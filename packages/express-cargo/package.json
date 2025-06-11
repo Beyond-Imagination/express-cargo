@@ -1,0 +1,34 @@
+{
+    "name": "express-cargo",
+    "version": "0.0.0",
+    "description": "express middleware for class-based request parsing",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "swc src -d dist",
+        "lint": "eslint src --ext .ts"
+    },
+    "keywords": [
+        "express",
+        "middleware",
+        "cargo",
+        "request"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.18.2"
+    },
+    "devDependencies": {
+        "@swc/cli": "^0.3.10",
+        "@swc/core": "^1.4.6",
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.11.19"
+    },
+    "peerDependencies": {
+        "express": "^4.18.2"
+    }
+}

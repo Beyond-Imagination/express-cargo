@@ -1,0 +1,22 @@
+{
+    "name": "express-cargo",
+    "version": "0.0.0",
+    "description": "express middleware for class-based request parsing",
+    "scripts": {
+        "build": "pnpm -r build",
+        "format": "prettier --write \"**/*.{ts,tsx,json}\""
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^7.0.0",
+        "@typescript-eslint/parser": "^7.0.0",
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.1.3",
+        "prettier": "^3.2.5",
+        "typescript": "^5.3.3"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "packageManager": "pnpm@9.1.1"
+}
