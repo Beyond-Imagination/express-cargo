@@ -6,7 +6,8 @@
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
-        "emitDeclarationOnly": true
+        "emitDeclarationOnly": true,
+        "types": ["reflect-metadata"]
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist", "**/*.test.ts"]
