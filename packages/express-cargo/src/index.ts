@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata'
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 export * from './binding'
