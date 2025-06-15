@@ -14,7 +14,11 @@ function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestH
 
                     const key = typeof field.key === 'string'
                         ? field.key
-                        : field.key.description || ""
+                        : field.key.description
+
+                    if (!key) {
+                        throw new Error('empty string or symbol is not allowed')
+                    }
 
                     switch (sourceKey) {
                         case bodyKey:
@@ -46,6 +50,6 @@ function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestH
     }
 }
 
-export function getCargo(req: Request) {
-    return req._cargo
+export function getCargo<T extends object = any>(req: Request): T | undefined {
+    return req._cargo as T;
 }
