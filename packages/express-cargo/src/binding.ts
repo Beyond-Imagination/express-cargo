@@ -12,25 +12,29 @@ function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestH
                 for (const field of fields) {
                     let value
 
+                    const key = typeof field.key === 'string'
+                        ? field.key
+                        : field.key.description || ""
+
                     switch (sourceKey) {
                         case bodyKey:
-                            value = req.body?.[field.key]
+                            value = req.body?.[key]
                             break
                         case queryKey:
-                            value = req.query?.[field.key.toString()]
+                            value = req.query?.[key]
                             break
                         case uriKey:
-                            value = req.params?.[field.key.toString()]
+                            value = req.params?.[key]
                             break
                         case headerKey:
-                            value = req.headers?.[String(field.key).toLowerCase()]
+                            value = req.headers?.[key.toLowerCase()]
                             break
                         case sessionKey:
-                            value = req.session?.[field.key]
+                            value = (req as any).session?.[key]
                             break
                     }
 
-                    cargo[field.key] = value
+                    cargo[field.property] = value
                 }
             }
 
