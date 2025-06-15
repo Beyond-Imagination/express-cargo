@@ -1,15 +1,4 @@
-import "reflect-metadata";
-import { Request, Response, NextFunction, RequestHandler } from 'express'
+import 'reflect-metadata'
 
+export * from './source'
 export * from './binding'
-
-export function bindingCargo(): RequestHandler {
-    return function (req: Request, res: Response, next: NextFunction) {
-        console.log(req, res, next)
-        next()
-    }
-}
-
-export function getCargo(req: Request) {
-    return req._cargo
-}

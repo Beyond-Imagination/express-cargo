@@ -1,23 +1,47 @@
-type Source = 'body' | 'query' | 'uri' | 'header' | 'session';
+import { Request, RequestHandler } from 'express'
+import { bodyKey, FieldMetadata, headerKey, queryKey, sessionKey, sourceKeys, uriKey } from './types'
 
-type FieldMetadata = {
-  property: string | symbol;
-  key: string | symbol;
-};
+function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
+    return (req, res, next) => {
+        try {
+            const cargo = new cargoClass() as any
 
-function createSourceDecorator(source: Source) {
-  return (key?: string): PropertyDecorator => {
-    return (target, propertyKey) => {
-      const metaKey = `cargo:${source}`;
-      const existing: FieldMetadata[] = Reflect.getMetadata(metaKey, target) || [];
-      existing.push({ property: propertyKey, key: key || propertyKey });
-      Reflect.defineMetadata(metaKey, existing, target);
-    };
-  };
+            for (const sourceKey of sourceKeys) {
+                const fields: FieldMetadata[] = Reflect.getMetadata(sourceKey, cargoClass.prototype) || []
+
+                for (const field of fields) {
+                    let value
+
+                    switch (sourceKey) {
+                        case bodyKey:
+                            value = req.body?.[field.key]
+                            break
+                        case queryKey:
+                            value = req.query?.[field.key.toString()]
+                            break
+                        case uriKey:
+                            value = req.params?.[field.key.toString()]
+                            break
+                        case headerKey:
+                            value = req.headers?.[String(field.key).toLowerCase()]
+                            break
+                        case sessionKey:
+                            value = req.session?.[field.key]
+                            break
+                    }
+
+                    cargo[field.key] = value
+                }
+            }
+
+            req._cargo = cargo
+            next()
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
-export const body = createSourceDecorator('body');
-export const query = createSourceDecorator('query');
-export const uri = createSourceDecorator('uri');
-export const header = createSourceDecorator('header');
-export const session = createSourceDecorator('session');
+export function getCargo(req: Request) {
+    return req._cargo
+}
