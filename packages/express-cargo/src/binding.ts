@@ -1,44 +1,45 @@
-import { Request, RequestHandler } from 'express'
-import { bodyKey, FieldMetadata, headerKey, queryKey, sessionKey, sourceKeys, uriKey } from './types'
+import type { Request, RequestHandler } from 'express'
 
-function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
+import { CargoFieldMetadata } from './types'
+import { getFieldMetadata } from './metadata'
+
+export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
     return (req, res, next) => {
         try {
             const cargo = new cargoClass() as any
+            const prototype = cargoClass.prototype
 
-            for (const sourceKey of sourceKeys) {
-                const fields: FieldMetadata[] = Reflect.getMetadata(sourceKey, cargoClass.prototype) || []
+            for (const property of Object.getOwnPropertyNames(prototype)) {
+                const meta: CargoFieldMetadata = getFieldMetadata(prototype, property)
+                if (!meta) continue
 
-                for (const field of fields) {
+                if (meta.source) {
                     let value
-
-                    const key = typeof field.key === 'string'
-                        ? field.key
-                        : field.key.description
+                    const key = typeof meta.key === 'string' ? meta.key : meta.key.description
 
                     if (!key) {
                         throw new Error('empty string or symbol is not allowed')
                     }
 
-                    switch (sourceKey) {
-                        case bodyKey:
+                    switch (meta.source) {
+                        case 'body':
                             value = req.body?.[key]
                             break
-                        case queryKey:
+                        case 'query':
                             value = req.query?.[key]
                             break
-                        case uriKey:
+                        case 'uri':
                             value = req.params?.[key]
                             break
-                        case headerKey:
-                            value = req.headers?.[key.toLowerCase()]
+                        case 'header':
+                            value = req.headers?.[String(key).toLowerCase()]
                             break
-                        case sessionKey:
+                        case 'session':
                             value = (req as any).session?.[key]
                             break
                     }
 
-                    cargo[field.property] = value
+                    cargo[property] = value
                 }
             }
 
@@ -50,6 +51,6 @@ function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestH
     }
 }
 
-export function getCargo<T extends object = any>(req: Request): T | undefined {
-    return req._cargo as T;
+export function getCargo<T extends object>(req: Request): T | undefined {
+    return req._cargo as T
 }
