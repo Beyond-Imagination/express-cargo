@@ -6,7 +6,7 @@ function getMetadataKey(propertyKey: string | symbol): string {
 
 export function getFieldMetadata(target: any, propertyKey: string | symbol): CargoFieldMetadata {
     const metadataKey = getMetadataKey(propertyKey)
-    return Reflect.getMetadata(metadataKey, target) || { key: propertyKey }
+    return Reflect.getMetadata(metadataKey, target) || { key: propertyKey, validators: [] }
 }
 
 export function setFieldMetadata(target: any, propertyKey: string | symbol, meta: CargoFieldMetadata): void {
