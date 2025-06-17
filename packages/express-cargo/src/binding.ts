@@ -39,6 +39,12 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                             break
                     }
 
+                    for (const rule of meta.validators) {
+                        if (!rule.validate(value)) {
+                            throw new Error(rule.message)
+                        }
+                    }
+
                     cargo[property] = value
                 }
             }
