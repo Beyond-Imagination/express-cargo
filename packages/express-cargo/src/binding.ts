@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldMetadata } from './types'
+import { CargoFieldError, CargoFieldMetadata, CargoValidationError } from './types'
 import { getFieldMetadata } from './metadata'
 
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
@@ -8,6 +8,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
         try {
             const cargo = new cargoClass() as any
             const prototype = cargoClass.prototype
+            const errors: CargoFieldError[] = []
 
             for (const property of Object.getOwnPropertyNames(prototype)) {
                 const meta: CargoFieldMetadata = getFieldMetadata(prototype, property)
@@ -18,7 +19,8 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                     const key = typeof meta.key === 'string' ? meta.key : meta.key.description
 
                     if (!key) {
-                        throw new Error('empty string or symbol is not allowed')
+                        errors.push(new CargoFieldError(key!, 'empty string or symbol is not allowed'))
+                        continue
                     }
 
                     switch (meta.source) {
@@ -41,12 +43,16 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
 
                     for (const rule of meta.validators) {
                         if (!rule.validate(value)) {
-                            throw new Error(rule.message)
+                            errors.push(new CargoFieldError(key, rule.message))
                         }
                     }
 
                     cargo[property] = value
                 }
+            }
+
+            if (errors.length > 0) {
+                throw new CargoValidationError(errors)
             }
 
             req._cargo = cargo
