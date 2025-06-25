@@ -1,28 +1,29 @@
 {
-    "$schema": "https://json.schemastore.org/swcrc",
     "jsc": {
         "parser": {
             "syntax": "typescript",
             "tsx": false,
-            "decorators": true,
-            "dynamicImport": true
+            "dynamicImport": true,
+            "decorators": true
         },
         "transform": {
             "legacyDecorator": true,
             "decoratorMetadata": true
         },
-        "target": "es2020",
+        "target": "es2017",
+        "externalHelpers": false,
+        "keepClassNames": true,
         "loose": false,
         "minify": {
             "compress": false,
             "mangle": false
+        },
+        "baseUrl": "../../apps/server/src",
+        "paths": {
+            "@/*": ["/*"]
         }
     },
     "module": {
-        "type": "commonjs",
-        "strict": true,
-        "noInterop": false
-    },
-    "minify": false,
-    "isModule": true
+        "type": "commonjs"
+    }
 }
