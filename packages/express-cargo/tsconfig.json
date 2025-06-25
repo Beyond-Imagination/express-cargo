@@ -6,9 +6,16 @@
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
-        "emitDeclarationOnly": true,
-        "types": ["reflect-metadata"]
+        "emitDeclarationOnly": false,
+        "types": ["reflect-metadata"],
+        "module": "ESNext",
+        "target": "ES2020",
+        "moduleResolution": "Node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "noEmit": false
     },
-    "include": ["src/**/*"],
+    "include": ["src", "src/**/*"],
     "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

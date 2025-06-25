@@ -1,0 +1,30 @@
+{
+    "name": "example",
+    "version": "0.0.0",
+    "description": "express-cargo example",
+    "main": "index.js",
+    "scripts": {
+        "start": "node dist/src/app.js",
+        "dev": "cross-env NODE_ENV=development nodemon",
+        "build": "rm -rf dist && swc src -d dist --source-maps --copy-files",
+        "lint": "eslint --ext .ts src/"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cross-env": "^7.0.3",
+        "express": "^4.18.2",
+        "express-cargo": "workspace:^",
+        "tslib": "^2.8.1"
+    },
+    "devDependencies": {
+        "@swc-node/register": "^1.10.9",
+        "@swc/cli": "^0.5.0",
+        "@swc/core": "^1.9.1",
+        "@swc/helpers": "^0.5.13",
+        "@types/express": "^4.17.23",
+        "nodemon": "^3.1.7",
+        "swc-node": "^1.0.0"
+    }
+}
