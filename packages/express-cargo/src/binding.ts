@@ -1,7 +1,7 @@
 import type { Request, RequestHandler } from 'express'
 
 import { CargoFieldError, CargoFieldMetadata, CargoValidationError } from './types'
-import { getFieldMetadata } from './metadata'
+import { getFieldMetadata, getFieldList } from './metadata'
 
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
     return (req, res, next) => {
@@ -10,7 +10,8 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
             const prototype = cargoClass.prototype
             const errors: CargoFieldError[] = []
 
-            for (const property of Object.getOwnPropertyNames(prototype)) {
+            const fields = getFieldList(prototype)
+            for (const property of fields) {
                 const meta: CargoFieldMetadata = getFieldMetadata(prototype, property)
                 if (!meta) continue
 

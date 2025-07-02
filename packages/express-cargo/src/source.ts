@@ -1,5 +1,5 @@
 import { Source } from './types'
-import { getFieldMetadata, setFieldMetadata } from './metadata'
+import { setFieldList, getFieldMetadata, setFieldMetadata } from './metadata'
 
 function createSourceDecorator(source: Source) {
     return (key?: string): PropertyDecorator => {
@@ -8,6 +8,7 @@ function createSourceDecorator(source: Source) {
             meta.source = source
             meta.key = key ?? propertyKey
             setFieldMetadata(target, propertyKey, meta)
+            setFieldList(target, propertyKey)
         }
     }
 }
