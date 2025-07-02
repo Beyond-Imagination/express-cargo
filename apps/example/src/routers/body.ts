@@ -5,13 +5,13 @@ const router: Router = express.Router()
 
 class BodyExample {
     @body()
-    number1: number
+    number1!: number
 
     @body()
-    number2: number
+    number2!: number
 
     @body()
-    number3: number
+    number3!: number
 }
 
 router.post('/', bindingCargo(BodyExample), (req, res) => {

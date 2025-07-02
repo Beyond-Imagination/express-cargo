@@ -2,8 +2,17 @@
     "name": "express-cargo",
     "version": "0.0.0",
     "description": "express middleware for class-based request parsing",
-    "main": "dist/src/index.js",
-    "types": "dist/index.d.ts",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "exports": {
+        ".": {
+            "development": "./src/index.ts",
+            "import": "./dist/index.esm.js",
+            "require": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
     "files": [
         "dist"
     ],
@@ -30,3 +39,4 @@
         "reflect-metadata": "^0.2.2"
     }
 }
+
