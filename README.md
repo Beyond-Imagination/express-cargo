@@ -18,7 +18,7 @@
 ```
 /
 ├── apps/
-│   ├── docs/         # docusarus 로 작성한 문서
+│   ├── docs/         # docusaurus 로 작성한 문서
 │   └── example/      # express-cargo 사용 예제 앱
 └── packages/
     └── express-cargo/ # express-cargo 라이브러리 소스
