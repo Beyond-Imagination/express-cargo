@@ -53,6 +53,7 @@ jobs:
             ["laggu"]="1269619098405441537"
             ["rlooo"]="1060181420389187715"
             ["yuchem2"]="307875691074945024"
+            ["sezeme"]="534088965050073089"
           )
 
           mentions=""
@@ -74,7 +75,7 @@ jobs:
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d "{
-            \"content\": \"📣 $MENTIONS님! Pull Request 리뷰어로 지정됐습니다.\\n🔗 PR: $PR_URL\"
+            \"content\": \"📣 $MENTIONS\n[express-cargo] PR 리뷰 요청되었습니다.\n🔗 $PR_URL\"
           }" \
           "$DISCORD_WEBHOOK_URL"
 
@@ -83,4 +84,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "[discord-review-notified] 리뷰 알림 전송됨 ✅"
+          gh pr comment ${{ github.event.pull_request.number }} --body "[discord-review-notified] Discord 리뷰 알림 완료 ✅"
