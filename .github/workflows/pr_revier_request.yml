@@ -1,9 +1,6 @@
-name: Notify Reviewers on PR
-
 on:
   pull_request:
     types: [review_requested]
-  workflow_dispatch:
 
 jobs:
   notify:
@@ -13,62 +10,35 @@ jobs:
       - name: Wait for reviewers to settle
         run: sleep 10
 
-      - name: Map GitHub usernames to Discord IDs
-        id: map-reviewers
+      - name: Get unique reviewers
+        id: reviewers
         env:
           REVIEWERS_JSON: ${{ toJson(github.event.pull_request.requested_reviewers) }}
         run: |
-          echo "🔄 Mapping GitHub reviewers to Discord mentions..."
+          reviewers=$(echo "$REVIEWERS_JSON" | jq -r '.[].login' | sort | uniq)
+          echo "reviewers=$reviewers" >> "$GITHUB_OUTPUT"
 
-          declare -A USER_MAP=(
-            ["laggu"]="1269619098405441537"
-            ["sezeme"]="534088965050073089"
-            ["rlooo"]="1060181420389187715"
-            ["yuchem2"]="307875691074945024"
-            ["chsjen492"]="1021785294078480394"
-            ["HeesooJun"]="347294009548341249"
-          )
+      - name: Map to Discord IDs
+        id: map
+        run: |
+          declare -A USER_MAP=(["laggu"]="...")
 
           mentions=""
-
-          while read login; do
+          for login in ${{ steps.reviewers.outputs.reviewers }}; do
             id=${USER_MAP[$login]}
-            if [ -n "$id" ]; then
-              mentions+="<@$id> "
-            else
-              echo "⚠️ No Discord ID mapped for $login"
-            fi
-          done < <(echo "$REVIEWERS_JSON" | jq -r '.[].login')
+            [ -n "$id" ] && mentions+="<@$id> "
+          done
 
           echo "mentions=$mentions" >> "$GITHUB_OUTPUT"
 
-      - name: Check if notification already sent
-        id: check
-        run: |
-          mkdir -p .cache
-          SENT_FILE=".cache/sent-${{ github.event.pull_request.number }}.flag"
-
-          if [ -f "$SENT_FILE" ]; then
-            echo "🔁 Already sent notification for this PR. Skipping..."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "✅ Sending notification for the first time."
-            touch "$SENT_FILE"
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Send Discord Notification
-        if: steps.check.outputs.skip == 'false'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          MENTIONS: ${{ steps.map-reviewers.outputs.mentions }}
+          MENTIONS: ${{ steps.map.outputs.mentions }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d "{
-            \"content\": \"📣 $MENTIONS님! Pull Request 리뷰어로 지정됐습니다. 확인해 주세요.\\n🔗 PR: $PR_URL\",
-            \"allowed_mentions\": {
-              \"parse\": [\"users\"]
-            }
+            \"content\": \"📣 $MENTIONS님! Pull Request 리뷰어로 지정됐습니다.\\n🔗 PR: $PR_URL\"
           }" \
           "$DISCORD_WEBHOOK_URL"
