@@ -2,6 +2,9 @@ on:
   pull_request:
     types: [review_requested]
 
+permissions:
+  pull-requests: write
+
 jobs:
   notify:
     runs-on: ubuntu-latest
