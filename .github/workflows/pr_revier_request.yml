@@ -15,20 +15,39 @@ jobs:
         env:
           REVIEWERS_JSON: ${{ toJson(github.event.pull_request.requested_reviewers) }}
         run: |
-          reviewers=$(echo "$REVIEWERS_JSON" | jq -r '.[].login' | sort | uniq)
+          echo "🔍 Extracting unique reviewers..."
+          reviewers=$(echo "$REVIEWERS_JSON" | jq -r '.[].login' | sort | uniq | paste -sd "," -)
+          echo "✅ reviewers: $reviewers"
           echo "reviewers=$reviewers" >> "$GITHUB_OUTPUT"
 
       - name: Map to Discord IDs
         id: map
         run: |
-          declare -A USER_MAP=(["laggu"]="...")
+          echo "🔗 Mapping GitHub usernames to Discord IDs..."
+          declare -A USER_MAP=(
+            ["laggu"]="1269619098405441537"
+            ["sezeme"]="534088965050073089"
+            ["rlooo"]="1060181420389187715"
+            ["yuchem2"]="307875691074945024"
+            ["chsjen492"]="1021785294078480394"
+            ["HeesooJun"]="347294009548341249"
+          )
 
           mentions=""
-          for login in ${{ steps.reviewers.outputs.reviewers }}; do
+
+          # reviewers를 쉼표 기준으로 배열로 다시 split
+          IFS="," read -ra reviewers <<< "${{ steps.reviewers.outputs.reviewers }}"
+
+          for login in "${reviewers[@]}"; do
             id=${USER_MAP[$login]}
-            [ -n "$id" ] && mentions+="<@$id> "
+            if [ -n "$id" ]; then
+              mentions+="<@$id> "
+            else
+              echo "⚠️ No Discord ID mapped for $login"
+            fi
           done
 
+          echo "✅ mentions: $mentions"
           echo "mentions=$mentions" >> "$GITHUB_OUTPUT"
 
       - name: Send Discord Notification
@@ -37,8 +56,12 @@ jobs:
           MENTIONS: ${{ steps.map.outputs.mentions }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
+          echo "🚀 Sending Discord notification..."
           curl -X POST -H "Content-Type: application/json" \
           -d "{
-            \"content\": \"📣 $MENTIONS님! Pull Request 리뷰어로 지정됐습니다.\\n🔗 PR: $PR_URL\"
+            \"content\": \"📣 $MENTIONS님! Pull Request 리뷰어로 지정됐습니다.\\n🔗 PR: $PR_URL\",
+            \"allowed_mentions\": {
+              \"parse\": [\"users\"]
+            }
           }" \
           "$DISCORD_WEBHOOK_URL"
