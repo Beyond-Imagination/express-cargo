@@ -70,6 +70,10 @@ jobs:
           }" \
           "$DISCORD_WEBHOOK_URL"
 
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Mark notification sent
         if: steps.check.outputs.skip == 'false'
         env:
