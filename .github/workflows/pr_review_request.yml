@@ -1,3 +1,5 @@
+name: Notify Reviewers
+
 on:
   pull_request:
     types: [review_requested]
@@ -9,7 +11,10 @@ jobs:
   notify:
     runs-on: ubuntu-latest
 
-    steps:
+    steps:    
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Wait for reviewers to settle
         run: sleep 10
 
@@ -72,10 +77,6 @@ jobs:
             \"content\": \"📣 $MENTIONS님! Pull Request 리뷰어로 지정됐습니다.\\n🔗 PR: $PR_URL\"
           }" \
           "$DISCORD_WEBHOOK_URL"
-
-
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Mark notification sent
         if: steps.check.outputs.skip == 'false'
