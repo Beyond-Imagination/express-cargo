@@ -1,7 +1,7 @@
 import { min } from '../../src/validator'
 import { getFieldMetadata } from '../../src/metadata'
 
-describe('min decorators', () => {
+describe('min decorator', () => {
     class Sample {
         @min(10)
         number1!: number

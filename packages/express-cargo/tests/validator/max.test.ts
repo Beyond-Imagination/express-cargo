@@ -9,7 +9,7 @@ describe('max decorator', () => {
         number2!: number
     }
 
-    it('should add max validator metadata', () => {
+    it('should have max validator metadata', () => {
         const meta = getFieldMetadata(Sample.prototype, 'number1')
         const maxRule = meta.validators?.find(v => v.type === 'max')
 
