@@ -8,22 +8,22 @@ function addValidator(target: any, propertyKey: string | symbol, rule: Validator
     setFieldMetadata(target, propertyKey, meta)
 }
 
-export function min(value: number): PropertyDecorator {
-    return (target, propertyKey) => {
+export function min(minimum: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'min',
-            validate: val => typeof val === 'number' && val >= value,
-            message: `${String(propertyKey)} must be >= ${value}`,
+            validate: input => typeof input === 'number' && input >= minimum,
+            message: `${String(propertyKey)} must be >= ${minimum}`,
         })
     }
 }
 
-export function max(value: number): PropertyDecorator {
-    return (target, propertyKey) => {
+export function max(maximum: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'max',
-            validate: val => typeof val === 'number' && val <= value,
-            message: `${String(propertyKey)} must be <= ${value}`,
+            validate: input => typeof input === 'number' && input <= maximum,
+            message: `${String(propertyKey)} must be <= ${maximum}`,
         })
     }
 }

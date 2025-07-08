@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+
 import { CargoFieldMetadata } from './types'
 
 function getMetadataKey(propertyKey: string | symbol): string {
