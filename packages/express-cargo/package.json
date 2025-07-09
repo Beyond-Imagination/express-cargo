@@ -18,7 +18,8 @@
     ],
     "scripts": {
         "build": "tsc --emitDeclarationOnly --declaration --outDir dist && swc src -d dist",
-        "lint": "eslint src --ext .ts"
+        "lint": "eslint src --ext .ts",
+        "test": "jest"
     },
     "keywords": [
         "express",
@@ -31,12 +32,13 @@
     "devDependencies": {
         "@swc/cli": "^0.3.10",
         "@swc/core": "^1.4.6",
-        "@types/node": "^20.11.19"
+        "@swc/jest": "^0.2.38",
+        "@types/node": "^20.11.19",
+        "jest": "^30.0.4"
     },
     "peerDependencies": {
-        "express": ">=4.17.0 <6",
         "@types/express": ">=4.17.0 <6",
+        "express": ">=4.17.0 <6",
         "reflect-metadata": "^0.2.2"
     }
 }
-

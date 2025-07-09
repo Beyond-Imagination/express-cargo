@@ -1,5 +1,5 @@
 {
-    "extends": "../../tsconfig.json",
+    "extends": "../../tsconfig.base.json",
     "compileOnSave": false,
     "compilerOptions": {
         "target": "es2017",
