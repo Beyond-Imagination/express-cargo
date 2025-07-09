@@ -27,3 +27,13 @@ export function max(value: number): PropertyDecorator {
         })
     }
 }
+
+export function suffix(value: string): PropertyDecorator {
+    return (target, propertyKey) => {
+        addValidator(target, propertyKey, {
+            type: 'suffix',
+            validate: val => typeof val === 'string' && val.endsWith(value),
+            message: `${String(propertyKey)} must end with ${value}`,
+        })
+    }
+}
