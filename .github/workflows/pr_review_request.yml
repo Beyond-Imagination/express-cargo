@@ -77,10 +77,3 @@ jobs:
           }" \
           "$DISCORD_WEBHOOK_URL"
           sleep 2  # 혹시나 Discord 전송 후 안정화 대기
-
-      - name: Mark notification sent
-        if: steps.check.outputs.skip == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "[discord-review-notified] Discord 리뷰 알림 완료 ✅"
