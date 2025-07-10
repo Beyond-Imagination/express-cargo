@@ -4,13 +4,6 @@ on:
   pull_request:
     types: [opened]
 
-permissions:
-  pull-requests: write
-
-concurrency:
-  group: pr-review-discord-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
-
 jobs:
   notify:
     runs-on: ubuntu-latest
