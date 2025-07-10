@@ -18,7 +18,7 @@ jobs:
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d "{
-            \"content\": \"📣 $MENTIONS\n[express-cargo] PR 리뷰 요청되었습니다.\n🔗 $PR_URL\"
+            \"content\": \"📣 [express-cargo] PR 리뷰 요청되었습니다.\n🔗 $PR_URL\"
           }" \
           "$DISCORD_WEBHOOK_URL"
           sleep 2  # 혹시나 Discord 전송 후 안정화 대기
