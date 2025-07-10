@@ -1,23 +1,21 @@
 name: Notify Reviewers
 
 on:
-  pull_request:
-    types: [opened]
+    pull_request:
+        types: [opened]
 
 jobs:
-  notify:
-    runs-on: ubuntu-latest
+    notify:
+        runs-on: ubuntu-latest
 
-    steps:    
-      - name: Send Discord Notification
-        if: steps.check.outputs.skip == 'false'
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.EXPRESS_CARGO_DISCORD_WEBHOOK_URL }}
-          MENTIONS: ${{ steps.map.outputs.mentions }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d "{
-            \"content\": \"📣 [express-cargo] PR 리뷰 요청되었습니다.\n🔗 $PR_URL\"
-          }" \
-          "$DISCORD_WEBHOOK_URL"
+        steps:
+            - name: Send Discord Notification
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.EXPRESS_CARGO_DISCORD_WEBHOOK_URL }}
+                  PR_URL: ${{ github.event.pull_request.html_url }}
+              run: |
+                  curl -X POST -H "Content-Type: application/json" \
+                  -d "{
+                    \"content\": \"📣 [express-cargo] PR 리뷰 요청되었습니다.\n🔗 $PR_URL\"
+                  }" \
+                  "$DISCORD_WEBHOOK_URL"
