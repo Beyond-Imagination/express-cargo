@@ -28,6 +28,16 @@ export function max(maximum: number): PropertyDecorator {
     }
 }
 
+export function prefix(value: string): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'prefix',
+            validate: val => typeof val === 'string' && val.startsWith(value),
+            message: `${String(propertyKey)} must start with ${value}`,
+        })
+    }
+}
+
 export function suffix(value: string): PropertyDecorator {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, {
