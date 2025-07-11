@@ -1,4 +1,4 @@
-name: fienmee CI
+name: express-cargo test
 
 on:
     - pull_request
