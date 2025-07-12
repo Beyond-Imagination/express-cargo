@@ -10,6 +10,12 @@ describe('equal decorator', () => {
         number1!: number
 
         number2!: number
+
+        @equal(null)
+        nullValue!: null
+
+        @equal(undefined)
+        undefinedValue!: undefined
     }
 
     it('should have equal validator with string argument', () => {
@@ -37,5 +43,29 @@ describe('equal decorator', () => {
         const equalRule = meta.validators?.find(v => v.type === 'equal')
 
         expect(equalRule).toBeUndefined()
+    })
+
+    it('should have equal validator with null argument', () => {
+        const meta = getFieldMetadata(Sample.prototype, 'nullValue')
+        const equalRule = meta.validators?.find(v => v.type === 'equal')
+
+        expect(equalRule).toBeDefined()
+        expect(equalRule?.message).toBe('nullValue must be equal to null')
+
+        expect(equalRule?.validate('not-null')).toBe(false)
+        expect(equalRule?.validate(null)).toBe(true)
+        expect(equalRule?.validate(undefined)).toBe(false)
+    })
+
+    it('should have equal validator with undefined argument', () => {
+        const meta = getFieldMetadata(Sample.prototype, 'undefinedValue')
+        const equalRule = meta.validators?.find(v => v.type === 'equal')
+
+        expect(equalRule).toBeDefined()
+        expect(equalRule?.message).toBe('undefinedValue must be equal to undefined')
+
+        expect(equalRule?.validate('not-undefined')).toBe(false)
+        expect(equalRule?.validate(undefined)).toBe(true)
+        expect(equalRule?.validate(null)).toBe(false)
     })
 })
