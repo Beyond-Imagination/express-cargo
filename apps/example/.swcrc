@@ -18,7 +18,7 @@
             "compress": false,
             "mangle": false
         },
-        "baseUrl": "../../apps/server/src",
+        "baseUrl": "../../apps/example/src",
         "paths": {
             "@/*": ["/*"]
         }
