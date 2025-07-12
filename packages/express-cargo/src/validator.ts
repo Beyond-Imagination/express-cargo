@@ -47,3 +47,13 @@ export function suffix(value: string): PropertyDecorator {
         })
     }
 }
+
+export function equal(value: any): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'equal',
+            validate: val => val === value,
+            message: `${String(propertyKey)} must be equal to ${value}`,
+        })
+    }
+}
