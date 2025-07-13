@@ -10,10 +10,10 @@
 
 
 ```typescript
-class Example {
+class Request {
     @body('email')
     email!: string
-  
+
     @query('limit')
     limit!: number
 

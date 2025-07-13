@@ -1,6 +1,6 @@
 ```typescript
-class Example {
-    @virtual((req) => req.authHeader?.replace(/^Bearer /, ''))
+class Request {
+    @virtual((req) => req.headers.authorization?.replace(/^Bearer /, ''))
     token!: string;
 }
 ```

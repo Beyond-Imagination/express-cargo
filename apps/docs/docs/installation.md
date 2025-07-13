@@ -16,7 +16,9 @@ npm install express-cargo reflect-metadata
 ### tsconfig.json
 ```json
 {
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
 }
 ```

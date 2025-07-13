@@ -7,7 +7,7 @@ Built-in validators:
 - @len(value: number)
 
 ```typescript
-class UserRequest {
+class Request {
     @min(18)
     @max(99)
     age!: number;
