@@ -1,7 +1,7 @@
 import { notEqual } from '../../src/validator'
 import { getFieldMetadata } from '../../src/metadata'
 
-describe('equal decorator', () => {
+describe('notEqual decorator', () => {
     class Sample {
         @notEqual('admin')
         role!: string
@@ -61,13 +61,13 @@ describe('equal decorator', () => {
 
     it('should not have equal validator with undefined argument', () => {
         const meta = getFieldMetadata(Sample.prototype, 'undefinedValue')
-        const equalRule = meta.validators?.find(v => v.type === 'notEqual')
+        const notEqualRule = meta.validators?.find(v => v.type === 'notEqual')
 
-        expect(equalRule).toBeDefined()
-        expect(equalRule?.message).toBe('undefinedValue must not be equal to undefined')
+        expect(notEqualRule).toBeDefined()
+        expect(notEqualRule?.message).toBe('undefinedValue must not be equal to undefined')
 
-        expect(equalRule?.validate('not-undefined')).toBe(true)
-        expect(equalRule?.validate(undefined)).toBe(false)
-        expect(equalRule?.validate(null)).toBe(true)
+        expect(notEqualRule?.validate('not-undefined')).toBe(true)
+        expect(notEqualRule?.validate(undefined)).toBe(false)
+        expect(notEqualRule?.validate(null)).toBe(true)
     })
 })
