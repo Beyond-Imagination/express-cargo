@@ -85,5 +85,3 @@ pnpm build
 ## 라이선스
 
 MIT
-
----

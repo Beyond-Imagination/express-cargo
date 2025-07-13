@@ -60,7 +60,7 @@ app.listen(3000)
 
 ## Examples & Documentation
 
-* **apps/example**: Contains practical example code
+* **apps/example**: Contains various practical code examples
 * **apps/docs**: Official documentation and API guide
 
 ---
@@ -85,5 +85,3 @@ pnpm build
 ## License
 
 MIT
-
----
