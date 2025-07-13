@@ -1,32 +1,32 @@
 # express-cargo
 
-**express-cargo**는 Express.js에서 request 데이터를 더욱 쉽고 타입 안전하게 관리할 수 있도록 도와주는 미들웨어 라이브러리입니다.  
-클래스 기반의 데코레이터와 바인딩 기능을 제공하여, 복잡한 request 파싱과 검증을 간결하게 처리할 수 있습니다.
+**express-cargo** is a middleware library for Express.js that makes handling request data easier and more type-safe.
+It provides class-based decorators and binding features to simplify complex request parsing and validation.
 
 ---
 
-## 주요 특징
+## Features
 
-- **클래스 기반 request 파싱**: 데코레이터로 body, query, param 등 request 데이터를 자동으로 바인딩
-- **타입 안전성**: TypeScript와 완벽하게 호환
-- **간편한 미들웨어 적용**: 기존 Express 미들웨어와 쉽게 통합
+* **Class-based request parsing**: Automatically bind request data (body, query, params, etc.) using decorators
+* **Type safety**: Fully compatible with TypeScript
+* **Easy middleware integration**: Seamlessly works with existing Express middleware
 
 ---
 
-## 디렉토리 구조
+## Directory Structure
 
 ```
 /
 ├── apps/
-│   ├── docs/         # docusaurus 로 작성한 문서
-│   └── example/      # express-cargo 사용 예제 앱
+│   ├── docs/         # Documentation built with Docusaurus
+│   └── example/      # Example app demonstrating express-cargo
 └── packages/
-    └── express-cargo/ # express-cargo 라이브러리 소스
+    └── express-cargo/ # express-cargo library source code
 ```
 
 ---
 
-## 설치
+## Installation
 
 ```bash
 npm install express-cargo
@@ -34,7 +34,7 @@ npm install express-cargo
 
 ---
 
-## 빠른 시작
+## Quick Start
 
 ```ts
 import express from 'express'
@@ -58,14 +58,14 @@ app.listen(3000)
 
 ---
 
-## 예제 및 문서
+## Examples & Documentation
 
-- **apps/example**: 다양한 실전 예제 코드 제공
-- **apps/docs**: 공식 문서 및 API 가이드
+* **apps/example**: Contains various practical code examples
+* **apps/docs**: Official documentation and API guide
 
 ---
 
-## 개발 및 빌드
+## Development & Build
 
 ```bash
 pnpm install
@@ -74,16 +74,14 @@ pnpm build
 
 ---
 
-## 기여하기
+## Contributing
 
-1. 이 저장소를 fork 후 브랜치 생성
-2. 변경사항 커밋 및 PR 생성
-3. 코드 스타일은 Prettier, ESLint 규칙을 따라주세요
+1. Fork this repository and create a new branch
+2. Commit your changes and open a pull request
+3. Follow the Prettier and ESLint rules for code style
 
 ---
 
-## 라이선스
+## License
 
 MIT
-
----
