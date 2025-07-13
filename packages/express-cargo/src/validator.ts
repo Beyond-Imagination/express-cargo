@@ -28,22 +28,22 @@ export function max(maximum: number): PropertyDecorator {
     }
 }
 
-export function prefix(value: string): PropertyDecorator {
+export function prefix(prefixText: string): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'prefix',
-            validate: val => typeof val === 'string' && val.startsWith(value),
-            message: `${String(propertyKey)} must start with ${value}`,
+            validate: val => typeof val === 'string' && val.startsWith(prefixText),
+            message: `${String(propertyKey)} must start with ${prefixText}`,
         })
     }
 }
 
-export function suffix(value: string): PropertyDecorator {
-    return (target, propertyKey) => {
+export function suffix(suffixText: string): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol) => {
         addValidator(target, propertyKey, {
             type: 'suffix',
-            validate: val => typeof val === 'string' && val.endsWith(value),
-            message: `${String(propertyKey)} must end with ${value}`,
+            validate: val => typeof val === 'string' && val.endsWith(suffixText),
+            message: `${String(propertyKey)} must end with ${suffixText}`,
         })
     }
 }
