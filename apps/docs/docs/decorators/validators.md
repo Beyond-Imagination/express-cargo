@@ -30,6 +30,12 @@ Checks if a string ends with the specified suffix.
 
 -   **`value`**: The required ending text.
 
+### `@equal(value: any)`
+
+Checks if the input value is strictly equal (`===`) to the specified value.
+
+-   **`value`**: The value to compare against.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
@@ -71,7 +77,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof CargoValidationError) {
         res.status(400).json({ 
             message: 'Validation Failed',
-            errors: err.errors.map(e => e.message) // Use err.errors and map to get messages
+            errors: err.errors.map(e => e.message)
         });
     } else {
         next(err);
