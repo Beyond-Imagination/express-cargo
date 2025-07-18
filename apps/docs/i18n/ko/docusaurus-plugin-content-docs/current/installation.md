@@ -1,4 +1,4 @@
-## install
+## 설치하기
 ```shell
 # With pnpm
 pnpm add express-cargo reflect-metadata
@@ -8,7 +8,7 @@ npm install express-cargo reflect-metadata
 
 ```
 
-## Requirements
+## 요구 버전
 
 - Node.js 20+
 - TypeScript enabled

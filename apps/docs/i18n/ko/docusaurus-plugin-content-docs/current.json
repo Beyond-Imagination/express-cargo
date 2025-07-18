@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "다음",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "시작하기",
+    "description": "The label for category Getting Started in sidebar docs"
+  },
+  "sidebar.docs.category.Core Concepts": {
+    "message": "가이드",
+    "description": "The label for category Core Concepts in sidebar docs"
+  },
+  "sidebar.docs.category.Advanced Usage": {
+    "message": "고급 가이드",
+    "description": "The label for category Advanced Usage in sidebar docs"
+  },
+  "sidebar.docs.category.Examples": {
+    "message": "예시",
+    "description": "The label for category Examples in sidebar docs"
+  }
+}
