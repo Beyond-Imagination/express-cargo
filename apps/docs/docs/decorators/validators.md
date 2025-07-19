@@ -32,13 +32,13 @@ Checks if a string ends with the specified suffix.
 
 ### `@equal(value: any)`
 
-Checks if the input value is strictly equal (`===`) to the specified value.
+Validates that the input value is strictly equal (`===`) to the specified value.
 
 - **`value`**: The value to compare against.
 
 ### `@notEqual(value: any)`
 
-Checks if the input value is strictly not equal (`!==`) to the specified value.
+Validates that the input value is strictly not equal (`!==`) to the specified value.
 
 - **`value`**: The value to compare against.
 
