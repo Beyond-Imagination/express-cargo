@@ -57,3 +57,13 @@ export function equal(value: any): PropertyDecorator {
         })
     }
 }
+
+export function notEqual(value: any): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'notEqual',
+            validate: val => val !== value,
+            message: `${String(propertyKey)} must not be equal to ${value}`,
+        })
+    }
+}
