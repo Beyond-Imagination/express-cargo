@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, query, header, uri } from 'express-cargo'
+import { bindingCargo, getCargo, body, query, header, uri, equal } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -52,6 +52,33 @@ class HeaderExample {
 
 router.get('/header', bindingCargo(HeaderExample), (req, res) => {
     const cargo = getCargo<HeaderExample>(req)
+    res.json(cargo)
+})
+
+class EqualExample {
+    @body()
+    @equal(3)
+    number!: number
+
+    @body()
+    @equal('text')
+    string!: string
+
+    @body()
+    @equal(true)
+    boolean!: boolean
+
+    @body()
+    @equal(null)
+    null!: null
+
+    @body()
+    @equal(undefined)
+    undefined!: undefined
+}
+
+router.post('/equal', bindingCargo(EqualExample), (req, res) => {
+    const cargo = getCargo<EqualExample>(req)
     res.json(cargo)
 })
 
