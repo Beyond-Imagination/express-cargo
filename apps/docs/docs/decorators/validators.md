@@ -10,79 +10,85 @@ Validation is not performed by a standalone `validate` function. Instead, it is 
 
 Checks if a number is greater than or equal to the specified minimum value.
 
--   **`value`**: The minimum allowed value.
+- **`value`**: The minimum allowed value.
 
 ### `@max(value: number)`
 
 Checks if a number is less than or equal to the specified maximum value.
 
--   **`value`**: The maximum allowed value.
+- **`value`**: The maximum allowed value.
 
 ### `@prefix(value: string)`
 
 Checks if a string starts with the specified prefix.
 
--   **`value`**: The required starting text.
+- **`value`**: The required starting text.
 
 ### `@suffix(value: string)`
 
 Checks if a string ends with the specified suffix.
 
--   **`value`**: The required ending text.
+- **`value`**: The required ending text.
 
 ### `@equal(value: any)`
 
 Checks if the input value is strictly equal (`===`) to the specified value.
 
--   **`value`**: The value to compare against.
+- **`value`**: The value to compare against.
+
+### `@notEqual(value: any)`
+
+Checks if the input value is strictly not equal (`!==`) to the specified value.
+
+- **`value`**: The value to compare against.
 
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
 
 ```typescript
-import express, { Request, Response, NextFunction } from 'express';
-import { bindingCargo, getCargo, body, min, max, suffix, CargoValidationError } from 'express-cargo';
+import express, { Request, Response, NextFunction } from 'express'
+import { bindingCargo, getCargo, body, min, max, suffix, CargoValidationError } from 'express-cargo'
 
 // 1. Define a class with source and validation rules
 class CreateAssetRequest {
     @body('name')
-    assetName!: string;
+    assetName!: string
 
     @body('type')
     @suffix('.png')
-    assetType!: string;
+    assetType!: string
 
     @body('quantity')
     @min(1)
     @max(100)
-    quantity!: number;
+    quantity!: number
 }
 
-const app = express();
-app.use(express.json());
+const app = express()
+app.use(express.json())
 
 // 2. Apply the bindingCargo middleware to a route
 app.post('/assets', bindingCargo(CreateAssetRequest), (req: Request, res: Response) => {
     // 3. If validation succeeds, access the data using getCargo
-    const assetData = getCargo<CreateAssetRequest>(req);
+    const assetData = getCargo<CreateAssetRequest>(req)
     res.json({
         message: 'Asset created successfully!',
-        data: assetData
-    });
-});
+        data: assetData,
+    })
+})
 
 // 4. Add an error handling middleware to catch validation errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof CargoValidationError) {
-        res.status(400).json({ 
+        res.status(400).json({
             message: 'Validation Failed',
-            errors: err.errors.map(e => e.message)
-        });
+            errors: err.errors.map(e => e.message),
+        })
     } else {
-        next(err);
+        next(err)
     }
-});
+})
 
 /*
 To test this endpoint, send a POST request to /assets.
@@ -118,9 +124,6 @@ When the invalid request body from the example above is sent, the error handler 
 ```json
 {
     "message": "Validation Failed",
-    "errors": [
-        "type: assetType must end with .png",
-        "quantity: quantity must be <= 100"
-    ]
+    "errors": ["type: assetType must end with .png", "quantity: quantity must be <= 100"]
 }
 ```
