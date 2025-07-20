@@ -1,7 +1,7 @@
 import { optional } from '../../src/decorators'
 import { getFieldMetadata } from '../../src/metadata'
 
-describe('optinal decorator', () => {
+describe('optional decorator', () => {
     class Sample {
         @optional()
         field1?: string
