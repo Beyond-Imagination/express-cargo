@@ -4,6 +4,7 @@ export type CargoFieldMetadata = {
     key: string | symbol
     source: Source
     validators: ValidatorRule[]
+    optional?: boolean
 }
 
 type ValidatorFunction = (value: any) => boolean
