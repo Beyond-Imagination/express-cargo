@@ -70,11 +70,11 @@ class EqualExample {
 
     @body()
     @equal(null)
-    null!: null
+    nullValue!: null
 
     @body()
     @equal(undefined)
-    undefined!: undefined
+    undefinedValue!: undefined
 }
 
 router.post('/equal', bindingCargo(EqualExample), (req, res) => {
@@ -97,11 +97,11 @@ class NotEqualExample {
 
     @body()
     @notEqual(null)
-    null!: null
+    nullValue!: null
 
     @body()
     @notEqual(undefined)
-    undefined!: undefined
+    undefinedValue!: undefined
 }
 
 router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
