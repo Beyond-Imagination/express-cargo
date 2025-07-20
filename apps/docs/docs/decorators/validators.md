@@ -124,6 +124,9 @@ When the invalid request body from the example above is sent, the error handler 
 ```json
 {
     "message": "Validation Failed",
-    "errors": ["type: assetType must end with .png", "quantity: quantity must be <= 100"]
+    "errors": [
+        "type: assetType must end with .png",
+        "quantity: quantity must be <= 100"
+    ]
 }
 ```

@@ -1,0 +1,5 @@
+{
+    "prettier.bracketSameLine": false,
+    "prettier.prettierPath": "",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
