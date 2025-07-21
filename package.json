@@ -4,6 +4,7 @@
     "description": "express middleware for class-based request parsing",
     "scripts": {
         "build": "pnpm -r build",
+        "build:docs": "pnpm --filter ./apps/docs build",
         "test": "pnpm -r test",
         "format": "prettier --write \"**/*.{ts,tsx,json}\""
     },
