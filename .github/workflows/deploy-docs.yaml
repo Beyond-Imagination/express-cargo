@@ -8,10 +8,6 @@ on:
             - 'apps/docs/**'
             - '.github/workflows/deploy-docs.yaml'
 
-    pull_request:
-        branches:
-            - develop
-
 jobs:
     build:
         runs-on: ubuntu-latest
