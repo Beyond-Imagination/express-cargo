@@ -18,6 +18,9 @@ describe('range decorator', () => {
         expect(rangeRule?.validate(4)).toBe(false);
         expect(rangeRule?.validate(10)).toBe(true);
         expect(rangeRule?.validate(16)).toBe(false);
+
+        expect(rangeRule?.validate(16)).toBe(false);
+        expect(rangeRule?.validate('not a number')).toBe(false);
     });
 
     it('should not have range validator metadata', () => {

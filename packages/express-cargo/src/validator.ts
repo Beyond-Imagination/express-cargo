@@ -72,12 +72,7 @@ export function range(min: number, max: number): PropertyDecorator {
   return (target, propertyKey) => {
     addValidator(target, propertyKey, {
       type: 'range',
-      validate: (value: any) => {
-        if (typeof value !== 'number') {
-          throw new Error(`@range can only be applied to number fields (found ${typeof value})`);
-        }
-        return value >= min && value <= max;
-      },
+            validate: (value: any) => typeof value === 'number' && value >= min && value <= max,
       message: `${String(propertyKey)} must be between ${min} and ${max}`,
     });
   };
