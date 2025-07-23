@@ -67,3 +67,13 @@ export function notEqual(value: any): PropertyDecorator {
         })
     }
 }
+
+export function range(min: number, max: number): PropertyDecorator {
+  return (target, propertyKey) => {
+    addValidator(target, propertyKey, {
+      type: 'range',
+            validate: (value: any) => typeof value === 'number' && value >= min && value <= max,
+      message: `${String(propertyKey)} must be between ${min} and ${max}`,
+    });
+  };
+}
