@@ -1,0 +1,18 @@
+{
+    "jsc": {
+        "target": "es2020",
+        "parser": {
+            "syntax": "typescript",
+            "decorators": true
+        },
+        "transform": {
+            "decoratorMetadata": true,
+            "legacyDecorator": true
+        }
+    },
+    "module": {
+        "type": "es6",
+        "strict": true
+    },
+    "isModule": true
+}
