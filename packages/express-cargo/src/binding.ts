@@ -42,6 +42,16 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                             break
                     }
 
+                    if (value === undefined || value === null) {
+                        if (meta.optional) {
+                            cargo[property] = undefined;
+                            continue; 
+                        } else {
+                            errors.push(new CargoFieldError(key, `${key} is required`));
+                            continue; 
+                        }
+                    }
+
                     for (const rule of meta.validators) {
                         if (!rule.validate(value)) {
                             errors.push(new CargoFieldError(key, rule.message))
