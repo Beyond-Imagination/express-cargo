@@ -2,22 +2,23 @@
     "name": "express-cargo",
     "version": "0.0.0",
     "description": "express middleware for class-based request parsing",
-    "main": "./dist/src/index.js",
-    "types": "./dist/index.d.ts",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
+    "types": "./dist/types/index.d.ts",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "development": "./src/index.ts",
-            "import": "./dist/index.esm.js",
-            "require": "./dist/index.js",
-            "default": "./dist/index.js"
+            "types": "./dist/types/index.d.ts",
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.js"
         }
     },
-    "files": [
-        "dist"
-    ],
+    "files": ["dist"],
     "scripts": {
-        "build": "tsc --emitDeclarationOnly --declaration --outDir dist && swc src -d dist",
+        "build": "npm run clean && npm run build:types && npm run build:cjs && npm run build:esm",
+        "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist/types",
+        "build:cjs": "swc src -d dist/cjs --config-file .swcrc.cjs.json",
+        "build:esm": "swc src -d dist/esm --config-file .swcrc.esm.json",
+        "clean": "rimraf dist",
         "lint": "eslint src --ext .ts",
         "test": "jest"
     },
