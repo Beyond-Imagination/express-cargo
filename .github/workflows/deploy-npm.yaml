@@ -10,7 +10,7 @@ on:
 
     pull_request:
         branches:
-            - develop
+            - CARGO-104
 
 jobs:
     publish:
