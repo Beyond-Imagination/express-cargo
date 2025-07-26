@@ -6,7 +6,6 @@ on:
             - main
         paths:
             - 'packages/express-cargo/**'
-            - '.github/workflows/deploy-npm.yaml'
 
 jobs:
     publish:
