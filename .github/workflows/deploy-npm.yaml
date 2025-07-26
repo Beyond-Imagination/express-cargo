@@ -4,10 +4,13 @@ on:
     push:
         branches:
             - main
-            - develop
         paths:
             - 'packages/express-cargo/**'
             - '.github/workflows/deploy-npm.yaml'
+
+    pull_request:
+        branches:
+            - develop
 
 jobs:
     publish:
