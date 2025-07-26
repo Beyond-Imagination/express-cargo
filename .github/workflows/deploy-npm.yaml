@@ -1,0 +1,45 @@
+name: Deploy to NPM
+
+on:
+    push:
+        branches:
+            - main
+            - develop
+        paths:
+            - 'packages/express-cargo/**'
+            - '.github/workflows/deploy-npm.yaml'
+
+jobs:
+    publish:
+        name: Publish express-cargo
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: packages/express-cargo
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   uses: pnpm/action-setup@v4
+                name: Install pnpm
+                with:
+                    run_install: false
+
+            -   name: Install Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: 20
+                    cache: 'pnpm'
+
+            -   name: Install dependencies
+                run: pnpm install
+
+            -   name: Build package
+                run: pnpm build
+
+            -   name: Publish to npm
+                run: npm publish --access public
+                env:
+                    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
