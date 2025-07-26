@@ -1,16 +1,14 @@
 name: Deploy to NPM
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - 'packages/express-cargo/**'
-            - '.github/workflows/deploy-npm.yaml'
+#    push:
+#        branches:
+#            - main
+#        paths:
+#            - 'packages/express-cargo/**'
+#            - '.github/workflows/deploy-npm.yaml'
 
-    pull_request:
-        branches:
-            - CARGO-104
+    - pull_request
 
 jobs:
     publish:
