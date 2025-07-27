@@ -60,7 +60,7 @@ router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
 class PrefixExample {
     @body()
     @prefix('https://')
-    url: string
+    url!: string
 }
 
 router.post('/prefix', bindingCargo(PrefixExample), (req, res) => {
@@ -71,7 +71,7 @@ router.post('/prefix', bindingCargo(PrefixExample), (req, res) => {
 class SuffixExample {
     @body()
     @suffix('.png')
-    photo: string
+    photo!: string
 }
 
 router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
