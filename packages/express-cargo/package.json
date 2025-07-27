@@ -28,7 +28,11 @@
         "cargo",
         "request"
     ],
-    "author": "",
+    "homepage": "https://beyond-imagination.github.io/express-cargo/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Beyond-Imagination/express-cargo.git"
+    },
     "license": "MIT",
     "devDependencies": {
         "@swc/cli": "^0.3.10",
