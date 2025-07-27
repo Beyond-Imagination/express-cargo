@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from "express-cargo";
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from 'express-cargo'
 
 const router: Router = express.Router()
 
