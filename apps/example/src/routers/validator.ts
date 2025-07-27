@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -54,6 +54,28 @@ class NotEqualExample {
 
 router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
     const cargo = getCargo<NotEqualExample>(req)
+    res.json(cargo)
+})
+
+class PrefixExample {
+    @body()
+    @prefix('https://')
+    url!: string
+}
+
+router.post('/prefix', bindingCargo(PrefixExample), (req, res) => {
+    const cargo = getCargo<PrefixExample>(req)
+    res.json(cargo)
+})
+
+class SuffixExample {
+    @body()
+    @suffix('.png')
+    photo!: string
+}
+
+router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
+    const cargo = getCargo<SuffixExample>(req)
     res.json(cargo)
 })
 
