@@ -8,7 +8,7 @@ It provides class-based decorators and binding features to simplify complex requ
 ## Installation
 
 ```bash
-npm install express-cargo
+npm install express-cargo reflect-metadata
 ```
 
 ---
