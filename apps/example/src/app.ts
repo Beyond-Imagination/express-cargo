@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import sourceRouter from './routers/source'
+import validatorRouter from './routers/validator'
 import { CargoValidationError } from 'express-cargo'
 
 const app = express()
@@ -10,6 +11,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(sourceRouter)
+app.use(validatorRouter)
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof CargoValidationError) {
