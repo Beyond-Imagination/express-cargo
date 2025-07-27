@@ -1,6 +1,6 @@
 {
     "name": "express-cargo",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "description": "express middleware for class-based request parsing",
     "scripts": {
         "build": "pnpm -r build",
