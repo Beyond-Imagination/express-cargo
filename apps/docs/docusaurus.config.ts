@@ -3,6 +3,7 @@ import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+const isVercel = process.env.VERCEL === '1'
 
 const config: Config = {
     title: 'express-cargo',
@@ -15,10 +16,10 @@ const config: Config = {
     },
 
     // Set the production url of your site here
-    url: 'https://beyond-imagination.github.io',
+    url: isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/express-cargo/',
+    baseUrl: isVercel? '/' : '/express-cargo/',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
