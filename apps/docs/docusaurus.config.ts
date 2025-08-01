@@ -97,35 +97,25 @@ const config: Config = {
                     title: 'Docs',
                     items: [
                         {
-                            label: 'Docs',
-                            to: '/',
-                        },
-                    ],
-                },
-                {
-                    title: 'Community',
-                    items: [
-                        {
-                            label: 'Stack Overflow',
-                            href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                            label: 'Getting Started',
+                            to: '/intro',
                         },
                         {
-                            label: 'Discord',
-                            href: 'https://discordapp.com/invite/docusaurus',
+                            label: 'Core Concepts',
+                            to: '/decorators/overview',
                         },
                         {
-                            label: 'X',
-                            href: 'https://x.com/docusaurus',
+                            label: 'Examples',
+                            to: '/examples/basic-usage',
                         },
                     ],
                 },
                 {
                     title: 'More',
                     items: [
-
                         {
                             label: 'GitHub',
-                            href: 'https://github.com/facebook/docusaurus',
+                            href: 'https://github.com/Beyond-Imagination/express-cargo',
                         },
                     ],
                 },
