@@ -20,7 +20,7 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "importHelpers": true,
-        "baseUrl": "../../apps/example/src",
+        "baseUrl": "../../apps/example-cjs/src",
         "paths": {
             "@/*": ["*"],
             "express-cargo": ["../../../packages/express-cargo/src/index.ts"]

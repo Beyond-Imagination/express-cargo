@@ -18,7 +18,7 @@
             "compress": false,
             "mangle": false
         },
-        "baseUrl": "../../apps/example/src",
+        "baseUrl": "../../apps/example-cjs/src",
         "paths": {
             "@/*": ["/*"]
         }

@@ -1,7 +1,7 @@
 {
-    "name": "example",
+    "name": "example-cjs",
     "version": "0.1.0",
-    "description": "express-cargo example",
+    "description": "express-cargo cjs example",
     "main": "index.js",
     "scripts": {
         "start": "node dist/src/app.js",
