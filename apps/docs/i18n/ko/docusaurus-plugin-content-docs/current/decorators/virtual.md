@@ -1,3 +1,8 @@
+---
+id: virtual
+title: 가상 필드
+---
+
 ## 가상필드
 
 ```typescript

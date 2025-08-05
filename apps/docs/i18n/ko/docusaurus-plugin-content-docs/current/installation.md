@@ -1,3 +1,8 @@
+---
+id: installation
+title: 설치 방법
+---
+
 ## 설치하기
 ```shell
 # With pnpm
