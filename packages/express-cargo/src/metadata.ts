@@ -28,7 +28,16 @@ export function setFieldMetadata(target: any, propertyKey: string | symbol, meta
 }
 
 export function getFieldList(target: any): (string | symbol)[] {
-    return Reflect.getMetadata(getFieldKey(), target) || []
+    const fields = new Set<string | symbol>()
+    let current = target
+
+    while (current && current !== Object.prototype) {
+        const currentFields = Reflect.getMetadata(getFieldKey(), current) || []
+        currentFields.forEach((f: string | symbol) => fields.add(f))
+        current = Object.getPrototypeOf(current)
+    }
+
+    return Array.from(fields)
 }
 
 export function setFieldList(target: any, propertyKey: string | symbol) {
