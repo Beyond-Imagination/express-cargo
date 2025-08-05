@@ -18,6 +18,13 @@ export function getFieldMetadata(target: any, propertyKey: string | symbol): Car
 export function setFieldMetadata(target: any, propertyKey: string | symbol, meta: CargoFieldMetadata): void {
     const metaKey = getMetadataKey(propertyKey)
     Reflect.defineMetadata(metaKey, meta, target)
+
+    // 필드 리스트 따로 관리
+    const fieldKey = getFieldKey()
+    const existingFields: (string | symbol)[] = Reflect.getMetadata(fieldKey, target) || []
+    if (!existingFields.includes(propertyKey)) {
+        Reflect.defineMetadata(fieldKey, [...existingFields, propertyKey], target)
+    }
 }
 
 export function getFieldList(target: any): (string | symbol)[] {
