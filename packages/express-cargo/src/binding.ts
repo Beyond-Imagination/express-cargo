@@ -16,7 +16,8 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 if (!meta) continue
 
                 let value
-                const key = typeof meta.key === 'string' ? meta.key : meta.key.description
+                const metaKey = meta.getKey()
+                const key = typeof metaKey === 'string' ? metaKey : metaKey.description
 
                 if (!key) {
                     errors.push(new CargoFieldError(key!, 'empty string or symbol is not allowed'))

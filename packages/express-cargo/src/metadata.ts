@@ -41,7 +41,7 @@ export class CargoClassMetadata {
 
 export class CargoFieldMetadata {
     readonly target: any
-    readonly key: string | symbol
+    private key: string | symbol
     private source: Source
     private validators: ValidatorRule[]
     private optional: boolean
@@ -52,6 +52,14 @@ export class CargoFieldMetadata {
         this.source = 'body'
         this.validators = []
         this.optional = false
+    }
+
+    getKey(): string | symbol {
+        return this.key
+    }
+
+    setKey(key: string | symbol) {
+        this.key = key
     }
 
     getSource(): Source {

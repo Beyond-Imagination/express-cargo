@@ -5,7 +5,8 @@ function createSourceDecorator(source: Source) {
     return (key?: string): PropertyDecorator => {
         return (target, propertyKey) => {
             const classMeta = new CargoClassMetadata(target)
-            const fieldMeta = classMeta.getFieldMetadata(key ?? propertyKey)
+            const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+            fieldMeta.setKey(key ?? propertyKey)
             fieldMeta.setSource(source)
             classMeta.setFieldMetadata(propertyKey, fieldMeta)
             classMeta.setFieldList(propertyKey)
