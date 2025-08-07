@@ -1,5 +1,5 @@
 import { max } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('max decorator', () => {
     class Sample {
@@ -9,9 +9,11 @@ describe('max decorator', () => {
         number2!: number
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should have max validator metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'number1')
-        const maxRule = meta.validators?.find(v => v.type === 'max')
+        const meta = classMeta.getFieldMetadata('number1')
+        const maxRule = meta.getValidators()?.find(v => v.type === 'max')
 
         expect(maxRule).toBeDefined()
         expect(maxRule?.message).toBe('number1 must be <= 20')
@@ -20,8 +22,8 @@ describe('max decorator', () => {
     })
 
     it('should not have max validator metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'number2')
-        const maxRule = meta.validators?.find(v => v.type === 'max')
+        const meta = classMeta.getFieldMetadata('number2')
+        const maxRule = meta.getValidators()?.find(v => v.type === 'max')
 
         expect(maxRule).toBeUndefined()
     })
