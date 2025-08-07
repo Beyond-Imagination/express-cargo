@@ -1,3 +1,8 @@
+---
+id: validators
+title: 유효성 검사 데코레이터
+---
+
 # 유효성 검사 데코레이터 (Validation Decorators)
 
 **Express-Cargo**는 요청 데이터가 클래스에 바인딩될 때 데코레이터를 사용하여 해당 데이터를 검증합니다.
