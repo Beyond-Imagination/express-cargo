@@ -77,3 +77,13 @@ export function range(min: number, max: number): PropertyDecorator {
     });
   };
 }
+
+export function isTrue(): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'isTrue',
+            validate: val => val === true,
+            message: `${String(propertyKey)} must be true`,
+        })
+    }
+}
