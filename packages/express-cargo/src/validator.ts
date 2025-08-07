@@ -83,7 +83,7 @@ export function isFalse(): PropertyDecorator {
         addValidator(target, propertyKey, {
             type: 'isFalse',
             validate: val => val === false,
-            message: `${String(propertyKey)} must not be false`,
+            message: `${String(propertyKey)} must be false`,
         })
     }
 }
