@@ -77,3 +77,13 @@ export function range(min: number, max: number): PropertyDecorator {
     });
   };
 }
+
+export function maxLength(max: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'maxLength',
+            validate: (val: any) => typeof val === 'string' && val.length <= max,
+            message: `${String(propertyKey)} must not exceed ${max} characters`,
+        })
+    }
+}
