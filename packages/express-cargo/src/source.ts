@@ -1,14 +1,15 @@
 import { Source } from './types'
-import { setFieldList, getFieldMetadata, setFieldMetadata } from './metadata'
+import { CargoClassMetadata } from './metadata'
 
 function createSourceDecorator(source: Source) {
     return (key?: string): PropertyDecorator => {
         return (target, propertyKey) => {
-            const meta = getFieldMetadata(target, propertyKey)
-            meta.source = source
-            meta.key = key ?? propertyKey
-            setFieldMetadata(target, propertyKey, meta)
-            setFieldList(target, propertyKey)
+            const classMeta = new CargoClassMetadata(target)
+            const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+            fieldMeta.setKey(key ?? propertyKey)
+            fieldMeta.setSource(source)
+            classMeta.setFieldMetadata(propertyKey, fieldMeta)
+            classMeta.setFieldList(propertyKey)
         }
     }
 }

@@ -1,5 +1,5 @@
 import { suffix } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('suffix decorator', () => {
     class Sample {
@@ -9,9 +9,11 @@ describe('suffix decorator', () => {
         link2!: string
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should have suffix metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'link1')
-        const suffixRule = meta.validators?.find(v => v.type === 'suffix')
+        const meta = classMeta.getFieldMetadata('link1')
+        const suffixRule = meta.getValidators()?.find(v => v.type === 'suffix')
 
         expect(suffixRule).toBeDefined()
         expect(suffixRule?.message).toBe('link1 must end with .com')
@@ -20,8 +22,8 @@ describe('suffix decorator', () => {
     })
 
     it('should not have suffix metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'link2')
-        const suffixRule = meta.validators?.find(v => v.type === 'suffix')
+        const meta = classMeta.getFieldMetadata('link2')
+        const suffixRule = meta.getValidators()?.find(v => v.type === 'suffix')
 
         expect(suffixRule).toBeUndefined()
     })
