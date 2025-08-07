@@ -1,5 +1,5 @@
 import { isFalse } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('isFalse decorator', () => {
     class Sample {
@@ -9,9 +9,11 @@ describe('isFalse decorator', () => {
         noValidatorValue!: boolean
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should have isFalse validator', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'booleanValue')
-        const isFalseRule = meta.validators?.find(v => v.type === 'isFalse')
+        const meta = classMeta.getFieldMetadata('booleanValue')
+        const isFalseRule = meta.getValidators()?.find(v => v.type === 'isFalse')
 
         expect(isFalseRule).toBeDefined()
         expect(isFalseRule?.message).toBe('booleanValue must be false')
@@ -20,8 +22,8 @@ describe('isFalse decorator', () => {
     })
 
     it('should not have isFalse validator', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'noValidatorValue')
-        const isFalseRule = meta.validators?.find(v => v.type === 'isFalse')
+        const meta = classMeta.getFieldMetadata('noValidatorValue')
+        const isFalseRule = meta.getValidators()?.find(v => v.type === 'isFalse')
 
         expect(isFalseRule).toBeUndefined()
     })
