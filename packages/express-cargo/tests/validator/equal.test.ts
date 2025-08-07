@@ -1,5 +1,5 @@
 import { equal } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('equal decorator', () => {
     class Sample {
@@ -18,9 +18,11 @@ describe('equal decorator', () => {
         undefinedValue!: undefined
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should have equal validator with string argument', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'role')
-        const equalRule = meta.validators?.find(v => v.type === 'equal')
+        const meta = classMeta.getFieldMetadata('role')
+        const equalRule = meta.getValidators()?.find(v => v.type === 'equal')
 
         expect(equalRule).toBeDefined()
         expect(equalRule?.message).toBe('role must be equal to admin')
@@ -29,8 +31,8 @@ describe('equal decorator', () => {
     })
 
     it('should have equal validator with number argument', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'number1')
-        const equalRule = meta.validators?.find(v => v.type === 'equal')
+        const meta = classMeta.getFieldMetadata('number1')
+        const equalRule = meta.getValidators()?.find(v => v.type === 'equal')
 
         expect(equalRule).toBeDefined()
         expect(equalRule?.message).toBe('number1 must be equal to 3')
@@ -39,15 +41,15 @@ describe('equal decorator', () => {
     })
 
     it('should not have equal validator when not decorated', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'number2')
-        const equalRule = meta.validators?.find(v => v.type === 'equal')
+        const meta = classMeta.getFieldMetadata('number2')
+        const equalRule = meta.getValidators()?.find(v => v.type === 'equal')
 
         expect(equalRule).toBeUndefined()
     })
 
     it('should have equal validator with null argument', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'nullValue')
-        const equalRule = meta.validators?.find(v => v.type === 'equal')
+        const meta = classMeta.getFieldMetadata('nullValue')
+        const equalRule = meta.getValidators()?.find(v => v.type === 'equal')
 
         expect(equalRule).toBeDefined()
         expect(equalRule?.message).toBe('nullValue must be equal to null')
@@ -58,8 +60,8 @@ describe('equal decorator', () => {
     })
 
     it('should have equal validator with undefined argument', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'undefinedValue')
-        const equalRule = meta.validators?.find(v => v.type === 'equal')
+        const meta = classMeta.getFieldMetadata('undefinedValue')
+        const equalRule = meta.getValidators()?.find(v => v.type === 'equal')
 
         expect(equalRule).toBeDefined()
         expect(equalRule?.message).toBe('undefinedValue must be equal to undefined')
