@@ -1,15 +1,15 @@
 import { getFieldList } from '../../src/metadata'
 import 'reflect-metadata'
-import { equal } from '../../src'
+import { body } from '../../src'
 
 describe('getFieldList', () => {
     class Parent {
-        @equal('parent')
+        @body()
         parentField: string
     }
 
     class Child extends Parent {
-        @equal('child')
+        @body()
         childField: string
     }
 
