@@ -1,5 +1,5 @@
 import { oneOf } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('oneOf decorator', () => {
     class Sample {
@@ -12,9 +12,11 @@ describe('oneOf decorator', () => {
         element3!: number
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should add oneOf validator to element1', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'element1')
-        const validator = meta.validators?.find(v => v.type === 'oneOf')
+        const meta = classMeta.getFieldMetadata('element1')
+        const validator = meta.getValidators()?.find(v => v.type === 'oneOf')
 
         expect(validator).toBeDefined()
         expect(validator?.message).toBe('element1 must be one of 10, 20, 30')
@@ -25,8 +27,8 @@ describe('oneOf decorator', () => {
     })
 
     it('should add oneOf validator to element2 with string options', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'element2')
-        const validator = meta.validators?.find(v => v.type === 'oneOf')
+        const meta = classMeta.getFieldMetadata('element2')
+        const validator = meta.getValidators()?.find(v => v.type === 'oneOf')
 
         expect(validator).toBeDefined()
         expect(validator?.message).toBe('element2 must be one of foo, bar')
@@ -36,8 +38,8 @@ describe('oneOf decorator', () => {
     })
 
     it('should not have oneOf validator on element3', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'element3')
-        const validator = meta.validators?.find(v => v.type === 'oneOf')
+        const meta = classMeta.getFieldMetadata('element3')
+        const validator = meta.getValidators()?.find(v => v.type === 'oneOf')
 
         expect(validator).toBeUndefined()
     })
