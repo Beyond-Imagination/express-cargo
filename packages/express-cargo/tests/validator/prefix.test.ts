@@ -1,5 +1,5 @@
 import { prefix } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('prefix decorator', () => {
     class Sample {
@@ -9,9 +9,11 @@ describe('prefix decorator', () => {
         id2!: string
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should have prefix metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'id1')
-        const prefixRule = meta.validators?.find(v => v.type === 'prefix')
+        const meta = classMeta.getFieldMetadata('id1')
+        const prefixRule = meta.getValidators()?.find(v => v.type === 'prefix')
 
         expect(prefixRule).toBeDefined()
         expect(prefixRule?.message).toBe('id1 must start with id')
@@ -20,8 +22,8 @@ describe('prefix decorator', () => {
     })
 
     it('should not have prefix metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'id2')
-        const prefixRule = meta.validators?.find(v => v.type === 'prefix')
+        const meta = classMeta.getFieldMetadata('id2')
+        const prefixRule = meta.getValidators()?.find(v => v.type === 'prefix')
 
         expect(prefixRule).toBeUndefined()
     })
