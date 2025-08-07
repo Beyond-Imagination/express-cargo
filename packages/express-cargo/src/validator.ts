@@ -77,3 +77,13 @@ export function range(min: number, max: number): PropertyDecorator {
     });
   };
 }
+
+export function minLength(min: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'minLength',
+            validate: (val: any) => typeof val === 'string' && val.length >= min,
+            message: `${String(propertyKey)} must be at least ${min} characters`,
+        })
+    }
+}
