@@ -1,3 +1,8 @@
+---
+id: nested-binding
+title: 중첩 바인딩
+---
+
 ## nested binding
 
 ```typescript
