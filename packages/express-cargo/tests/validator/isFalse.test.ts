@@ -19,6 +19,10 @@ describe('isFalse decorator', () => {
         expect(isFalseRule?.message).toBe('booleanValue must be false')
         expect(isFalseRule?.validate(true)).toBe(false)
         expect(isFalseRule?.validate(false)).toBe(true)
+        expect(isFalseRule?.validate(0)).toBe(false)
+        expect(isFalseRule?.validate('')).toBe(false)
+        expect(isFalseRule?.validate(null)).toBe(false)
+        expect(isFalseRule?.validate(undefined)).toBe(false)
     })
 
     it('should not have isFalse validator', () => {
