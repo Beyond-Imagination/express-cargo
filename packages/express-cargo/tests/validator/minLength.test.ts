@@ -1,5 +1,5 @@
 import { minLength } from '../../src/validator'
-import { CargoClassMetadata, getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('maxLength decorator', () => {
     class Sample {
