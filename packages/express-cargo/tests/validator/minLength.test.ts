@@ -1,5 +1,5 @@
 import { minLength } from '../../src/validator'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata, getFieldMetadata } from '../../src/metadata'
 
 describe('maxLength decorator', () => {
     class Sample {
@@ -12,9 +12,11 @@ describe('maxLength decorator', () => {
         notStringType!: any
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should add minLength validator to stringText', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'stringText')
-        const validator = meta.validators?.find(v => v.type === 'minLength')
+        const meta = classMeta.getFieldMetadata('stringText')
+        const validator = meta.getValidators()?.find(v => v.type === 'minLength')
 
         expect(validator).toBeDefined()
         expect(validator?.message).toBe('stringText must be at least 5 characters')
@@ -25,15 +27,15 @@ describe('maxLength decorator', () => {
     })
 
     it('should not have validator on noValidatorText', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'noValidatorText')
-        const validator = meta.validators?.find(v => v.type === 'minLength')
+        const meta = classMeta.getFieldMetadata('noValidatorText')
+        const validator = meta.getValidators()?.find(v => v.type === 'minLength')
 
         expect(validator).toBeUndefined()
     })
 
     it('should return false if value is not a string', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'notStringType')
-        const validator = meta.validators?.find(v => v.type === 'minLength')
+        const meta = classMeta.getFieldMetadata('notStringType')
+        const validator = meta.getValidators()?.find(v => v.type === 'minLength')
 
         expect(validator).toBeDefined()
         expect(validator?.validate(123)).toBe(false)
