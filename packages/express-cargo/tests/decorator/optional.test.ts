@@ -1,5 +1,5 @@
 import { optional } from '../../src/decorators'
-import { getFieldMetadata } from '../../src/metadata'
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('optional decorator', () => {
     class Sample {
@@ -9,13 +9,15 @@ describe('optional decorator', () => {
         field2?: number
     }
 
-     it('should mark field1 as optional in metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'field1')
-        expect(meta.optional).toBe(true)
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
+    it('should mark field1 as optional in metadata', () => {
+        const meta = classMeta.getFieldMetadata('field1')
+        expect(meta.getOptional()).toBe(true)
     })
 
     it('should not mark field2 as optional in metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'field2')
-        expect(meta.optional).toBeUndefined()
+        const meta = classMeta.getFieldMetadata('field2')
+        expect(meta.getOptional()).toBe(false)
     })
 })

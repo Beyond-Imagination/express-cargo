@@ -1,32 +1,88 @@
 import 'reflect-metadata'
 
-import { CargoFieldMetadata } from './types'
+import { Source, ValidatorRule } from './types'
 
-function getMetadataKey(propertyKey: string | symbol): string {
-    return `cargo:${String(propertyKey)}`
+export class CargoClassMetadata {
+    private target: any
+
+    constructor(target: any) {
+        this.target = target
+    }
+
+    getMetadataKey(propertyKey: string | symbol): string {
+        return `cargo:${String(propertyKey)}`
+    }
+
+    getFieldKey() {
+        return `cargo:fields`
+    }
+
+    getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
+        const metadataKey = this.getMetadataKey(propertyKey)
+        return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
+    }
+
+    setFieldMetadata(propertyKey: string | symbol, meta: CargoFieldMetadata): void {
+        const metaKey = this.getMetadataKey(propertyKey)
+        Reflect.defineMetadata(metaKey, meta, this.target)
+    }
+
+    getFieldList(): (string | symbol)[] {
+        return Reflect.getMetadata(this.getFieldKey(), this.target) || []
+    }
+
+    setFieldList(propertyKey: string | symbol) {
+        const existing = this.getFieldList()
+        if (!existing.includes(propertyKey)) {
+            Reflect.defineMetadata(this.getFieldKey(), [...existing, propertyKey], this.target)
+        }
+    }
 }
 
-function getFieldKey() {
-    return `cargo:fields`
-}
+export class CargoFieldMetadata {
+    readonly target: any
+    private key: string | symbol
+    private source: Source
+    private validators: ValidatorRule[]
+    private optional: boolean
 
-export function getFieldMetadata(target: any, propertyKey: string | symbol): CargoFieldMetadata {
-    const metadataKey = getMetadataKey(propertyKey)
-    return Reflect.getMetadata(metadataKey, target) || { key: propertyKey, validators: [] }
-}
+    constructor(target: any, key: string | symbol) {
+        this.target = target
+        this.key = key
+        this.source = 'body'
+        this.validators = []
+        this.optional = false
+    }
 
-export function setFieldMetadata(target: any, propertyKey: string | symbol, meta: CargoFieldMetadata): void {
-    const metaKey = getMetadataKey(propertyKey)
-    Reflect.defineMetadata(metaKey, meta, target)
-}
+    getKey(): string | symbol {
+        return this.key
+    }
 
-export function getFieldList(target: any): (string | symbol)[] {
-    return Reflect.getMetadata(getFieldKey(), target) || []
-}
+    setKey(key: string | symbol) {
+        this.key = key
+    }
 
-export function setFieldList(target: any, propertyKey: string | symbol) {
-    const existing = getFieldList(target)
-    if (!existing.includes(propertyKey)) {
-        Reflect.defineMetadata(getFieldKey(), [...existing, propertyKey], target)
+    getSource(): Source {
+        return this.source
+    }
+
+    setSource(source: Source): void {
+        this.source = source
+    }
+
+    getValidators(): ValidatorRule[] {
+        return this.validators
+    }
+
+    addValidator(rule: ValidatorRule): void {
+        this.validators.push(rule)
+    }
+
+    getOptional(): boolean {
+        return this.optional
+    }
+
+    setOptional(optional: boolean): void {
+        this.optional = optional
     }
 }

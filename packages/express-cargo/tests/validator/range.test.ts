@@ -1,5 +1,5 @@
 import {range} from '../../src/validator';
-import {getFieldMetadata} from '../../src/metadata';
+import { CargoClassMetadata } from '../../src/metadata'
 
 describe('range decorator', () => {
     class Sample {
@@ -9,9 +9,11 @@ describe('range decorator', () => {
         number2!: number;
     }
 
+    const classMeta = new CargoClassMetadata(Sample.prototype)
+
     it('should have range validator metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'number1');
-        const rangeRule = meta.validators?.find(v => v.type === 'range');
+        const meta = classMeta.getFieldMetadata('number1')
+        const rangeRule = meta.getValidators()?.find(v => v.type === 'range')
 
         expect(rangeRule).toBeDefined();
         expect(rangeRule?.message).toBe('number1 must be between 5 and 15');
@@ -24,8 +26,8 @@ describe('range decorator', () => {
     });
 
     it('should not have range validator metadata', () => {
-        const meta = getFieldMetadata(Sample.prototype, 'number2');
-        const rangeRule = meta.validators?.find(v => v.type === 'range');
+        const meta = classMeta.getFieldMetadata('number2')
+        const rangeRule = meta.getValidators()?.find(v => v.type === 'range')
 
         expect(rangeRule).toBeUndefined();
     });
