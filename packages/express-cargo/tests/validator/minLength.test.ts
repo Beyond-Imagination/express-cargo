@@ -1,7 +1,7 @@
 import { minLength } from '../../src/validator'
 import { CargoClassMetadata } from '../../src/metadata'
 
-describe('maxLength decorator', () => {
+describe('minLength decorator', () => {
     class Sample {
         @minLength(5)
         stringText!: string
