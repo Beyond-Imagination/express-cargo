@@ -117,3 +117,13 @@ export function minLength(min: number): PropertyDecorator {
         })
     }
 }
+
+export function oneOf(options: any[]): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'oneOf',
+            validate: (value: any) => options.includes(value),
+            message: `${String(propertyKey)} must be one of ${options.join(', ')}`,
+        })
+    }
+}
