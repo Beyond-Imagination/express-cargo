@@ -28,7 +28,16 @@ export class CargoClassMetadata {
     }
 
     getFieldList(): (string | symbol)[] {
-        return Reflect.getMetadata(this.getFieldKey(), this.target) || []
+        const fields = new Set<string | symbol>()
+        let current = this.target
+
+        while (current && current !== Object.prototype) {
+            const currentFields = Reflect.getMetadata(this.getFieldKey(), current) || []
+            currentFields.forEach((f: string | symbol) => fields.add(f))
+            current = Object.getPrototypeOf(current)
+        }
+
+        return Array.from(fields)
     }
 
     setFieldList(propertyKey: string | symbol) {
