@@ -69,11 +69,21 @@ export function notEqual(value: any): PropertyDecorator {
 }
 
 export function range(min: number, max: number): PropertyDecorator {
-  return (target, propertyKey) => {
-    addValidator(target, propertyKey, {
-      type: 'range',
+    return (target, propertyKey) => {
+        addValidator(target, propertyKey, {
+            type: 'range',
             validate: (value: any) => typeof value === 'number' && value >= min && value <= max,
-      message: `${String(propertyKey)} must be between ${min} and ${max}`,
-    });
-  };
+            message: `${String(propertyKey)} must be between ${min} and ${max}`,
+        })
+    }
+}
+
+export function isFalse(): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'isFalse',
+            validate: val => val === false,
+            message: `${String(propertyKey)} must be false`,
+        })
+    }
 }
