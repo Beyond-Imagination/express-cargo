@@ -54,7 +54,6 @@ export class CargoFieldMetadata {
         this.validators = []
         this.optional = false
         this.type = Reflect.getMetadata('design:type', target.prototype, key)
-        console.log(this)
     }
 
     getKey(): string | symbol {

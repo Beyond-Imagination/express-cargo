@@ -17,7 +17,14 @@ function bindValue<T extends object>(value: any, cargoClass: new () => T, baseKe
         const meta: CargoFieldMetadata = classMeta.getFieldMetadata(property)
         if (!meta) continue
 
-        const key = meta.getKey() as string
+        const metaKey = meta.getKey()
+        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+
+        if (!key) {
+            errors.push(new CargoFieldError(key!, 'empty string or symbol is not allowed'))
+            continue
+        }
+
         const fullKey = `${baseKey}.${key}`
         const propertyValue = value?.[key]
         if (propertyValue === undefined || propertyValue === null) {
@@ -53,7 +60,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
         try {
             const cargo = new cargoClass() as any
             const classMeta = new CargoClassMetadata(cargoClass)
-            let errors: CargoFieldError[] = []
+            const errors: CargoFieldError[] = []
 
             const fields = classMeta.getFieldList()
             for (const property of fields) {
@@ -101,7 +108,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 if (!isPrimitiveType(fieldType)) {
                     const result = bindValue(value, fieldType, key)
                     cargo[property] = result.cargo
-                    errors = errors.concat(result.errors)
+                    errors.concat(...result.errors)
                 } else {
                     for (const rule of meta.getValidators()) {
                         if (!rule.validate(value)) {
