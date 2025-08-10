@@ -78,11 +78,15 @@ export function range(min: number, max: number): PropertyDecorator {
   };
 }
 
-export function oneOf(options: any[]): PropertyDecorator {
+/**
+ * 속성 값이 주어진 값들 중 하나인지 확인합니다.
+ * @param options 허용되는 값의 배열.
+ */
+export function oneOf<T extends readonly any[]>(options: T): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'oneOf',
-            validate: (value: any) => options.includes(value),
+            validate: (value: unknown): value is T[number] => options.includes(value as T[number]),
             message: `${String(propertyKey)} must be one of ${options.join(', ')}`,
         })
     }
