@@ -9,7 +9,7 @@ describe('range decorator', () => {
         number2!: number;
     }
 
-    const classMeta = new CargoClassMetadata(Sample.prototype)
+    const classMeta = new CargoClassMetadata(Sample)
 
     it('should have range validator metadata', () => {
         const meta = classMeta.getFieldMetadata('number1')

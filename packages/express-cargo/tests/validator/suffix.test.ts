@@ -9,7 +9,7 @@ describe('suffix decorator', () => {
         link2!: string
     }
 
-    const classMeta = new CargoClassMetadata(Sample.prototype)
+    const classMeta = new CargoClassMetadata(Sample)
 
     it('should have suffix metadata', () => {
         const meta = classMeta.getFieldMetadata('link1')

@@ -12,7 +12,7 @@ describe('maxLength decorator', () => {
         notStringType!: any
     }
 
-    const classMeta = new CargoClassMetadata(Sample.prototype)
+    const classMeta = new CargoClassMetadata(Sample)
 
     it('should add maxLength validator to stringText', () => {
         const meta = classMeta.getFieldMetadata('stringText')

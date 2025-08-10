@@ -18,7 +18,7 @@ describe('notEqual decorator', () => {
         undefinedValue!: undefined
     }
 
-    const classMeta = new CargoClassMetadata(Sample.prototype)
+    const classMeta = new CargoClassMetadata(Sample)
 
     it('should not have equal validator with string argument', () => {
         const meta = classMeta.getFieldMetadata('role')

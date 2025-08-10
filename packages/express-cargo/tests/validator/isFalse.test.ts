@@ -9,7 +9,7 @@ describe('isFalse decorator', () => {
         noValidatorValue!: boolean
     }
 
-    const classMeta = new CargoClassMetadata(Sample.prototype)
+    const classMeta = new CargoClassMetadata(Sample)
 
     it('should have isFalse validator', () => {
         const meta = classMeta.getFieldMetadata('booleanValue')

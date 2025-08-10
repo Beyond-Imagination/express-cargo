@@ -9,7 +9,7 @@ describe('prefix decorator', () => {
         id2!: string
     }
 
-    const classMeta = new CargoClassMetadata(Sample.prototype)
+    const classMeta = new CargoClassMetadata(Sample)
 
     it('should have prefix metadata', () => {
         const meta = classMeta.getFieldMetadata('id1')
