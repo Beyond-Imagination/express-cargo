@@ -4,7 +4,7 @@ import { CargoClassMetadata } from './metadata'
 function createSourceDecorator(source: Source) {
     return (key?: string): PropertyDecorator => {
         return (target, propertyKey) => {
-            const classMeta = new CargoClassMetadata(target)
+            const classMeta = new CargoClassMetadata(target.constructor)
             const fieldMeta = classMeta.getFieldMetadata(propertyKey)
             fieldMeta.setKey(key ?? propertyKey)
             fieldMeta.setSource(source)
@@ -19,3 +19,4 @@ export const query = createSourceDecorator('query')
 export const uri = createSourceDecorator('uri')
 export const header = createSourceDecorator('header')
 export const session = createSourceDecorator('session')
+export const field = createSourceDecorator('field')

@@ -2,7 +2,7 @@ import { ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
-    const classMeta = new CargoClassMetadata(target)
+    const classMeta = new CargoClassMetadata(target.constructor)
     const fieldMeta = classMeta.getFieldMetadata(propertyKey)
     fieldMeta.addValidator(rule)
     classMeta.setFieldMetadata(propertyKey, fieldMeta)

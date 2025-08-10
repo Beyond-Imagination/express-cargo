@@ -3,12 +3,57 @@ import type { Request, RequestHandler } from 'express'
 import { CargoFieldError, CargoValidationError } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 
+function isPrimitiveType(type: new () => any): boolean {
+    return type === String || type === Number || type === Boolean || type === Date || type === Array || type === Object
+}
+
+function bindValue<T extends object>(value: any, cargoClass: new () => T, baseKey: string): { cargo: T; errors: CargoFieldError[] } {
+    const cargo = new cargoClass() as any
+    const classMeta = new CargoClassMetadata(cargoClass)
+    const errors: CargoFieldError[] = []
+
+    const fields = classMeta.getFieldList()
+    for (const property of fields) {
+        const meta: CargoFieldMetadata = classMeta.getFieldMetadata(property)
+        if (!meta) continue
+
+        const key = meta.getKey() as string
+        const fullKey = `${baseKey}.${key}`
+        const propertyValue = value?.[key]
+        if (propertyValue === undefined || propertyValue === null) {
+            if (meta.getOptional()) {
+                cargo[property] = undefined
+                continue
+            } else {
+                errors.push(new CargoFieldError(fullKey, `${fullKey} is required`))
+                continue
+            }
+        }
+
+        const fieldType = meta.getType()
+        if (!isPrimitiveType(fieldType)) {
+            const result = bindValue(propertyValue, fieldType, fullKey)
+            cargo[property] = result.cargo
+            errors.push(...result.errors)
+        } else {
+            for (const rule of meta.getValidators()) {
+                if (!rule.validate(propertyValue)) {
+                    errors.push(new CargoFieldError(fullKey, rule.message))
+                }
+            }
+            cargo[property] = propertyValue
+        }
+    }
+
+    return { cargo, errors }
+}
+
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
     return (req, res, next) => {
         try {
             const cargo = new cargoClass() as any
-            const classMeta = new CargoClassMetadata(cargoClass.prototype)
-            const errors: CargoFieldError[] = []
+            const classMeta = new CargoClassMetadata(cargoClass)
+            let errors: CargoFieldError[] = []
 
             const fields = classMeta.getFieldList()
             for (const property of fields) {
@@ -44,21 +89,27 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
 
                 if (value === undefined || value === null) {
                     if (meta.getOptional()) {
-                        cargo[property] = undefined;
-                        continue;
+                        cargo[property] = undefined
+                        continue
                     } else {
-                        errors.push(new CargoFieldError(key, `${key} is required`));
-                        continue;
+                        errors.push(new CargoFieldError(key, `${key} is required`))
+                        continue
                     }
                 }
 
-                for (const rule of meta.getValidators()) {
-                    if (!rule.validate(value)) {
-                        errors.push(new CargoFieldError(key, rule.message))
+                const fieldType = meta.getType()
+                if (!isPrimitiveType(fieldType)) {
+                    const result = bindValue(value, fieldType, key)
+                    cargo[property] = result.cargo
+                    errors = errors.concat(result.errors)
+                } else {
+                    for (const rule of meta.getValidators()) {
+                        if (!rule.validate(value)) {
+                            errors.push(new CargoFieldError(key, rule.message))
+                        }
                     }
+                    cargo[property] = value
                 }
-
-                cargo[property] = value
             }
 
             if (errors.length > 0) {

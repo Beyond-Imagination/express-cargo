@@ -45,6 +45,7 @@ export class CargoFieldMetadata {
     private source: Source
     private validators: ValidatorRule[]
     private optional: boolean
+    private type: new () => any
 
     constructor(target: any, key: string | symbol) {
         this.target = target
@@ -52,6 +53,8 @@ export class CargoFieldMetadata {
         this.source = 'body'
         this.validators = []
         this.optional = false
+        this.type = Reflect.getMetadata('design:type', target.prototype, key)
+        console.log(this)
     }
 
     getKey(): string | symbol {
@@ -84,5 +87,9 @@ export class CargoFieldMetadata {
 
     setOptional(optional: boolean): void {
         this.optional = optional
+    }
+
+    getType(): new () => any {
+        return this.type
     }
 }
