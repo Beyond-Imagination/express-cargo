@@ -54,16 +54,16 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
 
                 switch (meta.type) {
                     case String:
-                        value = String(value) ?? value
+                        value = String(value)
                         break
                     case Number:
-                        value = Number(value) ?? value
+                        value = isNaN(Number(value)) ? value : Number(value)
                         break
                     case Boolean:
                         value = value === true || value === 'true'
                         break
                     case Date:
-                        value = new Date(value) ?? value
+                        value = new Date(value)
                         break
                     default:
                         // TODO: object 처리
