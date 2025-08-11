@@ -52,6 +52,24 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                     }
                 }
 
+                switch (meta.type) {
+                    case String:
+                        value = String(value) ?? value
+                        break
+                    case Number:
+                        value = Number(value) ?? value
+                        break
+                    case Boolean:
+                        value = value === true || value === 'true'
+                        break
+                    case Date:
+                        value = new Date(value) ?? value
+                        break
+                    default:
+                        // TODO: object 처리
+                        break
+                }
+
                 for (const rule of meta.getValidators()) {
                     if (!rule.validate(value)) {
                         errors.push(new CargoFieldError(key, rule.message))
