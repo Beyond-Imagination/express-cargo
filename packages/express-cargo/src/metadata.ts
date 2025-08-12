@@ -50,6 +50,7 @@ export class CargoClassMetadata {
 
 export class CargoFieldMetadata {
     readonly target: any
+    readonly type: any
     private key: string | symbol
     private source: Source
     private validators: ValidatorRule[]
@@ -57,6 +58,7 @@ export class CargoFieldMetadata {
 
     constructor(target: any, key: string | symbol) {
         this.target = target
+        this.type = Reflect.getMetadata('design:type', target, key);
         this.key = key
         this.source = 'body'
         this.validators = []
