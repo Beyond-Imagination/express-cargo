@@ -31,7 +31,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                     const key = typeof metaKey === 'string' ? metaKey : metaKey.description
 
                     if (!key) {
-                        errors.push(new CargoFieldError(getErrorKey(sourceKey, key), 'empty string or symbol is not allowed'))
+                        errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
                         continue
                     }
 
@@ -101,7 +101,6 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
             bindObject(cargo, classMeta, 'initial', null, '')
 
             if (errors.length > 0) {
-                console.log(errors)
                 throw new CargoValidationError(errors)
             }
 
