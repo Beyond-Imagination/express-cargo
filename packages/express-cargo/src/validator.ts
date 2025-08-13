@@ -142,7 +142,7 @@ export function validate(validateFn: (value: unknown) => boolean, message: strin
     }
 }
 
-export function regexp(pattern: RegExp, message?: string) {
+export function regexp(pattern: RegExp, message?: string): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'regexp',
