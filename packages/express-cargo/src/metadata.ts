@@ -54,7 +54,7 @@ export class CargoFieldMetadata {
     private key: string | symbol
     private source: Source
     private validators: ValidatorRule[]
-    private transformer: (value: any) => any | undefined
+    private transformer: ((value: any) => any) | undefined
     private optional: boolean
 
     constructor(target: any, key: string | symbol) {
@@ -64,6 +64,7 @@ export class CargoFieldMetadata {
         this.source = 'body'
         this.validators = []
         this.optional = false
+        this.transformer = undefined
     }
 
     getKey(): string | symbol {
@@ -98,7 +99,7 @@ export class CargoFieldMetadata {
         this.optional = optional
     }
 
-    getTransformer(): (value: any) => any | undefined {
+    getTransformer(): ((value: any) => any) | undefined {
         return this.transformer
     }
 
