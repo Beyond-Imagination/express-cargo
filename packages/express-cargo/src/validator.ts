@@ -132,11 +132,11 @@ export function oneOf<T extends readonly any[]>(options: T): PropertyDecorator {
     }
 }
 
-export function validate(func: (value: unknown) => boolean, message: string): PropertyDecorator {
+export function validate(validateFn: (value: unknown) => boolean, message: string): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'validate',
-            validate: func,
+            validate: validateFn,
             message: message,
         })
     }

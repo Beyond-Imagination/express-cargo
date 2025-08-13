@@ -22,9 +22,9 @@ describe('validate decorator', () => {
     })
 
     it('should not have validate metadata', () => {
-        const meta = classMeta.getFieldMetadata('number1')
-        const suffixRule = meta.getValidators()?.find(v => v.type === 'suffix')
+        const meta = classMeta.getFieldMetadata('number2')
+        const validateRule = meta.getValidators()?.find(v => v.type === 'validate')
 
-        expect(suffixRule).toBeUndefined()
+        expect(validateRule).toBeUndefined()
     })
 })
