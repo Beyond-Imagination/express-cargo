@@ -141,3 +141,13 @@ export function validate(validateFn: (value: unknown) => boolean, message: strin
         })
     }
 }
+
+export function regexp(pattern: RegExp, message?: string) {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'regexp',
+            validate: (value: unknown) => typeof value === 'string' && pattern.test(value),
+            message: message || `${String(propertyKey)} does not match pattern ${pattern}`,
+        })
+    }
+}
