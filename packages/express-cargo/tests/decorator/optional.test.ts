@@ -9,7 +9,7 @@ describe('optional decorator', () => {
         field2?: number
     }
 
-    const classMeta = new CargoClassMetadata(Sample)
+    const classMeta = new CargoClassMetadata(Sample.prototype)
 
     it('should mark field1 as optional in metadata', () => {
         const meta = classMeta.getFieldMetadata('field1')

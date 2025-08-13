@@ -12,7 +12,7 @@ describe('minLength decorator', () => {
         notStringType!: any
     }
 
-    const classMeta = new CargoClassMetadata(Sample)
+    const classMeta = new CargoClassMetadata(Sample.prototype)
 
     it('should add minLength validator to stringText', () => {
         const meta = classMeta.getFieldMetadata('stringText')

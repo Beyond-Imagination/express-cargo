@@ -2,7 +2,7 @@ import { ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
-    const classMeta = new CargoClassMetadata(target.constructor)
+    const classMeta = new CargoClassMetadata(target)
     const fieldMeta = classMeta.getFieldMetadata(propertyKey)
     fieldMeta.addValidator(rule)
     classMeta.setFieldMetadata(propertyKey, fieldMeta)
@@ -114,6 +114,20 @@ export function minLength(min: number): PropertyDecorator {
             type: 'minLength',
             validate: (val: any) => typeof val === 'string' && val.length >= min,
             message: `${String(propertyKey)} must be at least ${min} characters`,
+        })
+    }
+}
+
+/**
+ * 속성 값이 주어진 값들 중 하나인지 확인합니다.
+ * @param options 허용되는 값의 배열.
+ */
+export function oneOf<T extends readonly any[]>(options: T): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'oneOf',
+            validate: (value: unknown): value is T[number] => options.includes(value as T[number]),
+            message: `${String(propertyKey)} must be one of ${options.join(', ')}`,
         })
     }
 }

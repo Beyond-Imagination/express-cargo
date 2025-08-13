@@ -28,7 +28,15 @@ export class CargoClassMetadata {
     }
 
     getFieldList(): (string | symbol)[] {
-        return Reflect.getMetadata(this.getFieldKey(), this.target) || []
+        const fields = new Set<string | symbol>()
+        let current = this.target
+
+        while (current && current !== Object.prototype) {
+            const currentFields = Reflect.getMetadata(this.getFieldKey(), current) || []
+            currentFields.forEach((f: string | symbol) => fields.add(f))
+            current = Object.getPrototypeOf(current)
+        }
+        return Array.from(fields)
     }
 
     setFieldList(propertyKey: string | symbol) {
@@ -41,19 +49,19 @@ export class CargoClassMetadata {
 
 export class CargoFieldMetadata {
     readonly target: any
+    readonly type: any
     private key: string | symbol
     private source: Source
     private validators: ValidatorRule[]
     private optional: boolean
-    private type: new () => any
 
     constructor(target: any, key: string | symbol) {
         this.target = target
+        this.type = Reflect.getMetadata('design:type', target, key)
         this.key = key
         this.source = 'body'
         this.validators = []
         this.optional = false
-        this.type = Reflect.getMetadata('design:type', target.prototype, key)
     }
 
     getKey(): string | symbol {
