@@ -36,6 +36,7 @@ export class CargoClassMetadata {
             currentFields.forEach((f: string | symbol) => fields.add(f))
             current = Object.getPrototypeOf(current)
         }
+
         return Array.from(fields)
     }
 
@@ -94,9 +95,5 @@ export class CargoFieldMetadata {
 
     setOptional(optional: boolean): void {
         this.optional = optional
-    }
-
-    getType(): new () => any {
-        return this.type
     }
 }
