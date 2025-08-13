@@ -52,6 +52,11 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                     }
                 }
 
+                const transformer = meta.getTransformer()
+                if (transformer) {
+                    value = transformer(value)
+                }
+
                 switch (meta.type) {
                     case String:
                         value = String(value)

@@ -54,6 +54,7 @@ export class CargoFieldMetadata {
     private key: string | symbol
     private source: Source
     private validators: ValidatorRule[]
+    private transformer: (value: any) => any | undefined
     private optional: boolean
 
     constructor(target: any, key: string | symbol) {
@@ -95,5 +96,13 @@ export class CargoFieldMetadata {
 
     setOptional(optional: boolean): void {
         this.optional = optional
+    }
+
+    getTransformer(): (value: any) => any | undefined {
+        return this.transformer
+    }
+
+    setTransformer(transformer: (value: any) => any): void {
+        this.transformer = transformer
     }
 }
