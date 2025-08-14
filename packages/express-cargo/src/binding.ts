@@ -50,11 +50,11 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
 
                 if (value === undefined || value === null) {
                     if (meta.getOptional()) {
-                        cargo[property] = undefined;
-                        continue;
+                        cargo[property] = undefined
+                        continue
                     } else {
-                        errors.push(new CargoFieldError(key, `${key} is required`));
-                        continue;
+                        errors.push(new CargoFieldError(key, `${key} is required`))
+                        continue
                     }
                 }
 
@@ -96,18 +96,23 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 const transformer = meta.getVirtualTransformer()
 
                 if (transformer && computedFields.length > 0) {
-                    const values = computedFields.map(field => cargo[field])
-                    const undefinedFields = values.filter(value => value === undefined)
+                    const undefinedFields = computedFields.filter(field => cargo[field] === undefined)
 
                     if (undefinedFields.length > 0) {
                         errors.push(new CargoVirtualFieldError(property, `Virtual field relies on undefined fields: ${undefinedFields.join(', ')}`))
                         continue
                     }
 
+                    const values = computedFields.map(field => cargo[field])
                     try {
                         cargo[property] = transformer(...values)
                     } catch (error) {
-                        errors.push(new CargoVirtualFieldError(property, `Error while computing virtual field: ${error.message}`))
+                        errors.push(
+                            new CargoVirtualFieldError(
+                                property,
+                                `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
+                            ),
+                        )
                     }
                 }
             }
