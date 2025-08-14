@@ -56,7 +56,7 @@ export class CargoFieldMetadata {
     private optional: boolean
     private validators: ValidatorRule[]
     private transformer: ((value: any) => any) | undefined
-    private virtualTransformer: ((req: Request) => any) | undefined
+    private requestTransformer: ((req: Request) => any) | undefined
 
     constructor(target: any, key: string | symbol) {
         this.target = target
@@ -66,7 +66,7 @@ export class CargoFieldMetadata {
         this.validators = []
         this.optional = false
         this.transformer = undefined
-        this.virtualTransformer = undefined
+        this.requestTransformer = undefined
     }
 
     getKey(): string | symbol {
@@ -109,11 +109,11 @@ export class CargoFieldMetadata {
         this.transformer = transformer
     }
 
-    getVirtualTransformer(): ((req: Request) => any) | undefined {
-        return this.virtualTransformer
+    getRequestTransformer(): ((req: Request) => any) | undefined {
+        return this.requestTransformer
     }
 
-    setVirtualTransformer(transformer: (req: Request) => any): void {
-        this.virtualTransformer = transformer
+    setRequestTransformer(transformer: (req: Request) => any): void {
+        this.requestTransformer = transformer
     }
 }

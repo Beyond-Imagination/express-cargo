@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldError, CargoValidationError, CargoVirtualFieldError } from './types'
+import { CargoFieldError, CargoValidationError, CargoTransformFieldError } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
@@ -24,15 +24,15 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                     continue
                 }
 
-                const virtualTransformer = meta.getVirtualTransformer()
-                if (virtualTransformer) {
+                const requestTransformer = meta.getRequestTransformer()
+                if (requestTransformer) {
                     try {
-                        cargo[property] = virtualTransformer(req)
+                        cargo[property] = requestTransformer(req)
                     } catch (error) {
                         errors.push(
-                            new CargoVirtualFieldError(
+                            new CargoTransformFieldError(
                                 property,
-                                `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
+                                `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
                             ),
                         )
                     }
