@@ -1,3 +1,4 @@
+import { Request } from 'express'
 import { CargoClassMetadata } from './metadata'
 
 export function transform(transformer: (value: any) => any): PropertyDecorator {
