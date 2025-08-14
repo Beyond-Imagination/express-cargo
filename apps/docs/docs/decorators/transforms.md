@@ -4,7 +4,7 @@ Express-Cargo uses decorators to automatically transform incoming request data b
 
 Unlike virtual fields, which create new fields from existing ones, these transformation decorators modify the value of a single field directly.
 
-## `@transform(transformer: (value: any) => any)`
+## `@transform<T>(transformer: (value: any) => T)`
 
 This is the primary decorator for data transformation. It takes a transformer function that receives the raw value from the request and returns the new, transformed value for the field.
 

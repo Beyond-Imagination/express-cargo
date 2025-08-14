@@ -9,7 +9,7 @@ Express-Cargo는 클래스에 데이터를 바인딩하기 전에 들어오는 �
 
 기존 필드를 조합하여 새로운 필드를 생성하는 가상 필드(virtual fields)와 달리, 이 변환 데코레이터는 단일 필드의 값을 직접 수정합니다.
 
-## `@transform(transformer: (value: any) => any)`
+## `@transform<T>(transformer: (value: any) => T)`
 
 `@transform`은 데이터 변환을 위한 핵심 데코레이터입니다. 요청에서 가져온 원시(raw) 값을 받아 새로운 변환된 값을 반환하는 변환 함수를 사용합니다.
 
