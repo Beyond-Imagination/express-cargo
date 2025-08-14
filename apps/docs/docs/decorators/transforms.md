@@ -1,8 +1,8 @@
 # Transformation Decorator
 
-Express-Cargo uses decorators to automatically transform incoming request data before it's bound to a class. This is useful for tasks like converting a string to a number, a string to a boolean, or sanitizing a value.
+Express-Cargo provides a decorator to automatically transform incoming request data before binding it to a class. This is useful for tasks such as normalizing user input (e.g., converting a string to lowercase) or parsing a comma-separated string into an array.
 
-Unlike virtual fields, which create new fields from existing ones, these transformation decorators modify the value of a single field directly.
+Unlike virtual fields, which combine existing fields to create a new one, this transformation decorator directly modifies the value of a single field.
 
 ## `@transform<T>(transformer: (value: any) => T)`
 
