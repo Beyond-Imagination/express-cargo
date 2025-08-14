@@ -26,3 +26,12 @@ export class CargoValidationError extends Error {
         this.errors = errors
     }
 }
+
+export class CargoVirtualFieldError extends CargoFieldError {
+    name: string
+
+    constructor(property: string | symbol, reason: string) {
+        super(property, reason)
+        this.name = 'CargoVirtualFieldError'
+    }
+}

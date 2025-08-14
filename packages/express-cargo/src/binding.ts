@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldError, CargoValidationError } from './types'
+import { CargoFieldError, CargoValidationError, CargoVirtualFieldError } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
@@ -9,6 +9,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
             const cargo = new cargoClass() as any
             const classMeta = new CargoClassMetadata(cargoClass.prototype)
             const errors: CargoFieldError[] = []
+            const virtualFields: (string | symbol)[] = []
 
             const fields = classMeta.getFieldList()
             for (const property of fields) {
@@ -21,6 +22,11 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
 
                 if (!key) {
                     errors.push(new CargoFieldError(key!, 'empty string or symbol is not allowed'))
+                    continue
+                }
+
+                if (meta.isVirtual()) {
+                    virtualFields.push(property)
                     continue
                 }
 
@@ -82,6 +88,28 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 }
 
                 cargo[property] = value
+            }
+
+            for (const property of virtualFields) {
+                const meta = classMeta.getFieldMetadata(property)
+                const computedFields = meta.getComputedFields()
+                const transformer = meta.getVirtualTransformer()
+
+                if (transformer && computedFields.length > 0) {
+                    const values = computedFields.map(field => cargo[field])
+                    const undefinedFields = values.filter(value => value === undefined)
+
+                    if (undefinedFields.length > 0) {
+                        errors.push(new CargoVirtualFieldError(property, `Virtual field relies on undefined fields: ${undefinedFields.join(', ')}`))
+                        continue
+                    }
+
+                    try {
+                        cargo[property] = transformer(...values)
+                    } catch (error) {
+                        errors.push(new CargoVirtualFieldError(property, `Error while computing virtual field: ${error.message}`))
+                    }
+                }
             }
 
             if (errors.length > 0) {
