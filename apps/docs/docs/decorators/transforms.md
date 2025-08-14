@@ -12,39 +12,40 @@ This is the primary decorator for data transformation. It takes a transformer fu
 
 ## Usage Example
 
-Here is a complete example of how to use the `@transform` decorator to handle data type conversions. This is especially useful for data coming from query parameters or form bodies, which are often parsed as strings.
+This example demonstrates how the `@transform` decorator can be used to normalize and process request data into a desired format. This is highly useful for handling diverse user inputs (e.g., case sensitivity, comma-separated lists) and ensuring that your API processes them consistently, which improves the stability of your application.
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { bindingCargo, getCargo, body, query, transform } from 'express-cargo'
+import { bindingCargo, getCargo, query, transform } from 'express-cargo'
 
-// 1. Define a class with source and transformation rules
+// 1. Define a class with data processing and normalization rules
 class SearchRequest {
-    // Transforms the 'page' query parameter (string) into a number
-    @query('page')
-    @transform((value: string) => parseInt(value, 10))
-    page!: number
+    // Transforms the 'sortBy' query parameter to lowercase for consistent sorting
+    @query()
+    @transform((value: string) => value.toLowerCase())
+    sortBy!: string
 
-    // Transforms the 'isPublished' query parameter (string) into a boolean
-    @query('isPublished')
-    @transform((value: string) => value === 'true')
-    isPublished!: boolean
+    // Splits the 'tags' query parameter by commas, trims whitespace from each tag, and converts it to an array
+    @query()
+    @transform((value: string) => value.split(',').map(tag => tag.trim()))
+    tags!: string[]
 }
 
 const app = express()
 app.use(express.json())
 
-// 2. Apply the bindingCargo middleware
+// 2. Apply the bindingCargo middleware to the route
 app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) => {
-    // 3. Access the data, which now has the correct types
+    // 3. Access the transformed data with the correct types
     const searchParams = getCargo<SearchRequest>(req)
 
     res.json({
-        message: 'Search parameters processed successfully!',
+        message: 'Search parameters transformed successfully!',
         data: searchParams,
-        // The data types are now correct
-        pageType: typeof searchParams.page, 
-        isPublishedType: typeof searchParams.isPublished
+        // Verify the type of the transformed data
+        sortByType: typeof searchParams.sortBy,
+        tagsType: typeof searchParams.tags,
+        firstTag: searchParams.tags?.[0], // Access the first element of the array
     })
 })
 
@@ -52,22 +53,27 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
 To test this endpoint, send a GET request to /search.
 
 Example request URL:
-http://localhost:3000/search?page=10&isPublished=true
+http://localhost:3000/search?sortBy=TITLE&tags=typescript, javascript ,node
 */
 ```
 
 ## Output Example
 
-When the example request URL is accessed, the `bindingCargo` middleware transforms the string values `page='10'` and `isPublished='true'` into their correct data types. The `getCargo` function returns an object with these transformed values.
+When the example request URL is accessed, the `bindingCargo` middleware processes the query parameters. The `@transform` decorators then normalize the `sortBy` value to a lowercase string and parse the comma-separated `tags` string into an array. The `getCargo` function returns an object with these transformed values.
 
 ```json
 {
-    "message": "Search parameters processed successfully!",
+    "message": "Search parameters transformed successfully!", 
     "data": {
-        "page": 10,
-        "isPublished": true
+        "sortBy": "title", 
+        "tags": [
+            "typescript",
+            "javascript",
+            "node"
+        ]
     },
-    "pageType": "number",
-    "isPublishedType": "boolean"
+    "sortByType": "string",
+    "tagsType": "object",
+    "firstTag": "typescript"
 }
 ```

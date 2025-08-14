@@ -17,39 +17,40 @@ Express-Cargo는 클래스에 데이터를 바인딩하기 전에 들어오는 �
 
 ## 사용 예시
 
-`@transform` 데코레이터를 사용하여 데이터 유형을 처리하는 전체 예시입니다. 이 기능은 특히 항상 문자열로 파싱되는 쿼리 파라미터나 폼 바디의 데이터를 처리할 때 유용합니다.
+이 예시는 `@transform` 데코레이터가 요청 데이터의 값을 정규화하거나 원하는 형태로 가공하는 방법을 보여줍니다. 이를 사용하면 사용자의 다양한 입력값(예: 대소문자, 쉼표로 구분된 목록)을 일관된 형식으로 처리할 수 있어 API의 안정성을 높이는 데 매우 유용합니다.
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { bindingCargo, getCargo, body, query, transform } from 'express-cargo'
+import { bindingCargo, getCargo, query, transform } from 'express-cargo'
 
-// 1. 소스 및 변환 규칙이 있는 클래스 정의
+// 1. 데이터 가공 및 정규화 규칙이 포함된 클래스 정의
 class SearchRequest {
-    // 'page' 쿼리 파라미터(문자열)를 숫자로 변환합니다.
-    @query('page')
-    @transform((value: string) => parseInt(value, 10))
-    page!: number
+    // 'sortBy' 쿼리 파라미터 값을 항상 소문자로 변환
+    @query('sortBy')
+    @transform((value: string) => value.toLowerCase())
+    sortBy!: string
 
-    // 'isPublished' 쿼리 파라미터(문자열)를 불리언으로 변환합니다.
-    @query('isPublished')
-    @transform((value: string) => value === 'true')
-    isPublished!: boolean
+    // 'tags' 쿼리 파라미터 값을 쉼표로 분리하여 배열로 변환하고 각 요소의 공백 제거
+    @query('tags')
+    @transform((value: string) => value.split(',').map(tag => tag.trim()))
+    tags!: string[]
 }
 
 const app = express()
 app.use(express.json())
 
-// 2. 라우트에 bindingCargo 미들웨어 적용
+// 2. bindingCargo 미들웨어 적용
 app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) => {
-    // 3. 이제 올바른 타입을 가진 데이터에 접근합니다.
+    // 3. 변환된 데이터를 올바른 타입으로 접근
     const searchParams = getCargo<SearchRequest>(req)
 
     res.json({
-        message: '검색 파라미터가 성공적으로 처리되었습니다!',
+        message: 'Search parameters transformed successfully!',
         data: searchParams,
-        // 데이터 타입이 올바르게 변환되었습니다.
-        pageType: typeof searchParams.page, 
-        isPublishedType: typeof searchParams.isPublished
+        // 변환된 데이터와 그 타입 확인
+        sortByType: typeof searchParams.sortBy,
+        tagsType: typeof searchParams.tags,
+        firstTag: searchParams.tags?.[0], // 배열 첫 번째 요소
     })
 })
 
@@ -63,16 +64,21 @@ http://localhost:3000/search?page=10&isPublished=true
 
 ## 출력 예시
 
-예시 요청 URL에 접근하면, `bindingCargo` 미들웨어는 문자열 값인 `page='10'`과 `isPublished='true'`를 올바른 데이터 타입으로 변환합니다. `getCargo` 함수는 이 변환된 값을 포함하는 객체를 반환합니다.
+예시 요청 URL로 접근하면, `bindingCargo` 미들웨어가 쿼리 파라미터를 처리합니다. `@transform` 데코레이터는 `sortBy` 값을 소문자 문자열로 정규화하고, 쉼표로 구분된 `tags` 문자열을 배열로 파싱합니다. `getCargo` 함수는 이렇게 변환된 값을 담고 있는 객체를 반환합니다.
 
 ```json
 {
-    "message": "검색 파라미터가 성공적으로 처리되었습니다!",
+    "message": "Search parameters transformed successfully!",
     "data": {
-        "page": 10,
-        "isPublished": true
+        "sortBy": "title",
+        "tags": [
+            "typescript",
+            "javascript",
+            "node"
+        ]
     },
-    "pageType": "number",
-    "isPublishedType": "boolean"
+    "sortByType": "string",
+    "tagsType": "object",
+    "firstTag": "typescript"
 }
 ```
