@@ -1,29 +1,27 @@
 import express, { Router } from 'express'
-import { bindingCargo, body, getCargo, transform } from 'express-cargo'
+import { bindingCargo, getCargo, query, transform } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class TransformExample {
-    @transform((value: string) => value.toLowerCase())
-    @body('name')
-    public name: string
-
+    @query()
     @transform((value: string) => parseInt(value, 10))
-    @body('age')
-    public age: number
+    page!: number
 
+    @query()
     @transform((value: string) => value === 'true')
-    @body('isActive')
-    public isActive: boolean
-
-    @transform((value: string) => value.split(',').map(item => item.trim()))
-    @body('tags')
-    public tags: string[]
+    isPublished!: boolean
 }
 
 router.post('/transform', bindingCargo(TransformExample), (req, res) => {
-    const cargo = getCargo<TransformExample>(req)
-    res.json(cargo)
+    const searchParams = getCargo<TransformExample>(req)
+
+    res.json({
+        message: 'Search parameters processed successfully!',
+        data: searchParams,
+        pageType: typeof searchParams?.page,
+        isPublishedType: typeof searchParams?.isPublished,
+    })
 })
 
 export default router
