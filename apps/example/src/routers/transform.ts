@@ -5,22 +5,23 @@ const router: Router = express.Router()
 
 class TransformExample {
     @query()
-    @transform((value: string) => parseInt(value, 10))
-    page!: number
+    @transform((value: string) => value.toLowerCase())
+    sortBy!: string
 
     @query()
-    @transform((value: string) => value === 'true')
-    isPublished!: boolean
+    @transform((value: string) => value.split(',').map(tag => tag.trim()))
+    tags!: string[]
 }
 
-router.post('/transform', bindingCargo(TransformExample), (req, res) => {
-    const searchParams = getCargo<TransformExample>(req)
+router.get('/transform', bindingCargo(TransformExample), (req, res) => {
+    const cargo = getCargo<TransformExample>(req)
 
     res.json({
-        message: 'Search parameters processed successfully!',
-        data: searchParams,
-        pageType: typeof searchParams?.page,
-        isPublishedType: typeof searchParams?.isPublished,
+        message: 'Search parameters transformed successfully!',
+        data: cargo,
+        sortByType: typeof cargo?.sortBy,
+        tagsType: typeof cargo?.tags,
+        firstTag: cargo?.tags?.[0],
     })
 })
 
