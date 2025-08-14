@@ -1,5 +1,5 @@
-import { virtual } from '../../src/transform'
 import { CargoClassMetadata } from '../../src/metadata'
+import { virtual } from '../../src'
 
 describe('virtual decorator', () => {
     class Sample {
@@ -7,45 +7,49 @@ describe('virtual decorator', () => {
         lastName!: string
         age!: number
 
-        @virtual(['firstName', 'lastName'], (firstName, lastName) => `${firstName} ${lastName}`)
+        @virtual(req => `${req.body?.firstName} ${req.body?.lastName}`)
         fullName!: string
 
-        @virtual(['age'], age => (age >= 18 ? 'Adult' : 'Minor'))
+        @virtual(req => (req.body?.age >= 18 ? 'Adult' : 'Minor'))
         ageGroup!: string
     }
 
+    const mockRequest = (body: any) => ({ body, headers: {} }) as any
     const classMeta = new CargoClassMetadata(Sample.prototype)
 
     it('should have virtual metadata for the decorated fields', () => {
         const fullNameMeta = classMeta.getFieldMetadata('fullName')
         const ageGroupMeta = classMeta.getFieldMetadata('ageGroup')
 
-        expect(fullNameMeta.isVirtual()).toBe(true)
-        expect(ageGroupMeta.isVirtual()).toBe(true)
+        expect(fullNameMeta.getVirtualTransformer()).toBeDefined()
+        expect(ageGroupMeta.getVirtualTransformer()).toBeDefined()
 
         const firstNameMeta = classMeta.getFieldMetadata('firstName')
-        expect(firstNameMeta.isVirtual()).toBe(false)
+        expect(firstNameMeta.getVirtualTransformer()).toBe(undefined)
     })
 
-    it('should correctly store computed fields and the transformer', () => {
+    it('should correctly store the transformer and execute it with a request object', () => {
         const fullNameMeta = classMeta.getFieldMetadata('fullName')
-
-        expect(fullNameMeta.getComputedFields()).toEqual(['firstName', 'lastName'])
-
         const transformer = fullNameMeta.getVirtualTransformer()
-        expect(transformer).toBeDefined()
 
-        expect(transformer!('John', 'Doe')).toBe('John Doe')
+        expect(transformer).toBeDefined()
+        expect(typeof transformer).toBe('function')
+
+        const req = mockRequest({ firstName: 'John', lastName: 'Doe' })
+        expect(transformer!(req)).toBe('John Doe')
     })
 
-    it('should apply the transformation correctly for a single computed field', () => {
+    it('should apply the transformation correctly for ageGroup', () => {
         const ageGroupMeta = classMeta.getFieldMetadata('ageGroup')
-        expect(ageGroupMeta.getComputedFields()).toEqual(['age'])
-
         const transformer = ageGroupMeta.getVirtualTransformer()
-        expect(transformer).toBeDefined()
 
-        expect(transformer!(17)).toBe('Minor')
-        expect(transformer!(25)).toBe('Adult')
+        expect(transformer).toBeDefined()
+        expect(typeof transformer).toBe('function')
+
+        const minorReq = mockRequest({ age: 17 })
+        expect(transformer!(minorReq)).toBe('Minor')
+
+        const adultReq = mockRequest({ age: 25 })
+        expect(transformer!(adultReq)).toBe('Adult')
     })
 })
