@@ -7,10 +7,10 @@ describe('virtual decorator', () => {
         lastName!: string
         age!: number
 
-        @virtual(['firstName', 'lastName'], (firstName, lastName) => `${firstName} ${lastName}`)
+        @virtual((obj: Sample) => `${obj.firstName} ${obj.lastName}`)
         fullName!: string
 
-        @virtual(['age'], age => (age >= 18 ? 'Adult' : 'Minor'))
+        @virtual((obj: Sample) => (obj.age >= 18 ? 'Adult' : 'Minor'))
         ageGroup!: string
     }
 
@@ -20,32 +20,32 @@ describe('virtual decorator', () => {
         const fullNameMeta = classMeta.getFieldMetadata('fullName')
         const ageGroupMeta = classMeta.getFieldMetadata('ageGroup')
 
-        expect(fullNameMeta.isVirtual()).toBe(true)
-        expect(ageGroupMeta.isVirtual()).toBe(true)
+        expect(fullNameMeta.getVirtualTransformer()).toBeDefined()
+        expect(ageGroupMeta.getVirtualTransformer()).toBeDefined()
 
         const firstNameMeta = classMeta.getFieldMetadata('firstName')
-        expect(firstNameMeta.isVirtual()).toBe(false)
+        expect(firstNameMeta.getVirtualTransformer()).toBeUndefined()
     })
 
-    it('should correctly store computed fields and the transformer', () => {
+    it('should correctly store the transformer and use the object', () => {
         const fullNameMeta = classMeta.getFieldMetadata('fullName')
-
-        expect(fullNameMeta.getComputedFields()).toEqual(['firstName', 'lastName'])
-
         const transformer = fullNameMeta.getVirtualTransformer()
+
         expect(transformer).toBeDefined()
 
-        expect(transformer!('John', 'Doe')).toBe('John Doe')
+        const testObject = { firstName: 'John', lastName: 'Doe' }
+        expect(transformer!(testObject)).toBe('John Doe')
     })
 
     it('should apply the transformation correctly for a single computed field', () => {
         const ageGroupMeta = classMeta.getFieldMetadata('ageGroup')
-        expect(ageGroupMeta.getComputedFields()).toEqual(['age'])
-
         const transformer = ageGroupMeta.getVirtualTransformer()
         expect(transformer).toBeDefined()
 
-        expect(transformer!(17)).toBe('Minor')
-        expect(transformer!(25)).toBe('Adult')
+        const testObjectMinor = { age: 17 }
+        const testObjectAdult = { age: 25 }
+
+        expect(transformer!(testObjectMinor)).toBe('Minor')
+        expect(transformer!(testObjectAdult)).toBe('Adult')
     })
 })

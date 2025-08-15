@@ -21,12 +21,11 @@ export function request<T>(transformer: (req: Request) => T): PropertyDecorator 
     }
 }
 
-export function virtual<T>(computedFields: (string | symbol)[], transformer: (...value: any[]) => T): PropertyDecorator {
+export function virtual<T>(transformer: (obj: object) => T): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
 
-        fieldMeta.setComputedFields(computedFields)
         fieldMeta.setVirtualTransformer(transformer)
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
         classMeta.setFieldList(propertyKey)

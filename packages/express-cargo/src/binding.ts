@@ -46,7 +46,7 @@ function bindObject(
             continue
         }
 
-        if (meta.isVirtual()) {
+        if (meta.getVirtualTransformer()) {
             virtualFields.push(property)
             continue
         }
@@ -102,18 +102,9 @@ function bindObject(
 
     for (const property of virtualFields) {
         const meta = metaClass.getFieldMetadata(property)
-        const computedFields = meta.getComputedFields()
         const transformer = meta.getVirtualTransformer()
-        const undefinedFields = computedFields.filter(field => targetObject[field] === undefined)
-
-        if (undefinedFields.length > 0) {
-            errors.push(new CargoTransformFieldError(property, `Virtual field relies on undefined fields: ${undefinedFields.join(', ')}`))
-            continue
-        }
-
         try {
-            const values = computedFields.map(field => targetObject[field])
-            targetObject[property] = transformer!(...values)
+            targetObject[property] = transformer!(targetObject)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
