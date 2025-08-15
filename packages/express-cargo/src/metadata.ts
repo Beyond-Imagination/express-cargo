@@ -59,7 +59,7 @@ export class CargoFieldMetadata {
 
     constructor(target: any, key: string | symbol) {
         this.target = target
-        this.type = Reflect.getMetadata('design:type', target, key);
+        this.type = Reflect.getMetadata('design:type', target, key)
         this.key = key
         this.source = 'body'
         this.validators = []
