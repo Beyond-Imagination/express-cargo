@@ -30,6 +30,7 @@ const sidebars: SidebarsConfig = {
                 'decorators/overview',
                 'decorators/source-decorators',
                 'decorators/virtual',
+                'decorators/transforms',
                 'decorators/validators',
             ],
         },
