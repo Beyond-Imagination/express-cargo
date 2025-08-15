@@ -9,8 +9,7 @@ function getErrorKey(sourceKey: string, currentKey: string): string {
 
 function bindObject(
     objectClass: any,
-    sources: { body: any; query: any; uri: any; header: any; session: any },
-    req: Request,
+    sources: { req: Request; body: any; query: any; uri: any; header: any; session: any },
     errors: CargoFieldError[],
     sourceKey: string = '',
 ): any {
@@ -33,7 +32,7 @@ function bindObject(
         const requestTransformer = meta.getRequestTransformer()
         if (requestTransformer) {
             try {
-                targetObject[property] = requestTransformer(req)
+                targetObject[property] = requestTransformer(sources.req)
             } catch (error) {
                 errors.push(
                     new CargoTransformFieldError(
@@ -77,7 +76,7 @@ function bindObject(
                 break
             default: {
                 const nextSources = { ...sources, [currentSource]: value }
-                targetObject[property] = bindObject(meta.type, nextSources, req, errors, getErrorKey(sourceKey, key))
+                targetObject[property] = bindObject(meta.type, nextSources, errors, getErrorKey(sourceKey, key))
                 break
             }
         }
@@ -101,13 +100,14 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
         try {
             const errors: CargoFieldError[] = []
             const sources = {
+                req: req,
                 body: req.body,
                 query: req.query,
                 uri: req.params,
                 header: req.headers,
                 session: (req as any).session,
             }
-            const cargo = bindObject(cargoClass, sources, req, errors)
+            const cargo = bindObject(cargoClass, sources, errors)
 
             if (errors.length > 0) {
                 throw new CargoValidationError(errors)
