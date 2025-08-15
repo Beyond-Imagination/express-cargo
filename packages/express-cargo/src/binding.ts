@@ -107,7 +107,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 header: req.headers,
                 session: (req as any).session,
             }
-            const cargo = bindObject(cargoClass, req, sources, errors)
+            const cargo = bindObject(cargoClass, sources, req, errors)
 
             if (errors.length > 0) {
                 throw new CargoValidationError(errors)
