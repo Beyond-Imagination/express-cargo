@@ -27,9 +27,8 @@ export class UserInfoDto {
     // Extract the token from the Authorization header.
     @header('authorization')
     @transform((value: string) => {
-        const parts = value.split(' ')
-        if (parts.length === 2 && parts[0] === 'Bearer') {
-            return parts[1]
+        if (value.startsWith('Bearer ')) {
+            return value.substring(7);
         }
         return ''
     })
