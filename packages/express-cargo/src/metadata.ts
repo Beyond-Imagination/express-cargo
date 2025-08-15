@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { Request } from 'express'
+import type { Request } from 'express'
 import { Source, ValidatorRule } from './types'
 
 export class CargoClassMetadata {

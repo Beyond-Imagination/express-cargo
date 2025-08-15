@@ -1,7 +1,7 @@
-import { Request } from 'express'
+import type { Request } from 'express'
 import { CargoClassMetadata } from './metadata'
 
-export function transform(transformer: (value: any) => any): PropertyDecorator {
+export function transform<T>(transformer: (value: T) => T): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)

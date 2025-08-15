@@ -3,101 +3,111 @@ import type { Request, RequestHandler } from 'express'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 
+function getErrorKey(sourceKey: string, currentKey: string): string {
+    return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
+}
+
+function bindObject(
+    objectClass: any,
+    sources: { body: any; query: any; uri: any; header: any; session: any },
+    req: Request,
+    errors: CargoFieldError[],
+    sourceKey: string = '',
+): any {
+    const metaClass = new CargoClassMetadata(objectClass.prototype)
+    const targetObject = new objectClass()
+    const fields = metaClass.getFieldList()
+    for (const property of fields) {
+        const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
+        if (!meta) continue
+
+        let value
+        const metaKey = meta.getKey()
+        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+
+        if (!key) {
+            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
+            continue
+        }
+
+        const requestTransformer = meta.getRequestTransformer()
+        if (requestTransformer) {
+            try {
+                targetObject[property] = requestTransformer(req)
+            } catch (error) {
+                errors.push(
+                    new CargoTransformFieldError(
+                        property,
+                        `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
+                    ),
+                )
+            }
+            continue
+        }
+
+        const currentSource = meta.getSource()
+        const currentSourceData = sources[currentSource as keyof typeof sources]
+
+        if (currentSourceData) {
+            value = currentSourceData[key]
+        }
+
+        if (value === undefined || value === null) {
+            if (meta.getOptional()) {
+                targetObject[property] = undefined
+                continue
+            } else {
+                errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+                continue
+            }
+        }
+
+        switch (meta.type) {
+            case String:
+                targetObject[property] = String(value)
+                break
+            case Number:
+                targetObject[property] = isNaN(Number(value)) ? value : Number(value)
+                break
+            case Boolean:
+                targetObject[property] = value === true || value === 'true'
+                break
+            case Date:
+                targetObject[property] = new Date(value)
+                break
+            default: {
+                const nextSources = { ...sources, [currentSource]: value }
+                targetObject[property] = bindObject(meta.type, nextSources, req, errors, getErrorKey(sourceKey, key))
+                break
+            }
+        }
+
+        const transformer = meta.getTransformer()
+        if (transformer) {
+            targetObject[property] = transformer(targetObject[property])
+        }
+
+        for (const rule of meta.getValidators()) {
+            if (!rule.validate(value)) {
+                errors.push(new CargoFieldError(key, rule.message))
+            }
+        }
+    }
+    return targetObject
+}
+
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
     return (req, res, next) => {
         try {
-            const cargo = new cargoClass() as any
-            const classMeta = new CargoClassMetadata(cargoClass.prototype)
             const errors: CargoFieldError[] = []
-
-            const fields = classMeta.getFieldList()
-            for (const property of fields) {
-                const meta: CargoFieldMetadata = classMeta.getFieldMetadata(property)
-                if (!meta) continue
-
-                let value
-                const metaKey = meta.getKey()
-                const key = typeof metaKey === 'string' ? metaKey : metaKey.description
-
-                if (!key) {
-                    errors.push(new CargoFieldError(key!, 'empty string or symbol is not allowed'))
-                    continue
-                }
-
-                const requestTransformer = meta.getRequestTransformer()
-                if (requestTransformer) {
-                    try {
-                        cargo[property] = requestTransformer(req)
-                    } catch (error) {
-                        errors.push(
-                            new CargoTransformFieldError(
-                                property,
-                                `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
-                            ),
-                        )
-                    }
-                    continue
-                }
-
-                switch (meta.getSource()) {
-                    case 'body':
-                        value = req.body?.[key]
-                        break
-                    case 'query':
-                        value = req.query?.[key]
-                        break
-                    case 'uri':
-                        value = req.params?.[key]
-                        break
-                    case 'header':
-                        value = req.headers?.[String(key).toLowerCase()]
-                        break
-                    case 'session':
-                        value = (req as any).session?.[key]
-                        break
-                }
-
-                if (value === undefined || value === null) {
-                    if (meta.getOptional()) {
-                        cargo[property] = undefined
-                        continue
-                    } else {
-                        errors.push(new CargoFieldError(key, `${key} is required`))
-                        continue
-                    }
-                }
-
-                const transformer = meta.getTransformer()
-                if (transformer) {
-                    value = transformer(value)
-                }
-
-                switch (meta.type) {
-                    case String:
-                        value = String(value)
-                        break
-                    case Number:
-                        value = isNaN(Number(value)) ? value : Number(value)
-                        break
-                    case Boolean:
-                        value = value === true || value === 'true'
-                        break
-                    case Date:
-                        value = new Date(value)
-                        break
-                    default:
-                        // TODO: object 처리
-                        break
-                }
-
-                for (const rule of meta.getValidators()) {
-                    if (!rule.validate(value)) {
-                        errors.push(new CargoFieldError(key, rule.message))
-                    }
-                }
-
-                cargo[property] = value
+            const sources = {
+                body: req.body,
+                query: req.query,
+                uri: req.params,
+                header: req.headers,
+                session: (req as any).session,
             }
+            const cargo = bindObject(cargoClass, req, sources, errors)
 
             if (errors.length > 0) {
                 throw new CargoValidationError(errors)
