@@ -104,26 +104,23 @@ function bindObject(
         const meta = metaClass.getFieldMetadata(property)
         const computedFields = meta.getComputedFields()
         const transformer = meta.getVirtualTransformer()
+        const undefinedFields = computedFields.filter(field => targetObject[field] === undefined)
 
-        if (transformer && computedFields.length > 0) {
-            const undefinedFields = computedFields.filter(field => targetObject[field] === undefined)
+        if (undefinedFields.length > 0) {
+            errors.push(new CargoTransformFieldError(property, `Virtual field relies on undefined fields: ${undefinedFields.join(', ')}`))
+            continue
+        }
 
-            if (undefinedFields.length > 0) {
-                errors.push(new CargoTransformFieldError(property, `Virtual field relies on undefined fields: ${undefinedFields.join(', ')}`))
-                continue
-            }
-
+        try {
             const values = computedFields.map(field => targetObject[field])
-            try {
-                targetObject[property] = transformer(...values)
-            } catch (error) {
-                errors.push(
-                    new CargoTransformFieldError(
-                        property,
-                        `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
-                    ),
-                )
-            }
+            targetObject[property] = transformer!(...values)
+        } catch (error) {
+            errors.push(
+                new CargoTransformFieldError(
+                    property,
+                    `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
+                ),
+            )
         }
     }
 
