@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-
+import type { Request } from 'express'
 import { Source, ValidatorRule } from './types'
 
 export class CargoClassMetadata {
@@ -53,9 +53,10 @@ export class CargoFieldMetadata {
     readonly type: any
     private key: string | symbol
     private source: Source
+    private optional: boolean
     private validators: ValidatorRule[]
     private transformer: ((value: any) => any) | undefined
-    private optional: boolean
+    private requestTransformer: ((req: Request) => any) | undefined
 
     constructor(target: any, key: string | symbol) {
         this.target = target
@@ -65,6 +66,7 @@ export class CargoFieldMetadata {
         this.validators = []
         this.optional = false
         this.transformer = undefined
+        this.requestTransformer = undefined
     }
 
     getKey(): string | symbol {
@@ -105,5 +107,13 @@ export class CargoFieldMetadata {
 
     setTransformer(transformer: (value: any) => any): void {
         this.transformer = transformer
+    }
+
+    getRequestTransformer(): ((req: Request) => any) | undefined {
+        return this.requestTransformer
+    }
+
+    setRequestTransformer(transformer: (req: Request) => any): void {
+        this.requestTransformer = transformer
     }
 }

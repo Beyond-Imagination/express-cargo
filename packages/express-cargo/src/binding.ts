@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldError, CargoValidationError } from './types'
+import { CargoFieldError, CargoValidationError, CargoTransformFieldError } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
@@ -9,7 +9,7 @@ function getErrorKey(sourceKey: string, currentKey: string): string {
 
 function bindObject(
     objectClass: any,
-    sources: { body: any; query: any; uri: any; header: any; session: any },
+    sources: { req: Request; body: any; query: any; uri: any; header: any; session: any },
     errors: CargoFieldError[],
     sourceKey: string = '',
 ): any {
@@ -26,6 +26,21 @@ function bindObject(
 
         if (!key) {
             errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
+            continue
+        }
+
+        const requestTransformer = meta.getRequestTransformer()
+        if (requestTransformer) {
+            try {
+                targetObject[property] = requestTransformer(sources.req)
+            } catch (error) {
+                errors.push(
+                    new CargoTransformFieldError(
+                        property,
+                        `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
+                    ),
+                )
+            }
             continue
         }
 
@@ -85,6 +100,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
         try {
             const errors: CargoFieldError[] = []
             const sources = {
+                req: req,
                 body: req.body,
                 query: req.query,
                 uri: req.params,
