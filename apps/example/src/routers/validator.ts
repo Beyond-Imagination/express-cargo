@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, maxLength, minLength } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -76,6 +76,17 @@ class SuffixExample {
 
 router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
     const cargo = getCargo<SuffixExample>(req)
+    res.json(cargo)
+})
+
+class MinLengthExample {
+    @body()
+    @minLength(2)
+    name!: string
+}
+
+router.post('/min-length', bindingCargo(MinLengthExample), (req, res) => {
+    const cargo = getCargo<MinLengthExample>(req)
     res.json(cargo)
 })
 
