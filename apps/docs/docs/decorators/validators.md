@@ -42,6 +42,12 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+### `@maxLength(value: number)`
+
+Validates that the decorated string’s length does not exceed the specified maximum.
+
+- **`value`**: The maximum allowed length in characters.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
