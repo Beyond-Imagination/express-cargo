@@ -42,6 +42,13 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+
+### `@minLength(value: number)`
+
+Validates that the decorated string’s length is at least the specified minimum.
+
+- **`value`**: The minimum allowed length in characters.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
