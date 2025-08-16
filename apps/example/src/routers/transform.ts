@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, query, transform } from 'express-cargo'
+import { bindingCargo, body, getCargo, query, transform, validate } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -23,6 +23,17 @@ router.get('/transform', bindingCargo(TransformExample), (req, res) => {
         tagsType: typeof cargo?.tags,
         firstTag: cargo?.tags?.[0],
     })
+})
+
+class ValidateExample {
+    @body()
+    @validate(email => (email as string).split('@').length === 2)
+    email!: string
+}
+
+router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
+    const cargo = getCargo<ValidateExample>(req)
+    res.json(cargo)
 })
 
 export default router
