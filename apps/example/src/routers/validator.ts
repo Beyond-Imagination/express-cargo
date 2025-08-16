@@ -1,5 +1,6 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, minLength } from 'express-cargo'
+import { length } from 'nodemon'
 
 const router: Router = express.Router()
 
@@ -76,6 +77,17 @@ class SuffixExample {
 
 router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
     const cargo = getCargo<SuffixExample>(req)
+    res.json(cargo)
+})
+
+class LengthExample {
+    @body()
+    @length(2)
+    name!: string
+}
+
+router.post('/length', bindingCargo(LengthExample), (req, res) => {
+    const cargo = getCargo<LengthExample>(req)
     res.json(cargo)
 })
 
