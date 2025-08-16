@@ -38,6 +38,7 @@ const sidebars: SidebarsConfig = {
             type: 'category',
             label: 'Advanced Usage',
             items: [
+                'advanced/inherited-binding',
                 'advanced/nested-binding',
                 'advanced/custom-transformer',
             ],
