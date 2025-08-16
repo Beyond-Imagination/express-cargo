@@ -42,6 +42,10 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+### `@isTrue()`
+
+Validates that the decorated property is true.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
