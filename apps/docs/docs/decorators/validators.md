@@ -42,6 +42,12 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+### `@oneOf(values: any[])`
+
+Validates that the input value is one of the specified values.
+
+- **`value`**: The array of allowed values.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
