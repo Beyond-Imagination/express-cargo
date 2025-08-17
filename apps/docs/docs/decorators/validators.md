@@ -46,6 +46,12 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 Validates that the decorated property is true.
 
+### `@length(value: number)`
+
+Validates that the decorated string’s length is exactly the specified value.
+
+- **`value`**: The required exact length in characters
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
