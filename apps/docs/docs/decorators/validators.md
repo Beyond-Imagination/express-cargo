@@ -48,6 +48,14 @@ Validates that the decorated string’s length is exactly the specified value.
 
 - **`value`**: The required exact length in characters
 
+### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
+
+Applies a custom validation function to the decorated field.
+This decorator provides flexibility to implement validation logic beyond the built-in ones.
+
+- **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
