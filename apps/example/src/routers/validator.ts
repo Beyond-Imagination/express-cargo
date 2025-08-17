@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, validate } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, validate, regexp } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -87,6 +87,17 @@ class ValidateExample {
 
 router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
     const cargo = getCargo<ValidateExample>(req)
+    res.json(cargo)
+})
+
+class RegexpExample {
+    @body()
+    @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
+    phone!: string
+}
+
+router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
+    const cargo = getCargo<RegexpExample>(req)
     res.json(cargo)
 })
 
