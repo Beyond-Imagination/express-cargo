@@ -1,18 +1,18 @@
 # Handling Nested Requests
 
-This example demonstrates how **Express-Cargo** can populate nested DTOs, allowing you to map complex, structured request data into a single, well-organized object.
+This example demonstrates how **Express-Cargo** can populate nested Requests, allowing you to map complex, structured request data into a single, well-organized object.
 
-## 1. Define Your DTOs
+## 1. Define Your Requests
 
-In this scenario, we'll define two classes: `UserInfoDto` and `OrderDto`. The `UserInfoDto` class pulls user details from the request body and an authentication token from the headers.
+In this scenario, we'll define two classes: `UserInfoRequest` and `OrderRequest`. The `UserInfoRequest` class pulls user details from the request body and an authentication token from the headers.
 
-**`UserInfoDto`** – Maps user details from the request body and extracts the authorization token from headers.
+**`UserInfoRequest`** – Maps user details from the request body and extracts the authorization token from headers.
 
 ```typescript
-// user.dto.ts
+// user.request.ts
 import { body, header, optional, prefix, transform } from 'express-cargo'
 
-export class UserInfoDto {
+export class UserInfoRequest {
     @body('name')
     name!: string
 
@@ -36,14 +36,14 @@ export class UserInfoDto {
 }
 ```
 
-**`OrderDto`** – Represents an order request, including a nested `UserInfoDto`.
+**`OrderRequest`** – Represents an order request, including a nested `UserInfoRequest`.
 
 ```typescript
-// order.dto.ts
+// order.request.ts
 import { body, min, max } from 'express-cargo'
-import { UserInfoDto } from './user.dto'
+import { UserInfoRequest } from './user.Request'
 
-export class OrderDto {
+export class OrderRequest {
     @body('productId')
     productId!: string
 
@@ -53,19 +53,19 @@ export class OrderDto {
     quantity!: number
 
     @body('user')
-    user!: UserInfoDto
+    user!: UserInfoRequest
 }
 ```
 
-In `UserInfoDto`, we use the `@header` decorator on the `authorization` property to get the value from the `Authorization` header. Then, the `@transform` decorator extracts just the token value, stripping the `"Bearer "` prefix.
+In `UserInfoRequest`, we use the `@header` decorator on the `authorization` property to get the value from the `Authorization` header. Then, the `@transform` decorator extracts just the token value, stripping the `"Bearer "` prefix.
 
 ## 2. Use in an Express Route
 
-Simply apply the `bindingCargo` middleware to your route with the top-level DTO, `OrderDto`. The middleware will handle all the binding logic for you.
+Simply apply the `bindingCargo` middleware to your route with the top-level Request, `OrderRequest`. The middleware will handle all the binding logic for you.
 
 ```typescript
-router.post('/orders', bindingCargo(OrderDto), (req, res) => {
-    const order = getCargo<OrderDto>(req)
+router.post('/orders', bindingCargo(OrderRequest), (req, res) => {
+    const order = getCargo<OrderRequest>(req)
 
     if (order) {
         console.log(`Processing order for product: ${order.productId}`)
@@ -100,11 +100,11 @@ This route will successfully process a request that has both a body and an `Auth
     Authorization: Bearer my-auth-token-12345
     ```
 
-When processed, `getCargo(req)` will return a single `OrderDto` object that contains all the data, with the `authorization` property correctly populated from the header. This demonstrates how **Express-Cargo** elegantly unifies multiple data sources into one clean object.
+When processed, `getCargo(req)` will return a single `OrderRequest` object that contains all the data, with the `authorization` property correctly populated from the header. This demonstrates how **Express-Cargo** elegantly unifies multiple data sources into one clean object.
 
 ## 4. Example Result
 
-Final bound `OrderDto` object:
+Final bound `OrderRequest` object:
 
 ```json
 {

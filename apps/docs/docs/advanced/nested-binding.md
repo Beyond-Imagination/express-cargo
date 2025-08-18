@@ -1,6 +1,6 @@
-# Nested DTO Binding
+# Nested Object Binding
 
-Express-Cargo allows you to handle nested objects in requests, automatically binding them to nested DTOs while supporting recursive type casting and validation.
+Express-Cargo allows you to handle nested objects in requests, automatically binding them to nested object while supporting recursive type casting and validation.
 
 ## Usage Example
 
@@ -8,13 +8,13 @@ Express-Cargo allows you to handle nested objects in requests, automatically bin
 import express, { Request, Response } from 'express'
 import { body, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. Define nested DTOs
+// 1. Define nested Object
 class Profile {
     @body('nickname')
     nickname!: string
 }
 
-class RequestDto {
+class ExampleObject {
     @body('profile')
     profile!: Profile
 }
@@ -23,11 +23,11 @@ class RequestDto {
 const app = express()
 app.use(express.json())
 
-app.post('/submit', bindingCargo(RequestDto), (req: Request, res: Response) => {
-    const requestData = getCargo<RequestDto>(req)
+app.post('/submit', bindingCargo(ExampleObject), (req: Request, res: Response) => {
+    const requestData = getCargo<ExampleObject>(req)
 
     res.json({
-        message: 'Nested DTO bound successfully!',
+        message: 'Nested bound successfully!',
         data: requestData,
     })
 })
@@ -42,11 +42,11 @@ http://localhost:3000/submit
 
 ## Output Example
 
-When a POST request with a nested profile object is sent, the `bindingCargo` middleware automatically instantiates and validates the nested `Profile` DTO. The `getCargo` function then returns a fully populated object with the nested data:
+When a POST request with a nested profile object is sent, the `bindingCargo` middleware automatically instantiates and validates the nested `ExampleObject`. The `getCargo` function then returns a fully populated object with the nested data:
 
 ```json
 {
-    "message": "Nested DTO bound successfully!",
+    "message": "Nested bound successfully!",
     "data": {
         "profile": {
             "nickname": "coder123"

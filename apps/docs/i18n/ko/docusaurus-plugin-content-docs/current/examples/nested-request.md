@@ -5,19 +5,19 @@ title: 중첩 요청 처리
 
 # 중첩 요청 처리하기
 
-이 예제는 **Express-Cargo**가 중첩된 DTO를 채워 넣어, 복잡하고 구조화된 요청 데이터를 하나의 잘 구성된 객체로 매핑하는 방법을 보여줍니다.
+이 예제는 **Express-Cargo**가 중첩된 요청을 채워 넣어, 복잡하고 구조화된 요청 데이터를 하나의 잘 구성된 객체로 매핑하는 방법을 보여줍니다.
 
-## 1. DTO 정의하기
+## 1. Request 정의하기
 
-이 시나리오에서는 `UserInfoDto`와 `OrderDto` 두 클래스를 정의합니다. `UserInfoDto` 클래스는 요청 본문에서 사용자 정보를 가져오고, 요청 헤더에서 인증 토큰을 추출합니다.
+이 시나리오에서는 `UserInfoRequest`와 `OrderRequest` 두 클래스를 정의합니다. `UserInfoRequest` 클래스는 요청 본문에서 사용자 정보를 가져오고, 요청 헤더에서 인증 토큰을 추출합니다.
 
-**`UserInfoDto`** – 요청 본문에서 사용자 정보를 매핑하고, 헤더에서 Authorization 토큰을 추출합니다.
+**`UserInfoRequest`** – 요청 본문에서 사용자 정보를 매핑하고, 헤더에서 Authorization 토큰을 추출합니다.
 
 ```typescript
-// user.dto.ts
+// user.request.ts
 import { body, header, optional, prefix, transform } from 'express-cargo'
 
-export class UserInfoDto {
+export class UserInfoRequest {
     @body('name')
     name!: string
 
@@ -40,14 +40,14 @@ export class UserInfoDto {
 }
 ```
 
-**`OrderDto`** – 주문 요청을 표현하며, 중첩된 `UserInfoDto`를 포함합니다.
+**`OrderRequest`** – 주문 요청을 표현하며, 중첩된 `UserInfoRequest`를 포함합니다.
 
 ```typescript
-// order.dto.ts
+// order.request.ts
 import { body, min, max } from 'express-cargo'
-import { UserInfoDto } from './user.dto'
+import { UserInfoRequest } from './user.request'
 
-export class OrderDto {
+export class OrderRequest {
     @body('productId')
     productId!: string
 
@@ -57,19 +57,19 @@ export class OrderDto {
     quantity!: number
 
     @body('user')
-    user!: UserInfoDto
+    user!: UserInfoRequest
 }
 ```
 
-`UserInfoDto`에서 `@header` 데코레이터를 사용해 `authorization` 속성을 `Authorization` 헤더 값으로 채웁니다. 그 다음, `@transform` 데코레이터로 `"Bearer "` 접두사를 제거하고 토큰 값만 추출합니다.
+`UserInfoRequest`에서 `@header` 데코레이터를 사용해 `authorization` 속성을 `Authorization` 헤더 값으로 채웁니다. 그 다음, `@transform` 데코레이터로 `"Bearer "` 접두사를 제거하고 토큰 값만 추출합니다.
 
 ## 2. Express 라우트에서 사용하기
 
-라우트에 최상위 DTO인 `OrderDto`와 함께 `bindingCargo` 미들웨어를 적용하면, 모든 바인딩 로직이 자동으로 처리됩니다.
+라우트에 최상위 Request인 `OrderRequest`와 함께 `bindingCargo` 미들웨어를 적용하면, 모든 바인딩 로직이 자동으로 처리됩니다.
 
 ```typescript
-router.post('/orders', bindingCargo(OrderDto), (req, res) => {
-    const order = getCargo<OrderDto>(req)
+router.post('/orders', bindingCargo(OrderRequest), (req, res) => {
+    const order = getCargo<OrderRequest>(req)
 
     if (order) {
         console.log(`주문 처리 중인 상품: ${order.productId}`)
@@ -104,11 +104,11 @@ router.post('/orders', bindingCargo(OrderDto), (req, res) => {
     Authorization: Bearer my-auth-token-12345
     ```
 
-처리 후 `getCargo(req)`는 모든 데이터를 포함한 단일 `OrderDto` 객체를 반환하며, `authorization` 속성은 헤더에서 추출한 토큰 값으로 올바르게 채워집니다. 이를 통해 **Express-Cargo**가 여러 데이터 소스를 하나의 깔끔한 객체로 통합하는 모습을 확인할 수 있습니다.
+처리 후 `getCargo(req)`는 모든 데이터를 포함한 단일 `OrderRequest` 객체를 반환하며, `authorization` 속성은 헤더에서 추출한 토큰 값으로 올바르게 채워집니다. 이를 통해 **Express-Cargo**가 여러 데이터 소스를 하나의 깔끔한 객체로 통합하는 모습을 확인할 수 있습니다.
 
 ## 4. 결과 예시
 
-최종 바인딩된 `OrderDto` 객체:
+최종 바인딩된 `OrderRequest` 객체:
 
 ```json
 {
