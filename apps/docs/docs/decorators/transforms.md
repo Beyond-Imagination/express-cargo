@@ -65,12 +65,8 @@ When the example request URL is accessed, the `bindingCargo` middleware processe
 {
     "message": "Search parameters transformed successfully!", 
     "data": {
-        "sortBy": "title", 
-        "tags": [
-            "typescript",
-            "javascript",
-            "node"
-        ]
+        "sortBy": "title",
+        "count": 10
     },
     "sortByType": "string",
     "countType": "number",

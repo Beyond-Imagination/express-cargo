@@ -71,11 +71,7 @@ http://localhost:3000/search?page=10&isPublished=true
     "message": "Search parameters transformed successfully!",
     "data": {
         "sortBy": "title",
-        "tags": [
-            "typescript",
-            "javascript",
-            "node"
-        ]
+        "count": 10
     },
     "sortByType": "string",
     "countType": "number",
