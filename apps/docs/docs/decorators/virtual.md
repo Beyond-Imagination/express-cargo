@@ -1,6 +1,6 @@
 # Virtual Field Decorators
 
-**Express-Cargo** provides decorators to define **virtual fields** and **request-derived fields**. These decorators allow you to compute values dynamically or map data from the request directly into a DTO property.
+**Express-Cargo** provides decorators to define **virtual fields** and **request-derived fields**. These decorators allow you to compute values dynamically or map data from the `Request` directly into the Object property.
 
 ## Built-in Virtual Decorators
 
@@ -22,8 +22,8 @@ The `@request` decorator maps a value from the Express `Request` object into a c
 import express, { Request, Response } from 'express'
 import { body, virtual, request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. Define DTOs with virtual and request-derived fields
-class OrderDto {
+// 1. Define Object with virtual and request-derived fields
+class OrderExample {
     @body('price')
     price!: number
 
@@ -31,13 +31,13 @@ class OrderDto {
     quantity!: number
 
     // Computed field not present in the request
-    @virtual(obj => obj.price * obj.quantity)
+    @virtual((obj: OrderExample) => obj.price * obj.quantity)
     total!: number
 }
 
-class HeaderDto {
+class HeaderExample {
     // Field derived directly from the request object
-    @request(req => req.headers['x-custom-header'] as string)
+    @request((req: Request) => req.headers['x-custom-header'] as string)
     customHeader!: string
 }
 
@@ -45,16 +45,16 @@ class HeaderDto {
 const app = express()
 app.use(express.json())
 
-app.post('/orders', bindingCargo(OrderDto), (req: Request, res: Response) => {
-    const orderData = getCargo<OrderDto>(req)
+app.post('/orders', bindingCargo(OrderExample), (req: Request, res: Response) => {
+    const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Order data processed with virtual fields!',
         data: orderData
     })
 })
 
-app.post('/headers', bindingCargo(HeaderDto), (req: Request, res: Response) => {
-    const headerData = getCargo<HeaderDto>(req)
+app.post('/headers', bindingCargo(HeaderExample), (req: Request, res: Response) => {
+    const headerData = getCargo<HeaderExample>(req)
     res.json({
         message: 'Header data mapped using @request!',
         data: headerData
