@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, validate } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -76,6 +76,17 @@ class SuffixExample {
 
 router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
     const cargo = getCargo<SuffixExample>(req)
+    res.json(cargo)
+})
+
+class ValidateExample {
+    @body()
+    @validate(email => (email as string).split('@').length === 2)
+    email!: string
+}
+
+router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
+    const cargo = getCargo<ValidateExample>(req)
     res.json(cargo)
 })
 

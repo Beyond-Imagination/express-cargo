@@ -16,6 +16,8 @@ function bindObject(
     const metaClass = new CargoClassMetadata(objectClass.prototype)
     const targetObject = new objectClass()
     const fields = metaClass.getFieldList()
+    const virtualFields: (string | symbol)[] = []
+
     for (const property of fields) {
         const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
         if (!meta) continue
@@ -41,6 +43,11 @@ function bindObject(
                     ),
                 )
             }
+            continue
+        }
+
+        if (meta.getVirtualTransformer()) {
+            virtualFields.push(property)
             continue
         }
 
@@ -92,6 +99,22 @@ function bindObject(
             }
         }
     }
+
+    for (const property of virtualFields) {
+        const meta = metaClass.getFieldMetadata(property)
+        const transformer = meta.getVirtualTransformer()
+        try {
+            targetObject[property] = transformer!(targetObject)
+        } catch (error) {
+            errors.push(
+                new CargoTransformFieldError(
+                    property,
+                    `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
+                ),
+            )
+        }
+    }
+
     return targetObject
 }
 
