@@ -34,7 +34,7 @@ function bindObject(
         const requestTransformer = meta.getRequestTransformer()
         if (requestTransformer) {
             try {
-                targetObject[property] = requestTransformer(sources.req)
+                value = requestTransformer(sources.req)
             } catch (error) {
                 errors.push(
                     new CargoTransformFieldError(
@@ -42,6 +42,15 @@ function bindObject(
                         `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
                     ),
                 )
+                continue
+            }
+
+            if (value === undefined || value === null) {
+                if (meta.getOptional()) {
+                    targetObject[property] = undefined
+                } else {
+                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+                }
             }
             continue
         }
