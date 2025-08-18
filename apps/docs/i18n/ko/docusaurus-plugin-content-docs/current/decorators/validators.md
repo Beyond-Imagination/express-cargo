@@ -76,7 +76,7 @@ title: 유효성 검사 데코레이터
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
 
-### `regexp(pattern: RegExp, message?: string)`
+### `@regexp(pattern: RegExp, message?: string)`
 
 데코레이터가 적용된 필드 값이 지정된 정규식(Regular Expression) 패턴과 일치하는지 검증합니다.
 이 데코레이터는 이메일, 휴대폰 번호 등 특정 형식을 강제할 때 유용합니다.
