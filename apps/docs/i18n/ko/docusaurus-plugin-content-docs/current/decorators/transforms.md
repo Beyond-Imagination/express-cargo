@@ -17,7 +17,7 @@ Express-Cargo는 들어오는 요청 데이터를 클래스에 바인딩하기 �
 
 ## 사용 예시
 
-이 예시는 `@transform` 데코레이터가 요청 데이터의 값을 정규화하거나 원하는 형태로 가공하는 방법을 보여줍니다. 이를 사용하면 사용자의 다양한 입력값(예: 대소문자, 쉼표로 구분된 목록)을 일관된 형식으로 처리할 수 있어 API의 안정성을 높이는 데 매우 유용합니다.
+이 예시는 `@transform` 데코레이터가 요청 데이터의 값을 정규화하거나 원하는 형태로 가공하는 방법을 보여줍니다. 이를 사용하면 사용자의 다양한 입력값을 일관된 형식으로 처리할 수 있어 API의 안정성을 높이는 데 매우 유용합니다.
 
 ```typescript
 import express, { Request, Response } from 'express'
@@ -30,10 +30,10 @@ class SearchRequest {
     @transform((value: string) => value.toLowerCase())
     sortBy!: string
 
-    // 'tags' 쿼리 파라미터 값을 쉼표로 분리하여 배열로 변환하고 각 요소의 공백 제거
-    @query('tags')
-    @transform((value: string) => value.split(',').map(tag => tag.trim()))
-    tags!: string[]
+    // 'count' 쿼리 파라미터 값을 2배로 변환
+    @query()
+    @transform((value: number) => value * 2)
+    count!: number
 }
 
 const app = express()
@@ -49,8 +49,8 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
         data: searchParams,
         // 변환된 데이터와 그 타입 확인
         sortByType: typeof searchParams.sortBy,
-        tagsType: typeof searchParams.tags,
-        firstTag: searchParams.tags?.[0], // 배열 첫 번째 요소
+        countType: typeof searchParams.count,
+        doubleCount: searchParams.count,
     })
 })
 
@@ -64,7 +64,7 @@ http://localhost:3000/search?page=10&isPublished=true
 
 ## 출력 예시
 
-예시 요청 URL로 접근하면, `bindingCargo` 미들웨어가 쿼리 파라미터를 처리합니다. `@transform` 데코레이터는 `sortBy` 값을 소문자 문자열로 정규화하고, 쉼표로 구분된 `tags` 문자열을 배열로 파싱합니다. `getCargo` 함수는 이렇게 변환된 값을 담고 있는 객체를 반환합니다.
+예시 요청 URL로 접근하면, `bindingCargo` 미들웨어가 쿼리 파라미터를 처리합니다. `@transform` 데코레이터는 `sortBy` 값을 소문자 문자열로 정규화하고, `count` 값을 2배로 변환합니다. `getCargo` 함수는 이렇게 변환된 값을 담고 있는 객체를 반환합니다.
 
 ```json
 {
@@ -78,7 +78,7 @@ http://localhost:3000/search?page=10&isPublished=true
         ]
     },
     "sortByType": "string",
-    "tagsType": "object",
-    "firstTag": "typescript"
+    "countType": "number",
+    "doubleCount": 10
 }
 ```

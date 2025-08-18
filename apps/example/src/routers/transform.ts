@@ -9,8 +9,8 @@ class TransformExample {
     sortBy!: string
 
     @query()
-    @transform((value: string) => value.split(',').map(tag => tag.trim()))
-    tags!: string[]
+    @transform((value: number) => value * 2)
+    count!: number
 }
 
 router.get('/transform', bindingCargo(TransformExample), (req, res) => {
@@ -20,8 +20,8 @@ router.get('/transform', bindingCargo(TransformExample), (req, res) => {
         message: 'Search parameters transformed successfully!',
         data: cargo,
         sortByType: typeof cargo?.sortBy,
-        tagsType: typeof cargo?.tags,
-        firstTag: cargo?.tags?.[0],
+        countType: typeof cargo?.count,
+        doubleCount: cargo?.count,
     })
 })
 
