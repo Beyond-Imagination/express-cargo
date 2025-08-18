@@ -51,6 +51,8 @@ function bindObject(
                 } else {
                     errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
                 }
+            } else {
+                targetObject[property] = value
             }
             continue
         }
