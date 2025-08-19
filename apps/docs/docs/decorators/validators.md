@@ -42,6 +42,7 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+<<<<<<< HEAD
 ### `@isTrue()`
 
 Validates that the decorated property is true.
@@ -61,6 +62,12 @@ Validates that the decorated string’s length is exactly the specified value.
 Validates that the decorated string’s length does not exceed the specified maximum.
 
 - **`value`**: The maximum allowed length in characters.
+
+### `@minLength(value: number)`
+
+Validates that the decorated string’s length is at least the specified minimum.
+
+- **`value`**: The minimum allowed length in characters.
 
 ### `@oneOf(values: any[])`
 
