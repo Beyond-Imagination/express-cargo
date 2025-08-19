@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -109,6 +109,17 @@ class OneOfExample {
 
 router.post('/one-of', bindingCargo(OneOfExample), (req, res) => {
     const cargo = getCargo<OneOfExample>(req)
+    res.json(cargo)
+})
+
+class MaxLengthExample {
+    @body()
+    @maxLength(5)
+    name!: string
+}
+
+router.post('/max-length', bindingCargo(MaxLengthExample), (req, res) => {
+    const cargo = getCargo<MaxLengthExample>(req)
     res.json(cargo)
 })
 
