@@ -42,7 +42,6 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
-<<<<<<< HEAD
 ### `@isTrue()`
 
 Validates that the decorated property is true.
