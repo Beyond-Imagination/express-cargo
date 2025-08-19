@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength, minLength, length } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength, minLength, length, validate, regexp } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -142,6 +142,28 @@ class LengthExample {
 
 router.post('/length', bindingCargo(LengthExample), (req, res) => {
     const cargo = getCargo<LengthExample>(req)
+    res.json(cargo)
+})
+
+class ValidateExample {
+    @body()
+    @validate(email => (email as string).split('@').length === 2)
+    email!: string
+}
+
+router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
+    const cargo = getCargo<ValidateExample>(req)
+    res.json(cargo)
+})
+
+class RegexpExample {
+    @body()
+    @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
+    phone!: string
+}
+
+router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
+    const cargo = getCargo<RegexpExample>(req)
     res.json(cargo)
 })
 

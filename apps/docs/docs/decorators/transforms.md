@@ -4,7 +4,7 @@ Express-Cargo provides a decorator to automatically transform incoming request d
 
 Unlike virtual fields, which combine existing fields to create a new one, this transformation decorator directly modifies the value of a single field.
 
-## `@transform<T>(transformer: (value: any) => T)`
+## `@transform<T>(transformer: (value: T) => T)`
 
 This is the primary decorator for data transformation. It takes a transformer function that receives the raw value from the request and returns the new, transformed value for the field.
 
@@ -12,7 +12,7 @@ This is the primary decorator for data transformation. It takes a transformer fu
 
 ## Usage Example
 
-This example demonstrates how the `@transform` decorator can be used to normalize and process request data into a desired format. This is highly useful for handling diverse user inputs (e.g., case sensitivity, comma-separated lists) and ensuring that your API processes them consistently, which improves the stability of your application.
+This example demonstrates how the `@transform` decorator can be used to normalize and process request data into a desired format. This is highly useful for handling diverse user inputs and ensuring that your API processes them consistently, which improves the stability of your application.
 
 ```typescript
 import express, { Request, Response } from 'express'
@@ -25,10 +25,10 @@ class SearchRequest {
     @transform((value: string) => value.toLowerCase())
     sortBy!: string
 
-    // Splits the 'tags' query parameter by commas, trims whitespace from each tag, and converts it to an array
+    // Doubles the 'count' query parameter value
     @query()
-    @transform((value: string) => value.split(',').map(tag => tag.trim()))
-    tags!: string[]
+    @transform((value: number) => value * 2)
+    count!: number
 }
 
 const app = express()
@@ -44,8 +44,8 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
         data: searchParams,
         // Verify the type of the transformed data
         sortByType: typeof searchParams.sortBy,
-        tagsType: typeof searchParams.tags,
-        firstTag: searchParams.tags?.[0], // Access the first element of the array
+        countType: typeof searchParams.count,
+        doubleCount: searchParams.count,
     })
 })
 
@@ -59,21 +59,17 @@ http://localhost:3000/search?sortBy=TITLE&tags=typescript, javascript ,node
 
 ## Output Example
 
-When the example request URL is accessed, the `bindingCargo` middleware processes the query parameters. The `@transform` decorators then normalize the `sortBy` value to a lowercase string and parse the comma-separated `tags` string into an array. The `getCargo` function returns an object with these transformed values.
+When the example request URL is accessed, the `bindingCargo` middleware processes the query parameters. The `@transform` decorators then normalize the `sortBy` value to a lowercase string and double the `count` value. The `getCargo` function returns an object with these transformed values.
 
 ```json
 {
     "message": "Search parameters transformed successfully!", 
     "data": {
-        "sortBy": "title", 
-        "tags": [
-            "typescript",
-            "javascript",
-            "node"
-        ]
+        "sortBy": "title",
+        "count": 10
     },
     "sortByType": "string",
-    "tagsType": "object",
-    "firstTag": "typescript"
+    "countType": "number",
+    "doubleCount": 10
 }
 ```

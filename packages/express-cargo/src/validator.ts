@@ -98,6 +98,16 @@ export function isTrue(): PropertyDecorator {
     }
 }
 
+export function length(value: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'length',
+            validate: (val: any) => typeof val === 'string' && val.length === value,
+            message: `${String(propertyKey)} must be ${value} characters`,
+        })
+    }
+}
+
 export function maxLength(max: number): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
@@ -132,12 +142,12 @@ export function oneOf<T extends readonly any[]>(options: T): PropertyDecorator {
     }
 }
 
-export function validate(validateFn: (value: unknown) => boolean, message: string): PropertyDecorator {
+export function validate(validateFn: (value: unknown) => boolean, message?: string): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, {
             type: 'validate',
             validate: validateFn,
-            message: message,
+            message: message || `${String(propertyKey)} did not pass the provided validation rule.`,
         })
     }
 }
