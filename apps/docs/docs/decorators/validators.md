@@ -42,6 +42,10 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+### `@isFalse()`
+
+Validates that the decorated property is false.
+
 ### `@length(value: number)`
 
 Validates that the decorated string’s length is exactly the specified value.
