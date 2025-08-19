@@ -5,13 +5,8 @@ title: 상속 바인딩
 
 ## 상속 바인딩 (inherited binding)
 
-### 동작 (Behavior)
-
-- Field 데코레이터는 **프로토타입 체인**을 따라 상속됩니다.
-- `getFieldList`는 현재 클래스와 부모 클래스의 메타데이터를 모두 수집합니다 (`Object.prototype` 제외).
-- 동일한 이름의 필드는 자식 클래스가 부모의 정의를 **덮어씁니다**.
-- `getFieldList`는 **source-decorators** 내부에서만 호출됩니다.  
-  따라서 상속 기능을 올바르게 사용하려면 반드시 source-decorators와 함께 활성화해야 합니다.
+Field 데코레이터는 부모 클래스에서 선언된 필드도 함께 적용됩니다.  
+즉, 공통 필드를 **기반 클래스**에 정의하고, 필요한 경우 **자식 클래스**에서 추가하거나 덮어쓸 수 있습니다.
 
 ### 예시 (Example)
 ```typescript
@@ -27,8 +22,9 @@ class CreateUserRequest extends BaseRequest {
   role!: string
 }
 ```
-CreateUserRequest의 필드 목록은 다음과 같습니다:
+### 결과
+`CreateUserRequest`는 다음과 같은 필드를 가집니다:
 
-- id (부모 BaseRequest에서 상속됨)
+- id : `BaseRequest`에서 상속됨
 
-- role (자식 CreateUserRequest에서 정의됨)
+- role : `CreateUserRequest`에서 정의됨

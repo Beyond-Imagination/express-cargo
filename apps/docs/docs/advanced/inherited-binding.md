@@ -1,12 +1,7 @@
 ## inherited-binding
 
-### Behavior
-
-- Field decorators are **inherited** through the prototype chain.
-- `getFieldList` collects metadata from the current class and all its parent classes (excluding `Object.prototype`).
-- Child fields can override parent fields with the same name.
-- `getFieldList` is only invoked inside **source-decorators**.  
-  To use inheritance correctly, you must enable it together with source-decorators.
+Field decorators are also applied to fields declared in parent classes.  
+This allows you to define common fields in a **base class** and then extend or override them in **child classes**.
 
 ### Example
 ```typescript
@@ -22,8 +17,10 @@ class CreateUserRequest extends BaseRequest {
   role!: string
 }
 ```
-The resulting field list of CreateUserRequest is:
 
-- id (inherited from BaseRequest)
+### Result
+`CreateUserRequest` will have the following fields:
 
-- role (defined in CreateUserRequest)
+- id : inherited from `BaseRequest`
+
+- role : defined in `CreateUserRequest`
