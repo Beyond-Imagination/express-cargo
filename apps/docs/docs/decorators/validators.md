@@ -56,6 +56,12 @@ Validates that the decorated string’s length is exactly the specified value.
 
 - **`value`**: The required exact length in characters
 
+### `@oneOf(values: any[])`
+
+Validates that the input value is one of the specified values.
+
+- **`values`**: The array of allowed values.
+
 ### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Applies a custom validation function to the decorated field.

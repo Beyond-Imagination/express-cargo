@@ -79,6 +79,16 @@ title: 유효성 검사 데코레이터
 
 - **`value`**: 문자열 길이
 
+---
+
+### `@oneOf(values: any[])`
+
+입력 값이 지정된 값 중 하나인지 확인합니다.
+
+- **`values`**: 허용되는 값들의 배열
+
+---
+
 ### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 데코레이터가 적용된 필드에 사용자 정의 검증 함수를 적용합니다.
