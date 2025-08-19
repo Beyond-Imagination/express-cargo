@@ -56,6 +56,12 @@ Validates that the decorated string’s length is exactly the specified value.
 
 - **`value`**: The required exact length in characters
 
+### `@maxLength(value: number)`
+
+Validates that the decorated string’s length does not exceed the specified maximum.
+
+- **`value`**: The maximum allowed length in characters.
+
 ### `@oneOf(values: any[])`
 
 Validates that the input value is one of the specified values.
