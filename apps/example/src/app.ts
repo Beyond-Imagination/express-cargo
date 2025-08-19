@@ -18,8 +18,11 @@ app.use(transformRouter)
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof CargoValidationError) {
         return res.status(400).json({
-            errors: err.errors,
             message: err.message,
+            errors: err.errors.map(e => ({
+                name: e.name,
+                message: e.message,
+            })),
         })
     }
     return res.status(500).json({
