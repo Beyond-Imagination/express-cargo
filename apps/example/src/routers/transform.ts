@@ -1,5 +1,5 @@
-import express, { Router } from 'express'
-import { bindingCargo, getCargo, query, transform } from 'express-cargo'
+import express, { type Request, Router } from 'express'
+import { bindingCargo, body, getCargo, query, request, transform, virtual } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -22,6 +22,39 @@ router.get('/transform', bindingCargo(TransformExample), (req, res) => {
         sortByType: typeof cargo?.sortBy,
         countType: typeof cargo?.count,
         doubleCount: cargo?.count,
+    })
+})
+
+class RequestExample {
+    @request((req: Request) => req?.headers['x-custom-header'] as string)
+    customHeader!: string
+}
+
+router.post('/request', bindingCargo(RequestExample), (req, res) => {
+    const cargo = getCargo<RequestExample>(req)
+
+    res.json({
+        message: 'Header data mapped using @request',
+        data: cargo,
+    })
+})
+
+class VirtualExample {
+    @body()
+    price!: number
+
+    @body()
+    quantity!: number
+
+    @virtual((obj: VirtualExample) => obj.price * obj.quantity)
+    total!: number
+}
+
+router.post('/virtual', bindingCargo(VirtualExample), (req, res) => {
+    const cargo = getCargo<VirtualExample>(req)
+    res.json({
+        message: 'Order data processed with @virtual',
+        data: cargo,
     })
 })
 

@@ -83,6 +83,14 @@ This decorator provides flexibility to implement validation logic beyond the bui
 - **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@regexp(pattern: RegExp, message?: string)`
+
+Validates that the decorated field matches the specified regular expression pattern.
+This decorator is useful for enforcing format rules such as email, phone numbers, etc.
+
+- **`pattern`**: A RegExp object used to test the field value. The value is valid if it matches the pattern.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
