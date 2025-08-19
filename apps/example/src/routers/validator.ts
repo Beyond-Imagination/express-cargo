@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -98,6 +98,17 @@ class IsFalseExample {
 
 router.post('/is-false', bindingCargo(IsFalseExample), (req, res) => {
     const cargo = getCargo<IsFalseExample>(req)
+    res.json(cargo)
+})
+
+class OneOfExample {
+    @body()
+    @oneOf(['js', 'ts', 'html', 'css'])
+    language!: string
+}
+
+router.post('/one-of', bindingCargo(OneOfExample), (req, res) => {
+    const cargo = getCargo<OneOfExample>(req)
     res.json(cargo)
 })
 
