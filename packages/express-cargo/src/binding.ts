@@ -47,7 +47,7 @@ function bindObject(
 
             if (value === undefined || value === null) {
                 if (meta.getOptional()) {
-                    targetObject[property] = undefined
+                    targetObject[property] = null
                 } else {
                     errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
                 }
@@ -71,7 +71,7 @@ function bindObject(
 
         if (value === undefined || value === null) {
             if (meta.getOptional()) {
-                targetObject[property] = undefined
+                targetObject[property] = null
                 continue
             } else {
                 errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
