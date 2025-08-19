@@ -61,6 +61,12 @@ title: 유효성 검사 데코레이터
 
 ---
 
+### `@isTrue()`
+
+주어진 값이 `true` 인지 확인합니다.
+
+---
+
 ### `@isFalse()`
 
 주어진 값이 `false` 인지 확인합니다.
@@ -72,6 +78,32 @@ title: 유효성 검사 데코레이터
 문자열의 길이가 지정된 값과 정확히 일치하는지 확인합니다.
 
 - **`value`**: 문자열 길이
+
+---
+
+### `@maxLength(value: number)`
+
+문자열의 길이가 지정된 최대값을 초과하지 않는지 확인합니다.
+
+- **`value`**: 허용되는 최대 문자 길이
+
+---
+
+### `@minLength(value: number)`
+
+문자열의 길이가 지정된 최소값 이상인지 확인합니다.
+
+- **`value`**: 허용되는 최소 문자 길이
+
+---
+
+### `@oneOf(values: any[])`
+
+입력 값이 지정된 값 중 하나인지 확인합니다.
+
+- **`values`**: 허용되는 값들의 배열
+
+---
 
 ### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
 

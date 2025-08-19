@@ -42,6 +42,10 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+### `@isTrue()`
+
+Validates that the decorated property is true.
+
 ### `@isFalse()`
 
 Validates that the decorated property is false.
@@ -51,6 +55,24 @@ Validates that the decorated property is false.
 Validates that the decorated string’s length is exactly the specified value.
 
 - **`value`**: The required exact length in characters
+
+### `@maxLength(value: number)`
+
+Validates that the decorated string’s length does not exceed the specified maximum.
+
+- **`value`**: The maximum allowed length in characters.
+
+### `@minLength(value: number)`
+
+Validates that the decorated string’s length is at least the specified minimum.
+
+- **`value`**: The minimum allowed length in characters.
+
+### `@oneOf(values: any[])`
+
+Validates that the input value is one of the specified values.
+
+- **`values`**: The array of allowed values.
 
 ### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
 
