@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isFalse } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -76,6 +76,17 @@ class SuffixExample {
 
 router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
     const cargo = getCargo<SuffixExample>(req)
+    res.json(cargo)
+})
+
+class IsTrueExample {
+    @body()
+    @isTrue()
+    booleanValue!: boolean
+}
+
+router.post('/is-true', bindingCargo(IsTrueExample), (req, res) => {
+    const cargo = getCargo<IsTrueExample>(req)
     res.json(cargo)
 })
 
