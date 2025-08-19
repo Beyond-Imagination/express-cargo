@@ -1,41 +1,41 @@
-import { maxLength } from '../../src/validator'
+import { length } from '../../src/validator'
 import { CargoClassMetadata } from '../../src/metadata'
 
-describe('maxLength decorator', () => {
+describe('length decorator', () => {
     class Sample {
-        @maxLength(5)
+        @length(5)
         stringText!: string
 
         noValidatorText!: string
 
-        @maxLength(3)
+        @length(3)
         notStringType!: any
     }
 
     const classMeta = new CargoClassMetadata(Sample.prototype)
 
-    it('should add maxLength validator to stringText', () => {
+    it('should add length validator to stringText', () => {
         const meta = classMeta.getFieldMetadata('stringText')
-        const validator = meta.getValidators()?.find(v => v.type === 'maxLength')
+        const validator = meta.getValidators()?.find(v => v.type === 'length')
 
         expect(validator).toBeDefined()
-        expect(validator?.message).toBe('stringText must not exceed 5 characters')
+        expect(validator?.message).toBe('stringText must be 5 characters')
 
-        expect(validator?.validate('abc')).toBe(true)
+        expect(validator?.validate('abc')).toBe(false)
         expect(validator?.validate('abcde')).toBe(true)
         expect(validator?.validate('abcdef')).toBe(false)
     })
 
     it('should not have validator on noValidatorText', () => {
         const meta = classMeta.getFieldMetadata('noValidatorText')
-        const validator = meta.getValidators()?.find(v => v.type === 'maxLength')
+        const validator = meta.getValidators()?.find(v => v.type === 'length')
 
         expect(validator).toBeUndefined()
     })
 
     it('should return false if value is not a string', () => {
         const meta = classMeta.getFieldMetadata('notStringType')
-        const validator = meta.getValidators()?.find(v => v.type === 'maxLength')
+        const validator = meta.getValidators()?.find(v => v.type === 'length')
 
         expect(validator).toBeDefined()
         expect(validator?.validate(123)).toBe(false)
