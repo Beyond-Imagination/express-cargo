@@ -1,5 +1,5 @@
 import express, { type Request, Router } from 'express'
-import { bindingCargo, getCargo, query, request, transform } from 'express-cargo'
+import { bindingCargo, body, getCargo, query, request, transform, virtual } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -35,6 +35,25 @@ router.post('/request', bindingCargo(RequestExample), (req, res) => {
 
     res.json({
         message: 'Header data mapped using @request',
+        data: cargo,
+    })
+})
+
+class VirtualExample {
+    @body()
+    price!: number
+
+    @body()
+    quantity!: number
+
+    @virtual((obj: VirtualExample) => obj.price * obj.quantity)
+    total!: number
+}
+
+router.post('/virtual', bindingCargo(VirtualExample), (req, res) => {
+    const cargo = getCargo<VirtualExample>(req)
+    res.json({
+        message: 'Order data processed with @virtual',
         data: cargo,
     })
 })
