@@ -42,6 +42,54 @@ Validates that the input value is strictly not equal (`!==`) to the specified va
 
 - **`value`**: The value to compare against.
 
+### `@isTrue()`
+
+Validates that the decorated property is true.
+
+### `@isFalse()`
+
+Validates that the decorated property is false.
+
+### `@length(value: number)`
+
+Validates that the decorated string’s length is exactly the specified value.
+
+- **`value`**: The required exact length in characters
+
+### `@maxLength(value: number)`
+
+Validates that the decorated string’s length does not exceed the specified maximum.
+
+- **`value`**: The maximum allowed length in characters.
+
+### `@minLength(value: number)`
+
+Validates that the decorated string’s length is at least the specified minimum.
+
+- **`value`**: The minimum allowed length in characters.
+
+### `@oneOf(values: any[])`
+
+Validates that the input value is one of the specified values.
+
+- **`values`**: The array of allowed values.
+
+### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
+
+Applies a custom validation function to the decorated field.
+This decorator provides flexibility to implement validation logic beyond the built-in ones.
+
+- **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+### `@regexp(pattern: RegExp, message?: string)`
+
+Validates that the decorated field matches the specified regular expression pattern.
+This decorator is useful for enforcing format rules such as email, phone numbers, etc.
+
+- **`pattern`**: A RegExp object used to test the field value. The value is valid if it matches the pattern.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.

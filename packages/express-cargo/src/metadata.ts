@@ -1,32 +1,129 @@
 import 'reflect-metadata'
+import type { Request } from 'express'
+import { Source, ValidatorRule } from './types'
 
-import { CargoFieldMetadata } from './types'
+export class CargoClassMetadata {
+    private target: any
 
-function getMetadataKey(propertyKey: string | symbol): string {
-    return `cargo:${String(propertyKey)}`
+    constructor(target: any) {
+        this.target = target
+    }
+
+    getMetadataKey(propertyKey: string | symbol): string {
+        return `cargo:${String(propertyKey)}`
+    }
+
+    getFieldKey() {
+        return `cargo:fields`
+    }
+
+    getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
+        const metadataKey = this.getMetadataKey(propertyKey)
+        return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
+    }
+
+    setFieldMetadata(propertyKey: string | symbol, meta: CargoFieldMetadata): void {
+        const metaKey = this.getMetadataKey(propertyKey)
+        Reflect.defineMetadata(metaKey, meta, this.target)
+    }
+
+    getFieldList(): (string | symbol)[] {
+        const fields = new Set<string | symbol>()
+        let current = this.target
+
+        while (current && current !== Object.prototype) {
+            const currentFields = Reflect.getMetadata(this.getFieldKey(), current) || []
+            currentFields.forEach((f: string | symbol) => fields.add(f))
+            current = Object.getPrototypeOf(current)
+        }
+
+        return Array.from(fields)
+    }
+
+    setFieldList(propertyKey: string | symbol) {
+        const existing = this.getFieldList()
+        if (!existing.includes(propertyKey)) {
+            Reflect.defineMetadata(this.getFieldKey(), [...existing, propertyKey], this.target)
+        }
+    }
 }
 
-function getFieldKey() {
-    return `cargo:fields`
-}
+export class CargoFieldMetadata {
+    readonly target: any
+    readonly type: any
+    private key: string | symbol
+    private source: Source
+    private optional: boolean
+    private validators: ValidatorRule[]
+    private transformer: ((value: any) => any) | undefined
+    private requestTransformer: ((req: Request) => any) | undefined
+    private virtualTransformer: ((obj: object) => any) | undefined
 
-export function getFieldMetadata(target: any, propertyKey: string | symbol): CargoFieldMetadata {
-    const metadataKey = getMetadataKey(propertyKey)
-    return Reflect.getMetadata(metadataKey, target) || { key: propertyKey, validators: [] }
-}
+    constructor(target: any, key: string | symbol) {
+        this.target = target
+        this.type = Reflect.getMetadata('design:type', target, key)
+        this.key = key
+        this.source = 'body'
+        this.validators = []
+        this.optional = false
+        this.transformer = undefined
+        this.requestTransformer = undefined
+        this.virtualTransformer = undefined
+    }
 
-export function setFieldMetadata(target: any, propertyKey: string | symbol, meta: CargoFieldMetadata): void {
-    const metaKey = getMetadataKey(propertyKey)
-    Reflect.defineMetadata(metaKey, meta, target)
-}
+    getKey(): string | symbol {
+        return this.key
+    }
 
-export function getFieldList(target: any): (string | symbol)[] {
-    return Reflect.getMetadata(getFieldKey(), target) || []
-}
+    setKey(key: string | symbol) {
+        this.key = key
+    }
 
-export function setFieldList(target: any, propertyKey: string | symbol) {
-    const existing = getFieldList(target)
-    if (!existing.includes(propertyKey)) {
-        Reflect.defineMetadata(getFieldKey(), [...existing, propertyKey], target)
+    getSource(): Source {
+        return this.source
+    }
+
+    setSource(source: Source): void {
+        this.source = source
+    }
+
+    getValidators(): ValidatorRule[] {
+        return this.validators
+    }
+
+    addValidator(rule: ValidatorRule): void {
+        this.validators.push(rule)
+    }
+
+    getOptional(): boolean {
+        return this.optional
+    }
+
+    setOptional(optional: boolean): void {
+        this.optional = optional
+    }
+
+    getTransformer(): ((value: any) => any) | undefined {
+        return this.transformer
+    }
+
+    setTransformer(transformer: (value: any) => any): void {
+        this.transformer = transformer
+    }
+
+    getRequestTransformer(): ((req: Request) => any) | undefined {
+        return this.requestTransformer
+    }
+
+    setRequestTransformer(transformer: (req: Request) => any): void {
+        this.requestTransformer = transformer
+    }
+
+    getVirtualTransformer(): ((...value: any[]) => any) | undefined {
+        return this.virtualTransformer
+    }
+
+    setVirtualTransformer(transformer: (...value: any[]) => any): void {
+        this.virtualTransformer = transformer
     }
 }

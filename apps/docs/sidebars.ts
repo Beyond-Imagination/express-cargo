@@ -30,6 +30,7 @@ const sidebars: SidebarsConfig = {
                 'decorators/overview',
                 'decorators/source-decorators',
                 'decorators/virtual',
+                'decorators/transforms',
                 'decorators/validators',
             ],
         },
@@ -37,6 +38,7 @@ const sidebars: SidebarsConfig = {
             type: 'category',
             label: 'Advanced Usage',
             items: [
+                'advanced/inherited-binding',
                 'advanced/nested-binding',
                 'advanced/custom-transformer',
             ],

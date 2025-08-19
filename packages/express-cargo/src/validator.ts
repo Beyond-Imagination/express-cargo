@@ -1,11 +1,11 @@
 import { ValidatorRule } from './types'
-import { getFieldMetadata, setFieldMetadata } from './metadata'
+import { CargoClassMetadata } from './metadata'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
-    const meta = getFieldMetadata(target, propertyKey)
-    meta.validators = meta.validators || []
-    meta.validators.push(rule)
-    setFieldMetadata(target, propertyKey, meta)
+    const classMeta = new CargoClassMetadata(target)
+    const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+    fieldMeta.addValidator(rule)
+    classMeta.setFieldMetadata(propertyKey, fieldMeta)
 }
 
 export function min(minimum: number): PropertyDecorator {
@@ -69,11 +69,95 @@ export function notEqual(value: any): PropertyDecorator {
 }
 
 export function range(min: number, max: number): PropertyDecorator {
-  return (target, propertyKey) => {
-    addValidator(target, propertyKey, {
-      type: 'range',
+    return (target, propertyKey) => {
+        addValidator(target, propertyKey, {
+            type: 'range',
             validate: (value: any) => typeof value === 'number' && value >= min && value <= max,
-      message: `${String(propertyKey)} must be between ${min} and ${max}`,
-    });
-  };
+            message: `${String(propertyKey)} must be between ${min} and ${max}`,
+        })
+    }
+}
+
+export function isFalse(): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'isFalse',
+            validate: val => val === false,
+            message: `${String(propertyKey)} must be false`,
+        })
+    }
+}
+
+export function isTrue(): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'isTrue',
+            validate: val => val === true,
+            message: `${String(propertyKey)} must be true`,
+        })
+    }
+}
+
+export function length(value: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'length',
+            validate: (val: any) => typeof val === 'string' && val.length === value,
+            message: `${String(propertyKey)} must be ${value} characters`,
+        })
+    }
+}
+
+export function maxLength(max: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'maxLength',
+            validate: (val: any) => typeof val === 'string' && val.length <= max,
+            message: `${String(propertyKey)} must not exceed ${max} characters`,
+        })
+    }
+}
+
+export function minLength(min: number): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'minLength',
+            validate: (val: any) => typeof val === 'string' && val.length >= min,
+            message: `${String(propertyKey)} must be at least ${min} characters`,
+        })
+    }
+}
+
+/**
+ * 속성 값이 주어진 값들 중 하나인지 확인합니다.
+ * @param options 허용되는 값의 배열.
+ */
+export function oneOf<T extends readonly any[]>(options: T): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'oneOf',
+            validate: (value: unknown): value is T[number] => options.includes(value as T[number]),
+            message: `${String(propertyKey)} must be one of ${options.join(', ')}`,
+        })
+    }
+}
+
+export function validate(validateFn: (value: unknown) => boolean, message?: string): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'validate',
+            validate: validateFn,
+            message: message || `${String(propertyKey)} did not pass the provided validation rule.`,
+        })
+    }
+}
+
+export function regexp(pattern: RegExp, message?: string): PropertyDecorator {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(target, propertyKey, {
+            type: 'regexp',
+            validate: (value: unknown) => typeof value === 'string' && pattern.test(value),
+            message: message || `${String(propertyKey)} does not match pattern ${pattern}`,
+        })
+    }
 }

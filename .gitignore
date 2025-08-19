@@ -1,7 +1,10 @@
-.idea
-node_modules
-dist
 .DS_Store
 
-*.log
+.idea
 .vscode
+.vercel
+
+node_modules
+dist
+
+*.log

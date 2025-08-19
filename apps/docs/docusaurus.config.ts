@@ -3,6 +3,7 @@ import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+const isVercel = process.env.VERCEL === '1'
 
 const config: Config = {
     title: 'express-cargo',
@@ -15,10 +16,10 @@ const config: Config = {
     },
 
     // Set the production url of your site here
-    url: 'https://beyond-imagination.github.io',
+    url: isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/express-cargo/',
+    baseUrl: isVercel ? '/' : '/express-cargo/',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
@@ -96,35 +97,25 @@ const config: Config = {
                     title: 'Docs',
                     items: [
                         {
-                            label: 'Docs',
-                            to: '/',
-                        },
-                    ],
-                },
-                {
-                    title: 'Community',
-                    items: [
-                        {
-                            label: 'Stack Overflow',
-                            href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                            label: 'Getting Started',
+                            to: '/intro',
                         },
                         {
-                            label: 'Discord',
-                            href: 'https://discordapp.com/invite/docusaurus',
+                            label: 'Core Concepts',
+                            to: '/decorators/overview',
                         },
                         {
-                            label: 'X',
-                            href: 'https://x.com/docusaurus',
+                            label: 'Examples',
+                            to: '/examples/basic-usage',
                         },
                     ],
                 },
                 {
                     title: 'More',
                     items: [
-
                         {
                             label: 'GitHub',
-                            href: 'https://github.com/facebook/docusaurus',
+                            href: 'https://github.com/Beyond-Imagination/express-cargo',
                         },
                     ],
                 },

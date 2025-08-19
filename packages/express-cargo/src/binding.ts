@@ -1,66 +1,147 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldError, CargoFieldMetadata, CargoValidationError } from './types'
-import { getFieldMetadata, getFieldList } from './metadata'
+import { CargoFieldError, CargoValidationError, CargoTransformFieldError } from './types'
+import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
+
+function getErrorKey(sourceKey: string, currentKey: string): string {
+    return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
+}
+
+function bindObject(
+    objectClass: any,
+    sources: { req: Request; body: any; query: any; uri: any; header: any; session: any },
+    errors: CargoFieldError[],
+    sourceKey: string = '',
+): any {
+    const metaClass = new CargoClassMetadata(objectClass.prototype)
+    const targetObject = new objectClass()
+    const fields = metaClass.getFieldList()
+    const virtualFields: (string | symbol)[] = []
+
+    for (const property of fields) {
+        const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
+        if (!meta) continue
+
+        let value
+        const metaKey = meta.getKey()
+        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+
+        if (!key) {
+            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
+            continue
+        }
+
+        const requestTransformer = meta.getRequestTransformer()
+        if (requestTransformer) {
+            try {
+                value = requestTransformer(sources.req)
+            } catch (error) {
+                errors.push(
+                    new CargoTransformFieldError(
+                        property,
+                        `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
+                    ),
+                )
+                continue
+            }
+
+            if (value === undefined || value === null) {
+                if (meta.getOptional()) {
+                    targetObject[property] = null
+                } else {
+                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+                }
+            } else {
+                targetObject[property] = value
+            }
+            continue
+        }
+
+        if (meta.getVirtualTransformer()) {
+            virtualFields.push(property)
+            continue
+        }
+
+        const currentSource = meta.getSource()
+        const currentSourceData = sources[currentSource as keyof typeof sources]
+
+        if (currentSourceData) {
+            value = currentSourceData[key]
+        }
+
+        if (value === undefined || value === null) {
+            if (meta.getOptional()) {
+                targetObject[property] = null
+                continue
+            } else {
+                errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+                continue
+            }
+        }
+
+        switch (meta.type) {
+            case String:
+                targetObject[property] = String(value)
+                break
+            case Number:
+                targetObject[property] = isNaN(Number(value)) ? value : Number(value)
+                break
+            case Boolean:
+                targetObject[property] = value === true || value === 'true'
+                break
+            case Date:
+                targetObject[property] = new Date(value)
+                break
+            default: {
+                const nextSources = { ...sources, [currentSource]: value }
+                targetObject[property] = bindObject(meta.type, nextSources, errors, getErrorKey(sourceKey, key))
+                break
+            }
+        }
+
+        const transformer = meta.getTransformer()
+        if (transformer) {
+            targetObject[property] = transformer(targetObject[property])
+        }
+
+        for (const rule of meta.getValidators()) {
+            if (!rule.validate(value)) {
+                errors.push(new CargoFieldError(key, rule.message))
+            }
+        }
+    }
+
+    for (const property of virtualFields) {
+        const meta = metaClass.getFieldMetadata(property)
+        const transformer = meta.getVirtualTransformer()
+        try {
+            targetObject[property] = transformer!(targetObject)
+        } catch (error) {
+            errors.push(
+                new CargoTransformFieldError(
+                    property,
+                    `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
+                ),
+            )
+        }
+    }
+
+    return targetObject
+}
 
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
     return (req, res, next) => {
         try {
-            const cargo = new cargoClass() as any
-            const prototype = cargoClass.prototype
             const errors: CargoFieldError[] = []
-
-            const fields = getFieldList(prototype)
-            for (const property of fields) {
-                const meta: CargoFieldMetadata = getFieldMetadata(prototype, property)
-                if (!meta) continue
-
-                if (meta.source) {
-                    let value
-                    const key = typeof meta.key === 'string' ? meta.key : meta.key.description
-
-                    if (!key) {
-                        errors.push(new CargoFieldError(key!, 'empty string or symbol is not allowed'))
-                        continue
-                    }
-
-                    switch (meta.source) {
-                        case 'body':
-                            value = req.body?.[key]
-                            break
-                        case 'query':
-                            value = req.query?.[key]
-                            break
-                        case 'uri':
-                            value = req.params?.[key]
-                            break
-                        case 'header':
-                            value = req.headers?.[String(key).toLowerCase()]
-                            break
-                        case 'session':
-                            value = (req as any).session?.[key]
-                            break
-                    }
-
-                    if (value === undefined || value === null) {
-                        if (meta.optional) {
-                            cargo[property] = undefined;
-                            continue; 
-                        } else {
-                            errors.push(new CargoFieldError(key, `${key} is required`));
-                            continue; 
-                        }
-                    }
-
-                    for (const rule of meta.validators) {
-                        if (!rule.validate(value)) {
-                            errors.push(new CargoFieldError(key, rule.message))
-                        }
-                    }
-
-                    cargo[property] = value
-                }
+            const sources = {
+                req: req,
+                body: req.body,
+                query: req.query,
+                uri: req.params,
+                header: req.headers,
+                session: (req as any).session,
             }
+            const cargo = bindObject(cargoClass, sources, errors)
 
             if (errors.length > 0) {
                 throw new CargoValidationError(errors)

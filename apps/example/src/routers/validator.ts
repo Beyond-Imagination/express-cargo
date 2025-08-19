@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength, minLength, length, validate, regexp } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -76,6 +76,94 @@ class SuffixExample {
 
 router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
     const cargo = getCargo<SuffixExample>(req)
+    res.json(cargo)
+})
+
+class IsTrueExample {
+    @body()
+    @isTrue()
+    booleanValue!: boolean
+}
+
+router.post('/is-true', bindingCargo(IsTrueExample), (req, res) => {
+    const cargo = getCargo<IsTrueExample>(req)
+    res.json(cargo)
+})
+
+class IsFalseExample {
+    @body()
+    @isFalse()
+    booleanValue!: boolean
+}
+
+router.post('/is-false', bindingCargo(IsFalseExample), (req, res) => {
+    const cargo = getCargo<IsFalseExample>(req)
+    res.json(cargo)
+})
+
+class OneOfExample {
+    @body()
+    @oneOf(['js', 'ts', 'html', 'css'])
+    language!: string
+}
+
+router.post('/one-of', bindingCargo(OneOfExample), (req, res) => {
+    const cargo = getCargo<OneOfExample>(req)
+    res.json(cargo)
+})
+
+class MaxLengthExample {
+    @body()
+    @maxLength(5)
+    name!: string
+}
+
+router.post('/max-length', bindingCargo(MaxLengthExample), (req, res) => {
+    const cargo = getCargo<MaxLengthExample>(req)
+    res.json(cargo)
+})
+
+class MinLengthExample {
+    @body()
+    @minLength(2)
+    name!: string
+}
+
+router.post('/min-length', bindingCargo(MinLengthExample), (req, res) => {
+    const cargo = getCargo<MinLengthExample>(req)
+    res.json(cargo)
+})
+
+class LengthExample {
+    @body()
+    @length(2)
+    name!: string
+}
+
+router.post('/length', bindingCargo(LengthExample), (req, res) => {
+    const cargo = getCargo<LengthExample>(req)
+    res.json(cargo)
+})
+
+class ValidateExample {
+    @body()
+    @validate(email => (email as string).split('@').length === 2)
+    email!: string
+}
+
+router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
+    const cargo = getCargo<ValidateExample>(req)
+    res.json(cargo)
+})
+
+class RegexpExample {
+    @body()
+    @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
+    phone!: string
+}
+
+router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
+    const cargo = getCargo<RegexpExample>(req)
     res.json(cargo)
 })
 
