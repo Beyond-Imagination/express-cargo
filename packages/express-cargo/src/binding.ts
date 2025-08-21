@@ -105,7 +105,7 @@ function bindObject(
         }
 
         for (const rule of meta.getValidators()) {
-            if (!rule.validate(value)) {
+            if (!rule.validate(targetObject[property])) {
                 errors.push(new CargoFieldError(key, rule.message))
             }
         }
