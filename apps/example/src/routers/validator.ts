@@ -15,14 +15,6 @@ class EqualExample {
     @body()
     @equal(true)
     boolean!: boolean
-
-    @body()
-    @equal(null)
-    nullValue!: null
-
-    @body()
-    @equal(undefined)
-    undefinedValue!: undefined
 }
 
 router.post('/equal', bindingCargo(EqualExample), (req, res) => {
@@ -42,14 +34,6 @@ class NotEqualExample {
     @body()
     @notEqual(true)
     boolean!: boolean
-
-    @body()
-    @notEqual(null)
-    nullValue!: null
-
-    @body()
-    @notEqual(undefined)
-    undefinedValue!: undefined
 }
 
 router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
