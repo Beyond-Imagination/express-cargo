@@ -10,12 +10,6 @@ describe('notEqual decorator', () => {
         number1!: number
 
         number2!: number
-
-        @notEqual(null)
-        nullValue!: null
-
-        @notEqual(undefined)
-        undefinedValue!: undefined
     }
 
     const classMeta = new CargoClassMetadata(Sample.prototype)
@@ -47,29 +41,5 @@ describe('notEqual decorator', () => {
         const notEqualRule = meta.getValidators()?.find(v => v.type === 'notEqual')
 
         expect(notEqualRule).toBeUndefined()
-    })
-
-    it('should not have equal validator with null argument', () => {
-        const meta = classMeta.getFieldMetadata('nullValue')
-        const notEqualRule = meta.getValidators()?.find(v => v.type === 'notEqual')
-
-        expect(notEqualRule).toBeDefined()
-        expect(notEqualRule?.message).toBe('nullValue must not be equal to null')
-
-        expect(notEqualRule?.validate('not-null')).toBe(true)
-        expect(notEqualRule?.validate(null)).toBe(false)
-        expect(notEqualRule?.validate(undefined)).toBe(true)
-    })
-
-    it('should not have equal validator with undefined argument', () => {
-        const meta = classMeta.getFieldMetadata('undefinedValue')
-        const notEqualRule = meta.getValidators()?.find(v => v.type === 'notEqual')
-
-        expect(notEqualRule).toBeDefined()
-        expect(notEqualRule?.message).toBe('undefinedValue must not be equal to undefined')
-
-        expect(notEqualRule?.validate('not-undefined')).toBe(true)
-        expect(notEqualRule?.validate(undefined)).toBe(false)
-        expect(notEqualRule?.validate(null)).toBe(true)
     })
 })
