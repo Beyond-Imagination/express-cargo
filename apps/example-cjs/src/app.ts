@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import cargo = require('express-cargo')
-const { bindingCargo, getCargo, body, query, header, uri, min, max, equal, notEqual, prefix, suffix } = cargo
+const { bindingCargo, getCargo, body, query, header, params, min, max, equal, notEqual, prefix, suffix } = cargo
 
 const app = express()
 
@@ -24,7 +24,7 @@ class ExampleRequest {
     @prefix('Bearer ')
     token!: string
 
-    @uri()
+    @params()
     @equal('1')
     id!: string
 }
