@@ -16,6 +16,7 @@ function createSourceDecorator(source: Source) {
 
 export const body = createSourceDecorator('body')
 export const query = createSourceDecorator('query')
-export const uri = createSourceDecorator('uri')
+export const params = createSourceDecorator('params')
+export const uri = params
 export const header = createSourceDecorator('header')
 export const session = createSourceDecorator('session')

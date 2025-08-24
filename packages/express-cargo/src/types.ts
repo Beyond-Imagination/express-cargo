@@ -1,4 +1,4 @@
-export type Source = 'body' | 'query' | 'uri' | 'header' | 'session'
+export type Source = 'body' | 'query' | 'params' | 'header' | 'session'
 
 type ValidatorFunction = (value: any) => boolean
 export type ValidatorRule = {

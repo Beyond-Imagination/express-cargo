@@ -9,7 +9,7 @@ function getErrorKey(sourceKey: string, currentKey: string): string {
 
 function bindObject(
     objectClass: any,
-    sources: { req: Request; body: any; query: any; uri: any; header: any; session: any },
+    sources: { req: Request; body: any; query: any; params: any; header: any; session: any },
     errors: CargoFieldError[],
     sourceKey: string = '',
 ): any {
@@ -137,7 +137,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 req: req,
                 body: req.body,
                 query: req.query,
-                uri: req.params,
+                params: req.params,
                 header: req.headers,
                 session: (req as any).session,
             }
