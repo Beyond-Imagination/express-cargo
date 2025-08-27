@@ -18,7 +18,7 @@ It provides class-based decorators and binding features to simplify complex requ
 |--------------|----------------------------------|-----------------------------|
 | `@body()`    | Binds a field from `req.body`    | `@body() name: string`      |
 | `@query()`   | Binds a field from `req.query`   | `@query() page: number`     |
-| `@params()`  | Binds a field from `req.params`  | `@param() id: string`       |
+| `@params()`  | Binds a field from `req.params`  | `@params() id: string`      |
 | `@uri()`     | alias of @params()               | `@uri() id: string`         |
 | `@header()`  | Binds a field from `req.headers` | `@header() token: string`   |
 | `@session()` | Binds a field from `req.session` | `@session() userId: string` |
