@@ -3,6 +3,8 @@ name: Call Notion Sync
 on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
+    branches:
+      - develop
 
 jobs:
   call-notion-sync:
