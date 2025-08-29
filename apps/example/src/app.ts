@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import sourceRouter from './routers/source'
 import validatorRouter from './routers/validator'
 import transformRouter from './routers/transform'
+import classFieldInheritanceRouter from './routers/classFieldInheritance'
 import { CargoValidationError } from 'express-cargo'
 
 const app = express()
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(sourceRouter)
 app.use(validatorRouter)
 app.use(transformRouter)
+app.use(classFieldInheritanceRouter)
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof CargoValidationError) {
