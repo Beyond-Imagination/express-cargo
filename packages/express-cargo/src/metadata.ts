@@ -13,8 +13,16 @@ export class CargoClassMetadata {
         return `cargo:${String(propertyKey)}`
     }
 
-    getFieldKey() {
+    getFieldKey(): string {
         return `cargo:fields`
+    }
+
+    getRequestFieldKey(): string {
+        return 'cargo:requestFields'
+    }
+
+    getVirtualFieldKey(): string {
+        return 'cargo:virtualFields'
     }
 
     getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
@@ -27,12 +35,12 @@ export class CargoClassMetadata {
         Reflect.defineMetadata(metaKey, meta, this.target)
     }
 
-    getFieldList(): (string | symbol)[] {
+    private getFieldListByKey(metadataKey: string): (string | symbol)[] {
         const fields = new Set<string | symbol>()
         let current = this.target
 
         while (current && current !== Object.prototype) {
-            const currentFields = Reflect.getMetadata(this.getFieldKey(), current) || []
+            const currentFields = Reflect.getMetadata(metadataKey, current) || []
             currentFields.forEach((f: string | symbol) => fields.add(f))
             current = Object.getPrototypeOf(current)
         }
@@ -40,11 +48,35 @@ export class CargoClassMetadata {
         return Array.from(fields)
     }
 
-    setFieldList(propertyKey: string | symbol) {
-        const existing = this.getFieldList()
+    private setFieldListByKey(metadataKey: string, propertyKey: string | symbol): void {
+        const existing = this.getFieldListByKey(metadataKey)
         if (!existing.includes(propertyKey)) {
-            Reflect.defineMetadata(this.getFieldKey(), [...existing, propertyKey], this.target)
+            Reflect.defineMetadata(metadataKey, [...existing, propertyKey], this.target)
         }
+    }
+
+    getFieldList(): (string | symbol)[] {
+        return this.getFieldListByKey(this.getFieldKey())
+    }
+
+    setFieldList(propertyKey: string | symbol): void {
+        this.setFieldListByKey(this.getFieldKey(), propertyKey)
+    }
+
+    getRequestFieldList(): (string | symbol)[] {
+        return this.getFieldListByKey(this.getRequestFieldKey())
+    }
+
+    setRequestFieldList(propertyKey: string | symbol): void {
+        this.setFieldListByKey(this.getRequestFieldKey(), propertyKey)
+    }
+
+    getVirtualFieldList(): (string | symbol)[] {
+        return this.getFieldListByKey(this.getVirtualFieldKey())
+    }
+
+    setVirtualFieldList(propertyKey: string | symbol): void {
+        this.setFieldListByKey(this.getVirtualFieldKey(), propertyKey)
     }
 }
 

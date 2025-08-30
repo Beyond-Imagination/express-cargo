@@ -17,7 +17,7 @@ export function request<T>(transformer: (req: Request) => T): PropertyDecorator 
 
         fieldMeta.setRequestTransformer(transformer)
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
-        classMeta.setFieldList(propertyKey)
+        classMeta.setRequestFieldList(propertyKey)
     }
 }
 
@@ -28,6 +28,6 @@ export function virtual<T>(transformer: (obj: object) => T): PropertyDecorator {
 
         fieldMeta.setVirtualTransformer(transformer)
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
-        classMeta.setFieldList(propertyKey)
+        classMeta.setVirtualFieldList(propertyKey)
     }
 }
