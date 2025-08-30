@@ -20,7 +20,8 @@
         "build:esm": "swc src -d dist/esm --config-file .swcrc.esm.json",
         "clean": "rimraf dist",
         "lint": "eslint src --ext .ts",
-        "test": "jest"
+        "test": "jest",
+        "prepublishOnly": "cp ../../README.md ./README.md"
     },
     "keywords": [
         "express",
