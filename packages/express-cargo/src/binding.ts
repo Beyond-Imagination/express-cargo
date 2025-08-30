@@ -16,9 +16,11 @@ function bindObject(
     const metaClass = new CargoClassMetadata(objectClass.prototype)
     const targetObject = new objectClass()
     const fields = metaClass.getFieldList()
-    const virtualFields: (string | symbol)[] = []
+    const requestFields = metaClass.getRequestFieldList()
+    const virtualFields = metaClass.getVirtualFieldList()
 
-    for (const property of fields) {
+    // request transform
+    for (const property of requestFields) {
         const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
         if (!meta) continue
 
@@ -32,19 +34,13 @@ function bindObject(
         }
 
         const requestTransformer = meta.getRequestTransformer()
-        if (requestTransformer) {
-            try {
-                value = requestTransformer(sources.req)
-            } catch (error) {
-                errors.push(
-                    new CargoTransformFieldError(
-                        property,
-                        `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
-                    ),
-                )
-                continue
-            }
+        if (!requestTransformer) {
+            errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
+            continue
+        }
 
+        try {
+            value = requestTransformer(sources.req)
             if (value === undefined || value === null) {
                 if (meta.getOptional()) {
                     targetObject[property] = null
@@ -54,11 +50,32 @@ function bindObject(
             } else {
                 targetObject[property] = value
             }
-            continue
+            for (const rule of meta.getValidators()) {
+                if (!rule.validate(targetObject[property])) {
+                    errors.push(new CargoFieldError(key, rule.message))
+                }
+            }
+        } catch (error) {
+            errors.push(
+                new CargoTransformFieldError(
+                    property,
+                    `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
+                ),
+            )
         }
+    }
 
-        if (meta.getVirtualTransformer()) {
-            virtualFields.push(property)
+    // source decorator parsing
+    for (const property of fields) {
+        const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
+        if (!meta) continue
+
+        let value
+        const metaKey = meta.getKey()
+        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+
+        if (!key) {
+            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
             continue
         }
 
@@ -111,11 +128,42 @@ function bindObject(
         }
     }
 
+    // virtual transform
     for (const property of virtualFields) {
         const meta = metaClass.getFieldMetadata(property)
-        const transformer = meta.getVirtualTransformer()
+        if (!meta) continue
+
+        let value
+        const metaKey = meta.getKey()
+        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+
+        if (!key) {
+            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
+            continue
+        }
+
+        const virtualTransformer = meta.getVirtualTransformer()
+        if (!virtualTransformer) {
+            errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
+            continue
+        }
+
         try {
-            targetObject[property] = transformer!(targetObject)
+            value = virtualTransformer(targetObject)
+            if (value === undefined || value === null) {
+                if (meta.getOptional()) {
+                    targetObject[property] = null
+                } else {
+                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+                }
+            } else {
+                targetObject[property] = value
+            }
+            for (const rule of meta.getValidators()) {
+                if (!rule.validate(targetObject[property])) {
+                    errors.push(new CargoFieldError(key, rule.message))
+                }
+            }
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
