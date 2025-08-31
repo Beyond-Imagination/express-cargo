@@ -3,6 +3,7 @@ import sourceRouter from './routers/source'
 import validatorRouter from './routers/validator'
 import transformRouter from './routers/transform'
 import { cargoErrorMiddleware } from 'express-cargo'
+import './errors/cargoErrorHandler'
 
 const app = express()
 
