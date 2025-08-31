@@ -1,8 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import sourceRouter from './routers/source'
 import validatorRouter from './routers/validator'
 import transformRouter from './routers/transform'
-import { CargoValidationError } from 'express-cargo'
+import { cargoErrorMiddleware } from 'express-cargo'
 
 const app = express()
 
@@ -14,20 +14,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(sourceRouter)
 app.use(validatorRouter)
 app.use(transformRouter)
-
-app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof CargoValidationError) {
-        return res.status(400).json({
-            message: err.message,
-            errors: err.errors.map(e => ({
-                name: e.name,
-                message: e.message,
-            })),
-        })
-    }
-    return res.status(500).json({
-        message: 'Internal Server Error',
-    })
-})
+app.use(cargoErrorMiddleware)
 
 app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
