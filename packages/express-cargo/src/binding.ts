@@ -2,6 +2,7 @@ import type { Request, RequestHandler } from 'express'
 
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
+import { getCargoErrorHandler } from './errorHandler'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
@@ -150,6 +151,12 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
             req._cargo = cargo
             next()
         } catch (err) {
+            if (err instanceof CargoValidationError) {
+                const handler = getCargoErrorHandler()
+                if (handler) {
+                    return handler(err, req, res, next)
+                }
+            }
             next(err)
         }
     }
