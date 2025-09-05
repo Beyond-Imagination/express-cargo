@@ -1,9 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import sourceRouter from './routers/source'
 import validatorRouter from './routers/validator'
 import transformRouter from './routers/transform'
 import classFieldInheritanceRouter from './routers/classFieldInheritance'
-import { CargoValidationError } from 'express-cargo'
+import './errors/cargoErrorHandler'
 
 const app = express()
 
@@ -16,20 +16,5 @@ app.use(sourceRouter)
 app.use(validatorRouter)
 app.use(transformRouter)
 app.use(classFieldInheritanceRouter)
-
-app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof CargoValidationError) {
-        return res.status(400).json({
-            message: err.message,
-            errors: err.errors.map(e => ({
-                name: e.name,
-                message: e.message,
-            })),
-        })
-    }
-    return res.status(500).json({
-        message: 'Internal Server Error',
-    })
-})
 
 app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
