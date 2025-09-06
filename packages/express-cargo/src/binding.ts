@@ -14,6 +14,9 @@ function bindObject(
     sourceKey: string = '',
 ): any {
     const metaClass = new CargoClassMetadata(objectClass.prototype)
+
+    metaClass.markBindingCargoCalled()
+
     const targetObject = new objectClass()
     const fields = metaClass.getFieldList()
     const virtualFields: (string | symbol)[] = []

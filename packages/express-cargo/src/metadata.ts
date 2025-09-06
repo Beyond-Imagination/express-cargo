@@ -4,6 +4,7 @@ import { Source, ValidatorRule } from './types'
 
 export class CargoClassMetadata {
     private target: any
+    private bindingCargoCalled: boolean = false
 
     constructor(target: any) {
         this.target = target
@@ -17,6 +18,10 @@ export class CargoClassMetadata {
         return `cargo:fields`
     }
 
+    markBindingCargoCalled() {
+        this.bindingCargoCalled = true
+    }
+
     getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
         const metadataKey = this.getMetadataKey(propertyKey)
         return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
@@ -28,22 +33,39 @@ export class CargoClassMetadata {
     }
 
     getFieldList(): (string | symbol)[] {
+        const cacheKey = `cargo:fields:cache`
+
+        if (this.bindingCargoCalled) {
+            const cached = Reflect.getMetadata(cacheKey, this.target)
+            if (cached) {
+                return cached
+            }
+        }
+
         const fields = new Set<string | symbol>()
         let current = this.target
-
         while (current && current !== Object.prototype) {
             const currentFields = Reflect.getMetadata(this.getFieldKey(), current) || []
             currentFields.forEach((f: string | symbol) => fields.add(f))
             current = Object.getPrototypeOf(current)
         }
 
-        return Array.from(fields)
+        const fieldList = Array.from(fields)
+
+        if (this.bindingCargoCalled) {
+            Reflect.defineMetadata(cacheKey, fieldList, this.target)
+        }
+
+        return fieldList
     }
 
     setFieldList(propertyKey: string | symbol) {
         const existing = this.getFieldList()
         if (!existing.includes(propertyKey)) {
             Reflect.defineMetadata(this.getFieldKey(), [...existing, propertyKey], this.target)
+
+            const cacheKey = `cargo:fields:cache`
+            Reflect.deleteMetadata(cacheKey, this.target)
         }
     }
 }
