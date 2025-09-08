@@ -52,7 +52,6 @@ export class CargoClassMetadata {
 
         const fields = new Set<string | symbol>()
         let current = this.target
-
         while (current && current !== Object.prototype) {
             const currentFields = Reflect.getMetadata(metadataKey, current) || []
             currentFields.forEach((f: string | symbol) => fields.add(f))
