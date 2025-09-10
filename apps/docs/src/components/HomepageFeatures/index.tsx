@@ -1,54 +1,45 @@
+import Translate from '@docusaurus/Translate';
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 type FeatureItem = {
-  title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  title: ReactNode;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: <Translate id="theme.homepage.feature.declarative.title">Declarative Data Binding</Translate>,
     description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
-      </>
+      <Translate id="theme.homepage.feature.declarative.description">
+        Effortlessly bind request data (body, query, params) to class instances using intuitive decorators, ensuring clean and focused routing logic.
+      </Translate>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: <Translate id="theme.homepage.feature.validation.title">Robust Data Validation</Translate>,
     description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
-      </>
+      <Translate id="theme.homepage.feature.validation.description">
+        Utilize a rich set of built-in decorators for effortless data validation, ensuring integrity before processing.
+      </Translate>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: <Translate id="theme.homepage.feature.typeSafe.title">Type-Safe & Extensible</Translate>,
     description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
+      <Translate id="theme.homepage.feature.typeSafe.description">
+        Built with TypeScript for full type safety, allowing you to extend the library with custom decorators and transformers.
+      </Translate>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
+      <div className="padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>
