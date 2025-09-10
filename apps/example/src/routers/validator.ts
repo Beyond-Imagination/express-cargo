@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength, minLength, length, validate, regexp } from 'express-cargo'
+import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength, minLength, length, validate, regexp, email } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -148,6 +148,17 @@ class RegexpExample {
 
 router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
     const cargo = getCargo<RegexpExample>(req)
+    res.json(cargo)
+})
+
+class EmailExample {
+    @body()
+    @email()
+    email!: string
+}
+
+router.post('/email', bindingCargo(EmailExample), (req, res) => {
+    const cargo = getCargo<EmailExample>(req)
     res.json(cargo)
 })
 
