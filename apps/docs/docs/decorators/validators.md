@@ -90,6 +90,10 @@ This decorator is useful for enforcing format rules such as email, phone numbers
 - **`pattern`**: A RegExp object used to test the field value. The value is valid if it matches the pattern.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@email()`
+
+Validates that the decorated property is a valid email address.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
