@@ -164,12 +164,11 @@ export function regexp(pattern: RegExp, message?: string): PropertyDecorator {
 
 export function email(): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
+        const DEFAULT_EMAIL_PATTERN =
+            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
         addValidator(target, propertyKey, {
             type: 'email',
-            validate: (value: unknown) => {
-                const DEFAULT_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                return typeof value === 'string' && DEFAULT_EMAIL_PATTERN.test(value)
-            },
+            validate: (value: unknown) => typeof value === 'string' && DEFAULT_EMAIL_PATTERN.test(value),
             message: `${String(propertyKey)} should be email format`,
         })
     }
