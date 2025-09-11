@@ -1,7 +1,7 @@
 name: Deploy Docs to GitHub Pages
 
 on:
-    create:
+    push:
         tags:
             - '*'
 
