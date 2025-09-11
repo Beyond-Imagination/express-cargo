@@ -10,9 +10,7 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
 import styles from './index.module.css';
 
-function TwoColumnLayout() {
-    const { siteConfig } = useDocusaurusContext();
-    const quickStartCode = `import express from 'express';
+const quickStartCode = `import express from 'express';
 import { body, bindingCargo, getCargo } from 'express-cargo';
 
 const app = express();
@@ -34,6 +32,10 @@ app.post('/sum', bindingCargo(SumRequest), (req, res) => {
 
 app.listen(3000);
 `;
+
+function TwoColumnLayout() {
+    const { siteConfig } = useDocusaurusContext();
+
 
     return (
         <div className={clsx('container', styles.pageContainer)}>
