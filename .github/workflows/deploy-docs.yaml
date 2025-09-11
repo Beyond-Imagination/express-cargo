@@ -1,12 +1,9 @@
 name: Deploy Docs to GitHub Pages
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - 'apps/docs/**'
-            - '.github/workflows/deploy-docs.yaml'
+    create:
+        tags:
+            - '*'
 
 jobs:
     build:

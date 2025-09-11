@@ -1,11 +1,9 @@
 name: Deploy to NPM
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - 'packages/express-cargo/**'
+    create:
+        tags:
+            - '*'
 
 jobs:
     publish:
