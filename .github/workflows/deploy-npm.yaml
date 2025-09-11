@@ -2,10 +2,11 @@ name: Deploy to NPM
 
 on:
     push:
-        branches:
-            - main
-        paths:
-            - 'packages/express-cargo/**'
+        tags:
+            - 'v*.*.*'
+    create:
+        tags:
+            - 'v*.*.*'
 
 jobs:
     publish:
