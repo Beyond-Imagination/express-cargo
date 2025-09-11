@@ -7,7 +7,7 @@ const isVercel = process.env.VERCEL === '1'
 
 const config: Config = {
     title: 'express-cargo',
-    tagline: 'Dinosaurs are cool',
+    tagline: 'Declarative, decorator-driven request data handling for Express.js.',
     favicon: 'img/favicon.ico',
 
     // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -69,7 +69,7 @@ const config: Config = {
             title: 'express-cargo',
             logo: {
                 alt: 'My Site Logo',
-                src: 'img/logo.svg',
+                src: 'img/logo.png',
             },
             items: [
                 {
@@ -84,14 +84,14 @@ const config: Config = {
                 },
                 // {to: '/blog', label: 'Blog', position: 'left'},
                 {
-                    href: 'https://github.com/facebook/docusaurus',
+                    href: 'https://github.com/Beyond-Imagination/express-cargo',
                     label: 'GitHub',
                     position: 'right',
                 },
             ],
         },
         footer: {
-            style: 'dark',
+            style: 'light',
             links: [
                 {
                     title: 'Docs',
@@ -130,3 +130,4 @@ const config: Config = {
 }
 
 export default config
+
