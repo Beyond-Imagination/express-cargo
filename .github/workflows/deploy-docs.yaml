@@ -3,7 +3,10 @@ name: Deploy Docs to GitHub Pages
 on:
     push:
         tags:
-            - '*'
+            - 'v*.*.*'
+    create:
+        tags:
+            - 'v*.*.*'
 
 jobs:
     build:

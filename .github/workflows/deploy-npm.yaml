@@ -3,7 +3,10 @@ name: Deploy to NPM
 on:
     push:
         tags:
-            - '*'
+            - 'v*.*.*'
+    create:
+        tags:
+            - 'v*.*.*'
 
 jobs:
     publish:
