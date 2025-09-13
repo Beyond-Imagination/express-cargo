@@ -10,6 +10,7 @@ on:
 
 jobs:
     publish:
+        if: github.ref_type == 'tag'
         name: Publish express-cargo
         runs-on: ubuntu-latest
 
