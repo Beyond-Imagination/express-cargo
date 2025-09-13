@@ -120,7 +120,7 @@ const config: Config = {
                     ],
                 },
             ],
-            copyright: `Copyright © 2025 Beyond_Imagination, Inc. Built with Docusaurus.`,
+            copyright: `Copyright © 2025 Beyond_Imagination Team. Built with Docusaurus.`,
         },
         prism: {
             theme: prismThemes.github,
