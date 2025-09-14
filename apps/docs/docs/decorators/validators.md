@@ -6,6 +6,10 @@ Validation is not performed by a standalone `validate` function. Instead, it is 
 
 ## Built-in Validators
 
+### `@optional()`
+
+Marks a field as optional, allowing it to be omitted or set to `undefined` without triggering validation errors.
+
 ### `@min(value: number)`
 
 Checks if a number is greater than or equal to the specified minimum value.
@@ -17,6 +21,13 @@ Checks if a number is greater than or equal to the specified minimum value.
 Checks if a number is less than or equal to the specified maximum value.
 
 - **`value`**: The maximum allowed value.
+
+### `@range(min: number, max: number)`
+
+Checks if a number is within the specified range, inclusive of the minimum and maximum values.
+
+- **`min`**: The minimum allowed value.
+- **`max`**: The maximum allowed value.
 
 ### `@prefix(value: string)`
 

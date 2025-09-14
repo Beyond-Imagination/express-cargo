@@ -1,7 +1,56 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, equal, notEqual, prefix, suffix, isTrue, isFalse, oneOf, maxLength, minLength, length, validate, regexp, email } from 'express-cargo'
+import {
+    bindingCargo,
+    getCargo,
+    body,
+    equal,
+    notEqual,
+    prefix,
+    suffix,
+    isTrue,
+    isFalse,
+    oneOf,
+    maxLength,
+    minLength,
+    length,
+    validate,
+    regexp,
+    email,
+    optional, min, max, range,
+} from 'express-cargo'
 
 const router: Router = express.Router()
+
+class OptionalExample {
+    @body()
+    @optional()
+    @equal(1)
+    number?: number
+}
+
+router.post('/optional', bindingCargo(OptionalExample), (req, res) => {
+    const cargo = getCargo<OptionalExample>(req)
+    res.json(cargo)
+})
+
+class RangeExample {
+    @body()
+    @min(1)
+    number1!: number
+
+    @body()
+    @max(10)
+    number2!: number
+
+    @body()
+    @range(10, 20)
+    number3!: number
+}
+
+router.post('/range', bindingCargo(RangeExample), (req, res) => {
+    const cargo = getCargo<RangeExample>(req)
+    res.json(cargo)
+})
 
 class EqualExample {
     @body()
