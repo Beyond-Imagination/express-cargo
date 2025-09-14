@@ -16,7 +16,10 @@ import {
     validate,
     regexp,
     email,
-    optional, min, max, range,
+    optional,
+    min,
+    max,
+    range,
 } from 'express-cargo'
 
 const router: Router = express.Router()
