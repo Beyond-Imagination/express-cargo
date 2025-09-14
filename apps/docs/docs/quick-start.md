@@ -1,20 +1,29 @@
 ```typescript
-import express from 'express';
-import { body, bindingCargo, getCargo } from 'express-cargo';
+import express from 'express'
+import { body, bindingCargo, getCargo, min, header, params } from 'express-cargo'
 
-class CreateUserRequest {
-    @body('email')
-    email!: string;
+const app = express()
+app.use(express.json())
 
-    @body('age')
-    age!: number;
+class RequestExample {
+    @body()
+    name!: string
+
+    @body()
+    @min(0)
+    age!: number
+
+    @params('id')
+    id!: number
+
+    @header()
+    authorization!: string
 }
 
-const app = express();
-app.use(express.json());
+app.post('/:id', bindingCargo(RequestExample), (req, res) => {
+    const data = getCargo<RequestExample>(req)
+    // write your code with bound data
+})
 
-app.post('/users', bindingCargo(CreateUserRequest), (req, res) => {
-    const data = getCargo<CreateUserRequest>(req);
-    res.json({ message: 'User created', data });
-});
+app.listen(3000)
 ```

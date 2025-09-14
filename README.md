@@ -69,22 +69,33 @@ npm install express-cargo
 
 ```ts
 import express from 'express'
-import { body, bindingCargo, getCargo } from 'express-cargo'
+import { body, bindingCargo, getCargo, min, header, params } from 'express-cargo'
 
 const app = express()
 app.use(express.json())
 
-class BodyExample {
-  @body() number1!: number
-  @body() number2!: number
+class RequestExample {
+    @body()
+    name!: string
+
+    @body()
+    @min(0)
+    age!: number
+
+    @params('id')
+    id!: number
+
+    @header()
+    authorization!: string
 }
 
-app.post('/sum', bindingCargo(BodyExample), (req, res) => {
-  const data = getCargo<BodyExample>(req)
-  res.json({ sum: data.number1 + data.number2 })
+app.post('/:id', bindingCargo(RequestExample), (req, res) => {
+    const data = getCargo<RequestExample>(req)
+    // write your code with bound data
 })
 
 app.listen(3000)
+
 ```
 
 ---
