@@ -1,4 +1,4 @@
-import { prefix } from '../../src/validator'
+import { CargoFieldError, prefix } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('prefix decorator', () => {
@@ -17,8 +17,8 @@ describe('prefix decorator', () => {
 
         expect(prefixRule).toBeDefined()
         expect(prefixRule?.message).toBe('id1 must start with id')
-        expect(prefixRule?.validate('14568')).toBe(false)
-        expect(prefixRule?.validate('id14568')).toBe(true)
+        expect(prefixRule?.validate('14568')).toBeInstanceOf(CargoFieldError)
+        expect(prefixRule?.validate('id14568')).toBeNull()
     })
 
     it('should not have prefix metadata', () => {

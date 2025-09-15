@@ -45,7 +45,7 @@ function bindObject(
 
         try {
             value = requestTransformer(sources.req)
-            if (value === undefined || value === null) {
+            if (!value) {
                 if (meta.getOptional()) {
                     targetObject[property] = null
                 } else {
@@ -55,8 +55,9 @@ function bindObject(
                 targetObject[property] = value
             }
             for (const rule of meta.getValidators()) {
-                if (!rule.validate(targetObject[property])) {
-                    errors.push(new CargoFieldError(key, rule.message))
+                const error = rule.validate(targetObject[property])
+                if (error) {
+                    errors.push(error)
                 }
             }
         } catch (error) {
@@ -126,8 +127,9 @@ function bindObject(
         }
 
         for (const rule of meta.getValidators()) {
-            if (!rule.validate(targetObject[property])) {
-                errors.push(new CargoFieldError(key, rule.message))
+            const error = rule.validate(targetObject[property])
+            if (error) {
+                errors.push(error)
             }
         }
     }
@@ -164,8 +166,9 @@ function bindObject(
                 targetObject[property] = value
             }
             for (const rule of meta.getValidators()) {
-                if (!rule.validate(targetObject[property])) {
-                    errors.push(new CargoFieldError(key, rule.message))
+                const error = rule.validate(targetObject[property])
+                if (error) {
+                    errors.push(error)
                 }
             }
         } catch (error) {

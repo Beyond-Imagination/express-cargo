@@ -1,4 +1,4 @@
-import { isFalse } from '../../src/validator'
+import { isFalse, CargoFieldError } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('isFalse decorator', () => {
@@ -17,12 +17,12 @@ describe('isFalse decorator', () => {
 
         expect(isFalseRule).toBeDefined()
         expect(isFalseRule?.message).toBe('booleanValue must be false')
-        expect(isFalseRule?.validate(true)).toBe(false)
-        expect(isFalseRule?.validate(false)).toBe(true)
-        expect(isFalseRule?.validate(0)).toBe(false)
-        expect(isFalseRule?.validate('')).toBe(false)
-        expect(isFalseRule?.validate(null)).toBe(false)
-        expect(isFalseRule?.validate(undefined)).toBe(false)
+        expect(isFalseRule?.validate(true)).toBeInstanceOf(CargoFieldError)
+        expect(isFalseRule?.validate(false)).toBeNull()
+        expect(isFalseRule?.validate(0)).toBeInstanceOf(CargoFieldError)
+        expect(isFalseRule?.validate('')).toBeInstanceOf(CargoFieldError)
+        expect(isFalseRule?.validate(null)).toBeInstanceOf(CargoFieldError)
+        expect(isFalseRule?.validate(undefined)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have isFalse validator', () => {
