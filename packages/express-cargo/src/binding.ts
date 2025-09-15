@@ -45,7 +45,7 @@ function bindObject(
 
         try {
             value = requestTransformer(sources.req)
-            if (!value) {
+            if (value === undefined || value === null) {
                 if (meta.getOptional()) {
                     targetObject[property] = null
                 } else {
