@@ -51,11 +51,9 @@ export class CargoValidationError extends Error {
 
 export class CargoTransformFieldError extends CargoFieldError {
     name: string
-    field: string | symbol
 
     constructor(field: string | symbol, message: string) {
         super(field, message)
         this.name = 'CargoTransformFieldError'
-        this.field = field
     }
 }
