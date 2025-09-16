@@ -104,15 +104,27 @@ function bindObject(
             case String:
                 targetObject[property] = String(value)
                 break
-            case Number:
-                targetObject[property] = isNaN(Number(value)) ? value : Number(value)
+            case Number: {
+                const parsedNumber = Number(value)
+                if (isNaN(parsedNumber)) {
+                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
+                    continue
+                }
+                targetObject[property] = parsedNumber
                 break
+            }
             case Boolean:
                 targetObject[property] = value === true || value === 'true'
                 break
-            case Date:
-                targetObject[property] = new Date(value)
+            case Date: {
+                const parsedDate = new Date(value)
+                if (isNaN(parsedDate.getTime())) {
+                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
+                    continue
+                }
+                targetObject[property] = parsedDate
                 break
+            }
             default: {
                 const nextSources = { ...sources, [currentSource]: value }
                 targetObject[property] = bindObject(meta.type, nextSources, errors, getErrorKey(sourceKey, key))
