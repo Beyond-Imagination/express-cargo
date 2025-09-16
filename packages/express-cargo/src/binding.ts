@@ -106,7 +106,7 @@ function bindObject(
                 break
             case Number: {
                 const parsedNumber = Number(value)
-                if (isNaN(parsedNumber)) {
+                if (isNaN(parsedNumber) || (typeof value === 'string' && value.trim() === '')) {
                     errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
                     continue
                 }
