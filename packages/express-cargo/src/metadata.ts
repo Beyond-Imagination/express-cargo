@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import { Source, ValidatorRule } from './types'
+import { ArrayElementType, Source, validArrayElementType, ValidatorRule } from './types'
 
 export class CargoClassMetadata {
     private target: any
@@ -110,6 +110,7 @@ export class CargoFieldMetadata {
     private key: string | symbol
     private source: Source
     private optional: boolean
+    private arrayElementType: validArrayElementType | undefined
     private validators: ValidatorRule[]
     private transformer: ((value: any) => any) | undefined
     private requestTransformer: ((req: Request) => any) | undefined
@@ -157,6 +158,14 @@ export class CargoFieldMetadata {
 
     setOptional(optional: boolean): void {
         this.optional = optional
+    }
+
+    getArrayElementType(): validArrayElementType | undefined {
+        return this.arrayElementType
+    }
+
+    setArrayElementType(arrayElementType: validArrayElementType): void {
+        this.arrayElementType = arrayElementType
     }
 
     getTransformer(): ((value: any) => any) | undefined {
