@@ -1,4 +1,4 @@
-import { isTrue } from '../../src/validator'
+import { CargoFieldError, isTrue } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('isTrue decorator', () => {
@@ -17,8 +17,8 @@ describe('isTrue decorator', () => {
 
         expect(isTrueRule).toBeDefined()
         expect(isTrueRule?.message).toBe('booleanValue must be true')
-        expect(isTrueRule?.validate(true)).toBe(true)
-        expect(isTrueRule?.validate(false)).toBe(false)
+        expect(isTrueRule?.validate(true)).toBeNull()
+        expect(isTrueRule?.validate(false)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have isTrue validator', () => {

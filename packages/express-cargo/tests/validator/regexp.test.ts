@@ -1,4 +1,4 @@
-import { regexp } from '../../src/validator'
+import { CargoFieldError, regexp } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('regexp decorator', () => {
@@ -17,11 +17,11 @@ describe('regexp decorator', () => {
 
         expect(regexpRule).toBeDefined()
         expect(regexpRule?.message).toBe('Does not match regexp')
-        expect(regexpRule?.validate('abc')).toBe(true)
-        expect(regexpRule?.validate('abbc')).toBe(true)
-        expect(regexpRule?.validate('ac')).toBe(false)
-        expect(regexpRule?.validate('abbb')).toBe(false)
-        expect(regexpRule?.validate(2)).toBe(false)
+        expect(regexpRule?.validate('abc')).toBeNull()
+        expect(regexpRule?.validate('abbc')).toBeNull()
+        expect(regexpRule?.validate('ac')).toBeInstanceOf(CargoFieldError)
+        expect(regexpRule?.validate('abbb')).toBeInstanceOf(CargoFieldError)
+        expect(regexpRule?.validate(2)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have regex metadata', () => {

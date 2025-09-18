@@ -1,4 +1,4 @@
-import { equal } from '../../src/validator'
+import { CargoFieldError, equal } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('equal decorator', () => {
@@ -20,8 +20,8 @@ describe('equal decorator', () => {
 
         expect(equalRule).toBeDefined()
         expect(equalRule?.message).toBe('role must be equal to admin')
-        expect(equalRule?.validate('member')).toBe(false)
-        expect(equalRule?.validate('admin')).toBe(true)
+        expect(equalRule?.validate('member')).toBeInstanceOf(CargoFieldError)
+        expect(equalRule?.validate('admin')).toBeNull()
     })
 
     it('should have equal validator with number argument', () => {
@@ -30,8 +30,8 @@ describe('equal decorator', () => {
 
         expect(equalRule).toBeDefined()
         expect(equalRule?.message).toBe('number1 must be equal to 3')
-        expect(equalRule?.validate(100)).toBe(false)
-        expect(equalRule?.validate(3)).toBe(true)
+        expect(equalRule?.validate(100)).toBeInstanceOf(CargoFieldError)
+        expect(equalRule?.validate(3)).toBeNull()
     })
 
     it('should not have equal validator when not decorated', () => {

@@ -1,4 +1,4 @@
-import {range} from '../../src/validator';
+import { CargoFieldError, range } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('range decorator', () => {
@@ -17,12 +17,12 @@ describe('range decorator', () => {
 
         expect(rangeRule).toBeDefined();
         expect(rangeRule?.message).toBe('number1 must be between 5 and 15');
-        expect(rangeRule?.validate(4)).toBe(false);
-        expect(rangeRule?.validate(10)).toBe(true);
-        expect(rangeRule?.validate(16)).toBe(false);
+        expect(rangeRule?.validate(4)).toBeInstanceOf(CargoFieldError);
+        expect(rangeRule?.validate(10)).toBeNull();
+        expect(rangeRule?.validate(16)).toBeInstanceOf(CargoFieldError);
 
-        expect(rangeRule?.validate(16)).toBe(false);
-        expect(rangeRule?.validate('not a number')).toBe(false);
+        expect(rangeRule?.validate(16)).toBeInstanceOf(CargoFieldError);
+        expect(rangeRule?.validate('not a number')).toBeInstanceOf(CargoFieldError);
     });
 
     it('should not have range validator metadata', () => {

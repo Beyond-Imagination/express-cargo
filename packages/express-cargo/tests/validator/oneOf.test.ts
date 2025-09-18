@@ -1,4 +1,4 @@
-import { oneOf } from '../../src/validator'
+import { CargoFieldError, oneOf } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('oneOf decorator', () => {
@@ -27,11 +27,11 @@ describe('oneOf decorator', () => {
         expect(validator).toBeDefined()
         expect(validator?.message).toBe('element1 must be one of 10, 20, 30')
 
-        expect(validator?.validate(10)).toBe(true)
-        expect(validator?.validate(25)).toBe(false)
-        expect(validator?.validate(30)).toBe(true)
-        expect(validator?.validate(null)).toBe(false)
-        expect(validator?.validate(undefined)).toBe(false)
+        expect(validator?.validate(10)).toBeNull()
+        expect(validator?.validate(25)).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate(30)).toBeNull()
+        expect(validator?.validate(null)).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate(undefined)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should add oneOf validator to element2 with string options', () => {
@@ -41,8 +41,8 @@ describe('oneOf decorator', () => {
         expect(validator).toBeDefined()
         expect(validator?.message).toBe('element2 must be one of foo, bar')
 
-        expect(validator?.validate('foo')).toBe(true)
-        expect(validator?.validate('loo')).toBe(false)
+        expect(validator?.validate('foo')).toBeNull()
+        expect(validator?.validate('loo')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have oneOf validator on element3', () => {
@@ -58,8 +58,8 @@ describe('oneOf decorator', () => {
 
         expect(validator).toBeDefined()
 
-        expect(validator?.validate('foo')).toBe(false)
-        expect(validator?.validate(10)).toBe(false)
+        expect(validator?.validate('foo')).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate(10)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should validate mixed type of elements on element5', () => {
@@ -68,8 +68,8 @@ describe('oneOf decorator', () => {
 
         expect(validator).toBeDefined()
 
-        expect(validator?.validate('a')).toBe(true)
-        expect(validator?.validate(1)).toBe(true)
-        expect(validator?.validate(2)).toBe(false)
+        expect(validator?.validate('a')).toBeNull()
+        expect(validator?.validate(1)).toBeNull()
+        expect(validator?.validate(2)).toBeInstanceOf(CargoFieldError)
     })
 })

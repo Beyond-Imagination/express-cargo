@@ -1,4 +1,4 @@
-import { length } from '../../src/validator'
+import { CargoFieldError, length } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('length decorator', () => {
@@ -21,9 +21,9 @@ describe('length decorator', () => {
         expect(validator).toBeDefined()
         expect(validator?.message).toBe('stringText must be 5 characters')
 
-        expect(validator?.validate('abc')).toBe(false)
-        expect(validator?.validate('abcde')).toBe(true)
-        expect(validator?.validate('abcdef')).toBe(false)
+        expect(validator?.validate('abc')).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate('abcde')).toBeNull()
+        expect(validator?.validate('abcdef')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have validator on noValidatorText', () => {
@@ -38,9 +38,9 @@ describe('length decorator', () => {
         const validator = meta.getValidators()?.find(v => v.type === 'length')
 
         expect(validator).toBeDefined()
-        expect(validator?.validate(123)).toBe(false)
-        expect(validator?.validate(null)).toBe(false)
-        expect(validator?.validate(undefined)).toBe(false)
-        expect(validator?.validate(true)).toBe(false)
+        expect(validator?.validate(123)).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate(null)).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate(undefined)).toBeInstanceOf(CargoFieldError)
+        expect(validator?.validate(true)).toBeInstanceOf(CargoFieldError)
     })
 })

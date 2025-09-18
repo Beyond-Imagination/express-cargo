@@ -1,4 +1,4 @@
-import { notEqual } from '../../src/validator'
+import { CargoFieldError, notEqual } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('notEqual decorator', () => {
@@ -20,8 +20,8 @@ describe('notEqual decorator', () => {
 
         expect(notEqualRule).toBeDefined()
         expect(notEqualRule?.message).toBe('role must not be equal to admin')
-        expect(notEqualRule?.validate('member')).toBe(true)
-        expect(notEqualRule?.validate('admin')).toBe(false)
+        expect(notEqualRule?.validate('member')).toBeNull()
+        expect(notEqualRule?.validate('admin')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have equal validator with number argument', () => {
@@ -30,10 +30,10 @@ describe('notEqual decorator', () => {
 
         expect(notEqualRule).toBeDefined()
         expect(notEqualRule?.message).toBe('number1 must not be equal to 3')
-        expect(notEqualRule?.validate(100)).toBe(true)
-        expect(notEqualRule?.validate(3)).toBe(false)
-        expect(notEqualRule?.validate(3.0)).toBe(false)
-        expect(notEqualRule?.validate('3')).toBe(true)
+        expect(notEqualRule?.validate(100)).toBeNull()
+        expect(notEqualRule?.validate(3)).toBeInstanceOf(CargoFieldError)
+        expect(notEqualRule?.validate(3.0)).toBeInstanceOf(CargoFieldError)
+        expect(notEqualRule?.validate('3')).toBeNull()
     })
 
     it('should not have equal validator when not decorated', () => {

@@ -1,4 +1,4 @@
-import { suffix, validate } from '../../src/validator'
+import { CargoFieldError, validate } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('validate decorator', () => {
@@ -17,8 +17,8 @@ describe('validate decorator', () => {
 
         expect(validateRule).toBeDefined()
         expect(validateRule?.message).toBe('number should be 1')
-        expect(validateRule?.validate(1)).toBe(true)
-        expect(validateRule?.validate(2)).toBe(false)
+        expect(validateRule?.validate(1)).toBeNull()
+        expect(validateRule?.validate(2)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have validate metadata', () => {

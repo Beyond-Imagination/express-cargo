@@ -1,4 +1,4 @@
-import { max } from '../../src/validator'
+import { CargoFieldError, max } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('max decorator', () => {
@@ -17,8 +17,8 @@ describe('max decorator', () => {
 
         expect(maxRule).toBeDefined()
         expect(maxRule?.message).toBe('number1 must be <= 20')
-        expect(maxRule?.validate(25)).toBe(false)
-        expect(maxRule?.validate(15)).toBe(true)
+        expect(maxRule?.validate(25)).toBeInstanceOf(CargoFieldError)
+        expect(maxRule?.validate(15)).toBeNull()
     })
 
     it('should not have max validator metadata', () => {

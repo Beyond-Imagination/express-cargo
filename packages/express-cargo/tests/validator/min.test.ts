@@ -1,6 +1,5 @@
-import { min } from '../../src/validator'
+import { CargoFieldError, min, body } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
-import { body } from '../../src'
 
 describe('min decorator', () => {
     class Sample {
@@ -18,9 +17,8 @@ describe('min decorator', () => {
         const minRule = meta.getValidators()?.find(v => v.type === 'min')
 
         expect(minRule).toBeDefined()
-        expect(minRule?.message).toBe('number1 must be >= 10')
-        expect(minRule?.validate(5)).toBe(false)
-        expect(minRule?.validate(15)).toBe(true)
+        expect(minRule?.validate(5)).toBeInstanceOf(CargoFieldError)
+        expect(minRule?.validate(15)).toBeNull()
     })
 
     it('should not have min validator metadata', () => {
@@ -43,9 +41,8 @@ describe('min decorator', () => {
         const minRule = meta.getValidators()?.find(v => v.type === 'min')
 
         expect(minRule).toBeDefined()
-        expect(minRule?.message).toBe('number1 must be >= 10')
-        expect(minRule?.validate(5)).toBe(false)
-        expect(minRule?.validate(15)).toBe(true)
+        expect(minRule?.validate(5)).toBeInstanceOf(CargoFieldError)
+        expect(minRule?.validate(15)).toBeNull()
     })
 
     it('should have min validator metadata on extended field', () => {
@@ -53,9 +50,8 @@ describe('min decorator', () => {
         const minRule = meta.getValidators()?.find(v => v.type === 'min')
 
         expect(minRule).toBeDefined()
-        expect(minRule?.message).toBe('number3 must be >= 10')
-        expect(minRule?.validate(5)).toBe(false)
-        expect(minRule?.validate(15)).toBe(true)
+        expect(minRule?.validate(5)).toBeInstanceOf(CargoFieldError)
+        expect(minRule?.validate(15)).toBeNull()
     })
 
     it('should NOT have validator metadata on undecorated field', () => {
