@@ -12,44 +12,44 @@ Marks a field as optional, allowing it to be omitted or set to `undefined` witho
 
 ### `@min(value: number)`
 
-Checks if a number is greater than or equal to the specified minimum value.
+Validates that a number is greater than or equal to the specified minimum value.
 
 - **`value`**: The minimum allowed value.
 
 ### `@max(value: number)`
 
-Checks if a number is less than or equal to the specified maximum value.
+Validates that a number is less than or equal to the specified maximum value.
 
 - **`value`**: The maximum allowed value.
 
 ### `@range(min: number, max: number)`
 
-Checks if a number is within the specified range, inclusive of the minimum and maximum values.
+Validates that a number is within the specified range, inclusive of the minimum and maximum values.
 
 - **`min`**: The minimum allowed value.
 - **`max`**: The maximum allowed value.
 
 ### `@prefix(value: string)`
 
-Checks if a string starts with the specified prefix.
+Validates that a string starts with the specified prefix.
 
 - **`value`**: The required starting text.
 
 ### `@suffix(value: string)`
 
-Checks if a string ends with the specified suffix.
+Validates that a string ends with the specified suffix.
 
 - **`value`**: The required ending text.
 
 ### `@equal(value: any)`
 
-Validates that the input value is strictly equal (`===`) to the specified value. 
+Validates that a value is strictly equal (`===`) to the specified value. 
 
 - **`value`**: The value to compare against.
 
 ### `@notEqual(value: any)`
 
-Validates that the input value is strictly not equal (`!==`) to the specified value.
+Validates that a value is strictly not equal (`!==`) to the specified value.
 
 - **`value`**: The value to compare against.
 
@@ -87,7 +87,7 @@ Validates that the input value is one of the specified values.
 
 ### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
 
-Applies a custom validation function to the decorated field.
+Validates a value using a custom validation function.
 This decorator provides flexibility to implement validation logic beyond the built-in ones.
 
 - **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
