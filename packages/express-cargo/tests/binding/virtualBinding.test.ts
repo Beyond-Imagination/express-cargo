@@ -47,7 +47,7 @@ describe('virtual binding', () => {
         expect(err.errors).toEqual(expect.arrayContaining([expect.objectContaining({ message: expect.stringContaining('nameLength') })]))
     })
 
-    it('optional virtual field 없으면 null 처리', () => {
+    it('optional virtual field가 빈 문자열을 반환하는 경우', () => {
         const middleware = bindingCargo(VirtualDTO)
 
         const req = makeMockReq({
