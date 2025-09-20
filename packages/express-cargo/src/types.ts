@@ -1,5 +1,9 @@
 export type Source = 'body' | 'query' | 'params' | 'header' | 'session'
 
+type ClassConstructor = new () => any
+export type validArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
+export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
+
 type ValidatorFunction = (value: any) => boolean
 type errorMessageFunction = (property: string | symbol, value: any) => string
 export type cargoErrorMessage = string | errorMessageFunction

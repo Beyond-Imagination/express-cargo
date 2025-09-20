@@ -1,11 +1,57 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldError, CargoValidationError, CargoTransformFieldError } from './types'
+import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, ArrayElementType } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
+}
+
+function typeCasting(
+    type: any,
+    elementType: ArrayElementType | undefined,
+    sourceKey: string,
+    key: string,
+    value: any,
+    errors: CargoFieldError[],
+    sources: any,
+    currentSource: Source,
+): any {
+    switch (type) {
+        case String:
+            return String(value)
+        case Number: {
+            const parsedNumber = Number(value)
+            if (isNaN(parsedNumber) || (typeof value === 'string' && value.trim() === '')) {
+                errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
+                return undefined
+            }
+            return parsedNumber
+        }
+        case Boolean:
+            return value === true || value === 'true'
+        case Date: {
+            const parsedDate = new Date(value)
+            if (isNaN(parsedDate.getTime())) {
+                errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
+                return undefined
+            }
+            return parsedDate
+        }
+        case Array: {
+            if (!Array.isArray(value)) {
+                errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an array`))
+                return undefined
+            }
+            if (!elementType) return value
+            return value.map((element, i) => typeCasting(elementType, undefined, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource));
+        }
+        default: {
+            const nextSources = { ...sources, [currentSource]: value }
+            return bindObject(type, nextSources, errors, getErrorKey(sourceKey, key))
+        }
+    }
 }
 
 function bindObject(
@@ -101,37 +147,7 @@ function bindObject(
             }
         }
 
-        switch (meta.type) {
-            case String:
-                targetObject[property] = String(value)
-                break
-            case Number: {
-                const parsedNumber = Number(value)
-                if (isNaN(parsedNumber) || (typeof value === 'string' && value.trim() === '')) {
-                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
-                    continue
-                }
-                targetObject[property] = parsedNumber
-                break
-            }
-            case Boolean:
-                targetObject[property] = value === true || value === 'true'
-                break
-            case Date: {
-                const parsedDate = new Date(value)
-                if (isNaN(parsedDate.getTime())) {
-                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
-                    continue
-                }
-                targetObject[property] = parsedDate
-                break
-            }
-            default: {
-                const nextSources = { ...sources, [currentSource]: value }
-                targetObject[property] = bindObject(meta.type, nextSources, errors, getErrorKey(sourceKey, key))
-                break
-            }
-        }
+        targetObject[property] = typeCasting(meta.type, meta.getArrayElementType(), sourceKey, key, value, errors, sources, currentSource)
 
         const transformer = meta.getTransformer()
         if (transformer) {

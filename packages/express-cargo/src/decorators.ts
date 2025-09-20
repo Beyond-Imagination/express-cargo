@@ -1,10 +1,28 @@
 import { CargoClassMetadata } from './metadata'
+import { ArrayElementType } from './types'
+
+const TYPE_MAP = {
+    string: String,
+    number: Number,
+    boolean: Boolean,
+    date: Date,
+} as const
 
 export function optional(): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         fieldMeta.setOptional(true)
+        classMeta.setFieldMetadata(propertyKey, fieldMeta)
+    }
+}
+
+export function array(elementType: ArrayElementType): PropertyDecorator {
+    return (target: any, propertyKey: string | symbol) => {
+        const classMeta = new CargoClassMetadata(target)
+        const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+        const actualType = typeof elementType === 'string' ? TYPE_MAP[elementType] : elementType
+        fieldMeta.setArrayElementType(actualType)
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
