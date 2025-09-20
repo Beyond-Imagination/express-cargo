@@ -3,9 +3,7 @@ import { request, optional, min } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 import { CargoValidationError } from '../../src'
 
-// DTO 정의
 class RequestDTO {
-    // req 객체 전체를 받는 transformer
     @request(req => req.headers['x-user-id']) userId!: string
     @request(req => req.headers['x-score']) @min(10) score!: number
     @request(req => req.headers['x-optional']) @optional() optionalField?: string
