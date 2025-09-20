@@ -21,7 +21,7 @@ describe('request binding', () => {
 
         middleware(req, res, next)
 
-        const dto = getCargo<RequestDTO>(req)
+        const dto = getCargo<RequestDTO>(req)!
 
         expect(next).toHaveBeenCalledWith()
         expect(dto.userId).toBe('user_123')
