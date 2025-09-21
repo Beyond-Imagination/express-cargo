@@ -43,7 +43,7 @@ Validates that a string ends with the specified suffix.
 
 ### `@equal(value: any)`
 
-Validates that a value is strictly equal (`===`) to the specified value. 
+Validates that a value is strictly equal (`===`) to the specified value.
 
 - **`value`**: The value to compare against.
 
