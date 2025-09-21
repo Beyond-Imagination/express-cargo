@@ -1,7 +1,8 @@
 import type { Request } from 'express'
 import { CargoClassMetadata } from './metadata'
+import { TypedPropertyDecorator } from './types'
 
-export function transform<T>(transformer: (value: T) => T): PropertyDecorator {
+export function transform<T>(transformer: (value: T) => T): TypedPropertyDecorator<T> {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
@@ -10,7 +11,7 @@ export function transform<T>(transformer: (value: T) => T): PropertyDecorator {
     }
 }
 
-export function request<T>(transformer: (req: Request) => T): PropertyDecorator {
+export function request<T>(transformer: (req: Request) => T): TypedPropertyDecorator<T> {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
@@ -21,7 +22,7 @@ export function request<T>(transformer: (req: Request) => T): PropertyDecorator 
     }
 }
 
-export function virtual<T>(transformer: (obj: object) => T): PropertyDecorator {
+export function virtual<T>(transformer: (obj: any) => T): TypedPropertyDecorator<T> {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)

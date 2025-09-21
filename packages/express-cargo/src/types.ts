@@ -59,3 +59,5 @@ export class CargoTransformFieldError extends CargoFieldError {
         this.name = 'CargoTransformFieldError'
     }
 }
+
+export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T }, propertyKey: K) => void
