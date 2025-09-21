@@ -7,7 +7,7 @@ describe('default decorator', () => {
         field1?: string
 
         @defaultValue(3)
-        field2?: string
+        field2?: number
 
         @defaultValue(5)
         field3?: number
