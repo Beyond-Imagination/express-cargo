@@ -9,7 +9,7 @@ class DefaultExample {
     number!: number
 
     @body()
-    @defaultValue(2)
+    @defaultValue('2')
     string!: string
 
     @body()
