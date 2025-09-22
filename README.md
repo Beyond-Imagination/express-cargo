@@ -5,6 +5,54 @@ It provides class-based decorators and binding features to simplify complex requ
 
 ---
 
+## Installation
+
+```bash
+npm install express-cargo reflect-metadata
+```
+
+---
+
+## Quick Start
+
+```ts
+import express from 'express'
+import { body, bindingCargo, getCargo, min, header, params } from 'express-cargo'
+
+const app = express()
+app.use(express.json())
+
+class RequestExample {
+    @body()
+    name!: string
+
+    @body()
+    @min(0)
+    age!: number
+
+    @params('id')
+    id!: number
+
+    @header()
+    authorization!: string
+}
+
+app.post('/:id', bindingCargo(RequestExample), (req, res) => {
+    const data = getCargo<RequestExample>(req)
+    // write your code with bound data
+})
+
+app.listen(3000)
+```
+---
+
+## Documentation
+
+Full guide and API reference:  
+👉 [express-cargo Documentation](https://beyond-imagination.github.io/express-cargo/)
+
+---
+
 ## Features
 
 * **Class-based request parsing**: Automatically bind request data (body, query, params, etc.) using decorators
@@ -41,86 +89,6 @@ It provides class-based decorators and binding features to simplify complex requ
 | `@oneOf(options: readonly any[])`       | Value must be one of `options`.                       | `@oneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'` |
 | `@validate(validateFn, message?)`       | Custom validation function.                           | `@validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@regexp(pattern: RegExp, message?)`    | String must match the given regular expression.       | `@regexp(/^[0-9]+$/, 'digits only') phone!: string` |
-
----
-
-## Directory Structure
-
-```
-/
-├── apps/
-│   ├── docs/         # Documentation built with Docusaurus
-│   └── example/      # Example app demonstrating express-cargo
-└── packages/
-    └── express-cargo/ # express-cargo library source code
-```
-
----
-
-## Installation
-
-```bash
-npm install express-cargo
-```
-
----
-
-## Quick Start
-
-```ts
-import express from 'express'
-import { body, bindingCargo, getCargo, min, header, params } from 'express-cargo'
-
-const app = express()
-app.use(express.json())
-
-class RequestExample {
-    @body()
-    name!: string
-
-    @body()
-    @min(0)
-    age!: number
-
-    @params('id')
-    id!: number
-
-    @header()
-    authorization!: string
-}
-
-app.post('/:id', bindingCargo(RequestExample), (req, res) => {
-    const data = getCargo<RequestExample>(req)
-    // write your code with bound data
-})
-
-app.listen(3000)
-
-```
-
----
-
-## Examples & Documentation
-
-* **apps/example**: Contains various practical code examples
-* **apps/docs**: Official documentation and API guide
-
----
-
-## Development & Build
-
-```bash
-pnpm install
-pnpm build
-```
-
----
-
-## Contributing
-
-1. Fork this repository and create a new branch
-2. Commit your changes and open a pull request
-3. Follow the Prettier and ESLint rules for code style
 
 ---
 
