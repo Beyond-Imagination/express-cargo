@@ -1,5 +1,5 @@
 import { CargoClassMetadata } from './metadata'
-import { ArrayElementType } from './types'
+import { ArrayElementType, TypedPropertyDecorator } from './types'
 
 const TYPE_MAP = {
     string: String,
@@ -17,7 +17,7 @@ export function optional(): PropertyDecorator {
     }
 }
 
-export function array(elementType: ArrayElementType): PropertyDecorator {
+export function array(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
