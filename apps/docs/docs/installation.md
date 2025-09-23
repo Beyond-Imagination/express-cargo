@@ -1,12 +1,25 @@
 ## install
-```shell
-# With pnpm
-pnpm add express-cargo reflect-metadata
 
-# Or with npm
-npm install express-cargo reflect-metadata
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-```
+<Tabs groupId="package-manager">
+    <TabItem value="npm" label="npm">
+        ```
+        npm install express-cargo reflect-metadata
+        ```
+    </TabItem>
+    <TabItem value="yarn" label="yarn">
+        ```
+        yarn add express-cargo reflect-metadata
+        ```
+    </TabItem>
+    <TabItem value="pnpm" label="pnpm">
+        ```
+        pnpm add express-cargo reflect-metadata
+        ```
+    </TabItem>
+</Tabs>
 
 ## Requirements
 
