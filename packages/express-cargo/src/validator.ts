@@ -1,4 +1,4 @@
-import { cargoErrorMessage, ValidatorRule } from './types'
+import { cargoErrorMessage, TypedPropertyDecorator, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
@@ -8,8 +8,8 @@ function addValidator(target: any, propertyKey: string | symbol, rule: Validator
     classMeta.setFieldMetadata(propertyKey, fieldMeta)
 }
 
-export function min(minimum: number, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function min(minimum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+    return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'min',
@@ -19,8 +19,8 @@ export function min(minimum: number, message?: cargoErrorMessage): PropertyDecor
     }
 }
 
-export function max(maximum: number, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function max(maximum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+    return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'max',
@@ -30,8 +30,8 @@ export function max(maximum: number, message?: cargoErrorMessage): PropertyDecor
     }
 }
 
-export function prefix(prefixText: string, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function prefix(prefixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'prefix',
@@ -41,8 +41,8 @@ export function prefix(prefixText: string, message?: cargoErrorMessage): Propert
     }
 }
 
-export function suffix(suffixText: string, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol) => {
+export function suffix(suffixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'suffix',
@@ -74,19 +74,19 @@ export function notEqual(value: any, message?: cargoErrorMessage): PropertyDecor
     }
 }
 
-export function range(min: number, max: number, message?: cargoErrorMessage): PropertyDecorator {
+export function range(min: number, max: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'range',
-            (value: any) => typeof value === 'number' && value >= min && value <= max,
+            value => typeof value === 'number' && value >= min && value <= max,
             message || `${String(propertyKey)} must be between ${min} and ${max}`,
         ))
     }
 }
 
-export function isFalse(message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function isFalse(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
+    return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'isFalse',
@@ -96,8 +96,8 @@ export function isFalse(message?: cargoErrorMessage): PropertyDecorator {
     }
 }
 
-export function isTrue(message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function isTrue(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
+    return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'isTrue',
@@ -107,8 +107,8 @@ export function isTrue(message?: cargoErrorMessage): PropertyDecorator {
     }
 }
 
-export function length(value: number, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function length(value: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'length',
@@ -118,8 +118,8 @@ export function length(value: number, message?: cargoErrorMessage): PropertyDeco
     }
 }
 
-export function maxLength(max: number, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function maxLength(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'maxLength',
@@ -129,8 +129,8 @@ export function maxLength(max: number, message?: cargoErrorMessage): PropertyDec
     }
 }
 
-export function minLength(min: number, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function minLength(min: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'minLength',
@@ -166,8 +166,8 @@ export function validate(validateFn: (value: unknown) => boolean, message?: carg
     }
 }
 
-export function regexp(pattern: RegExp, message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function regexp(pattern: RegExp, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
             'regexp',
@@ -177,8 +177,8 @@ export function regexp(pattern: RegExp, message?: cargoErrorMessage): PropertyDe
     }
 }
 
-export function email(message?: cargoErrorMessage): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
+export function email(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
         const DEFAULT_EMAIL_PATTERN =
             /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
         addValidator(target, propertyKey, new ValidatorRule(
