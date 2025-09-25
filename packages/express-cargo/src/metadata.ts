@@ -110,6 +110,7 @@ export class CargoFieldMetadata {
     private key: string | symbol
     private source: Source
     private optional: boolean
+    private defaultValue: any
     private arrayElementType: validArrayElementType | undefined
     private validators: ValidatorRule[]
     private transformer: ((value: any) => any) | undefined
@@ -123,6 +124,7 @@ export class CargoFieldMetadata {
         this.source = 'body'
         this.validators = []
         this.optional = false
+        this.defaultValue = undefined
         this.transformer = undefined
         this.requestTransformer = undefined
         this.virtualTransformer = undefined
@@ -158,6 +160,14 @@ export class CargoFieldMetadata {
 
     setOptional(optional: boolean): void {
         this.optional = optional
+    }
+
+    getDefault(): any {
+        return this.defaultValue
+    }
+
+    setDefault(defaultValue: any): void {
+        this.defaultValue = defaultValue
     }
 
     getArrayElementType(): validArrayElementType | undefined {

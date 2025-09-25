@@ -26,3 +26,12 @@ export function array(elementType: ArrayElementType): TypedPropertyDecorator<Arr
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
+
+export function defaultValue(value: any) {
+    return function (target: any, propertyKey: string | symbol) {
+        const classMeta = new CargoClassMetadata(target)
+        const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+        fieldMeta.setDefault(value)
+        classMeta.setFieldMetadata(propertyKey, fieldMeta)
+    }
+}

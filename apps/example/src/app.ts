@@ -3,6 +3,7 @@ import sourceRouter from './routers/source'
 import validatorRouter from './routers/validator'
 import transformRouter from './routers/transform'
 import classFieldInheritanceRouter from './routers/classFieldInheritance'
+import decoratorRouter from './routers/decorator'
 import arrayFieldRouter from './routers/arrayField'
 import './errors/cargoErrorHandler'
 
@@ -17,6 +18,7 @@ app.use(sourceRouter)
 app.use(validatorRouter)
 app.use(transformRouter)
 app.use(classFieldInheritanceRouter)
+app.use(decoratorRouter)
 app.use(arrayFieldRouter)
 
 app.listen(port, () => {console.log(`Example app listening on port ${port}`)})

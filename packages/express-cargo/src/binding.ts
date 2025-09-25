@@ -92,7 +92,10 @@ function bindObject(
         try {
             value = requestTransformer(sources.req)
             if (value === undefined || value === null) {
-                if (meta.getOptional()) {
+                if (meta.getDefault() !== undefined) {
+                    targetObject[property] = meta.getDefault()
+                    continue
+                } else if (meta.getOptional()) {
                     targetObject[property] = null
                 } else {
                     errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
@@ -138,7 +141,10 @@ function bindObject(
         }
 
         if (value === undefined || value === null) {
-            if (meta.getOptional()) {
+            if (meta.getDefault() !== undefined) {
+                targetObject[property] = meta.getDefault()
+                continue
+            } else if (meta.getOptional()) {
                 targetObject[property] = null
                 continue
             } else {
@@ -185,7 +191,10 @@ function bindObject(
         try {
             value = virtualTransformer(targetObject)
             if (value === undefined || value === null) {
-                if (meta.getOptional()) {
+                if (meta.getDefault() !== undefined) {
+                    targetObject[property] = meta.getDefault()
+                    continue
+                } else if (meta.getOptional()) {
                     targetObject[property] = null
                 } else {
                     errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
