@@ -41,6 +41,7 @@ const sidebars: SidebarsConfig = {
                 'advanced/inherited-binding',
                 'advanced/nested-binding',
                 'advanced/custom-transformer',
+                'advanced/array-decorator',
             ],
         },
         {
