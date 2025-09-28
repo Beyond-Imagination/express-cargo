@@ -1,6 +1,6 @@
 # Default Field Decorator
 
-Express-Cargo provides decorators to define default values for request fields. These decorators automatically assign a value when the incoming request does not provide one (undefined or null).
+Express-Cargo provides decorators to define default values for request fields. The decorator automatically assigns a value when the incoming request does not provide one (undefined or null).
 
 ## Built-in Default Decorator
 
