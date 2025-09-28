@@ -18,7 +18,7 @@ Express-Cargo는 요청 필드에 기본값을 정의할 수 있는 데코레이
 ```typescript
 class Request {
     @body()
-    @defaultValue(0)
+    @defaultValue(1)
     price!: number;
 }
 ```
