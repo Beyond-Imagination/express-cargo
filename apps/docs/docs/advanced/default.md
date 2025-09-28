@@ -13,7 +13,7 @@ The @defaultValue decorator assigns a default value to a class property when the
 ```typescript
 class Request {
     @body()
-    @defaultValue(0)
+    @defaultValue(1)
     price!: number;
 }
 ```
