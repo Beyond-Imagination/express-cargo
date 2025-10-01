@@ -63,8 +63,9 @@ app.listen(3000)
 ---
 
 ### 요청 바인딩 데코레이터
+
 | 데코레이터        | 설명                      | 예시                          |
-| ------------ | ----------------------- | --------------------------- |
+|--------------|-------------------------|-----------------------------|
 | `@body()`    | `req.body` 의 필드를 바인딩    | `@body() name: string`      |
 | `@query()`   | `req.query` 의 필드를 바인딩   | `@query() page: number`     |
 | `@params()`  | `req.params` 의 필드를 바인딩  | `@params() id: string`      |
@@ -75,8 +76,10 @@ app.listen(3000)
 ---
 
 ### 검증 데코레이터
+
 | 데코레이터                                | 설명                                | 예시                                                                                         |
-| ------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------ |
+|--------------------------------------|-----------------------------------|--------------------------------------------------------------------------------------------|
+| `@optional()`                        | 값이 없는 경우 밸리데이션을 하지 않음             | `@optional() value?: number`                                                               |
 | `@min(minimum: number)`              | 숫자가 `minimum` 이상이어야 함             | `@min(18) age!: number`                                                                    |
 | `@max(maximum: number)`              | 숫자가 `maximum` 이하이어야 함             | `@max(100) score!: number`                                                                 |
 | `@range(min: number, max: number)`   | 숫자가 `min` 이상 `max` 이하 범위에 포함되어야 함 | `@range(1, 5) rating!: number`                                                             |
@@ -92,6 +95,7 @@ app.listen(3000)
 | `@oneOf(options: readonly any[])`    | 값이 `options` 중 하나여야 함             | `@oneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                         |
 | `@validate(validateFn, message?)`    | 커스텀 검증 함수를 사용                     | `@validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@regexp(pattern: RegExp, message?)` | 문자열이 주어진 정규식을 만족해야 함              | `@regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
+| `@email()`                           | 값이 이메일 형식이어야 함                    | `@email() email!: string`                                                                  |
 
 ## 라이선스
 
