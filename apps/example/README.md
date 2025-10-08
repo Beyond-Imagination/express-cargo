@@ -1,5 +1,5 @@
 # express-cargo 테스트
-example app 은 express-cargo 를 쉽게 테스트 하기 위해 만들어진 툴입니다.
+example app은 express-cargo를 쉽게 테스트하기 위해 만들어진 도구입니다.
 
 ## Getting Started
 
@@ -8,11 +8,11 @@ pnpm install
 pnpm dev
 ```
 
-## test 목록
+## 테스트 목록
 
 ### @body
 
-```
+```typescript
 class BodyExample {
     @body()
     number!: number
@@ -41,5 +41,3 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ```
 
 ---
-
-
