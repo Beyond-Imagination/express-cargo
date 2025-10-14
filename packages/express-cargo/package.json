@@ -21,7 +21,7 @@
         "clean": "rimraf dist",
         "lint": "eslint src --ext .ts",
         "test": "jest",
-        "prepublishOnly": "cp ../../README.md ./README.md"
+        "prepublishOnly": "cp ../../README.md ../../LICENSE ."
     },
     "keywords": [
         "express",
