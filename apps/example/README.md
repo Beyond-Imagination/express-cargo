@@ -252,7 +252,7 @@ curl -X POST 'http://localhost:3000/default' \
 # use default
 curl -X POST 'http://localhost:3000/default' \
     -H 'Content-Type: application/json' \
-    -d '{}
+    -d '{}'
 ```
 
 ---
@@ -286,16 +286,8 @@ curl -X POST 'http://localhost:3000/default' \
 ```typescript
 class RangeExample {
     @body()
-    @min(1)
-    number1!: number
-
-    @body()
-    @max(10)
-    number2!: number
-
-    @body()
     @range(10, 20)
-    number3!: number
+    number1!: number
 }
 
 router.post('/range', bindingCargo(RangeExample), (req, res) => {
@@ -308,9 +300,7 @@ router.post('/range', bindingCargo(RangeExample), (req, res) => {
 curl -X POST 'http://localhost:3000/range' \
     -H 'Content-Type: application/json' \
     -d '{
-        "number1": 1,
-        "number2": 10,
-        "number3": 15
+        "number1": 15
     }'
 ```
 
@@ -713,7 +703,7 @@ curl -X POST 'http://localhost:3000/array' \
 
 ---
 
-### transformer
+### @transform
 
 ```typescript
 class TransformExample {
