@@ -34,7 +34,7 @@ router.post('/body', bindingCargo(BodyExample), (req, res) => {
 ```
 
 ```shell
-curl -X POST --location "http://127.0.0.1:3000/body" \
+curl -X POST --location "http://localhost:3000/body" \
     -H "Content-Type: application/json" \
     -d '{
             "number": 1,
@@ -45,7 +45,74 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 
 ---
 
-### @Query
+### @query
+
+```typescript
+class QueryExample {
+    @query()
+    number!: number
+
+    @query()
+    string!: string
+
+    @query()
+    boolean!: boolean
+}
+
+router.get('/query', bindingCargo(QueryExample), (req, res) => {
+    const cargo = getCargo<QueryExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X GET 'http://localhost:3000/query?number=456&string=hello-query&boolean=false'
+```
+
+---
+
+### @params & @uri
+
+```typescript
+class URIExample {
+    @uri()
+    id!: number
+}
+
+router.get('/uri/:id', bindingCargo(URIExample), (req, res) => {
+    const cargo = getCargo<URIExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X GET 'http://localhost:3000/uri/789'
+```
+
+---
+
+### @header
+
+```typescript
+class HeaderExample {
+    @header()
+    authorization!: string
+}
+
+router.get('/header', bindingCargo(HeaderExample), (req, res) => {
+    const cargo = getCargo<HeaderExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X GET 'http://localhost:3000/header' \
+  -H 'Authorization: Bearer my-auth-token-123'
+```
+
+---
+
+### @session
 
 ```typescript
 
@@ -57,65 +124,63 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 
 ---
 
-### @Params
+### @request
 
 ```typescript
+class RequestExample {
+    @request((req: Request) => req?.headers['x-custom-header'] as string)
+    customHeader!: string
+}
 
+router.post('/request', bindingCargo(RequestExample), (req, res) => {
+    const cargo = getCargo<RequestExample>(req)
+
+    res.json({
+        message: 'Header data mapped using @request',
+        data: cargo,
+    })
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/request' \
+    -H 'Content-Type: application/json' \
+    -H 'X-Custom-Header: data-from-my-app-123' \
+    -d '{}'
 ```
 
 ---
 
-
-### @Header
+### @virtual
 
 ```typescript
+class VirtualExample {
+    @body()
+    price!: number
 
+    @body()
+    quantity!: number
+
+    @virtual((obj: VirtualExample) => obj.price * obj.quantity)
+    total!: number
+}
+
+router.post('/virtual', bindingCargo(VirtualExample), (req, res) => {
+    const cargo = getCargo<VirtualExample>(req)
+    res.json({
+        message: 'Order data processed with @virtual',
+        data: cargo,
+    })
+})
 ```
 
 ```shell
-
-```
-
----
-
-
-### @Session
-
-```typescript
-
-```
-
-```shell
-
-```
-
----
-
-### @Request
-
-```typescript
-
-```
-
-```shell
-
-```
-
----
-
-
-### @Virtual
-
-```typescript
-
-```
-
-```shell
-
+curl -X POST 'http://localhost:3000/virtual' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "price": 100,
+        "quantity": 5
+    }'
 ```
 
 ---
@@ -126,11 +191,27 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @optional
 
 ```typescript
+class OptionalExample {
+    @body()
+    @optional()
+    @equal(1)
+    number?: number
+}
 
+router.post('/optional', bindingCargo(OptionalExample), (req, res) => {
+    const cargo = getCargo<OptionalExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
+curl -X POST 'http://localhost:3000/optional' \
+    -H 'Content-Type: application/json' \
+    -d '{"number": 1}'
 
+curl -X POST 'http://localhost:3000/optional' \
+    -H 'Content-Type: application/json' \
+    -d '{}'
 ```
 
 ---
@@ -138,11 +219,40 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @default
 
 ```typescript
+class DefaultExample {
+    @body()
+    @defaultValue(3)
+    number!: number
 
+    @body()
+    @defaultValue('2')
+    string!: string
+
+    @body()
+    @defaultValue(false)
+    boolean!: boolean
+}
+
+router.post('/default', bindingCargo(DefaultExample), (req, res) => {
+    const cargo = getCargo<DefaultExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
+# default ignore
+curl -X POST 'http://localhost:3000/default' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "number": 99,
+        "string": "custom-value",
+        "boolean": true
+    }'
 
+# use default
+curl -X POST 'http://localhost:3000/default' \
+    -H 'Content-Type: application/json' \
+    -d '{}
 ```
 
 ---
@@ -174,11 +284,34 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @range
 
 ```typescript
+class RangeExample {
+    @body()
+    @min(1)
+    number1!: number
 
+    @body()
+    @max(10)
+    number2!: number
+
+    @body()
+    @range(10, 20)
+    number3!: number
+}
+
+router.post('/range', bindingCargo(RangeExample), (req, res) => {
+    const cargo = getCargo<RangeExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/range' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "number1": 1,
+        "number2": 10,
+        "number3": 15
+    }'
 ```
 
 ---
@@ -186,11 +319,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @prefix
 
 ```typescript
+class PrefixExample {
+    @body()
+    @prefix('https://')
+    url!: string
+}
 
+router.post('/prefix', bindingCargo(PrefixExample), (req, res) => {
+    const cargo = getCargo<PrefixExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/prefix' \
+    -H 'Content-Type: application/json' \
+    -d '{"url": "https://example.com"}'
 ```
 
 ---
@@ -198,11 +342,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @suffix
 
 ```typescript
+class SuffixExample {
+    @body()
+    @suffix('.png')
+    photo!: string
+}
 
+router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
+    const cargo = getCargo<SuffixExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/suffix' \
+    -H 'Content-Type: application/json' \
+    -d '{"photo": "my_picture.png"}'
 ```
 
 ---
@@ -210,11 +365,34 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @equal
 
 ```typescript
+class EqualExample {
+    @body()
+    @equal(3)
+    number!: number
 
+    @body()
+    @equal('text')
+    string!: string
+
+    @body()
+    @equal(true)
+    boolean!: boolean
+}
+
+router.post('/equal', bindingCargo(EqualExample), (req, res) => {
+    const cargo = getCargo<EqualExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/equal' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "number": 3,
+        "string": "text",
+        "boolean": true
+    }'
 ```
 
 ---
@@ -222,11 +400,34 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @notEqual
 
 ```typescript
+class NotEqualExample {
+    @body()
+    @notEqual(3)
+    number!: number
 
+    @body()
+    @notEqual('text')
+    string!: string
+
+    @body()
+    @notEqual(true)
+    boolean!: boolean
+}
+
+router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
+    const cargo = getCargo<NotEqualExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/not-equal' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "number": 4,
+        "string": "other-text",
+        "boolean": false
+    }'
 ```
 
 ---
@@ -234,11 +435,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @isTrue
 
 ```typescript
+class IsTrueExample {
+    @body()
+    @isTrue()
+    booleanValue!: boolean
+}
 
+router.post('/is-true', bindingCargo(IsTrueExample), (req, res) => {
+    const cargo = getCargo<IsTrueExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/is-true' \
+    -H 'Content-Type: application/json' \
+    -d '{"booleanValue": true}'
 ```
 
 ---
@@ -246,11 +458,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @isFalse
 
 ```typescript
+class IsFalseExample {
+    @body()
+    @isFalse()
+    booleanValue!: boolean
+}
 
+router.post('/is-false', bindingCargo(IsFalseExample), (req, res) => {
+    const cargo = getCargo<IsFalseExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/is-false' \
+    -H 'Content-Type: application/json' \
+    -d '{"booleanValue": false}'
 ```
 
 ---
@@ -258,11 +481,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @length
 
 ```typescript
+class LengthExample {
+    @body()
+    @length(2)
+    name!: string
+}
 
+router.post('/length', bindingCargo(LengthExample), (req, res) => {
+    const cargo = getCargo<LengthExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/length' \
+    -H 'Content-Type: application/json' \
+    -d '{"name": "AB"}'
 ```
 
 ---
@@ -270,11 +504,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @maxLength
 
 ```typescript
+class MaxLengthExample {
+    @body()
+    @maxLength(5)
+    name!: string
+}
 
+router.post('/max-length', bindingCargo(MaxLengthExample), (req, res) => {
+    const cargo = getCargo<MaxLengthExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/max-length' \
+    -H 'Content-Type: application/json' \
+    -d '{"name": "hello"}'
 ```
 
 ---
@@ -282,11 +527,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @minLength
 
 ```typescript
+class MinLengthExample {
+    @body()
+    @minLength(2)
+    name!: string
+}
 
+router.post('/min-length', bindingCargo(MinLengthExample), (req, res) => {
+    const cargo = getCargo<MinLengthExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/min-length' \
+    -H 'Content-Type: application/json' \
+    -d '{"name": "ok"}'
 ```
 
 ---
@@ -294,11 +550,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @oneOf
 
 ```typescript
+class OneOfExample {
+    @body()
+    @oneOf(['js', 'ts', 'html', 'css'])
+    language!: string
+}
 
+router.post('/one-of', bindingCargo(OneOfExample), (req, res) => {
+    const cargo = getCargo<OneOfExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/one-of' \
+    -H 'Content-Type: application/json' \
+    -d '{"language": "ts"}'
 ```
 
 ---
@@ -306,11 +573,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @validate
 
 ```typescript
+class ValidateExample {
+    @body()
+    @validate(email => (email as string).split('@').length === 2)
+    email!: string
+}
 
+router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
+    const cargo = getCargo<ValidateExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/validate' \
+    -H 'Content-Type: application/json' \
+    -d '{"email": "test@example.com"}'
 ```
 
 ---
@@ -318,11 +596,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @regexp
 
 ```typescript
+class RegexpExample {
+    @body()
+    @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
+    phone!: string
+}
 
+router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
+    const cargo = getCargo<RegexpExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/regexp' \
+    -H 'Content-Type: application/json' \
+    -d '{"phone": "010-1234-5678"}'
 ```
 
 ---
@@ -330,11 +619,22 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 ### @email
 
 ```typescript
+class EmailExample {
+    @body()
+    @email()
+    email!: string
+}
 
+router.post('/email', bindingCargo(EmailExample), (req, res) => {
+    const cargo = getCargo<EmailExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/email' \
+    -H 'Content-Type: application/json' \
+    -d '{"email": "user.name@sub.domain.co.kr"}'
 ```
 
 ---
@@ -352,16 +652,95 @@ curl -X POST --location "http://127.0.0.1:3000/body" \
 
 ```
 
+### Array Type casting
+
+```typescript
+class CustomClass {
+    @body()
+    name!: string
+
+    @body()
+    age!: number
+}
+
+class ArraySample {
+    @body()
+    @array(String)
+    stringArray!: string[]
+
+    @body()
+    @array(Number)
+    numberArray!: number[]
+
+    @body()
+    @array(Boolean)
+    booleanArray!: boolean[]
+
+    @body()
+    @array(Date)
+    dateArray!: Date[]
+
+    @body()
+    @array('string')
+    stringLiteralArray!: string[]
+
+    @body()
+    @array(CustomClass)
+    customClassArray!: CustomClass[]
+}
+
+router.post('/array', bindingCargo(ArraySample), (req, res) => {
+    const cargo = getCargo<ArraySample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/array' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "stringArray": ["apple", "banana", "cherry"],
+        "numberArray": [10, 20, 30],
+        "booleanArray": [true, false, true],
+        "dateArray": ["2023-01-01T00:00:00Z", "2023-12-31T23:59:59Z"],
+        "stringLiteralArray": ["foo", "bar"],
+        "customClassArray": [
+            { "name": "Alice", "age": 30 },
+            { "name": "Bob", "age": 25 }
+        ]
+    }'
+```
+
 ---
 
 ### transformer
 
 ```typescript
+class TransformExample {
+    @query()
+    @transform((value: string) => value.toLowerCase())
+    sortBy!: string
 
+    @query()
+    @transform((value: number) => value * 2)
+    count!: number
+}
+
+router.get('/transform', bindingCargo(TransformExample), (req, res) => {
+    const cargo = getCargo<TransformExample>(req)
+
+    res.json({
+        message: 'Search parameters transformed successfully!',
+        data: cargo,
+        sortByType: typeof cargo?.sortBy,
+        countType: typeof cargo?.count,
+        doubleCount: cargo?.count,
+    })
+})
 ```
 
 ```shell
-
+curl -X GET 'http://localhost:3000/transform?sortBy=NAME&count=5'
 ```
 
 ---
