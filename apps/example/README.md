@@ -260,11 +260,24 @@ curl -X POST 'http://localhost:3000/default' \
 ### @min
 
 ```typescript
+class MinExample {
+    @body()
+    @min(1)
+    number!: number
+}
 
+router.post('/min', bindingCargo(MinExample), (req, res) => {
+    const cargo = getCargo<RangeExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/min' \
+-H 'Content-Type: application/json' \
+-d '{
+    "number": 1
+}'
 ```
 
 ---
@@ -272,11 +285,24 @@ curl -X POST 'http://localhost:3000/default' \
 ### @max
 
 ```typescript
+class MaxExample {
+    @body()
+    @max(10)
+    number!: number
+}
 
+router.post('/max', bindingCargo(MaxExample), (req, res) => {
+    const cargo = getCargo<MaxExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/max' \
+-H 'Content-Type: application/json' \
+-d '{
+    "number": 10
+}'
 ```
 
 ---

@@ -36,18 +36,32 @@ router.post('/optional', bindingCargo(OptionalExample), (req, res) => {
     res.json(cargo)
 })
 
-class RangeExample {
+class MinExample {
     @body()
     @min(1)
-    number1!: number
+    number!: number
+}
 
+router.post('/min', bindingCargo(MinExample), (req, res) => {
+    const cargo = getCargo<MinExample>(req)
+    res.json(cargo)
+})
+
+class MaxExample {
     @body()
     @max(10)
-    number2!: number
+    number!: number
+}
 
+router.post('/max', bindingCargo(MaxExample), (req, res) => {
+    const cargo = getCargo<MaxExample>(req)
+    res.json(cargo)
+})
+
+class RangeExample {
     @body()
     @range(10, 20)
-    number3!: number
+    number!: number
 }
 
 router.post('/range', bindingCargo(RangeExample), (req, res) => {
