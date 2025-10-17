@@ -267,7 +267,7 @@ class MinExample {
 }
 
 router.post('/min', bindingCargo(MinExample), (req, res) => {
-    const cargo = getCargo<RangeExample>(req)
+    const cargo = getCargo<MinExample>(req)
     res.json(cargo)
 })
 ```
