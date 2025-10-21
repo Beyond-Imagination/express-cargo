@@ -661,11 +661,49 @@ curl -X POST 'http://localhost:3000/email' \
 ### Type casting
 
 ```typescript
+class CustomClass {
+    @body()
+    name!: string
 
+    @body()
+    age!: number
+}
+
+class BasicTypeSample {
+    @body()
+    string!: string
+
+    @uri()
+    number!: number
+
+    @body()
+    boolean!: boolean
+
+    @body()
+    date!: Date
+
+    @body()
+    customObject!: CustomClass
+}
+
+router.post('/type-casting/:number', bindingCargo(BasicTypeSample), (req, res) => {
+    const cargo = getCargo<BasicTypeSample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/type-casting/10' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "string": "test",
+        "boolean": "true",
+        "date": "2025-10-26",
+        "customObject": {
+            "name": "Jane Doe",
+            "age": 26
+        }
+    }'
 ```
 
 ### Array Type casting
