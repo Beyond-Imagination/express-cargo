@@ -16,6 +16,7 @@
         "cross-env": "^7.0.3",
         "express": "^4.18.2",
         "express-cargo": "workspace:^",
+        "express-session": "^1.18.2",
         "tslib": "^2.8.1"
     },
     "devDependencies": {
@@ -24,6 +25,7 @@
         "@swc/core": "^1.9.1",
         "@swc/helpers": "^0.5.13",
         "@types/express": "^4.17.23",
+        "@types/express-session": "^1.18.2",
         "nodemon": "^3.1.7",
         "swc-node": "^1.0.0"
     }
