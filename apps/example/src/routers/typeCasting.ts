@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { body, array, bindingCargo, getCargo } from 'express-cargo'
+import { body, array, bindingCargo, getCargo, uri } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -10,6 +10,28 @@ class CustomClass {
     @body()
     age!: number
 }
+
+class BasicTypeSample {
+    @body()
+    string!: string
+
+    @uri()
+    number!: number
+
+    @body()
+    boolean!: boolean
+
+    @body()
+    date!: Date
+
+    @body()
+    customObject!: CustomClass
+}
+
+router.post('/type-casting/:number', bindingCargo(BasicTypeSample), (req, res) => {
+    const cargo = getCargo<BasicTypeSample>(req)
+    res.json(cargo)
+})
 
 class ArraySample {
     @body()

@@ -4,7 +4,7 @@ import validatorRouter from './routers/validator'
 import transformRouter from './routers/transform'
 import classFieldInheritanceRouter from './routers/classFieldInheritance'
 import decoratorRouter from './routers/decorator'
-import arrayFieldRouter from './routers/arrayField'
+import arrayFieldRouter from './routers/typeCasting'
 import './errors/cargoErrorHandler'
 
 const app = express()
