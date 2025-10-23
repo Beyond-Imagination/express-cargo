@@ -1,5 +1,6 @@
 import express, { Router } from 'express'
-import { bindingCargo, getCargo, body, query, header, uri } from 'express-cargo'
+import expressSession from 'express-session'
+import { bindingCargo, getCargo, body, query, header, uri, session } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -52,6 +53,37 @@ class HeaderExample {
 
 router.get('/header', bindingCargo(HeaderExample), (req, res) => {
     const cargo = getCargo<HeaderExample>(req)
+    res.json(cargo)
+})
+
+class CookieExample {
+    @session()
+    path!: string
+
+    @session()
+    httpOnly!: boolean
+
+    @session()
+    secure!: boolean
+}
+
+class SessionExample {
+    @session()
+    cookie!: CookieExample
+
+    @session()
+    userId!: string
+}
+
+router.use(expressSession({ secret: 'test', resave: false, cookie: { secure: false } }))
+
+router.post('/session', (req, res) => {
+    ;(req as any).session.userId = 'test-user-id'
+    res.sendStatus(204)
+})
+
+router.get('/session', bindingCargo(SessionExample), (req, res) => {
+    const cargo = getCargo<SessionExample>(req)
     res.json(cargo)
 })
 

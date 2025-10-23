@@ -115,11 +115,41 @@ curl -X GET 'http://localhost:3000/header' \
 ### @session
 
 ```typescript
+class CookieExample {
+    @session()
+    path!: string
 
+    @session()
+    httpOnly!: boolean
+
+    @session()
+    secure!: boolean
+}
+
+class SessionExample {
+    @session()
+    cookie!: CookieExample
+
+    @session()
+    userId!: string
+}
+
+router.use(expressSession({ secret: 'test', resave: false, cookie: { secure: false } }))
+
+router.post('/session', (req, res) => {
+    ;(req as any).session.userId = 'test-user-id'
+    res.sendStatus(204)
+})
+
+router.get('/session', bindingCargo(SessionExample), (req, res) => {
+    const cargo = getCargo<SessionExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
+curl -X POST 'http://localhost:3000/session'
+curl -X GET 'http://localhost:3000/session'
 ```
 
 ---
