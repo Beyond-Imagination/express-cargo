@@ -845,12 +845,46 @@ express-cargo 의 에러 핸들링 방식
 
 ### Error handler 세팅
 
-```typescript
+`setCargoErrorHandler`를 이용해 커스텀 에러 핸들러를 설정할 수 있습니다. express-cargo에서 발생시키는 에러를 처리하는 함수를 정의할 수 있습니다.
 
+```typescript
+setCargoErrorHandler((err: CargoValidationError, req: Request, res: Response, next: NextFunction) => {
+    res.status(422).json({
+        code: 'VALIDATION_ERROR',
+        message: '입력값이 올바르지 않습니다.',
+        details: err.errors.map(e => ({
+            name: e.name,
+            message: e.message,
+        })),
+    })
+});
+
+// body example code
+router.post('/body', bindingCargo(BodyExample), (req, res) => {
+    const cargo = getCargo<BodyExample>(req)
+    res.json(cargo)
+})
+
+// min exmaple code
+router.post('/min', bindingCargo(MinExample), (req, res) => {
+    const cargo = getCargo<MinExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
+# response has error message
+curl -X POST 'http://localhost:3000/body' \
+-H 'Content-Type: application/json' \
+-d '{
+    "number": 123
+}'
 
+curl -X POST 'http://localhost:3000/min' \
+-H 'Content-Type: application/json' \
+-d '{
+    "number": -10
+}'
 ```
 
 ---
