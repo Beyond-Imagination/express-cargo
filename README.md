@@ -139,7 +139,7 @@ setCargoErrorHandler((err, req, res, next) => {
         error: 'Validation failed',
         details: err.errors.map(e => ({
                 field: e.field,
-                message: e.message
+                message: e.name
             }))
         })
     } else {
