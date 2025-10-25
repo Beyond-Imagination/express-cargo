@@ -927,14 +927,14 @@ class IntegrationExample extends BodyExample {
     token!: string
 }
 
-router.post('/integration', bindingCargo(IntegrationExample), (req, res) => {
+router.post('/integration/:case', bindingCargo(IntegrationExample), (req, res) => {
     const cargo = getCargo<IntegrationExample>(req)
     res.json(cargo)
 })
 ```
 
 ```shell
-curl -X POST 'http://localhost:3000/integration/20?today=\"2025-10-28"' \
+curl -X POST 'http://localhost:3000/integration/20?today=2025-10-28' \
 -H 'Content-Type: application/json' \
 -H 'Authorization: Bearer eyJhb...'
 -d '{

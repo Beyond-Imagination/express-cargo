@@ -42,8 +42,8 @@ class IntegrationExample extends BodyExample {
     'content-type'!: string
 
     @request((request: Request) => request.headers['authorization'])
-    @prefix('Bearer')
-    @transform((value: string) => value.split('Bearer')[1])
+    @prefix('Bearer ')
+    @transform((value: string) => value.substring(7))
     token!: string
 }
 
