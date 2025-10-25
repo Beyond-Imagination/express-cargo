@@ -833,12 +833,64 @@ curl -X GET 'http://localhost:3000/transform?sortBy=NAME&count=5'
 express-cargo 의 에러 핸들링 방식
 
 ### Field validation Error
-```typescript
 
+```typescript
+const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+    if (error instanceof CargoValidationError) {
+        res.status(400).json({
+            name: error.name,
+            errors: error.errors,
+            message: error.message,
+        })
+    } else if (error instanceof CargoTransformFieldError || error instanceof CargoFieldError) {
+        res.status(400).json({
+            name: error.name,
+            field: error.field,
+            message: error.message,
+        })
+    } else {
+        res.status(500).json({
+            name: 'Internal Server Error',
+            message: error.message,
+        })
+    }
+}
+
+class ErrorHandlerExample {
+    @body()
+    @maxLength(10)
+    name!: string
+
+    @body()
+    @email()
+    @transform((target: string) => target.toLowerCase())
+    email!: string
+}
+
+router.get('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
+    const cargo = getCargo<ErrorHandlerExample>(req)
+    res.json(cargo)
+})
+
+router.use(errorHandler)
 ```
 
 ```shell
+# correct request
+curl -X POST 'http://localhost:3000/error-handler' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "name": "Jane Doe",
+        "email": "janeDoe123@epxress-cargo.com"
+    }'
 
+# raise cargo error
+curl -X POST 'http://localhost:3000/error-handler' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "name": "Jane Marie Roe",
+        "email": "janeDoe123"
+    }'
 ```
 
 ---
