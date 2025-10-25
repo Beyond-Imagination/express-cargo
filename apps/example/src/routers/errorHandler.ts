@@ -15,16 +15,20 @@ import {
 
 const router: Router = express.Router()
 
-let errorHandlerTemp
+const saveAndBypassErrorHandler = (req: Request, res: Response, next: NextFunction) => {
+    const originalHandler = getCargoErrorHandler()
 
-const saveErrorHandler = (req: Request, res: Response, next: NextFunction) => {
-    errorHandlerTemp = getCargoErrorHandler()
+    res.on('finish', () => {
+        if (originalHandler) {
+            setCargoErrorHandler(originalHandler)
+        }
+    })
+
     setCargoErrorHandler((error, req, res, next) => next(error))
     next()
 }
 
 const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
-    setCargoErrorHandler(errorHandlerTemp!)
     if (error instanceof CargoValidationError) {
         res.status(400).json({
             name: error.name,
@@ -56,7 +60,7 @@ class ErrorHandlerExample {
     email!: string
 }
 
-router.use(saveErrorHandler)
+router.use(saveAndBypassErrorHandler)
 
 router.post('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
     const cargo = getCargo<ErrorHandlerExample>(req)

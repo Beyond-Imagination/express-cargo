@@ -867,7 +867,7 @@ class ErrorHandlerExample {
     email!: string
 }
 
-router.get('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
+router.post('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
     const cargo = getCargo<ErrorHandlerExample>(req)
     res.json(cargo)
 })
