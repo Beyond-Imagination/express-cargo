@@ -13,6 +13,21 @@ npm install express-cargo reflect-metadata
 
 ---
 
+## TypeScript Configuration
+
+Add to your `tsconfig.json`:
+
+```json
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
+}
+```
+
+---
+
 ## Quick Start
 
 ```ts
@@ -96,6 +111,42 @@ Full guide and API reference:
 | `@email()`                           | String must be email format.                          | `@email() email!: string`                                                                  |
 
 ---
+
+### Transform Decorators
+
+| Decorator | Description | Example |
+|-----------|-------------|---------|
+| `@transform(transformer)` | Transform the parsed value | `@transform(v => v.trim()) name!: string` |
+| `@request(transformer)` | Extract value from Express Request object | `@request(req => req.ip) clientIp!: string` |
+| `@virtual(transformer)` | Compute value from other fields | `@virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
+
+### Utility Decorators
+
+| Decorator | Description | Example |
+|-----------|-------------|---------|
+| `@defaultValue(value)` | Set default value when field is missing | `@defaultValue(0) count!: number` |
+| `@array(elementType)` | Specify array element type | `@array(String) tags!: string[]` |
+
+### Error Handling
+
+```ts
+import { setCargoErrorHandler, CargoValidationError } from 'express-cargo'
+
+// Custom error handler
+setCargoErrorHandler((err, req, res, next) => {
+    if (err instanceof CargoValidationError) {
+        res.status(400).json({
+        error: 'Validation failed',
+        details: err.errors.map(e => ({
+                field: e.field,
+                message: e.name
+            }))
+        })
+    } else {
+        next(err)
+    }
+})
+```
 
 ## License
 
