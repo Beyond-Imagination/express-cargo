@@ -944,26 +944,58 @@ curl -X POST 'http://localhost:3000/min' \
 ## Binding
 request 를 지정된 class 의 object 로 변경
 
-### bindingCargo
+### bindingCargo & getCargo
 
 ```typescript
+class PostData {
+    @body()
+    name!: string
 
+    @body()
+    content!: string
+}
+
+class BodyExample {
+    @body()
+    @array(PostData)
+    posts!: PostData[]
+}
+
+class IntegrationExample extends BodyExample {
+    @query()
+    today!: Date
+
+    @params()
+    @validate(value => typeof value === 'number' && value > 0 && value <= 100)
+    case!: number
+
+    @header()
+    @validate(value => value === 'application/json')
+    'content-type'!: string
+
+    @request((request: Request) => request.headers['authorization'])
+    @prefix('Bearer')
+    @transform((value: string) => value.split('Bearer')[1])
+    token!: string
+}
+
+router.post('/integration/:case', bindingCargo(IntegrationExample), (req, res) => {
+    const cargo = getCargo<IntegrationExample>(req)
+    res.json(cargo)
+})
 ```
 
 ```shell
-
-```
-
----
-
-### getCargo
-
-```typescript
-
-```
-
-```shell
-
+curl -X POST 'http://localhost:3000/integration/20?today=2025-10-28' \
+-H 'Content-Type: application/json' \
+-H 'Authorization: Bearer eyJhb...'
+-d '{
+        "posts": [
+          { "name": "post1", "content": "hello..." },
+          { "name": "post2", "content": "About express-cargo..." },
+          { "name": "post3", "content": "Test Integration..." }
+        ]
+    }'
 ```
 
 ---
