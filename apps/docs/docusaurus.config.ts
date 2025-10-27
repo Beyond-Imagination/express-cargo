@@ -66,7 +66,6 @@ const config: Config = {
         // Replace with your project's social card
         image: 'img/logo.png',
         navbar: {
-            title: 'express-cargo',
             logo: {
                 alt: 'My Site Logo',
                 src: 'img/logo.png',
