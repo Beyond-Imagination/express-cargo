@@ -5,6 +5,7 @@ import transformRouter from './routers/transform'
 import classFieldInheritanceRouter from './routers/classFieldInheritance'
 import decoratorRouter from './routers/decorator'
 import arrayFieldRouter from './routers/typeCasting'
+import errorHandlerRouter from './routers/errorHandler'
 import integrationRouter from './routers/integration'
 import './errors/cargoErrorHandler'
 
@@ -21,6 +22,7 @@ app.use(transformRouter)
 app.use(classFieldInheritanceRouter)
 app.use(decoratorRouter)
 app.use(arrayFieldRouter)
+app.use(errorHandlerRouter)
 app.use(integrationRouter)
 
 app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
