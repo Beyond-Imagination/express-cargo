@@ -13,6 +13,21 @@ npm install express-cargo reflect-metadata
 
 ---
 
+## TypeScript 설정
+
+`tsconfig.json`에 다음을 추가하세요:
+
+```json
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
+}
+```
+
+---
+
 ## 빠른 시작
 
 ```ts
@@ -96,6 +111,44 @@ app.listen(3000)
 | `@validate(validateFn, message?)`    | 커스텀 검증 함수를 사용                     | `@validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@regexp(pattern: RegExp, message?)` | 문자열이 주어진 정규식을 만족해야 함              | `@regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
 | `@email()`                           | 값이 이메일 형식이어야 함                    | `@email() email!: string`                                                                  |
+
+---
+
+### Transform 데코레이터
+
+| 데코레이터 | 설명 | 예시 |
+|------------|------|------|
+| `@transform(transformer)` | 파싱된 값에 추가 변환 적용 | `@transform(v => v.trim()) name!: string` |
+| `@request(transformer)`   | Express Request 객체에서 값 추출 | `@request(req => req.ip) clientIp!: string` |
+| `@virtual(transformer)`   | 다른 필드들을 기반으로 값 계산 | `@virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
+
+### 유틸리티 데코레이터
+
+| 데코레이터 | 설명 | 예시 |
+|------------|------|------|
+| `@defaultValue(value)` | 필드가 없을 때 기본값 설정 | `@defaultValue(0) count!: number` |
+| `@array(elementType)`  | 배열 요소 타입 지정 | `@array(String) tags!: string[]` |
+
+### 에러 처리
+
+```ts
+import { setCargoErrorHandler, CargoValidationError } from 'express-cargo'
+
+// 커스텀 에러 핸들러
+setCargoErrorHandler((err, req, res, next) => {
+    if (err instanceof CargoValidationError) {
+        res.status(400).json({
+        error: 'Validation failed',
+        details: err.errors.map(e => ({
+                field: e.field,
+                message: e.name
+            }))
+        })
+    } else {
+        next(err)
+    }
+})
+```
 
 ## 라이선스
 
