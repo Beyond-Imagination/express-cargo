@@ -206,3 +206,53 @@ export function isAlpha(message?: cargoErrorMessage): TypedPropertyDecorator<str
         )
     }
 }
+
+const UUID_PATTERNS = {
+    all: /^[0-9a-f]{8}-[0-9a-f]{4}-[1345][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    v1: /^[0-9a-f]{8}-[0-9a-f]{4}-1[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    v3: /^[0-9a-f]{8}-[0-9a-f]{4}-3[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    v4: /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    v5: /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+} as const
+
+export function uuid(version?: string | number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    let regex: RegExp
+    let versionLabel: string
+
+    if (!version) {
+        regex = UUID_PATTERNS.all
+        versionLabel = 'v1, v3, v4, or v5'
+    } else {
+        const v = String(version).replace('v', '')
+        switch (v) {
+            case '1':
+                regex = UUID_PATTERNS.v1
+                versionLabel = 'v1'
+                break
+            case '3':
+                regex = UUID_PATTERNS.v3
+                versionLabel = 'v3'
+                break
+            case '4':
+                regex = UUID_PATTERNS.v4
+                versionLabel = 'v4'
+                break
+            case '5':
+                regex = UUID_PATTERNS.v5
+                versionLabel = 'v5'
+                break
+            default:
+                regex = UUID_PATTERNS.all
+                versionLabel = 'v1, v3, v4, or v5'
+        }
+    }
+
+    return (target, propertyKey): void => {
+        addValidator(target, propertyKey, new ValidatorRule(
+            propertyKey,
+            'uuid',
+            (value: unknown) => typeof value === 'string' && regex.test(value),
+            message || `${String(propertyKey)} must be a valid UUID format (${versionLabel})`,
+        ))
+    }
+}
