@@ -19,7 +19,7 @@ import {
     optional,
     min,
     max,
-    range,
+    range, isAlpha,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -225,6 +225,17 @@ class EmailExample {
 
 router.post('/email', bindingCargo(EmailExample), (req, res) => {
     const cargo = getCargo<EmailExample>(req)
+    res.json(cargo)
+})
+
+class AlphaExample {
+    @body()
+    @isAlpha()
+    name!: string
+}
+
+router.post('/alpha', bindingCargo(AlphaExample), (req, res) => {
+    const cargo = getCargo<AlphaExample>(req)
     res.json(cargo)
 })
 
