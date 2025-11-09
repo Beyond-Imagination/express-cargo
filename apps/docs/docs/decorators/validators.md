@@ -105,6 +105,13 @@ This decorator is useful for enforcing format rules such as email, phone numbers
 
 Validates that the decorated property is a valid email address.
 
+### `isAlpha(message?: string)`
+
+Validates that the decorated field contains alphabetic characters only (uppercase or lowercase English letters, A–Z / a–z).
+
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
