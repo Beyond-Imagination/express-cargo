@@ -27,8 +27,8 @@ describe('isAlpha decorator', () => {
 
     it('should not have isAlpha validator', () => {
         const meta = classMeta.getFieldMetadata('noValidatorValue')
-        const isFalseRule = meta.getValidators()?.find(v => v.type === 'alpha')
+        const isAlphaRule = meta.getValidators()?.find(v => v.type === 'alpha')
 
-        expect(isFalseRule).toBeUndefined()
+        expect(isAlphaRule).toBeUndefined()
     })
 })
