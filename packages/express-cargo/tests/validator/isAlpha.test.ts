@@ -4,7 +4,7 @@ import { CargoClassMetadata } from '../../src/metadata'
 describe('isAlpha decorator', () => {
     class Sample {
         @isAlpha()
-        alphaValue!: boolean
+        alphaValue!: string
 
         noValidatorValue!: boolean
     }
