@@ -190,9 +190,10 @@ export function email(message?: cargoErrorMessage): TypedPropertyDecorator<strin
     }
 }
 
+const ALPHA_PATTERN = /^[a-zA-Z]+$/
+
 export function isAlpha(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
-        const ALPHA_PATTERN = /^[a-zA-Z]+$/
         addValidator(
             target,
             propertyKey,
