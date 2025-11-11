@@ -3,6 +3,7 @@ export type Source = 'body' | 'query' | 'params' | 'header' | 'session'
 type ClassConstructor = new () => any
 export type validArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
 export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
+export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 
 type ValidatorFunction = (value: any) => boolean
 type errorMessageFunction = (property: string | symbol, value: any) => string

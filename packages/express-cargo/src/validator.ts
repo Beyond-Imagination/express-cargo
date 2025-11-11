@@ -1,4 +1,4 @@
-import { cargoErrorMessage, TypedPropertyDecorator, ValidatorRule } from './types'
+import { cargoErrorMessage, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
@@ -215,11 +215,11 @@ const uuidPatterns = {
     v5: /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
 }
 
-export function uuid(version?: string | number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     let regex: RegExp
     let versionLabel: string
 
-    const v = version ? String(version).replace('v', '') : 'all'
+    const v = version ? version.replace('v', '') : 'all'
 
     switch (v) {
         case '1':
