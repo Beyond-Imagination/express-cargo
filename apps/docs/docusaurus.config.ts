@@ -126,7 +126,32 @@ const config: Config = {
             theme: prismThemes.github,
             darkTheme: prismThemes.dracula,
         },
+        metadata: [
+            { name: 'keywords', content: 'express, middleware, express middleware, express-cargo, express decorator, request, express request, node.js, typescript, npm' },
+            { name: 'description', content: 'A TypeScript-based Express.js middleware for structured request data handling.' },
+            { name: 'author', content: 'Beyond_Imagination' },
+        ],
     } satisfies Preset.ThemeConfig,
+
+    headTags: [
+        {
+            tagName: 'script',
+            attributes: { type: 'application/ld+json' },
+            innerHTML: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": "express-cargo",
+                "applicationCategory": "Web development library",
+                "operatingSystem": "any",
+                "url": isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io/express-cargo',
+                "author": {
+                    "@type": "Organization",
+                    "name": "Beyond_Imagination"
+                },
+                "description": "A TypeScript-based Express.js middleware for structured request data handling.",
+            }),
+        },
+    ],
 }
 
 export default config
