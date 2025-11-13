@@ -14,7 +14,15 @@ npm install express-cargo reflect-metadata
 ---
 
 ## TypeScript 설정
+express-cargo는 TypeScript 데코레이터와 런타임 타입 메타데이터를 사용합니다.
+정상적으로 동작시키기 위해서는 TypeScript를 설치하고 몇 가지 컴파일 옵션을 활성화해야 합니다.
 
+### 1. TypeScript 설치 (아직 설치하지 않았다면)
+```
+npm install -D typescript
+```
+
+### 2. 데코레이터 지원 활성화
 `tsconfig.json`에 다음을 추가하세요:
 
 ```json
