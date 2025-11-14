@@ -14,8 +14,16 @@ npm install express-cargo reflect-metadata
 ---
 
 ## TypeScript Configuration
+express-cargo uses TypeScript decorators and runtime type metadata.
+To use it properly, you need to install TypeScript and enable a few compiler options.
 
-Add to your `tsconfig.json`:
+### 1. Install TypeScript (if not already installed)
+```
+npm install -D typescript
+```
+
+### 2. Enable Decorator Support
+Add the following settings to your tsconfig.json:
 
 ```json
 {
