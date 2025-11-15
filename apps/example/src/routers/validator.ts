@@ -19,7 +19,9 @@ import {
     optional,
     min,
     max,
-    range, isAlpha,
+    range,
+    isAlpha,
+    uuid,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -236,6 +238,21 @@ class AlphaExample {
 
 router.post('/alpha', bindingCargo(AlphaExample), (req, res) => {
     const cargo = getCargo<AlphaExample>(req)
+    res.json(cargo)
+})
+
+class UuidExample {
+    @body()
+    @uuid()
+    uuidAll!: string
+
+    @body()
+    @uuid('v4')
+    uuid!: string
+}
+
+router.post('/uuid', bindingCargo(UuidExample), (req, res) => {
+    const cargo = getCargo<UuidExample>(req)
     res.json(cargo)
 })
 

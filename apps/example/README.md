@@ -683,6 +683,34 @@ curl -X POST 'http://localhost:3000/email' \
     -d '{"email": "user.name@sub.domain.co.kr"}'
 ```
 
+### @uuid
+
+```typescript
+class UuidExample {
+    @body()
+    @uuid()
+    uuidAll!: string
+
+    @body()
+    @uuid('v4')
+    uuid!: string
+}
+
+router.post('/uuid', bindingCargo(UuidExample), (req, res) => {
+    const cargo = getCargo<UuidExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/uuid' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "uuidAll": "6bb113fd-4dcb-1197-956d-ba9033e22c69",
+      "uuid": "a91f62e5-28aa-48a1-ae2d-95e41c164113"
+    }'
+```
+
 ---
 
 ## Transform
