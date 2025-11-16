@@ -16,8 +16,8 @@
     "scripts": {
         "build": "npm run clean && npm run build:types && npm run build:cjs && npm run build:esm",
         "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist/types",
-        "build:cjs": "cd src && swc . -d ../dist/cjs --config-file ../.swcrc.cjs.json",
-        "build:esm": "cd src && swc . -d ../dist/esm --config-file ../.swcrc.esm.json",
+        "build:cjs": "swc src -d dist/cjs --config-file .swcrc.cjs.json --strip-leading-paths",
+        "build:esm": "swc src -d dist/esm --config-file .swcrc.esm.json --strip-leading-paths",
         "clean": "rimraf dist",
         "lint": "eslint src --ext .ts",
         "test": "jest",
