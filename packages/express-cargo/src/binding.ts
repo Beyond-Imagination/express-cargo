@@ -1,6 +1,13 @@
 import type { Request, RequestHandler } from 'express'
 
-import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, ArrayElementType } from './types'
+import {
+    CargoFieldError,
+    CargoValidationError,
+    CargoTransformFieldError,
+    Source,
+    ArrayElementType,
+    cargoErrorMessage,
+} from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 
@@ -48,10 +55,23 @@ function typeCasting(
             return value.map((element, i) => typeCasting(elementType, undefined, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource));
         }
         default: {
+            if (isEnumObject(type)) {
+                return value
+            }
             const nextSources = { ...sources, [currentSource]: value }
             return bindObject(type, nextSources, errors, getErrorKey(sourceKey, key))
         }
     }
+}
+
+function isEnumObject(obj: any): boolean {
+    if (typeof obj !== 'object' || obj === null) return false
+
+    const values = Object.values(obj)
+    if (values.length === 0) return false
+
+    // 숫자 enum: 양방향 매핑 때문에 숫자/문자 섞여 있음
+    return values.every(v => typeof v === 'string' || typeof v === 'number')
 }
 
 function bindObject(
