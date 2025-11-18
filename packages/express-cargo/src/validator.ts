@@ -252,3 +252,14 @@ export function uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedP
         ))
     }
 }
+
+export function alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(target, propertyKey, new ValidatorRule(
+            propertyKey,
+            'alphanumeric',
+            (value: unknown) => typeof value === 'string' && /^[a-zA-Z0-9]+$/.test(value),
+            message || `${String(propertyKey)} should be alphanumeric`,
+        ))
+    }
+}

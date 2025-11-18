@@ -22,6 +22,7 @@ import {
     range,
     isAlpha,
     uuid,
+    alphanumeric,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -253,6 +254,17 @@ class UuidExample {
 
 router.post('/uuid', bindingCargo(UuidExample), (req, res) => {
     const cargo = getCargo<UuidExample>(req)
+    res.json(cargo)
+})
+
+class AlphanumericExample {
+    @body()
+    @alphanumeric()
+    alphanumeric!: string
+}
+
+router.post('/alphanumeric', bindingCargo(AlphanumericExample), (req, res) => {
+    const cargo = getCargo<AlphanumericExample>(req)
     res.json(cargo)
 })
 
