@@ -6,7 +6,9 @@ export function enumType<T>(enumObj: object, message?: cargoErrorMessage): Typed
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
 
-        const enumValues = Object.values(enumObj)
+        const enumValues = Object.keys(enumObj)
+            .filter(k => isNaN(Number(k)))
+            .map(k => enumObj[k as keyof typeof enumObj])
 
         // 1. enum 타입 정보 저장
         fieldMeta.setEnumType(enumObj)
@@ -16,7 +18,7 @@ export function enumType<T>(enumObj: object, message?: cargoErrorMessage): Typed
             new ValidatorRule(
                 propertyKey,
                 'enumType',
-                input => enumValues.includes(input),
+                input => enumValues.some(v => v == input),
                 message || `${String(propertyKey)} must be one of: ${enumValues.join(', ')}`,
             ),
         )
