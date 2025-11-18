@@ -683,6 +683,8 @@ curl -X POST 'http://localhost:3000/email' \
     -d '{"email": "user.name@sub.domain.co.kr"}'
 ```
 
+---
+
 ### @uuid
 
 ```typescript
@@ -711,6 +713,28 @@ curl -X POST 'http://localhost:3000/uuid' \
     }'
 ```
 
+---
+
+### alphanumeric
+
+```typescript
+class AlphanumericExample {
+    @body()
+    @alphanumeric()
+    alphanumeric!: string
+}
+
+router.post('/alphanumeric', bindingCargo(AlphanumericExample), (req, res) => {
+    const cargo = getCargo<AlphanumericExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/alphanumeric' \
+    -H 'Content-Type: application/json' \
+    -d '{ "alphanumeric": "abc123" }'
+```
 ---
 
 ## Transform
