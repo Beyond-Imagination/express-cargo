@@ -1,7 +1,7 @@
 import { CargoClassMetadata } from './metadata'
 import { cargoErrorMessage, TypedPropertyDecorator, ValidatorRule } from './types'
 
-export function enumType<T>(enumObj: object, message?: cargoErrorMessage): TypedPropertyDecorator<T> {
+export function Enum<T>(enumObj: object, message?: cargoErrorMessage): TypedPropertyDecorator<T> {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
@@ -17,7 +17,7 @@ export function enumType<T>(enumObj: object, message?: cargoErrorMessage): Typed
         fieldMeta.addValidator(
             new ValidatorRule(
                 propertyKey,
-                'enumType',
+                'enum',
                 input => enumValues.some(v => v == input),
                 message || `${String(propertyKey)} must be one of: ${enumValues.join(', ')}`,
             ),

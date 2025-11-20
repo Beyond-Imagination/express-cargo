@@ -1,6 +1,6 @@
-import { CargoFieldError, max, optional } from '../../src'
+import { CargoFieldError } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
-import { enumType } from '../../src/enum'
+import { Enum } from '../../src/enum'
 
 enum Role {
     ADMIN = 'admin',
@@ -14,10 +14,10 @@ enum NumericRole {
 
 describe('enum', () => {
     class Sample {
-        @enumType(Role)
+        @Enum(Role)
         role!: Role
 
-        @enumType(NumericRole)
+        @Enum(NumericRole)
         numericRole!: NumericRole
 
         noValidator!: Role
@@ -27,7 +27,7 @@ describe('enum', () => {
 
     it('should have enum metadata', () => {
         const meta = classMeta.getFieldMetadata('role')
-        const enumRule = meta.getValidators()?.find(v => v.type === 'enumType')
+        const enumRule = meta.getValidators()?.find(v => v.type === 'enum')
 
         expect(enumRule).toBeDefined()
         expect(enumRule?.message).toBe('role must be one of: admin, user')
@@ -37,7 +37,7 @@ describe('enum', () => {
 
     it('should handle numeric enums', () => {
         const meta = classMeta.getFieldMetadata('numericRole')
-        const enumRule = meta.getValidators()?.find(v => v.type === 'enumType')
+        const enumRule = meta.getValidators()?.find(v => v.type === 'enum')
 
         expect(enumRule).toBeDefined()
         expect(enumRule?.message).toBe('numericRole must be one of: 0, 1')
@@ -48,7 +48,7 @@ describe('enum', () => {
 
     it('should not have enum metadata', () => {
         const meta = classMeta.getFieldMetadata('noValidator')
-        const enumRule = meta.getValidators()?.find(v => v.type === 'enumType')
+        const enumRule = meta.getValidators()?.find(v => v.type === 'enum')
 
         expect(enumRule).toBeUndefined()
     })
