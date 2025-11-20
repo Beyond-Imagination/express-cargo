@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { body, array, bindingCargo, getCargo, uri } from 'express-cargo'
+import { body, array, bindingCargo, getCargo, uri, Enum } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -61,6 +61,32 @@ class ArraySample {
 
 router.post('/array', bindingCargo(ArraySample), (req, res) => {
     const cargo = getCargo<ArraySample>(req)
+    res.json(cargo)
+})
+
+enum Role {
+    ADMIN,
+    USER,
+}
+
+enum StringRole {
+    ADMIN = 'admin',
+    USER = 'user',
+}
+class EnumSample {
+    @body()
+    @Enum(Role)
+    role!: Role
+
+    @body()
+    @Enum(StringRole)
+    stringRole!: StringRole
+}
+
+router.post('/enum', bindingCargo(EnumSample), (req, res) => {
+    const cargo = getCargo<EnumSample>(req)
+    console.log('role : ', cargo?.role)
+    console.log('string role : ', cargo?.stringRole)
     res.json(cargo)
 })
 
