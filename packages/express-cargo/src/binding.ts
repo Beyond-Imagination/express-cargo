@@ -1,13 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import {
-    CargoFieldError,
-    CargoValidationError,
-    CargoTransformFieldError,
-    Source,
-    ArrayElementType,
-    cargoErrorMessage,
-} from './types'
+import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, ArrayElementType } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 
@@ -52,7 +45,7 @@ function typeCasting(
                 return undefined
             }
             if (!elementType) return value
-            return value.map((element, i) => typeCasting(elementType, undefined, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource));
+            return value.map((element, i) => typeCasting(elementType, undefined, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource))
         }
         default: {
             const nextSources = { ...sources, [currentSource]: value }
