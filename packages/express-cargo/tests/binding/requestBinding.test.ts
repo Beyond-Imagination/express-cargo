@@ -5,7 +5,7 @@ import { CargoValidationError } from '../../src'
 
 class RequestDTO {
     @request(req => req.headers['x-user-id']) userId!: string
-    @request(req => req.headers['x-score']) @min(10) score!: number
+    @request(req => Number(req.headers['x-score'])) @min(10) score!: number
     @request(req => req.headers['x-optional']) @optional() optionalField?: string
 }
 
@@ -14,7 +14,7 @@ describe('request binding', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
-            headers: { 'x-user-id': 'user_123', 'x-score': 42 },
+            headers: { 'x-user-id': 'user_123', 'x-score': '42' },
         })
         const res = makeMockRes()
         const next = makeNext()
@@ -33,7 +33,7 @@ describe('request binding', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
-            headers: { 'x-user-id': 'user_123', 'x-score': 5 },
+            headers: { 'x-user-id': 'user_123', 'x-score': '5' },
         })
         const res = makeMockRes()
         const next = makeNext()
@@ -49,7 +49,7 @@ describe('request binding', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
-            headers: { 'x-user-id': 'user_456', 'x-score': 20 },
+            headers: { 'x-user-id': 'user_456', 'x-score': '20' },
         })
         const res = makeMockRes()
         const next = makeNext()
