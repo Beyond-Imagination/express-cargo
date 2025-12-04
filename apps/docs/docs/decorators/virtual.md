@@ -37,7 +37,7 @@ class OrderExample {
 
 class HeaderExample {
     // Field derived directly from the request object
-    @Request((req: Request) => req.headers['x-custom-header'] as string)
+    @Request(req => req.headers['x-custom-header'] as string)
     customHeader!: string
 }
 

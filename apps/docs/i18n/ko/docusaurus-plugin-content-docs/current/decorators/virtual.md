@@ -42,7 +42,7 @@ class OrderExample {
 
 class HeaderExample {
     // 요청 객체에서 직접 가져오는 필드
-    @Request((req: Request) => req.headers['x-custom-header'] as string)
+    @Request(req => req.headers['x-custom-header'] as string)
     customHeader!: string
 }
 

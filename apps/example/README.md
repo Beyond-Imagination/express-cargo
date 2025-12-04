@@ -218,12 +218,12 @@ curl -X POST 'http://localhost:3000/virtual' \
 ## Validation
 어떤 validation 을 적용할지 결정하는 데코레이터
 
-### @optional
+### @Optional
 
 ```typescript
 class OptionalExample {
     @Body()
-    @optional()
+    @Optional()
     @equal(1)
     number?: number
 }
@@ -246,20 +246,20 @@ curl -X POST 'http://localhost:3000/optional' \
 
 ---
 
-### @default
+### @Default
 
 ```typescript
 class DefaultExample {
     @Body()
-    @defaultValue(3)
+    @Default(3)
     number!: number
 
     @Body()
-    @defaultValue('2')
+    @Default('2')
     string!: string
 
     @Body()
-    @defaultValue(false)
+    @Default(false)
     boolean!: boolean
 }
 
@@ -1026,7 +1026,7 @@ class IntegrationExample extends BodyExample {
     'content-type'!: string
 
     @Request((request: Request) => request.headers['authorization'])
-    @prefix('Bearer')
+    @prefix('Bearer ')
     @Transform((value: string) => value.split('Bearer')[1])
     token!: string
 }
