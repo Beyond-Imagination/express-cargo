@@ -1,15 +1,15 @@
-import { bindingCargo, body, CargoValidationError, getCargo, header, min, optional, params, query, session } from '../../src'
+import { bindingCargo, Body, CargoValidationError, getCargo, Header, min, Optional, Params, Query, Session } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 
 class TestDTO {
-    @body('name') name!: string
-    @query('age') age!: number
-    @params('id') id!: number
-    @header('isAdmin') isAdmin!: boolean
-    @session('loginAt') loginAt!: Date
+    @Body('name') name!: string
+    @Query('age') age!: number
+    @Params('id') id!: number
+    @Header('isAdmin') isAdmin!: boolean
+    @Session('loginAt') loginAt!: Date
 
-    @body('nickname') @optional() nickname?: string
-    @body('score') @min(3) score!: number
+    @Body('nickname') @Optional() nickname?: string
+    @Body('score') @min(3) score!: number
 }
 
 describe('source decorator binding', () => {

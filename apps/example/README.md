@@ -13,17 +13,17 @@ pnpm dev
 ## Request Binding
 필드에 적용하여 해당 필드의 값을 어디서 가져올지 결정하는 데코레이터
 
-### @body
+### @Body
 
 ```typescript
 class BodyExample {
-    @body()
+    @Body()
     number!: number
 
-    @body()
+    @Body()
     string!: string
 
-    @body()
+    @Body()
     boolean!: boolean
 }
 
@@ -45,17 +45,17 @@ curl -X POST --location "http://localhost:3000/body" \
 
 ---
 
-### @query
+### @Query
 
 ```typescript
 class QueryExample {
-    @query()
+    @Query()
     number!: number
 
-    @query()
+    @Query()
     string!: string
 
-    @query()
+    @Query()
     boolean!: boolean
 }
 
@@ -71,11 +71,11 @@ curl -X GET 'http://localhost:3000/query?number=456&string=hello-query&boolean=f
 
 ---
 
-### @params & @uri
+### @Params & @Uri
 
 ```typescript
 class URIExample {
-    @uri()
+    @Uri()
     id!: number
 }
 
@@ -91,11 +91,11 @@ curl -X GET 'http://localhost:3000/uri/789'
 
 ---
 
-### @header
+### @Header
 
 ```typescript
 class HeaderExample {
-    @header()
+    @Header()
     authorization!: string
 }
 
@@ -112,25 +112,25 @@ curl -X GET 'http://localhost:3000/header' \
 
 ---
 
-### @session
+### @Session
 
 ```typescript
 class CookieExample {
-    @session()
+    @Session()
     path!: string
 
-    @session()
+    @Session()
     httpOnly!: boolean
 
-    @session()
+    @Session()
     secure!: boolean
 }
 
 class SessionExample {
-    @session()
+    @Session()
     cookie!: CookieExample
 
-    @session()
+    @Session()
     userId!: string
 }
 
@@ -154,11 +154,11 @@ curl -X GET 'http://localhost:3000/session'
 
 ---
 
-### @request
+### @Request
 
 ```typescript
 class RequestExample {
-    @request((req: Request) => req?.headers['x-custom-header'] as string)
+    @Request(req => req?.headers['x-custom-header'] as string)
     customHeader!: string
 }
 
@@ -166,7 +166,7 @@ router.post('/request', bindingCargo(RequestExample), (req, res) => {
     const cargo = getCargo<RequestExample>(req)
 
     res.json({
-        message: 'Header data mapped using @request',
+        message: 'Header data mapped using @Request',
         data: cargo,
     })
 })
@@ -181,24 +181,24 @@ curl -X POST 'http://localhost:3000/request' \
 
 ---
 
-### @virtual
+### @Virtual
 
 ```typescript
 class VirtualExample {
-    @body()
+    @Body()
     price!: number
 
-    @body()
+    @Body()
     quantity!: number
 
-    @virtual((obj: VirtualExample) => obj.price * obj.quantity)
+    @Virtual((obj: VirtualExample) => obj.price * obj.quantity)
     total!: number
 }
 
 router.post('/virtual', bindingCargo(VirtualExample), (req, res) => {
     const cargo = getCargo<VirtualExample>(req)
     res.json({
-        message: 'Order data processed with @virtual',
+        message: 'Order data processed with @Virtual',
         data: cargo,
     })
 })
@@ -222,7 +222,7 @@ curl -X POST 'http://localhost:3000/virtual' \
 
 ```typescript
 class OptionalExample {
-    @body()
+    @Body()
     @optional()
     @equal(1)
     number?: number
@@ -250,15 +250,15 @@ curl -X POST 'http://localhost:3000/optional' \
 
 ```typescript
 class DefaultExample {
-    @body()
+    @Body()
     @defaultValue(3)
     number!: number
 
-    @body()
+    @Body()
     @defaultValue('2')
     string!: string
 
-    @body()
+    @Body()
     @defaultValue(false)
     boolean!: boolean
 }
@@ -291,7 +291,7 @@ curl -X POST 'http://localhost:3000/default' \
 
 ```typescript
 class MinExample {
-    @body()
+    @Body()
     @min(1)
     number!: number
 }
@@ -316,7 +316,7 @@ curl -X POST 'http://localhost:3000/min' \
 
 ```typescript
 class MaxExample {
-    @body()
+    @Body()
     @max(10)
     number!: number
 }
@@ -341,7 +341,7 @@ curl -X POST 'http://localhost:3000/max' \
 
 ```typescript
 class RangeExample {
-    @body()
+    @Body()
     @range(10, 20)
     number1!: number
 }
@@ -366,7 +366,7 @@ curl -X POST 'http://localhost:3000/range' \
 
 ```typescript
 class PrefixExample {
-    @body()
+    @Body()
     @prefix('https://')
     url!: string
 }
@@ -389,7 +389,7 @@ curl -X POST 'http://localhost:3000/prefix' \
 
 ```typescript
 class SuffixExample {
-    @body()
+    @Body()
     @suffix('.png')
     photo!: string
 }
@@ -412,15 +412,15 @@ curl -X POST 'http://localhost:3000/suffix' \
 
 ```typescript
 class EqualExample {
-    @body()
+    @Body()
     @equal(3)
     number!: number
 
-    @body()
+    @Body()
     @equal('text')
     string!: string
 
-    @body()
+    @Body()
     @equal(true)
     boolean!: boolean
 }
@@ -447,15 +447,15 @@ curl -X POST 'http://localhost:3000/equal' \
 
 ```typescript
 class NotEqualExample {
-    @body()
+    @Body()
     @notEqual(3)
     number!: number
 
-    @body()
+    @Body()
     @notEqual('text')
     string!: string
 
-    @body()
+    @Body()
     @notEqual(true)
     boolean!: boolean
 }
@@ -482,7 +482,7 @@ curl -X POST 'http://localhost:3000/not-equal' \
 
 ```typescript
 class IsTrueExample {
-    @body()
+    @Body()
     @isTrue()
     booleanValue!: boolean
 }
@@ -505,7 +505,7 @@ curl -X POST 'http://localhost:3000/is-true' \
 
 ```typescript
 class IsFalseExample {
-    @body()
+    @Body()
     @isFalse()
     booleanValue!: boolean
 }
@@ -528,7 +528,7 @@ curl -X POST 'http://localhost:3000/is-false' \
 
 ```typescript
 class LengthExample {
-    @body()
+    @Body()
     @length(2)
     name!: string
 }
@@ -551,7 +551,7 @@ curl -X POST 'http://localhost:3000/length' \
 
 ```typescript
 class MaxLengthExample {
-    @body()
+    @Body()
     @maxLength(5)
     name!: string
 }
@@ -574,7 +574,7 @@ curl -X POST 'http://localhost:3000/max-length' \
 
 ```typescript
 class MinLengthExample {
-    @body()
+    @Body()
     @minLength(2)
     name!: string
 }
@@ -597,7 +597,7 @@ curl -X POST 'http://localhost:3000/min-length' \
 
 ```typescript
 class OneOfExample {
-    @body()
+    @Body()
     @oneOf(['js', 'ts', 'html', 'css'])
     language!: string
 }
@@ -620,7 +620,7 @@ curl -X POST 'http://localhost:3000/one-of' \
 
 ```typescript
 class ValidateExample {
-    @body()
+    @Body()
     @validate(email => (email as string).split('@').length === 2)
     email!: string
 }
@@ -643,7 +643,7 @@ curl -X POST 'http://localhost:3000/validate' \
 
 ```typescript
 class RegexpExample {
-    @body()
+    @Body()
     @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
     phone!: string
 }
@@ -666,7 +666,7 @@ curl -X POST 'http://localhost:3000/regexp' \
 
 ```typescript
 class EmailExample {
-    @body()
+    @Body()
     @email()
     email!: string
 }
@@ -689,11 +689,11 @@ curl -X POST 'http://localhost:3000/email' \
 
 ```typescript
 class UuidExample {
-    @body()
+    @Body()
     @uuid()
     uuidAll!: string
 
-    @body()
+    @Body()
     @uuid('v4')
     uuid!: string
 }
@@ -719,7 +719,7 @@ curl -X POST 'http://localhost:3000/uuid' \
 
 ```typescript
 class AlphanumericExample {
-    @body()
+    @Body()
     @alphanumeric()
     alphanumeric!: string
 }
@@ -744,27 +744,27 @@ curl -X POST 'http://localhost:3000/alphanumeric' \
 
 ```typescript
 class CustomClass {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     age!: number
 }
 
 class BasicTypeSample {
-    @body()
+    @Body()
     string!: string
 
-    @uri()
+    @Uri()
     number!: number
 
-    @body()
+    @Body()
     boolean!: boolean
 
-    @body()
+    @Body()
     date!: Date
 
-    @body()
+    @Body()
     customObject!: CustomClass
 }
 
@@ -792,36 +792,36 @@ curl -X POST 'http://localhost:3000/type-casting/10' \
 
 ```typescript
 class CustomClass {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     age!: number
 }
 
 class ArraySample {
-    @body()
-    @array(String)
+    @Body()
+    @Array(String)
     stringArray!: string[]
 
-    @body()
-    @array(Number)
+    @Body()
+    @Array(Number)
     numberArray!: number[]
 
-    @body()
-    @array(Boolean)
+    @Body()
+    @Array(Boolean)
     booleanArray!: boolean[]
 
-    @body()
-    @array(Date)
+    @Body()
+    @Array(Date)
     dateArray!: Date[]
 
-    @body()
-    @array('string')
+    @Body()
+    @Array('string')
     stringLiteralArray!: string[]
 
-    @body()
-    @array(CustomClass)
+    @Body()
+    @Array(CustomClass)
     customClassArray!: CustomClass[]
 }
 
@@ -849,16 +849,16 @@ curl -X POST 'http://localhost:3000/array' \
 
 ---
 
-### @transform
+### @Transform
 
 ```typescript
 class TransformExample {
-    @query()
-    @transform((value: string) => value.toLowerCase())
+    @Query()
+    @Transform((value: string) => value.toLowerCase())
     sortBy!: string
 
-    @query()
-    @transform((value: number) => value * 2)
+    @Query()
+    @Transform((value: number) => value * 2)
     count!: number
 }
 
@@ -909,13 +909,13 @@ const errorHandler = (error: Error, req: Request, res: Response, next: NextFunct
 }
 
 class ErrorHandlerExample {
-    @body()
+    @Body()
     @maxLength(10)
     name!: string
 
-    @body()
+    @Body()
     @email()
-    @transform((target: string) => target.toLowerCase())
+    @Transform((target: string) => target.toLowerCase())
     email!: string
 }
 
@@ -1000,34 +1000,34 @@ request 를 지정된 class 의 object 로 변경
 
 ```typescript
 class PostData {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     content!: string
 }
 
 class BodyExample {
-    @body()
-    @array(PostData)
+    @Body()
+    @Array(PostData)
     posts!: PostData[]
 }
 
 class IntegrationExample extends BodyExample {
-    @query()
+    @Query()
     today!: Date
 
-    @params()
+    @Params()
     @validate(value => typeof value === 'number' && value > 0 && value <= 100)
     case!: number
 
-    @header()
+    @Header()
     @validate(value => value === 'application/json')
     'content-type'!: string
 
-    @request((request: Request) => request.headers['authorization'])
+    @Request((request: Request) => request.headers['authorization'])
     @prefix('Bearer')
-    @transform((value: string) => value.split('Bearer')[1])
+    @Transform((value: string) => value.split('Bearer')[1])
     token!: string
 }
 

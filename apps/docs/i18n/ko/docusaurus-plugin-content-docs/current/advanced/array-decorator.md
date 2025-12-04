@@ -4,49 +4,49 @@ title: Array 데코레이터
 ---
 # Array 데코레이터
 
-Express-Cargo의 `@array` 데코레이터를 사용하면 요청에서 배열 유형을 자동으로 바인딩하고 캐스팅할 수 있습니다. 이는 필드가 문자열, 숫자 또는 사용자 정의 객체와 같은 특정 유형의 배열일 것으로 예상될 때 유용합니다.
+Express-Cargo의 `@Array` 데코레이터를 사용하면 요청에서 배열 유형을 자동으로 바인딩하고 캐스팅할 수 있습니다. 이는 필드가 문자열, 숫자 또는 사용자 정의 객체와 같은 특정 유형의 배열일 것으로 예상될 때 유용합니다.
 
 ## 사용 예시
 
 ```typescript
 import express, { Router } from 'express'
-import { body, array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
 // 1. 사용자 정의 클래스 정의 (선택 사항)
 class CustomClass {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     age!: number
 }
 
 // 2. 배열 필드를 사용하여 클래스 정의
 class ArraySample {
-    @body()
-    @array(String)
+    @Body()
+    @Array(String)
     stringArray!: string[]
 
-    @body()
-    @array(Number)
+    @Body()
+    @Array(Number)
     numberArray!: number[]
 
-    @body()
-    @array(Boolean)
+    @Body()
+    @Array(Boolean)
     booleanArray!: boolean[]
 
-    @body()
-    @array(Date)
+    @Body()
+    @Array(Date)
     dateArray!: Date[]
 
-    @body()
-    @array('string')
+    @Body()
+    @Array('string')
     stringLiteralArray!: string[]
 
-    @body()
-    @array(CustomClass)
+    @Body()
+    @Array(CustomClass)
     customClassArray!: CustomClass[]
 }
 

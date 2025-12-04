@@ -5,13 +5,13 @@ title: 빠른 시작
 
 ```typescript
 import express from 'express';
-import { body, bindingCargo, getCargo } from 'express-cargo';
+import { Body, bindingCargo, getCargo } from 'express-cargo';
 
 class CreateUserRequest {
-    @body('email')
+    @Body('email')
     email!: string;
 
-    @body('age')
+    @Body('age')
     age!: number;
 }
 

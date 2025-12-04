@@ -9,40 +9,40 @@ title: 가상 필드
 
 ## Built-in Virtual Decorators
 
-### `@virtual<T>(transformer: (obj: object) => T)`
+### `@Virtual<T>(transformer: (obj: object) => T)`
 
-`@virtual` 데코레이터는 **계산된 속성(computed property)**을 정의합니다. 이 속성은 요청에서 직접 가져오는 것이 아니라, 객체의 다른 속성을 기반으로 값을 계산합니다.
+`@Virtual` 데코레이터는 **계산된 속성(computed property)**을 정의합니다. 이 속성은 요청에서 직접 가져오는 것이 아니라, 객체의 다른 속성을 기반으로 값을 계산합니다.
 
 - **`transformer`**: 객체 인스턴스를 받아 계산된 값을 반환하는 함수
 
-### `@request<T>(transformer: (req: Request) => T)`
+### `@Request<T>(transformer: (req: Request) => T)`
 
-`@request` 데코레이터는 Express `Request` 객체에서 값을 가져와 클래스 속성에 바인딩합니다.
+`@Request` 데코레이터는 Express `Request` 객체에서 값을 가져와 클래스 속성에 바인딩합니다.
 
 - **`transformer`**: 요청 객체를 받아 바인딩할 값을 반환하는 함수
 
 ## 사용 예시
 
 ```typescript
-import express, { Request, Response } from 'express'
-import { body, virtual, request, bindingCargo, getCargo } from 'express-cargo'
+import express from 'express'
+import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
 // 1. 가상 필드와 요청 기반 필드가 포함된 객체 정의
 class OrderExample {
-    @body('price')
+    @Body('price')
     price!: number
 
-    @body('quantity')
+    @Body('quantity')
     quantity!: number
 
     // 요청에는 존재하지 않는 계산 필드
-    @virtual((obj: OrderExample) => obj.price * obj.quantity)
+    @Virtual((obj: OrderExample) => obj.price * obj.quantity)
     total!: number
 }
 
 class HeaderExample {
     // 요청 객체에서 직접 가져오는 필드
-    @request((req: Request) => req.headers['x-custom-header'] as string)
+    @Request((req: Request) => req.headers['x-custom-header'] as string)
     customHeader!: string
 }
 
@@ -50,7 +50,7 @@ class HeaderExample {
 const app = express()
 app.use(express.json())
 
-app.post('/orders', bindingCargo(OrderExample), (req: Request, res: Response) => {
+app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: '가상 필드로 처리된 주문 데이터!',
@@ -58,7 +58,7 @@ app.post('/orders', bindingCargo(OrderExample), (req: Request, res: Response) =>
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req: Request, res: Response) => {
+app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
     const headerData = getCargo<HeaderExample>(req)
     res.json({
         message: '요청 기반 필드(@request)로 매핑된 헤더 데이터!',

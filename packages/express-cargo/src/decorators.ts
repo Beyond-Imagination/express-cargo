@@ -8,7 +8,7 @@ const TYPE_MAP = {
     date: Date,
 } as const
 
-export function optional(): PropertyDecorator {
+export function Optional(): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
@@ -17,7 +17,7 @@ export function optional(): PropertyDecorator {
     }
 }
 
-export function array(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
+export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
@@ -27,7 +27,7 @@ export function array(elementType: ArrayElementType): TypedPropertyDecorator<Arr
     }
 }
 
-export function defaultValue(value: any) {
+export function Default(value: any) {
     return function (target: any, propertyKey: string | symbol) {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)

@@ -1,15 +1,15 @@
 import { CargoClassMetadata } from '../../src/metadata'
 import 'reflect-metadata'
-import { body } from '../../src'
+import { Body } from '../../src'
 
 describe('getFieldList', () => {
     class Parent {
-        @body()
+        @Body()
         parentField: string
     }
 
     class Child extends Parent {
-        @body()
+        @Body()
         childField: string
     }
 

@@ -4,40 +4,40 @@
 
 ## Built-in Virtual Decorators
 
-### `@virtual<T>(transformer: (obj: object) => T)`
+### `@Virtual<T>(transformer: (obj: object) => T)`
 
-The `@virtual` decorator defines a **computed property** that is not directly sourced from the request. Instead, its value is derived from other properties of the object.
+The `@Virtual` decorator defines a **computed property** that is not directly sourced from the request. Instead, its value is derived from other properties of the object.
 
 - **`transformer`**: A function that receives the object instance and returns the computed value
 
-### `@request<T>(transformer: (req: Request) => T)`
+### `@Request<T>(transformer: (req: Request) => T)`
 
-The `@request` decorator maps a value from the Express `Request` object into a class property.
+The `@Request` decorator maps a value from the Express `Request` object into a class property.
 
 - **`transformer`**: A function that receives the Request object and returns the value to bind.
 
 ## Usage Example
 
 ```typescript
-import express, { Request, Response } from 'express'
-import { body, virtual, request, bindingCargo, getCargo } from 'express-cargo'
+import express from 'express'
+import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
 // 1. Define Object with virtual and request-derived fields
 class OrderExample {
-    @body('price')
+    @Body('price')
     price!: number
 
-    @body('quantity')
+    @Body('quantity')
     quantity!: number
 
     // Computed field not present in the request
-    @virtual((obj: OrderExample) => obj.price * obj.quantity)
+    @Virtual((obj: OrderExample) => obj.price * obj.quantity)
     total!: number
 }
 
 class HeaderExample {
     // Field derived directly from the request object
-    @request((req: Request) => req.headers['x-custom-header'] as string)
+    @Request((req: Request) => req.headers['x-custom-header'] as string)
     customHeader!: string
 }
 
@@ -45,7 +45,7 @@ class HeaderExample {
 const app = express()
 app.use(express.json())
 
-app.post('/orders', bindingCargo(OrderExample), (req: Request, res: Response) => {
+app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Order data processed with virtual fields!',
@@ -53,7 +53,7 @@ app.post('/orders', bindingCargo(OrderExample), (req: Request, res: Response) =>
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req: Request, res: Response) => {
+app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
     const headerData = getCargo<HeaderExample>(req)
     res.json({
         message: 'Header data mapped using @request!',

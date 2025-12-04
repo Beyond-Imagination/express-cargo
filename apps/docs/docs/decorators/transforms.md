@@ -4,7 +4,7 @@ Express-Cargo provides a decorator to automatically transform incoming request d
 
 Unlike virtual fields, which combine existing fields to create a new one, this transformation decorator directly modifies the value of a single field.
 
-## `@transform<T>(transformer: (value: T) => T)`
+## `@Transform<T>(transformer: (value: T) => T)`
 
 This is the primary decorator for data transformation. It takes a transformer function that receives the raw value from the request and returns the new, transformed value for the field.
 
@@ -12,22 +12,22 @@ This is the primary decorator for data transformation. It takes a transformer fu
 
 ## Usage Example
 
-This example demonstrates how the `@transform` decorator can be used to normalize and process request data into a desired format. This is highly useful for handling diverse user inputs and ensuring that your API processes them consistently, which improves the stability of your application.
+This example demonstrates how the `@Transform` decorator can be used to normalize and process request data into a desired format. This is highly useful for handling diverse user inputs and ensuring that your API processes them consistently, which improves the stability of your application.
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { bindingCargo, getCargo, query, transform } from 'express-cargo'
+import { bindingCargo, getCargo, Query, Transform } from 'express-cargo'
 
 // 1. Define a class with data processing and normalization rules
 class SearchRequest {
     // Transforms the 'sortBy' query parameter to lowercase for consistent sorting
-    @query()
-    @transform((value: string) => value.toLowerCase())
+    @Query()
+    @Transform((value: string) => value.toLowerCase())
     sortBy!: string
 
     // Doubles the 'count' query parameter value
-    @query()
-    @transform((value: number) => value * 2)
+    @Query()
+    @Transform((value: number) => value * 2)
     count!: number
 }
 
@@ -59,7 +59,7 @@ http://localhost:3000/search?sortBy=TITLE&tags=typescript, javascript ,node
 
 ## Output Example
 
-When the example request URL is accessed, the `bindingCargo` middleware processes the query parameters. The `@transform` decorators then normalize the `sortBy` value to a lowercase string and double the `count` value. The `getCargo` function returns an object with these transformed values.
+When the example request URL is accessed, the `bindingCargo` middleware processes the query parameters. The `@Transform` decorators then normalize the `sortBy` value to a lowercase string and double the `count` value. The `getCargo` function returns an object with these transformed values.
 
 ```json
 {

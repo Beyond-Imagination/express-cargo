@@ -1,23 +1,24 @@
 ## Built-in decorators
 
 | Decorator    | Source        |
-| ------------ | ------------- |
-| `@body()`    | `req.body`    |
-| `@query()`   | `req.query`   |
-| `@header()`  | `req.headers` |
-| `@uri()`     | `req.params`  |
-| `@session()` | `req.session` |
+|--------------|---------------|
+| `@Body()`    | `req.body`    |
+| `@Query()`   | `req.query`   |
+| `@Header()`  | `req.headers` |
+| `@Uri()`     | `req.params`  |
+| `@Params()`  | `req.params`  |
+| `@Session()` | `req.session` |
 
 
 ```typescript
 class Request {
-    @body('email')
+    @Body('email')
     email!: string
 
-    @query('limit')
+    @Query('limit')
     limit!: number
 
-    @header('Authorization')
+    @Header('Authorization')
     authorization!: string
 }
 ```
