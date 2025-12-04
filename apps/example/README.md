@@ -1027,7 +1027,7 @@ class IntegrationExample extends BodyExample {
 
     @Request((request: Request) => request.headers['authorization'])
     @prefix('Bearer ')
-    @Transform((value: string) => value.split('Bearer')[1])
+    @Transform((value: string) => value.substring(7))
     token!: string
 }
 
