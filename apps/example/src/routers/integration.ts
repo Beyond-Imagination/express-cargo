@@ -1,49 +1,37 @@
-import express, { Request, Router } from 'express'
-import {
-    body,
-    query,
-    params,
-    validate,
-    header,
-    prefix,
-    transform,
-    request,
-    array,
-    bindingCargo,
-    getCargo,
-} from 'express-cargo'
+import express, { Router } from 'express'
+import { Body, Query, Params, validate, Header, prefix, Transform, Request, Array, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class PostData {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     content!: string
 }
 
 class BodyExample {
-    @body()
-    @array(PostData)
+    @Body()
+    @Array(PostData)
     posts!: PostData[]
 }
 
 class IntegrationExample extends BodyExample {
-    @query()
+    @Query()
     today!: Date
 
-    @params()
+    @Params()
     @validate(value => typeof value === 'number' && value > 0 && value <= 100)
     case!: number
 
-    @header()
+    @Header()
     @validate(value => value === 'application/json')
     'content-type'!: string
 
-    @request((request: Request) => request.headers['authorization'])
+    @Request(request => request.headers['authorization'])
     @prefix('Bearer ')
-    @transform((value: string) => value.substring(7))
+    @Transform((value: string) => value.substring(7))
     token!: string
 }
 

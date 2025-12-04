@@ -1,22 +1,22 @@
-import { bindingCargo, body, getCargo, length } from 'express-cargo'
+import { bindingCargo, Body, getCargo, length } from 'express-cargo'
 import express, { Router } from 'express'
 
 const router: Router = express.Router()
 
 class BaseSample {
-    @body()
+    @Body()
     @length(4)
     baseText!: string
 }
 
 class Sample extends BaseSample {
-    @body()
+    @Body()
     @length(5)
     stringText!: string
 }
 
 class FieldSample {
-    @body()
+    @Body()
     sample!: Sample
 }
 

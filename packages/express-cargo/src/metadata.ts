@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import { ArrayElementType, Source, validArrayElementType, ValidatorRule } from './types'
+import { Source, validArrayElementType, ValidatorRule } from './types'
 
 export class CargoClassMetadata {
     private target: any

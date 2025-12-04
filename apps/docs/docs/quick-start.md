@@ -1,22 +1,22 @@
 ```typescript
 import express from 'express'
-import { body, bindingCargo, getCargo, min, header, params } from 'express-cargo'
+import { Body, bindingCargo, getCargo, min, Header, Params } from 'express-cargo'
 
 const app = express()
 app.use(express.json())
 
 class RequestExample {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     @min(0)
     age!: number
 
-    @params('id')
+    @Params('id')
     id!: number
 
-    @header()
+    @Header()
     authorization!: string
 }
 

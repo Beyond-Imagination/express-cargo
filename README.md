@@ -40,23 +40,23 @@ Add the following settings to your tsconfig.json:
 
 ```ts
 import express from 'express'
-import { body, bindingCargo, getCargo, min, header, params } from 'express-cargo'
+import { Body, bindingCargo, getCargo, min, Header, Params } from 'express-cargo'
 
 const app = express()
 app.use(express.json())
 
 class RequestExample {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     @min(0)
     age!: number
 
-    @params('id')
+    @Params('id')
     id!: number
 
-    @header()
+    @Header()
     authorization!: string
 }
 
@@ -89,18 +89,18 @@ Full guide and API reference:
 
 | Decorator    | Description                      | Example                     |
 |--------------|----------------------------------|-----------------------------|
-| `@body()`    | Binds a field from `req.body`    | `@body() name: string`      |
-| `@query()`   | Binds a field from `req.query`   | `@query() page: number`     |
-| `@params()`  | Binds a field from `req.params`  | `@params() id: string`      |
-| `@uri()`     | alias of @params()               | `@uri() id: string`         |
-| `@header()`  | Binds a field from `req.headers` | `@header() token: string`   |
-| `@session()` | Binds a field from `req.session` | `@session() userId: string` |
+| `@Body()`    | Binds a field from `req.body`    | `@Body() name: string`      |
+| `@Query()`   | Binds a field from `req.query`   | `@Query() page: number`     |
+| `@Params()`  | Binds a field from `req.params`  | `@Params() id: string`      |
+| `@Uri()`     | alias of @params()               | `@Uri() id: string`         |
+| `@Header()`  | Binds a field from `req.headers` | `@Header() token: string`   |
+| `@Session()` | Binds a field from `req.session` | `@Session() userId: string` |
 
 ### Validation Decorators
 
 | Decorator                            | Description                                           | Example                                                                                    |
 |--------------------------------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| `@optional()`                        | Skip validation when value is null or undefined.      | `@optional() value?: number`                                                               |
+| `@Optional()`                        | Skip validation when value is null or undefined.      | `@Optional() value?: number`                                                               |
 | `@min(minimum: number)`              | Number must be greater than or equal to `minimum`.    | `@min(18) age!: number`                                                                    |
 | `@max(maximum: number)`              | Number must be less than or equal to `maximum`.       | `@max(100) score!: number`                                                                 |
 | `@range(min: number, max: number)`   | Number must be between `min` and `max` (inclusive).   | `@range(1, 5) rating!: number`                                                             |
@@ -122,18 +122,18 @@ Full guide and API reference:
 
 ### Transform Decorators
 
-| Decorator | Description | Example |
-|-----------|-------------|---------|
-| `@transform(transformer)` | Transform the parsed value | `@transform(v => v.trim()) name!: string` |
-| `@request(transformer)` | Extract value from Express Request object | `@request(req => req.ip) clientIp!: string` |
-| `@virtual(transformer)` | Compute value from other fields | `@virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
+| Decorator                 | Description                               | Example                                                                 |
+|---------------------------|-------------------------------------------|-------------------------------------------------------------------------|
+| `@Transform(transformer)` | Transform the parsed value                | `@Transform(v => v.trim()) name!: string`                               |
+| `@Request(transformer)`   | Extract value from Express Request object | `@Request(req => req.ip) clientIp!: string`                             |
+| `@Virtual(transformer)`   | Compute value from other fields           | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
 ### Utility Decorators
 
-| Decorator | Description | Example |
-|-----------|-------------|---------|
-| `@defaultValue(value)` | Set default value when field is missing | `@defaultValue(0) count!: number` |
-| `@array(elementType)` | Specify array element type | `@array(String) tags!: string[]` |
+| Decorator             | Description                             | Example                          |
+|-----------------------|-----------------------------------------|----------------------------------|
+| `@Default(value)`     | Set default value when field is missing | `@Default(0) count!: number`     |
+| `@Array(elementType)` | Specify array element type              | `@Array(String) tags!: string[]` |
 
 ### Error Handling
 

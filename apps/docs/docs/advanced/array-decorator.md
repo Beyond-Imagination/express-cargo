@@ -1,48 +1,48 @@
 # Array Decorator
 
-Express-Cargo's `@array` decorator allows you to automatically bind and cast array types from a request. This is useful when you expect a field to be an array of a specific type, like strings, numbers, or even custom objects.
+Express-Cargo's `@Array` decorator allows you to automatically bind and cast array types from a request. This is useful when you expect a field to be an array of a specific type, like strings, numbers, or even custom objects.
 
 ## Usage Example
 
 ```typescript
 import express, { Router } from 'express'
-import { body, array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
 // 1. Define a custom class (optional)
 class CustomClass {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     age!: number
 }
 
 // 2. Define the class with array fields
 class ArraySample {
-    @body()
-    @array(String)
+    @Body()
+    @Array(String)
     stringArray!: string[]
 
-    @body()
-    @array(Number)
+    @Body()
+    @Array(Number)
     numberArray!: number[]
 
-    @body()
-    @array(Boolean)
+    @Body()
+    @Array(Boolean)
     booleanArray!: boolean[]
 
-    @body()
-    @array(Date)
+    @Body()
+    @Array(Date)
     dateArray!: Date[]
 
-    @body()
-    @array('string')
+    @Body()
+    @Array('string')
     stringLiteralArray!: string[]
 
-    @body()
-    @array(CustomClass)
+    @Body()
+    @Array(CustomClass)
     customClassArray!: CustomClass[]
 }
 

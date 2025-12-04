@@ -1,15 +1,15 @@
-import express, { type Request, Router } from 'express'
-import { bindingCargo, body, getCargo, query, request, transform, virtual } from 'express-cargo'
+import express, { Router } from 'express'
+import { bindingCargo, Body, getCargo, Query, Request, Transform, Virtual } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class TransformExample {
-    @query()
-    @transform((value: string) => value.toLowerCase())
+    @Query()
+    @Transform((value: string) => value.toLowerCase())
     sortBy!: string
 
-    @query()
-    @transform((value: number) => value * 2)
+    @Query()
+    @Transform((value: number) => value * 2)
     count!: number
 }
 
@@ -26,7 +26,7 @@ router.get('/transform', bindingCargo(TransformExample), (req, res) => {
 })
 
 class RequestExample {
-    @request((req: Request) => req?.headers['x-custom-header'] as string)
+    @Request(req => req?.headers['x-custom-header'] as string)
     customHeader!: string
 }
 
@@ -40,13 +40,13 @@ router.post('/request', bindingCargo(RequestExample), (req, res) => {
 })
 
 class VirtualExample {
-    @body()
+    @Body()
     price!: number
 
-    @body()
+    @Body()
     quantity!: number
 
-    @virtual((obj: VirtualExample) => obj.price * obj.quantity)
+    @Virtual((obj: VirtualExample) => obj.price * obj.quantity)
     total!: number
 }
 

@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from 'express'
 import {
     bindingCargo,
-    body,
+    Body,
     CargoFieldError,
     CargoTransformFieldError,
     CargoValidationError,
@@ -10,7 +10,7 @@ import {
     getCargoErrorHandler,
     maxLength,
     setCargoErrorHandler,
-    transform,
+    Transform,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -50,13 +50,13 @@ const errorHandler = (error: Error, req: Request, res: Response, next: NextFunct
 }
 
 class ErrorHandlerExample {
-    @body()
+    @Body()
     @maxLength(10)
     name!: string
 
-    @body()
+    @Body()
     @email()
-    @transform((target: string) => target.toLowerCase())
+    @Transform((target: string) => target.toLowerCase())
     email!: string
 }
 
