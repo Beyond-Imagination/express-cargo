@@ -18,7 +18,7 @@ export function Enum<T>(enumObj: object, message?: cargoErrorMessage): TypedProp
             new ValidatorRule(
                 propertyKey,
                 'enum',
-                input => enumValues.some(v => v == input),
+                input => enumValues.some(v => String(v) === String(input)),
                 message || `${String(propertyKey)} must be one of: ${enumValues.join(', ')}`,
             ),
         )
