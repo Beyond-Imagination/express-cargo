@@ -85,8 +85,8 @@ class EnumSample {
 
 router.post('/enum', bindingCargo(EnumSample), (req, res) => {
     const cargo = getCargo<EnumSample>(req)
-    console.log('role : ', cargo?.role)
-    console.log('string role : ', cargo?.stringRole)
+    console.log('role is enum? : ', cargo?.role === Role.ADMIN)
+    console.log('string role is enum? : ', cargo?.stringRole === StringRole.USER)
     res.json(cargo)
 })
 
