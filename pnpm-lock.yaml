@@ -174,6 +174,9 @@ importers:
       '@swc/jest':
         specifier: ^0.2.38
         version: 0.2.38(@swc/core@1.12.0(@swc/helpers@0.5.17))
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
       '@types/node':
         specifier: ^20.11.19
         version: 20.19.0

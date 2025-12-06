@@ -10,7 +10,7 @@ describe('virtual decorator', () => {
         @virtual((obj: Sample) => `${obj.firstName} ${obj.lastName}`)
         fullName!: string
 
-        @virtual((obj: Sample) => (obj.age >= 18 ? 'Adult' : 'Minor'))
+        @virtual((obj: Sample) => (obj.age >= 18 ? 'Adult' : 'Minor') as string)
         ageGroup!: string
     }
 

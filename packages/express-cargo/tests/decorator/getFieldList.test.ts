@@ -5,12 +5,12 @@ import { body } from '../../src'
 describe('getFieldList', () => {
     class Parent {
         @body()
-        parentField: string
+        parentField!: string
     }
 
     class Child extends Parent {
         @body()
-        childField: string
+        childField!: string
     }
 
     const childClassMeta = new CargoClassMetadata(Child.prototype)
@@ -21,7 +21,7 @@ describe('getFieldList', () => {
         expect(fields.length).toBe(2)
     })
 
-    class EmptyClass {}
+    class EmptyClass { }
 
     const emptyClassMeta = new CargoClassMetadata(EmptyClass.prototype)
     it('should return empty array if no metadata', () => {

@@ -10,7 +10,7 @@ describe('request decorator', () => {
         @request(req => `${req.body?.firstName} ${req.body?.lastName}`)
         fullName!: string
 
-        @request(req => (req.body?.age >= 18 ? 'Adult' : 'Minor'))
+        @request(req => req.body?.age >= 18 ? 'Adult' : 'Minor' as string)
         ageGroup!: string
     }
 
