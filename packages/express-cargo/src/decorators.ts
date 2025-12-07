@@ -27,8 +27,8 @@ export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Arr
     }
 }
 
-export function Default(value: any) {
-    return function (target: any, propertyKey: string | symbol) {
+export function Default(value: any): PropertyDecorator {
+    return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         fieldMeta.setDefault(value)

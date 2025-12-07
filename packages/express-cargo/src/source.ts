@@ -3,7 +3,7 @@ import { CargoClassMetadata } from './metadata'
 
 function createSourceDecorator(source: Source) {
     return (key?: string): PropertyDecorator => {
-        return (target, propertyKey) => {
+        return (target: any, propertyKey: string | symbol) => {
             const classMeta = new CargoClassMetadata(target)
             const fieldMeta = classMeta.getFieldMetadata(propertyKey)
             fieldMeta.setKey(key ?? propertyKey)

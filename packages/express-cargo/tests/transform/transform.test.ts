@@ -3,19 +3,19 @@ import { CargoClassMetadata } from '../../src/metadata'
 
 describe('transform decorator', () => {
     class Sample {
-        @Transform(value => value.toUpperCase())
+        @Transform((value: string) => value.toUpperCase())
         text!: string
 
-        @Transform(value => value * 2)
+        @Transform((value: number) => value * 2)
         number!: number
 
-        @Transform(value => value.trim())
+        @Transform((value: string) => value.trim())
         message!: string
 
         untransformedValue!: string
 
-        @Transform(value => value === 'on')
-        checkbox: boolean
+        @Transform((value: any) => value === 'on')
+        checkbox!: boolean
     }
 
     const classMeta = new CargoClassMetadata(Sample.prototype)
@@ -36,7 +36,7 @@ describe('transform decorator', () => {
         const transformer = meta.getTransformer()
 
         expect(transformer).toBeDefined()
-        expect(transformer('hello world')).toBe('HELLO WORLD')
+        expect(transformer!('hello world')).toBe('HELLO WORLD')
     })
 
     it('should apply the transformation correctly for number values', () => {
@@ -44,7 +44,7 @@ describe('transform decorator', () => {
         const transformer = meta.getTransformer()
 
         expect(transformer).toBeDefined()
-        expect(transformer(10)).toBe(20)
+        expect(transformer!(10)).toBe(20)
     })
 
     it('should apply the transformation correctly for string trim', () => {
@@ -60,7 +60,7 @@ describe('transform decorator', () => {
         const transformer = meta.getTransformer()
 
         expect(transformer).toBeDefined()
-        expect(transformer('on')).toBe(true)
-        expect(transformer('off')).toBe(false)
+        expect(transformer!('on')).toBe(true)
+        expect(transformer!('off')).toBe(false)
     })
 })

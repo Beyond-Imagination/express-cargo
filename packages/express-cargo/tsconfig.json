@@ -2,20 +2,31 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "./dist",
-        "rootDir": "./src",
+        "rootDir": ".",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
         "emitDeclarationOnly": false,
-        "types": ["reflect-metadata"],
+        "types": [
+            "reflect-metadata",
+            "jest"
+        ],
         "module": "ESNext",
         "target": "ES2020",
         "moduleResolution": "Node",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "noEmit": false
+        "noEmit": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
-    "include": ["src", "src/**/*"],
-    "exclude": ["node_modules", "dist", "**/*.test.ts"]
+    "include": [
+        "src/**/*",
+        "tests/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+    ]
 }
