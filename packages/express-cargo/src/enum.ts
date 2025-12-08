@@ -6,9 +6,9 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
 
-        const enumValues = Object.keys(enumObj)
-            .filter(k => isNaN(Number(k)))
-            .map(k => enumObj[k as keyof typeof enumObj])
+        const enumKeys = Object.keys(enumObj).filter(k => isNaN(Number(k)))
+        const enumValues = enumKeys.map(k => enumObj[k as keyof typeof enumObj])
+        const validInputs = [...enumKeys, ...enumValues]
 
         // 1. enum 타입 정보 저장
         fieldMeta.setEnumType(enumObj)
@@ -18,7 +18,7 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
             new ValidatorRule(
                 propertyKey,
                 'enum',
-                input => enumValues.some(v => String(v) === String(input)),
+                input => validInputs.some(v => String(v) === String(input)),
                 message || `${String(propertyKey)} must be one of: ${enumValues.join(', ')}`,
             ),
         )
@@ -27,32 +27,20 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
         const transformer = (value: any): any => {
             if (value === null || value === undefined) return value
 
-            // enumObj 예: { 0: "ADMIN", 1: "USER", ADMIN: 0, USER: 1 }
-            const enumEntries = Object.entries(enumObj)
+            const enumKeys = Object.keys(enumObj).filter(k => isNaN(Number(k)))
 
-            // 숫자 문자열 → 숫자
-            if (typeof value === 'string' && !isNaN(Number(value))) {
-                value = Number(value)
-            }
-
-            // ① value가 enum의 value(숫자 또는 문자열)로 직접 존재하는지 체크
-            const directMatch = enumEntries.find(([k, v]) => v === value)
-            if (directMatch) {
-                const [key] = directMatch
-                return enumObj[key as keyof typeof enumObj]
-            }
-
-            // ② value가 enum key로 들어온 경우
-            if (typeof value === 'string' && value in enumObj) {
+            // 1. 입력값이 enum 키('ADMIN') 인 경우
+            if (typeof value === 'string' && enumKeys.includes(value)) {
                 return enumObj[value as keyof typeof enumObj]
             }
 
-            // ③ 숫자 enum인 경우: 숫자로 들어왔을 때 enum value 매핑
-            if (typeof value === 'number' && value in enumObj) {
-                // ex) enumObj[0] === 'ADMIN', 그러면 enumObj['ADMIN'] → 0 반환
-                const enumKey = enumObj[value]
-                if (enumKey && enumKey in enumObj) {
-                    return enumObj[enumKey as keyof typeof enumObj]
+            // 비교를 위해 숫자형 문자열을 숫자로 변환
+            const comparableValue = typeof value === 'string' && !isNaN(Number(value)) ? Number(value) : value
+
+            // 2. 입력값이 enum 값(예: 0 또는 'admin')인 경우
+            for (const key of enumKeys) {
+                if (enumObj[key as keyof typeof enumObj] === comparableValue) {
+                    return comparableValue
                 }
             }
 

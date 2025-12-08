@@ -44,6 +44,8 @@ describe('enum', () => {
         expect(enumRule?.validate('super-admin')).toBeInstanceOf(CargoFieldError)
         expect(enumRule?.validate('0')).toBeNull()
         expect(enumRule?.validate(0)).toBeNull()
+        expect(enumRule?.validate(0)).toBeNull()
+        expect(enumRule?.validate('ADMIN')).toBeNull()
     })
 
     it('should not have enum metadata', () => {
