@@ -1,17 +1,17 @@
-import { body, CargoFieldError, uuid } from '../../src'
+import { Body, CargoFieldError, uuid } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('uuid decorator', () => {
     class Sample {
-        @body()
+        @Body()
         @uuid()
         uuidAll!: string
 
-        @body()
+        @Body()
         @uuid('v4')
         uuidV1!: string
 
-        @body()
+        @Body()
         id!: string
     }
 

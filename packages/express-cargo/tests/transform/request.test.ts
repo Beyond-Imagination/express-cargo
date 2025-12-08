@@ -1,4 +1,4 @@
-import { request } from '../../src/transform'
+import { Request } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('request decorator', () => {
@@ -7,10 +7,10 @@ describe('request decorator', () => {
         lastName!: string
         age!: number
 
-        @request(req => `${req.body?.firstName} ${req.body?.lastName}`)
+        @Request(req => `${req.body?.firstName} ${req.body?.lastName}`)
         fullName!: string
 
-        @request(req => req.body?.age >= 18 ? 'Adult' : 'Minor' as string)
+        @Request(req => req.body?.age >= 18 ? 'Adult' : 'Minor' as string)
         ageGroup!: string
     }
 

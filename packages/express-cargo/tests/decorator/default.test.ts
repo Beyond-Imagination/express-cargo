@@ -1,15 +1,15 @@
-import { defaultValue } from '../../src'
+import { Default } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('default decorator', () => {
     class Sample {
-        @defaultValue('default')
+        @Default('default')
         field1?: string
 
-        @defaultValue(3)
+        @Default(3)
         field2?: number
 
-        @defaultValue(5)
+        @Default(5)
         field3?: number
 
         field4?: string

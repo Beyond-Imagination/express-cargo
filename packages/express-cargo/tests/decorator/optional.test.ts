@@ -1,9 +1,9 @@
-import { optional } from '../../src/decorators'
+import { Optional } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('optional decorator', () => {
     class Sample {
-        @optional()
+        @Optional()
         field1?: string
 
         field2?: number

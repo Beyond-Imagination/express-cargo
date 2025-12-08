@@ -11,16 +11,16 @@ Express-Cargo를 사용하면 요청 내 중첩 객체를 처리할 수 있으�
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { body, bindingCargo, getCargo } from 'express-cargo'
+import { Body, bindingCargo, getCargo } from 'express-cargo'
 
 // 1. 중첩 객체 정의
 class Profile {
-    @body('nickname')
+    @Body('nickname')
     nickname!: string
 }
 
 class ExampleObject {
-    @body('profile')
+    @Body('profile')
     profile!: Profile
 }
 

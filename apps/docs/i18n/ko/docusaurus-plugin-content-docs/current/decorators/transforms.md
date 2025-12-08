@@ -9,30 +9,30 @@ Express-Cargo는 들어오는 요청 데이터를 클래스에 바인딩하기 �
 
 기존 필드를 조합하여 새로운 필드를 생성하는 가상 필드(virtual fields)와 달리, 이 변환 데코레이터는 단일 필드의 값을 직접 수정합니다.
 
-## `@transform<T>(transformer: (value: T) => T)`
+## `@Transform<T>(transformer: (value: T) => T)`
 
-`@transform`은 데이터 변환을 위한 핵심 데코레이터입니다. 요청에서 가져온 원시(raw) 값을 받아 새로운 변환된 값을 반환하는 변환 함수를 사용합니다.
+`@Transform`은 데이터 변환을 위한 핵심 데코레이터입니다. 요청에서 가져온 원시(raw) 값을 받아 새로운 변환된 값을 반환하는 변환 함수를 사용합니다.
 
 - `transformer`: 원시 값을 받아서 변환된 값을 반환하는 함수입니다.
 
 ## 사용 예시
 
-이 예시는 `@transform` 데코레이터가 요청 데이터의 값을 정규화하거나 원하는 형태로 가공하는 방법을 보여줍니다. 이를 사용하면 사용자의 다양한 입력값을 일관된 형식으로 처리할 수 있어 API의 안정성을 높이는 데 매우 유용합니다.
+이 예시는 `@Transform` 데코레이터가 요청 데이터의 값을 정규화하거나 원하는 형태로 가공하는 방법을 보여줍니다. 이를 사용하면 사용자의 다양한 입력값을 일관된 형식으로 처리할 수 있어 API의 안정성을 높이는 데 매우 유용합니다.
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { bindingCargo, getCargo, query, transform } from 'express-cargo'
+import { bindingCargo, getCargo, Query, Transform } from 'express-cargo'
 
 // 1. 데이터 가공 및 정규화 규칙이 포함된 클래스 정의
 class SearchRequest {
     // 'sortBy' 쿼리 파라미터 값을 항상 소문자로 변환
-    @query('sortBy')
-    @transform((value: string) => value.toLowerCase())
+    @Query('sortBy')
+    @Transform((value: string) => value.toLowerCase())
     sortBy!: string
 
     // 'count' 쿼리 파라미터 값을 2배로 변환
-    @query()
-    @transform((value: number) => value * 2)
+    @Query()
+    @Transform((value: number) => value * 2)
     count!: number
 }
 

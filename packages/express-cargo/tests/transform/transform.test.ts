@@ -1,20 +1,20 @@
-import { transform } from '../../src/transform'
+import { Transform } from '../../src/transform'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('transform decorator', () => {
     class Sample {
-        @transform((value: string) => value.toUpperCase())
+        @Transform((value: string) => value.toUpperCase())
         text!: string
 
-        @transform((value: number) => value * 2)
+        @Transform((value: number) => value * 2)
         number!: number
 
-        @transform((value: string) => value.trim())
+        @Transform((value: string) => value.trim())
         message!: string
 
         untransformedValue!: string
 
-        @transform((value: any) => value === 'on')
+        @Transform((value: any) => value === 'on')
         checkbox!: boolean
     }
 
