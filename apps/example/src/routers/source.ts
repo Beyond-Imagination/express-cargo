@@ -1,17 +1,17 @@
 import express, { Router } from 'express'
 import expressSession from 'express-session'
-import { bindingCargo, getCargo, body, query, header, uri, session } from 'express-cargo'
+import { bindingCargo, getCargo, Body, Query, Header, Uri, Session } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class BodyExample {
-    @body()
+    @Body()
     number!: number
 
-    @body()
+    @Body()
     string!: string
 
-    @body()
+    @Body()
     boolean!: boolean
 }
 
@@ -21,13 +21,13 @@ router.post('/body', bindingCargo(BodyExample), (req, res) => {
 })
 
 class QueryExample {
-    @query()
+    @Query()
     number!: number
 
-    @query()
+    @Query()
     string!: string
 
-    @query()
+    @Query()
     boolean!: boolean
 }
 
@@ -37,7 +37,7 @@ router.get('/query', bindingCargo(QueryExample), (req, res) => {
 })
 
 class URIExample {
-    @uri()
+    @Uri()
     id!: number
 }
 
@@ -47,7 +47,7 @@ router.get('/uri/:id', bindingCargo(URIExample), (req, res) => {
 })
 
 class HeaderExample {
-    @header()
+    @Header()
     authorization!: string
 }
 
@@ -57,21 +57,21 @@ router.get('/header', bindingCargo(HeaderExample), (req, res) => {
 })
 
 class CookieExample {
-    @session()
+    @Session()
     path!: string
 
-    @session()
+    @Session()
     httpOnly!: boolean
 
-    @session()
+    @Session()
     secure!: boolean
 }
 
 class SessionExample {
-    @session()
+    @Session()
     cookie!: CookieExample
 
-    @session()
+    @Session()
     userId!: string
 }
 

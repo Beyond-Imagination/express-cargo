@@ -6,7 +6,7 @@ Validation is not performed by a standalone `validate` function. Instead, it is 
 
 ## Built-in Validators
 
-### `@optional()`
+### `@Optional()`
 
 Marks a field as optional, allowing it to be omitted or set to `undefined` without triggering validation errors.
 
@@ -118,18 +118,18 @@ Here is a complete example of how to use validation decorators within an Express
 
 ```typescript
 import express, { Request, Response, NextFunction } from 'express'
-import { bindingCargo, getCargo, body, min, max, suffix, CargoValidationError } from 'express-cargo'
+import { bindingCargo, getCargo, Body, min, max, suffix, CargoValidationError } from 'express-cargo'
 
 // 1. Define a class with source and validation rules
 class CreateAssetRequest {
-    @body('name')
+    @Body('name')
     assetName!: string
 
-    @body('type')
+    @Body('type')
     @suffix('.png')
     assetType!: string
 
-    @body('quantity')
+    @Body('quantity')
     @min(1)
     @max(100)
     quantity!: number

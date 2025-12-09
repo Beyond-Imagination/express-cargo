@@ -1,6 +1,6 @@
 {
     "name": "example-cjs",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "description": "express-cargo cjs example",
     "main": "index.js",
     "scripts": {

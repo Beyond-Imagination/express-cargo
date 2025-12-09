@@ -1,30 +1,30 @@
 import express, { Router } from 'express'
-import { body, array, bindingCargo, getCargo, uri, Enum } from 'express-cargo'
+import { Body, Array, bindingCargo, getCargo, Uri, Enum } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class CustomClass {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     age!: number
 }
 
 class BasicTypeSample {
-    @body()
+    @Body()
     string!: string
 
-    @uri()
+    @Uri()
     number!: number
 
-    @body()
+    @Body()
     boolean!: boolean
 
-    @body()
+    @Body()
     date!: Date
 
-    @body()
+    @Body()
     customObject!: CustomClass
 }
 
@@ -34,28 +34,28 @@ router.post('/type-casting/:number', bindingCargo(BasicTypeSample), (req, res) =
 })
 
 class ArraySample {
-    @body()
-    @array(String)
+    @Body()
+    @Array(String)
     stringArray!: string[]
 
-    @body()
-    @array(Number)
+    @Body()
+    @Array(Number)
     numberArray!: number[]
 
-    @body()
-    @array(Boolean)
+    @Body()
+    @Array(Boolean)
     booleanArray!: boolean[]
 
-    @body()
-    @array(Date)
+    @Body()
+    @Array(Date)
     dateArray!: Date[]
 
-    @body()
-    @array('string')
+    @Body()
+    @Array('string')
     stringLiteralArray!: string[]
 
-    @body()
-    @array(CustomClass)
+    @Body()
+    @Array(CustomClass)
     customClassArray!: CustomClass[]
 }
 

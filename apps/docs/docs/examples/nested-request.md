@@ -10,23 +10,23 @@ In this scenario, we'll define two classes: `UserInfoRequest` and `OrderRequest`
 
 ```typescript
 // user.request.ts
-import { body, header, optional, prefix, transform } from 'express-cargo'
+import { Body, Header, Optional, prefix, Transform } from 'express-cargo'
 
 export class UserInfoRequest {
-    @body('name')
+    @Body('name')
     name!: string
 
-    @body('email')
+    @Body('email')
     @prefix('user-')
     email!: string
 
-    @body('age')
-    @optional()
+    @Body('age')
+    @Optional()
     age?: number
 
     // Extract the token from the Authorization header.
-    @header('authorization')
-    @transform((value: string) => {
+    @Header('authorization')
+    @Transform((value: string) => {
         if (value.startsWith('Bearer ')) {
             return value.substring(7);
         }
@@ -40,19 +40,19 @@ export class UserInfoRequest {
 
 ```typescript
 // order.request.ts
-import { body, min, max } from 'express-cargo'
+import { Body, min, max } from 'express-cargo'
 import { UserInfoRequest } from './user.Request'
 
 export class OrderRequest {
-    @body('productId')
+    @Body('productId')
     productId!: string
 
-    @body('quantity')
+    @Body('quantity')
     @min(1)
     @max(10)
     quantity!: number
 
-    @body('user')
+    @Body('user')
     user!: UserInfoRequest
 }
 ```

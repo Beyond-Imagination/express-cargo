@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 import {
     bindingCargo,
     getCargo,
-    body,
+    Body,
     equal,
     notEqual,
     prefix,
@@ -16,17 +16,20 @@ import {
     validate,
     regexp,
     email,
-    optional,
+    Optional,
     min,
     max,
-    range, isAlpha,
+    range,
+    isAlpha,
+    uuid,
+    alphanumeric,
 } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class OptionalExample {
-    @body()
-    @optional()
+    @Body()
+    @Optional()
     @equal(1)
     number?: number
 }
@@ -37,7 +40,7 @@ router.post('/optional', bindingCargo(OptionalExample), (req, res) => {
 })
 
 class MinExample {
-    @body()
+    @Body()
     @min(1)
     number!: number
 }
@@ -48,7 +51,7 @@ router.post('/min', bindingCargo(MinExample), (req, res) => {
 })
 
 class MaxExample {
-    @body()
+    @Body()
     @max(10)
     number!: number
 }
@@ -59,7 +62,7 @@ router.post('/max', bindingCargo(MaxExample), (req, res) => {
 })
 
 class RangeExample {
-    @body()
+    @Body()
     @range(10, 20)
     number!: number
 }
@@ -70,15 +73,15 @@ router.post('/range', bindingCargo(RangeExample), (req, res) => {
 })
 
 class EqualExample {
-    @body()
+    @Body()
     @equal(3)
     number!: number
 
-    @body()
+    @Body()
     @equal('text')
     string!: string
 
-    @body()
+    @Body()
     @equal(true)
     boolean!: boolean
 }
@@ -89,15 +92,15 @@ router.post('/equal', bindingCargo(EqualExample), (req, res) => {
 })
 
 class NotEqualExample {
-    @body()
+    @Body()
     @notEqual(3)
     number!: number
 
-    @body()
+    @Body()
     @notEqual('text')
     string!: string
 
-    @body()
+    @Body()
     @notEqual(true)
     boolean!: boolean
 }
@@ -108,7 +111,7 @@ router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
 })
 
 class PrefixExample {
-    @body()
+    @Body()
     @prefix('https://')
     url!: string
 }
@@ -119,7 +122,7 @@ router.post('/prefix', bindingCargo(PrefixExample), (req, res) => {
 })
 
 class SuffixExample {
-    @body()
+    @Body()
     @suffix('.png')
     photo!: string
 }
@@ -130,7 +133,7 @@ router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
 })
 
 class IsTrueExample {
-    @body()
+    @Body()
     @isTrue()
     booleanValue!: boolean
 }
@@ -141,7 +144,7 @@ router.post('/is-true', bindingCargo(IsTrueExample), (req, res) => {
 })
 
 class IsFalseExample {
-    @body()
+    @Body()
     @isFalse()
     booleanValue!: boolean
 }
@@ -152,7 +155,7 @@ router.post('/is-false', bindingCargo(IsFalseExample), (req, res) => {
 })
 
 class OneOfExample {
-    @body()
+    @Body()
     @oneOf(['js', 'ts', 'html', 'css'])
     language!: string
 }
@@ -163,7 +166,7 @@ router.post('/one-of', bindingCargo(OneOfExample), (req, res) => {
 })
 
 class MaxLengthExample {
-    @body()
+    @Body()
     @maxLength(5)
     name!: string
 }
@@ -174,7 +177,7 @@ router.post('/max-length', bindingCargo(MaxLengthExample), (req, res) => {
 })
 
 class MinLengthExample {
-    @body()
+    @Body()
     @minLength(2)
     name!: string
 }
@@ -185,7 +188,7 @@ router.post('/min-length', bindingCargo(MinLengthExample), (req, res) => {
 })
 
 class LengthExample {
-    @body()
+    @Body()
     @length(2)
     name!: string
 }
@@ -196,7 +199,7 @@ router.post('/length', bindingCargo(LengthExample), (req, res) => {
 })
 
 class ValidateExample {
-    @body()
+    @Body()
     @validate(email => (email as string).split('@').length === 2)
     email!: string
 }
@@ -207,7 +210,7 @@ router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
 })
 
 class RegexpExample {
-    @body()
+    @Body()
     @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
     phone!: string
 }
@@ -218,7 +221,7 @@ router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
 })
 
 class EmailExample {
-    @body()
+    @Body()
     @email()
     email!: string
 }
@@ -229,13 +232,39 @@ router.post('/email', bindingCargo(EmailExample), (req, res) => {
 })
 
 class AlphaExample {
-    @body()
+    @Body()
     @isAlpha()
     name!: string
 }
 
 router.post('/alpha', bindingCargo(AlphaExample), (req, res) => {
     const cargo = getCargo<AlphaExample>(req)
+    res.json(cargo)
+})
+
+class UuidExample {
+    @Body()
+    @uuid()
+    uuidAll!: string
+
+    @Body()
+    @uuid('v4')
+    uuid!: string
+}
+
+router.post('/uuid', bindingCargo(UuidExample), (req, res) => {
+    const cargo = getCargo<UuidExample>(req)
+    res.json(cargo)
+})
+
+class AlphanumericExample {
+    @Body()
+    @alphanumeric()
+    alphanumeric!: string
+}
+
+router.post('/alphanumeric', bindingCargo(AlphanumericExample), (req, res) => {
+    const cargo = getCargo<AlphanumericExample>(req)
     res.json(cargo)
 })
 

@@ -1,19 +1,19 @@
 import express, { Router } from 'express'
-import { bindingCargo, body, defaultValue, getCargo } from 'express-cargo'
+import { bindingCargo, Body, Default, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
 class DefaultExample {
-    @body()
-    @defaultValue(3)
+    @Body()
+    @Default(3)
     number!: number
 
-    @body()
-    @defaultValue('2')
+    @Body()
+    @Default('2')
     string!: string
 
-    @body()
-    @defaultValue(false)
+    @Body()
+    @Default(false)
     boolean!: boolean
 }
 

@@ -13,6 +13,10 @@ title: 유효성 검사 데코레이터
 
 ## 기본 제공 유효성 검사기 (Built-in Validators)
 
+### `@Optional()`
+
+해당 필드를 선택 사항으로 표시하여, 유효성 검사 오류를 발생시키지 않고 필드를 생략하거나 `undefined`로 설정할 수 있도록 합니다.
+
 ### `@min(value: number)`
 
 숫자가 지정된 최소값 이상인지 검증합니다.
@@ -154,18 +158,18 @@ title: 유효성 검사 데코레이터
 
 ```ts
 import express, { Request, Response, NextFunction } from 'express';
-import { bindingCargo, getCargo, body, min, max, suffix, CargoValidationError } from 'express-cargo';
+import { bindingCargo, getCargo, Body, min, max, suffix, CargoValidationError } from 'express-cargo';
 
 // 1. 바인딩 및 검증 규칙이 정의된 클래스
 class CreateAssetRequest {
-    @body('name')
+    @Body('name')
     assetName!: string;
 
-    @body('type')
+    @Body('type')
     @suffix('.png')
     assetType!: string;
 
-    @body('quantity')
+    @Body('quantity')
     @min(1)
     @max(100)
     quantity!: number;

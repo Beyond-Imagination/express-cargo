@@ -1,16 +1,16 @@
 import { CargoClassMetadata } from '../../src/metadata'
 import 'reflect-metadata'
-import { body } from '../../src'
+import { Body } from '../../src'
 
 describe('getFieldList', () => {
     class Parent {
-        @body()
-        parentField: string
+        @Body()
+        parentField!: string
     }
 
     class Child extends Parent {
-        @body()
-        childField: string
+        @Body()
+        childField!: string
     }
 
     const childClassMeta = new CargoClassMetadata(Child.prototype)
@@ -21,7 +21,7 @@ describe('getFieldList', () => {
         expect(fields.length).toBe(2)
     })
 
-    class EmptyClass {}
+    class EmptyClass { }
 
     const emptyClassMeta = new CargoClassMetadata(EmptyClass.prototype)
     it('should return empty array if no metadata', () => {

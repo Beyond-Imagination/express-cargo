@@ -1,4 +1,4 @@
-import { virtual } from '../../src/transform'
+import { Virtual } from '../../src/transform'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('virtual decorator', () => {
@@ -7,10 +7,10 @@ describe('virtual decorator', () => {
         lastName!: string
         age!: number
 
-        @virtual((obj: Sample) => `${obj.firstName} ${obj.lastName}`)
+        @Virtual((obj: Sample) => `${obj.firstName} ${obj.lastName}`)
         fullName!: string
 
-        @virtual((obj: Sample) => (obj.age >= 18 ? 'Adult' : 'Minor'))
+        @Virtual((obj: Sample) => (obj.age >= 18 ? 'Adult' : 'Minor') as string)
         ageGroup!: string
     }
 

@@ -1,15 +1,15 @@
 import { bindingCargo, getCargo } from '../../src'
-import { body, virtual, optional, min } from '../../src'
+import { Body, Virtual, Optional, min } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 import { CargoValidationError } from '../../src'
 
 class VirtualDTO {
-    @body('firstName') firstName!: string
-    @body('lastName') lastName!: string
+    @Body('firstName') firstName!: string
+    @Body('lastName') lastName!: string
 
-    @virtual((dto: VirtualDTO) => `${dto.firstName} ${dto.lastName}`) fullName!: string
-    @virtual((dto: VirtualDTO) => dto.firstName?.toUpperCase()) @optional() upperName?: string
-    @virtual((dto: VirtualDTO) => dto.firstName.length + dto.lastName.length) @min(5) nameLength!: number
+    @Virtual((dto: VirtualDTO) => `${dto.firstName} ${dto.lastName}`) fullName!: string
+    @Virtual((dto: VirtualDTO) => dto.firstName?.toUpperCase()) @Optional() upperName?: string
+    @Virtual((dto: VirtualDTO) => dto.firstName.length + dto.lastName.length) @min(5) nameLength!: number
 }
 
 describe('virtual binding', () => {
