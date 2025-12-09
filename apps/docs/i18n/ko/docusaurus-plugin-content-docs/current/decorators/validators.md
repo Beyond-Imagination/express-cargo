@@ -17,7 +17,7 @@ title: 유효성 검사 데코레이터
 
 해당 필드를 선택 사항으로 표시하여, 유효성 검사 오류를 발생시키지 않고 필드를 생략하거나 `undefined`로 설정할 수 있도록 합니다.
 
-### `@min(value: number)`
+### `@Min(value: number)`
 
 숫자가 지정된 최소값 이상인지 검증합니다.
 
@@ -25,7 +25,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@max(value: number)`
+### `@Max(value: number)`
 
 숫자가 지정된 최대값 이하인지 검증합니다.
 
@@ -33,7 +33,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@range(min: number, max: number)`
+### `@Range(min: number, max: number)`
 
 숫자가 지정된 최소값과 최대값 범위 내에 포함되는지 검증합니다.
 
@@ -43,7 +43,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@prefix(value: string)`
+### `@Prefix(value: string)`
 
 문자열이 지정된 접두사로 시작하는지 검증합니다.
 
@@ -51,7 +51,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@suffix(value: string)`
+### `@Suffix(value: string)`
 
 문자열이 지정된 접미사로 끝나는지 검증합니다.
 
@@ -59,7 +59,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@equal(value: any)`
+### `@Equal(value: any)`
 
 입력 값이 주어진 값과 정확히 일치하는지(`===`) 검증합니다.
 
@@ -67,7 +67,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@notEqual(value: any)`
+### `@NotEqual(value: any)`
 
 입력 값이 주어진 값과 정확히 일치하지 않는지(`!==`) 검증합니다.
 
@@ -75,19 +75,19 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@isTrue()`
+### `@IsTrue()`
 
 주어진 값이 `true` 인지 검증합니다.
 
 ---
 
-### `@isFalse()`
+### `@IsFalse()`
 
 주어진 값이 `false` 인지 검증합니다.
 
 ---
 
-### `@length(value: number)`
+### `@Length(value: number)`
 
 문자열의 길이가 지정된 값과 정확히 일치하는지 검증합니다.
 
@@ -95,7 +95,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@maxLength(value: number)`
+### `@MaxLength(value: number)`
 
 문자열의 길이가 지정된 최대값을 초과하지 않는지 검증합니다.
 
@@ -103,7 +103,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@minLength(value: number)`
+### `@MinLength(value: number)`
 
 문자열의 길이가 지정된 최소값 이상인지 검증합니다.
 
@@ -111,7 +111,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@oneOf(values: any[])`
+### `@OneOf(values: any[])`
 
 입력 값이 지정된 값 중 하나인지 검증합니다.
 
@@ -119,7 +119,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
+### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 사용자 정의 검증 함수를 사용해 값을 검증합니다.
 이 데코레이터를 사용하면 기본 제공 데코레이터를 넘어서는 유연한 검증 로직을 구현할 수 있습니다.
@@ -128,7 +128,7 @@ title: 유효성 검사 데코레이터
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
 
-### `@regexp(pattern: RegExp, message?: string)`
+### `@Regexp(pattern: RegExp, message?: string)`
 
 값이 지정된 정규식 패턴과 일치하는지 검증합니다.
 이 데코레이터는 이메일, 휴대폰 번호 등 특정 형식을 강제할 때 유용합니다.
@@ -138,13 +138,13 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@email()`
+### `@Email()`
 
 값이 유효한 이메일 주소인지 검증합니다.
 
 ---
 
-### `isAlpha(message?: string)`
+### `Alpha(message?: string)`
 
 값이 알파벳 문자만(대문자 또는 소문자 영어 문자, A–Z / a–z) 포함하고 있는지 확인합니다.
 
@@ -158,7 +158,7 @@ title: 유효성 검사 데코레이터
 
 ```ts
 import express, { Request, Response, NextFunction } from 'express';
-import { bindingCargo, getCargo, Body, min, max, suffix, CargoValidationError } from 'express-cargo';
+import { bindingCargo, getCargo, Body, Min, Max, Suffix, CargoValidationError } from 'express-cargo';
 
 // 1. 바인딩 및 검증 규칙이 정의된 클래스
 class CreateAssetRequest {
@@ -166,12 +166,12 @@ class CreateAssetRequest {
     assetName!: string;
 
     @Body('type')
-    @suffix('.png')
+    @Suffix('.png')
     assetType!: string;
 
     @Body('quantity')
-    @min(1)
-    @max(100)
+    @Min(1)
+    @Max(100)
     quantity!: number;
 }
 
@@ -213,8 +213,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 [유효하지 않은 요청 예시]
 {
     "name": "My-Asset",
-    "type": "icon.jpg", // @suffix('.png') 실패
-    "quantity": 101     // @max(100) 실패
+    "type": "icon.jpg", // @Suffix('.png') 실패
+    "quantity": 101     // @Max(100) 실패
 }
 */
 ```

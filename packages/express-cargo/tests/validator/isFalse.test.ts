@@ -1,9 +1,9 @@
-import { isFalse, CargoFieldError } from '../../src'
+import { IsFalse, CargoFieldError } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('isFalse decorator', () => {
     class Sample {
-        @isFalse()
+        @IsFalse()
         booleanValue!: boolean
 
         noValidatorValue!: boolean

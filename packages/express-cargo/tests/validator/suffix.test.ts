@@ -1,9 +1,9 @@
-import { CargoFieldError, suffix } from '../../src'
+import { CargoFieldError, Suffix } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('suffix decorator', () => {
     class Sample {
-        @suffix('.com')
+        @Suffix('.com')
         link1!: string
 
         link2!: string

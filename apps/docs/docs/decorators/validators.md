@@ -10,82 +10,82 @@ Validation is not performed by a standalone `validate` function. Instead, it is 
 
 Marks a field as optional, allowing it to be omitted or set to `undefined` without triggering validation errors.
 
-### `@min(value: number)`
+### `@Min(value: number)`
 
 Validates that a number is greater than or equal to the specified minimum value.
 
 - **`value`**: The minimum allowed value.
 
-### `@max(value: number)`
+### `@Max(value: number)`
 
 Validates that a number is less than or equal to the specified maximum value.
 
 - **`value`**: The maximum allowed value.
 
-### `@range(min: number, max: number)`
+### `@Range(min: number, max: number)`
 
 Validates that a number is within the specified range, inclusive of the minimum and maximum values.
 
 - **`min`**: The minimum allowed value.
 - **`max`**: The maximum allowed value.
 
-### `@prefix(value: string)`
+### `@Prefix(value: string)`
 
 Validates that a string starts with the specified prefix.
 
 - **`value`**: The required starting text.
 
-### `@suffix(value: string)`
+### `@Suffix(value: string)`
 
 Validates that a string ends with the specified suffix.
 
 - **`value`**: The required ending text.
 
-### `@equal(value: any)`
+### `@Equal(value: any)`
 
 Validates that a value is strictly equal (`===`) to the specified value.
 
 - **`value`**: The value to compare against.
 
-### `@notEqual(value: any)`
+### `@NotEqual(value: any)`
 
 Validates that a value is strictly not equal (`!==`) to the specified value.
 
 - **`value`**: The value to compare against.
 
-### `@isTrue()`
+### `@IsTrue()`
 
 Validates that the decorated property is true.
 
-### `@isFalse()`
+### `@IsFalse()`
 
 Validates that the decorated property is false.
 
-### `@length(value: number)`
+### `@Length(value: number)`
 
 Validates that the decorated string’s length is exactly the specified value.
 
 - **`value`**: The required exact length in characters
 
-### `@maxLength(value: number)`
+### `@MaxLength(value: number)`
 
 Validates that the decorated string’s length does not exceed the specified maximum.
 
 - **`value`**: The maximum allowed length in characters.
 
-### `@minLength(value: number)`
+### `@MinLength(value: number)`
 
 Validates that the decorated string’s length is at least the specified minimum.
 
 - **`value`**: The minimum allowed length in characters.
 
-### `@oneOf(values: any[])`
+### `@OneOf(values: any[])`
 
 Validates that the input value is one of the specified values.
 
 - **`values`**: The array of allowed values.
 
-### `@validate(validateFn: (value: unknown) => boolean, message?: string)`
+### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Validates a value using a custom validation function.
 This decorator provides flexibility to implement validation logic beyond the built-in ones.
@@ -93,7 +93,7 @@ This decorator provides flexibility to implement validation logic beyond the bui
 - **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-### `@regexp(pattern: RegExp, message?: string)`
+### `@Regexp(pattern: RegExp, message?: string)`
 
 Validates that the decorated field matches the specified regular expression pattern.
 This decorator is useful for enforcing format rules such as email, phone numbers, etc.
@@ -101,11 +101,11 @@ This decorator is useful for enforcing format rules such as email, phone numbers
 - **`pattern`**: A RegExp object used to test the field value. The value is valid if it matches the pattern.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-### `@email()`
+### `@Email()`
 
 Validates that the decorated property is a valid email address.
 
-### `isAlpha(message?: string)`
+### `Alpha(message?: string)`
 
 Validates that the decorated field contains alphabetic characters only (uppercase or lowercase English letters, A–Z / a–z).
 
@@ -118,7 +118,7 @@ Here is a complete example of how to use validation decorators within an Express
 
 ```typescript
 import express, { Request, Response, NextFunction } from 'express'
-import { bindingCargo, getCargo, Body, min, max, suffix, CargoValidationError } from 'express-cargo'
+import { bindingCargo, getCargo, Body, Min, Max, Suffix, CargoValidationError } from 'express-cargo'
 
 // 1. Define a class with source and validation rules
 class CreateAssetRequest {
@@ -126,12 +126,12 @@ class CreateAssetRequest {
     assetName!: string
 
     @Body('type')
-    @suffix('.png')
+    @Suffix('.png')
     assetType!: string
 
     @Body('quantity')
-    @min(1)
-    @max(100)
+    @Min(1)
+    @Max(100)
     quantity!: number
 }
 
@@ -173,8 +173,8 @@ Example of a VALID request body:
 Example of an INVALID request body:
 {
     "name": "My-Asset",
-    "type": "icon.jpg", // Fails @suffix('.png')
-    "quantity": 101     // Fails @max(100)
+    "type": "icon.jpg", // Fails @Suffix('.png')
+    "quantity": 101     // Fails @Max(100)
 }
 */
 ```

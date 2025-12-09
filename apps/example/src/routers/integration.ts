@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { Body, Query, Params, validate, Header, prefix, Transform, Request, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, Query, Params, Validate, Header, Prefix, Transform, Request, Array, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -22,15 +22,15 @@ class IntegrationExample extends BodyExample {
     today!: Date
 
     @Params()
-    @validate(value => typeof value === 'number' && value > 0 && value <= 100)
+    @Validate(value => typeof value === 'number' && value > 0 && value <= 100)
     case!: number
 
     @Header()
-    @validate(value => value === 'application/json')
+    @Validate(value => value === 'application/json')
     'content-type'!: string
 
     @Request(request => request.headers['authorization'])
-    @prefix('Bearer ')
+    @Prefix('Bearer ')
     @Transform((value: string) => value.substring(7))
     token!: string
 }

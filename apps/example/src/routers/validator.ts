@@ -3,26 +3,26 @@ import {
     bindingCargo,
     getCargo,
     Body,
-    equal,
-    notEqual,
-    prefix,
-    suffix,
-    isTrue,
-    isFalse,
-    oneOf,
-    maxLength,
-    minLength,
-    length,
-    validate,
-    regexp,
-    email,
+    Equal,
+    NotEqual,
+    Prefix,
+    Suffix,
+    IsTrue,
+    IsFalse,
+    OneOf,
+    MaxLength,
+    MinLength,
+    Length,
+    Validate,
+    Regexp,
+    Email,
     Optional,
-    min,
-    max,
-    range,
-    isAlpha,
-    uuid,
-    alphanumeric,
+    Min,
+    Max,
+    Range,
+    Alpha,
+    Uuid,
+    Alphanumeric,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -30,7 +30,7 @@ const router: Router = express.Router()
 class OptionalExample {
     @Body()
     @Optional()
-    @equal(1)
+    @Equal(1)
     number?: number
 }
 
@@ -41,7 +41,7 @@ router.post('/optional', bindingCargo(OptionalExample), (req, res) => {
 
 class MinExample {
     @Body()
-    @min(1)
+    @Min(1)
     number!: number
 }
 
@@ -52,7 +52,7 @@ router.post('/min', bindingCargo(MinExample), (req, res) => {
 
 class MaxExample {
     @Body()
-    @max(10)
+    @Max(10)
     number!: number
 }
 
@@ -63,7 +63,7 @@ router.post('/max', bindingCargo(MaxExample), (req, res) => {
 
 class RangeExample {
     @Body()
-    @range(10, 20)
+    @Range(10, 20)
     number!: number
 }
 
@@ -74,15 +74,15 @@ router.post('/range', bindingCargo(RangeExample), (req, res) => {
 
 class EqualExample {
     @Body()
-    @equal(3)
+    @Equal(3)
     number!: number
 
     @Body()
-    @equal('text')
+    @Equal('text')
     string!: string
 
     @Body()
-    @equal(true)
+    @Equal(true)
     boolean!: boolean
 }
 
@@ -93,15 +93,15 @@ router.post('/equal', bindingCargo(EqualExample), (req, res) => {
 
 class NotEqualExample {
     @Body()
-    @notEqual(3)
+    @NotEqual(3)
     number!: number
 
     @Body()
-    @notEqual('text')
+    @NotEqual('text')
     string!: string
 
     @Body()
-    @notEqual(true)
+    @NotEqual(true)
     boolean!: boolean
 }
 
@@ -112,7 +112,7 @@ router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
 
 class PrefixExample {
     @Body()
-    @prefix('https://')
+    @Prefix('https://')
     url!: string
 }
 
@@ -123,7 +123,7 @@ router.post('/prefix', bindingCargo(PrefixExample), (req, res) => {
 
 class SuffixExample {
     @Body()
-    @suffix('.png')
+    @Suffix('.png')
     photo!: string
 }
 
@@ -134,7 +134,7 @@ router.post('/suffix', bindingCargo(SuffixExample), (req, res) => {
 
 class IsTrueExample {
     @Body()
-    @isTrue()
+    @IsTrue()
     booleanValue!: boolean
 }
 
@@ -145,7 +145,7 @@ router.post('/is-true', bindingCargo(IsTrueExample), (req, res) => {
 
 class IsFalseExample {
     @Body()
-    @isFalse()
+    @IsFalse()
     booleanValue!: boolean
 }
 
@@ -156,7 +156,7 @@ router.post('/is-false', bindingCargo(IsFalseExample), (req, res) => {
 
 class OneOfExample {
     @Body()
-    @oneOf(['js', 'ts', 'html', 'css'])
+    @OneOf(['js', 'ts', 'html', 'css'])
     language!: string
 }
 
@@ -167,7 +167,7 @@ router.post('/one-of', bindingCargo(OneOfExample), (req, res) => {
 
 class MaxLengthExample {
     @Body()
-    @maxLength(5)
+    @MaxLength(5)
     name!: string
 }
 
@@ -178,7 +178,7 @@ router.post('/max-length', bindingCargo(MaxLengthExample), (req, res) => {
 
 class MinLengthExample {
     @Body()
-    @minLength(2)
+    @MinLength(2)
     name!: string
 }
 
@@ -189,7 +189,7 @@ router.post('/min-length', bindingCargo(MinLengthExample), (req, res) => {
 
 class LengthExample {
     @Body()
-    @length(2)
+    @Length(2)
     name!: string
 }
 
@@ -200,7 +200,7 @@ router.post('/length', bindingCargo(LengthExample), (req, res) => {
 
 class ValidateExample {
     @Body()
-    @validate(email => (email as string).split('@').length === 2)
+    @Validate(email => (email as string).split('@').length === 2)
     email!: string
 }
 
@@ -211,7 +211,7 @@ router.post('/validate', bindingCargo(ValidateExample), (req, res) => {
 
 class RegexpExample {
     @Body()
-    @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
+    @Regexp(/^01[016789]-\d{3,4}-\d{4}$/)
     phone!: string
 }
 
@@ -222,7 +222,7 @@ router.post('/regexp', bindingCargo(RegexpExample), (req, res) => {
 
 class EmailExample {
     @Body()
-    @email()
+    @Email()
     email!: string
 }
 
@@ -233,7 +233,7 @@ router.post('/email', bindingCargo(EmailExample), (req, res) => {
 
 class AlphaExample {
     @Body()
-    @isAlpha()
+    @Alpha()
     name!: string
 }
 
@@ -244,11 +244,11 @@ router.post('/alpha', bindingCargo(AlphaExample), (req, res) => {
 
 class UuidExample {
     @Body()
-    @uuid()
+    @Uuid()
     uuidAll!: string
 
     @Body()
-    @uuid('v4')
+    @Uuid('v4')
     uuid!: string
 }
 
@@ -259,7 +259,7 @@ router.post('/uuid', bindingCargo(UuidExample), (req, res) => {
 
 class AlphanumericExample {
     @Body()
-    @alphanumeric()
+    @Alphanumeric()
     alphanumeric!: string
 }
 

@@ -1,14 +1,14 @@
-import { CargoFieldError, minLength } from '../../src'
+import { CargoFieldError, MinLength } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('minLength decorator', () => {
     class Sample {
-        @minLength(5)
+        @MinLength(5)
         stringText!: string
 
         noValidatorText!: string
 
-        @minLength(3)
+        @MinLength(3)
         notStringType!: any
     }
 

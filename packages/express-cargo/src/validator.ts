@@ -8,7 +8,7 @@ function addValidator(target: any, propertyKey: string | symbol, rule: Validator
     classMeta.setFieldMetadata(propertyKey, fieldMeta)
 }
 
-export function min(minimum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+export function Min(minimum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -19,7 +19,7 @@ export function min(minimum: number, message?: cargoErrorMessage): TypedProperty
     }
 }
 
-export function max(maximum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+export function Max(maximum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -30,7 +30,7 @@ export function max(maximum: number, message?: cargoErrorMessage): TypedProperty
     }
 }
 
-export function prefix(prefixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Prefix(prefixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -41,7 +41,7 @@ export function prefix(prefixText: string, message?: cargoErrorMessage): TypedPr
     }
 }
 
-export function suffix(suffixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Suffix(suffixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -52,7 +52,7 @@ export function suffix(suffixText: string, message?: cargoErrorMessage): TypedPr
     }
 }
 
-export function equal(value: any, message?: cargoErrorMessage): PropertyDecorator {
+export function Equal(value: any, message?: cargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -63,7 +63,7 @@ export function equal(value: any, message?: cargoErrorMessage): PropertyDecorato
     }
 }
 
-export function notEqual(value: any, message?: cargoErrorMessage): PropertyDecorator {
+export function NotEqual(value: any, message?: cargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -74,7 +74,7 @@ export function notEqual(value: any, message?: cargoErrorMessage): PropertyDecor
     }
 }
 
-export function range(min: number, max: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+export function Range(min: number, max: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -85,7 +85,7 @@ export function range(min: number, max: number, message?: cargoErrorMessage): Ty
     }
 }
 
-export function isFalse(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
+export function IsFalse(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -96,7 +96,7 @@ export function isFalse(message?: cargoErrorMessage): TypedPropertyDecorator<boo
     }
 }
 
-export function isTrue(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
+export function IsTrue(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -107,7 +107,7 @@ export function isTrue(message?: cargoErrorMessage): TypedPropertyDecorator<bool
     }
 }
 
-export function length(value: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Length(value: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -118,7 +118,7 @@ export function length(value: number, message?: cargoErrorMessage): TypedPropert
     }
 }
 
-export function maxLength(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function MaxLength(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -129,7 +129,7 @@ export function maxLength(max: number, message?: cargoErrorMessage): TypedProper
     }
 }
 
-export function minLength(min: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function MinLength(min: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -144,7 +144,7 @@ export function minLength(min: number, message?: cargoErrorMessage): TypedProper
  * 속성 값이 주어진 값들 중 하나인지 확인합니다.
  * @param options 허용되는 값의 배열.
  */
-export function oneOf<T extends readonly any[]>(options: T, message?: cargoErrorMessage): PropertyDecorator {
+export function OneOf<T extends readonly any[]>(options: T, message?: cargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -155,7 +155,7 @@ export function oneOf<T extends readonly any[]>(options: T, message?: cargoError
     }
 }
 
-export function validate(validateFn: (value: unknown) => boolean, message?: cargoErrorMessage): PropertyDecorator {
+export function Validate(validateFn: (value: unknown) => boolean, message?: cargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -166,7 +166,7 @@ export function validate(validateFn: (value: unknown) => boolean, message?: carg
     }
 }
 
-export function regexp(pattern: RegExp, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Regexp(pattern: RegExp, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,
@@ -177,7 +177,7 @@ export function regexp(pattern: RegExp, message?: cargoErrorMessage): TypedPrope
     }
 }
 
-export function email(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Email(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         const DEFAULT_EMAIL_PATTERN =
             /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -192,7 +192,7 @@ export function email(message?: cargoErrorMessage): TypedPropertyDecorator<strin
 
 const ALPHA_PATTERN = /^[a-zA-Z]+$/
 
-export function isAlpha(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Alpha(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -215,7 +215,7 @@ const uuidPatterns = {
     v5: /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
 }
 
-export function uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     let regex: RegExp
     let versionLabel: string
 
@@ -253,7 +253,7 @@ export function uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedP
     }
 }
 
-export function alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(target, propertyKey, new ValidatorRule(
             propertyKey,

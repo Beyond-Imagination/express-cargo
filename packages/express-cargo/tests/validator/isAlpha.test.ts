@@ -1,9 +1,9 @@
-import { CargoFieldError, isAlpha } from '../../src'
+import { CargoFieldError, Alpha } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('isAlpha decorator', () => {
     class Sample {
-        @isAlpha()
+        @Alpha()
         alphaValue!: string
 
         noValidatorValue!: boolean

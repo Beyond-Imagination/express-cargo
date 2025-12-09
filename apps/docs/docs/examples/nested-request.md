@@ -10,14 +10,14 @@ In this scenario, we'll define two classes: `UserInfoRequest` and `OrderRequest`
 
 ```typescript
 // user.request.ts
-import { Body, Header, Optional, prefix, Transform } from 'express-cargo'
+import { Body, Header, Optional, Prefix, Transform } from 'express-cargo'
 
 export class UserInfoRequest {
     @Body('name')
     name!: string
 
     @Body('email')
-    @prefix('user-')
+    @Prefix('user-')
     email!: string
 
     @Body('age')
@@ -40,7 +40,7 @@ export class UserInfoRequest {
 
 ```typescript
 // order.request.ts
-import { Body, min, max } from 'express-cargo'
+import { Body, Min, Max } from 'express-cargo'
 import { UserInfoRequest } from './user.Request'
 
 export class OrderRequest {
@@ -48,8 +48,8 @@ export class OrderRequest {
     productId!: string
 
     @Body('quantity')
-    @min(1)
-    @max(10)
+    @Min(1)
+    @Max(10)
     quantity!: number
 
     @Body('user')

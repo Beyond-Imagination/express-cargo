@@ -50,7 +50,7 @@ class RequestExample {
     name!: string
 
     @Body()
-    @min(0)
+    @Min(0)
     age!: number
 
     @Params('id')
@@ -101,22 +101,22 @@ Full guide and API reference:
 | Decorator                            | Description                                           | Example                                                                                    |
 |--------------------------------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------|
 | `@Optional()`                        | Skip validation when value is null or undefined.      | `@Optional() value?: number`                                                               |
-| `@min(minimum: number)`              | Number must be greater than or equal to `minimum`.    | `@min(18) age!: number`                                                                    |
-| `@max(maximum: number)`              | Number must be less than or equal to `maximum`.       | `@max(100) score!: number`                                                                 |
-| `@range(min: number, max: number)`   | Number must be between `min` and `max` (inclusive).   | `@range(1, 5) rating!: number`                                                             |
-| `@prefix(prefixText: string)`        | String must start with `prefixText`.                  | `@prefix('IMG_') fileName!: string`                                                        |
-| `@suffix(suffixText: string)`        | String must end with `suffixText`.                    | `@suffix('.jpg') fileName!: string`                                                        |
-| `@length(value: number)`             | String length must be exactly `value`.                | `@length(6) otp!: string`                                                                  |
-| `@minLength(min: number)`            | String length must be greater than or equal to `min`. | `@minLength(8) password!: string`                                                          |
-| `@maxLength(max: number)`            | String length must be less than or equal to `max`.    | `@maxLength(20) username!: string`                                                         |
-| `@equal(value: any)`                 | Value must be strictly equal to `value`.              | `@equal('production') env!: string`                                                        |
-| `@notEqual(value: any)`              | Value must not be equal to `value`.                   | `@notEqual('admin') role!: string`                                                         |
-| `@isTrue()`                          | Value must be `true`.                                 | `@isTrue() acceptedTerms!: boolean`                                                        |
-| `@isFalse()`                         | Value must be `false`.                                | `@isFalse() blocked!: boolean`                                                             |
-| `@oneOf(options: readonly any[])`    | Value must be one of `options`.                       | `@oneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                         |
-| `@validate(validateFn, message?)`    | Custom validation function.                           | `@validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
-| `@regexp(pattern: RegExp, message?)` | String must match the given regular expression.       | `@regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
-| `@email()`                           | String must be email format.                          | `@email() email!: string`                                                                  |
+| `@Min(minimum: number)`              | Number must be greater than or equal to `minimum`.    | `@Min(18) age!: number`                                                                    |
+| `@Max(maximum: number)`              | Number must be less than or equal to `maximum`.       | `@Max(100) score!: number`                                                                 |
+| `@Range(min: number, max: number)`   | Number must be between `min` and `max` (inclusive).   | `@Range(1, 5) rating!: number`                                                             |
+| `@Prefix(prefixText: string)`        | String must start with `prefixText`.                  | `@Prefix('IMG_') fileName!: string`                                                        |
+| `@Suffix(suffixText: string)`        | String must end with `suffixText`.                    | `@Suffix('.jpg') fileName!: string`                                                        |
+| `@Length(value: number)`             | String length must be exactly `value`.                | `@Length(6) otp!: string`                                                                  |
+| `@MinLength(min: number)`            | String length must be greater than or equal to `min`. | `@MinLength(8) password!: string`                                                          |
+| `@MaxLength(max: number)`            | String length must be less than or equal to `max`.    | `@MaxLength(20) username!: string`                                                         |
+| `@Equal(value: any)`                 | Value must be strictly equal to `value`.              | `@Equal('production') env!: string`                                                        |
+| `@NotEqual(value: any)`              | Value must not be equal to `value`.                   | `@NotEqual('admin') role!: string`                                                         |
+| `@IsTrue()`                          | Value must be `true`.                                 | `@IsTrue() acceptedTerms!: boolean`                                                        |
+| `@IsFalse()`                         | Value must be `false`.                                | `@IsFalse() blocked!: boolean`                                                             |
+| `@OneOf(options: readonly any[])`    | Value must be one of `options`.                       | `@OneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                         |
+| `@Validate(validateFn, message?)`    | Custom validation function.                           | `@Validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
+| `@Regexp(pattern: RegExp, message?)` | String must match the given regular expression.       | `@Regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
+| `@Email()`                           | String must be email format.                          | `@Email() email!: string`                                                                  |
 
 ---
 

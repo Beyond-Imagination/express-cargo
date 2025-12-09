@@ -7,13 +7,13 @@ This allows you to define common fields in a **base class** and then extend or o
 ```typescript
 class BaseRequest {
   @Body()
-  @length(10)
+  @Length(10)
   id!: string
 }
 
 class CreateUserRequest extends BaseRequest {
   @Body()
-  @oneOf(["admin", "user"])
+  @OneOf(["admin", "user"])
   role!: string
 }
 ```

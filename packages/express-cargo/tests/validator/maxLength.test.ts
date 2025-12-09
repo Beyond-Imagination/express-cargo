@@ -1,14 +1,14 @@
-import { CargoFieldError, maxLength } from '../../src'
+import { CargoFieldError, MaxLength } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('maxLength decorator', () => {
     class Sample {
-        @maxLength(5)
+        @MaxLength(5)
         stringText!: string
 
         noValidatorText!: string
 
-        @maxLength(3)
+        @MaxLength(3)
         notStringType!: any
     }
 
