@@ -116,6 +116,7 @@ export class CargoFieldMetadata {
     private transformer: ((value: any) => any) | undefined
     private requestTransformer: ((req: Request) => any) | undefined
     private virtualTransformer: ((obj: object) => any) | undefined
+    private enumType: object | undefined
 
     constructor(target: any, key: string | symbol) {
         this.target = target
@@ -128,6 +129,7 @@ export class CargoFieldMetadata {
         this.transformer = undefined
         this.requestTransformer = undefined
         this.virtualTransformer = undefined
+        this.enumType = undefined
     }
 
     getKey(): string | symbol {
@@ -200,5 +202,13 @@ export class CargoFieldMetadata {
 
     setVirtualTransformer(transformer: (...value: any[]) => any): void {
         this.virtualTransformer = transformer
+    }
+
+    setEnumType(enumType: object): void {
+        this.enumType = enumType
+    }
+
+    getEnumType(): object | undefined {
+        return this.enumType
     }
 }
