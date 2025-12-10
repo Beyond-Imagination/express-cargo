@@ -104,7 +104,7 @@ function bindObject(
                 targetObject[property] = value
             }
             for (const rule of meta.getValidators()) {
-                const error = rule.validate(targetObject[property])
+                const error = rule.validate(targetObject[property], targetObject)
                 if (error) {
                     errors.push(error)
                 }
@@ -161,7 +161,7 @@ function bindObject(
         }
 
         for (const rule of meta.getValidators()) {
-            const error = rule.validate(targetObject[property])
+            const error = rule.validate(targetObject[property], targetObject)
             if (error) {
                 errors.push(error)
             }
@@ -203,7 +203,7 @@ function bindObject(
                 targetObject[property] = value
             }
             for (const rule of meta.getValidators()) {
-                const error = rule.validate(targetObject[property])
+                const error = rule.validate(targetObject[property], targetObject)
                 if (error) {
                     errors.push(error)
                 }

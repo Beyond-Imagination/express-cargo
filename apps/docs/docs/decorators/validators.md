@@ -111,6 +111,12 @@ Validates that the decorated field contains alphabetic characters only (uppercas
 
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `With(fieldName: string, message?: string)`
+
+Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.
+
+- **`fieldName`**: The name of the target field that the current decorated field depends on. If this field exists or is Truthy, the decorated field may be Truthy
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
 ## Usage Example
 

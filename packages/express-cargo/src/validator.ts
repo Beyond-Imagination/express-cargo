@@ -263,3 +263,18 @@ export function alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorato
         ))
     }
 }
+
+export function With(fieldName: string, message?: cargoErrorMessage): PropertyDecorator {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'with',
+                (value: unknown, instance?: Record<string | symbol, any>) => !(!!value && !instance?.[fieldName]),
+                message || `${String(propertyKey)} requires ${fieldName}`,
+            ),
+        )
+    }
+}
