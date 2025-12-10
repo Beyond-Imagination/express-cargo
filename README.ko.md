@@ -92,7 +92,7 @@ app.listen(3000)
 | `@Body()`    | `req.body` 의 필드를 바인딩    | `@Body() name: string`      |
 | `@Query()`   | `req.query` 의 필드를 바인딩   | `@Query() page: number`     |
 | `@Params()`  | `req.params` 의 필드를 바인딩  | `@Params() id: string`      |
-| `@Uri()`     | `@params()` 의 별칭        | `@Uri() id: string`         |
+| `@Uri()`     | `@Params()` 의 별칭        | `@Uri() id: string`         |
 | `@Header()`  | `req.headers` 의 필드를 바인딩 | `@Header() token: string`   |
 | `@Session()` | `req.session` 의 필드를 바인딩 | `@Session() userId: string` |
 ---
