@@ -74,7 +74,7 @@ describe('with decorator', () => {
         expect(result).toBeInstanceOf(CargoFieldError)
     })
 
-    it('Case 5: Should pass safely when instance is undefined', () => {
+    it('Case 5: Should fail when instance is undefined', () => {
         const meta = classMeta.getFieldMetadata(TARGET_FIELD)
         const withRule = meta.getValidators()?.find(v => v.type === 'with')
         const instance = undefined
