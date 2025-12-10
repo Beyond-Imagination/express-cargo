@@ -105,7 +105,7 @@ This decorator is useful for enforcing format rules such as email, phone numbers
 
 Validates that the decorated property is a valid email address.
 
-### `Alpha(message?: string)`
+### `@Alpha(message?: string)`
 
 Validates that the decorated field contains alphabetic characters only (uppercase or lowercase English letters, A–Z / a–z).
 

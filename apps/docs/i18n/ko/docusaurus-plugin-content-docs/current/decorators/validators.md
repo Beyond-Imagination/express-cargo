@@ -144,7 +144,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `Alpha(message?: string)`
+### `@Alpha(message?: string)`
 
 값이 알파벳 문자만(대문자 또는 소문자 영어 문자, A–Z / a–z) 포함하고 있는지 확인합니다.
 

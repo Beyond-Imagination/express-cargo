@@ -715,7 +715,7 @@ curl -X POST 'http://localhost:3000/uuid' \
 
 ---
 
-### Alphanumeric
+### @Alphanumeric
 
 ```typescript
 class AlphanumericExample {
