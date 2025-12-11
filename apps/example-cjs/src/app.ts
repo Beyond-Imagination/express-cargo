@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import cargo = require('express-cargo')
-const { bindingCargo, getCargo, body, query, header, params, Min, Max, Equal, NotEqual, Prefix, Suffix } = cargo
+const { bindingCargo, getCargo, Body, Query, Header, Params, Min, Max, Equal, NotEqual, Prefix, Suffix } = cargo
 
 const app = express()
 
@@ -10,21 +10,21 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 class ExampleRequest {
-    @body()
+    @Body()
     @Min(1)
     @Max(10)
     @NotEqual(5)
     number!: number
 
-    @query()
+    @Query()
     @Suffix('@gmail.com')
     email!: string
 
-    @header('Authorization')
+    @Header('Authorization')
     @Prefix('Bearer ')
     token!: string
 
-    @params()
+    @Params()
     @Equal('1')
     id!: string
 }

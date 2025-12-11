@@ -40,23 +40,23 @@ npm install -D typescript
 
 ```ts
 import express from 'express'
-import { body, bindingCargo, getCargo, Min, header, params } from 'express-cargo'
+import { Body, bindingCargo, getCargo, Min, Header, Params } from 'express-cargo'
 
 const app = express()
 app.use(express.json())
 
 class RequestExample {
-    @body()
+    @Body()
     name!: string
 
-    @body()
+    @Body()
     @Min(0)
     age!: number
 
-    @params('id')
+    @Params('id')
     id!: number
 
-    @header()
+    @Header()
     authorization!: string
 }
 
@@ -89,13 +89,12 @@ app.listen(3000)
 
 | 데코레이터        | 설명                      | 예시                          |
 |--------------|-------------------------|-----------------------------|
-| `@body()`    | `req.body` 의 필드를 바인딩    | `@body() name: string`      |
-| `@query()`   | `req.query` 의 필드를 바인딩   | `@query() page: number`     |
-| `@params()`  | `req.params` 의 필드를 바인딩  | `@params() id: string`      |
-| `@uri()`     | `@params()` 의 별칭        | `@uri() id: string`         |
-| `@header()`  | `req.headers` 의 필드를 바인딩 | `@header() token: string`   |
-| `@session()` | `req.session` 의 필드를 바인딩 | `@session() userId: string` |
-
+| `@Body()`    | `req.body` 의 필드를 바인딩    | `@Body() name: string`      |
+| `@Query()`   | `req.query` 의 필드를 바인딩   | `@Query() page: number`     |
+| `@Params()`  | `req.params` 의 필드를 바인딩  | `@Params() id: string`      |
+| `@Uri()`     | `@Params()` 의 별칭        | `@Uri() id: string`         |
+| `@Header()`  | `req.headers` 의 필드를 바인딩 | `@Header() token: string`   |
+| `@Session()` | `req.session` 의 필드를 바인딩 | `@Session() userId: string` |
 ---
 
 ### 검증 데코레이터
@@ -125,18 +124,18 @@ app.listen(3000)
 
 ### Transform 데코레이터
 
-| 데코레이터 | 설명 | 예시 |
-|------------|------|------|
-| `@transform(transformer)` | 파싱된 값에 추가 변환 적용 | `@transform(v => v.trim()) name!: string` |
-| `@request(transformer)`   | Express Request 객체에서 값 추출 | `@request(req => req.ip) clientIp!: string` |
-| `@virtual(transformer)`   | 다른 필드들을 기반으로 값 계산 | `@virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
+| 데코레이터                     | 설명                        | 예시                                                                      |
+|---------------------------|---------------------------|-------------------------------------------------------------------------|
+| `@Transform(transformer)` | 파싱된 값에 추가 변환 적용           | `@Transform(v => v.trim()) name!: string`                               |
+| `@Request(transformer)`   | Express Request 객체에서 값 추출 | `@Request(req => req.ip) clientIp!: string`                             |
+| `@Virtual(transformer)`   | 다른 필드들을 기반으로 값 계산         | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
 ### 유틸리티 데코레이터
 
-| 데코레이터 | 설명 | 예시 |
-|------------|------|------|
-| `@defaultValue(value)` | 필드가 없을 때 기본값 설정 | `@defaultValue(0) count!: number` |
-| `@array(elementType)`  | 배열 요소 타입 지정 | `@array(String) tags!: string[]` |
+| 데코레이터                  | 설명              | 예시                                |
+|------------------------|-----------------|-----------------------------------|
+| `@DefaultValue(value)` | 필드가 없을 때 기본값 설정 | `@DefaultValue(0) count!: number` |
+| `@Array(elementType)`  | 배열 요소 타입 지정     | `@Array(String) tags!: string[]`  |
 
 ### 에러 처리
 
