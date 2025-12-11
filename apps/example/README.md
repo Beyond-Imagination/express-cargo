@@ -737,6 +737,43 @@ curl -X POST 'http://localhost:3000/alphanumeric' \
 ```
 ---
 
+### with
+
+```typescript
+class WithExample {
+    @Body()
+    @With('limit')
+    page!: number
+
+    @Body()
+    limit!: number
+}
+
+router.post('/with', bindingCargo(WithExample), (req, res) => {
+    const cargo = getCargo<WithExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/with' \
+-H 'Content-Type: application/json' \
+-d '{
+    "page": 1,
+    "limit": 10
+}'
+```
+
+```shell
+curl -X POST 'http://localhost:3000/with' \
+-H 'Content-Type: application/json' \
+-d '{
+    "page": 1 
+}'
+```
+
+---
+
 ## Transform
 필드의 값 or 타입을 변경
 

@@ -45,7 +45,7 @@ function typeCasting(
                 return undefined
             }
             if (!elementType) return value
-            return value.map((element, i) => typeCasting(elementType, undefined, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource));
+            return value.map((element, i) => typeCasting(elementType, undefined, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource))
         }
         default: {
             const nextSources = { ...sources, [currentSource]: value }
@@ -104,7 +104,7 @@ function bindObject(
                 targetObject[property] = value
             }
             for (const rule of meta.getValidators()) {
-                const error = rule.validate(targetObject[property])
+                const error = rule.validate(targetObject[property], targetObject)
                 if (error) {
                     errors.push(error)
                 }
@@ -153,7 +153,11 @@ function bindObject(
             }
         }
 
-        targetObject[property] = typeCasting(meta.type, meta.getArrayElementType(), sourceKey, key, value, errors, sources, currentSource)
+        if (meta.getEnumType() !== undefined) {
+            targetObject[property] = value
+        } else {
+            targetObject[property] = typeCasting(meta.type, meta.getArrayElementType(), sourceKey, key, value, errors, sources, currentSource)
+        }
 
         const transformer = meta.getTransformer()
         if (transformer) {
@@ -161,7 +165,7 @@ function bindObject(
         }
 
         for (const rule of meta.getValidators()) {
-            const error = rule.validate(targetObject[property])
+            const error = rule.validate(targetObject[property], targetObject)
             if (error) {
                 errors.push(error)
             }
@@ -203,7 +207,7 @@ function bindObject(
                 targetObject[property] = value
             }
             for (const rule of meta.getValidators()) {
-                const error = rule.validate(targetObject[property])
+                const error = rule.validate(targetObject[property], targetObject)
                 if (error) {
                     errors.push(error)
                 }

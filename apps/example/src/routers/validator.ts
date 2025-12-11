@@ -23,6 +23,7 @@ import {
     Alpha,
     Uuid,
     Alphanumeric,
+    With,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -265,6 +266,20 @@ class AlphanumericExample {
 
 router.post('/alphanumeric', bindingCargo(AlphanumericExample), (req, res) => {
     const cargo = getCargo<AlphanumericExample>(req)
+    res.json(cargo)
+})
+
+class WithExample {
+    @Body()
+    limit!: number
+
+    @Body()
+    @With('limit')
+    page!: number
+}
+
+router.post('/with', bindingCargo(WithExample), (req, res) => {
+    const cargo = getCargo<WithExample>(req)
     res.json(cargo)
 })
 

@@ -119,6 +119,7 @@ app.listen(3000)
 | `@Validate(validateFn, message?)`    | 커스텀 검증 함수를 사용                     | `@Validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@Regexp(pattern: RegExp, message?)` | 문자열이 주어진 정규식을 만족해야 함              | `@Regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
 | `@Email()`                           | 값이 이메일 형식이어야 함                    | `@Email() email!: string`                                                                  |
+| `@With(fieldName: string)`           | 데코레이터가 적용된 필드에 값이 있을 경우, 지정된 대상 필드 (fieldName)도 반드시 값을 가져야 함을 검증하여, 두 필드 간의 필수적인 의존 관계를 설정합니다. | `@With('price') discountRate?: number`                                                     |
 
 ---
 

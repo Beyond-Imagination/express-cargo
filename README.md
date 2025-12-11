@@ -117,6 +117,7 @@ Full guide and API reference:
 | `@Validate(validateFn, message?)`    | Custom validation function.                           | `@Validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@Regexp(pattern: RegExp, message?)` | String must match the given regular expression.       | `@Regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
 | `@Email()`                           | String must be email format.                          | `@Email() email!: string`                                                                  |
+| `@With(fieldName: string)`           | Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency. | `@With('price') discountRate?: number`                                                     |
 
 ---
 

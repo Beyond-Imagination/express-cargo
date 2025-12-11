@@ -5,7 +5,7 @@ export type validArrayElementType = typeof String | typeof Number | typeof Boole
 export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 
-type ValidatorFunction = (value: any) => boolean
+type ValidatorFunction = (value: any, instance?: Record<string | symbol, any>) => boolean
 type errorMessageFunction = (property: string | symbol, value: any) => string
 export type cargoErrorMessage = string | errorMessageFunction
 
@@ -22,8 +22,8 @@ export class ValidatorRule {
         this.message = message
     }
 
-    validate(value: any): CargoFieldError | null {
-        if (!this.validateFunction(value)) {
+    validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
+        if (!this.validateFunction(value, instance)) {
             let message = typeof this.message === 'string' ? this.message : this.message(this.propertyKey, value)
             return new CargoFieldError(this.propertyKey, message)
         }
