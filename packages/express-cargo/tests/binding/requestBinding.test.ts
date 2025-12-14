@@ -1,11 +1,11 @@
 import { bindingCargo, getCargo } from '../../src'
-import { Request, Optional, min } from '../../src'
+import { Request, Optional, Min } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 import { CargoValidationError } from '../../src'
 
 class RequestDTO {
     @Request(req => req.headers['x-user-id']) userId!: string
-    @Request(req => Number(req.headers['x-score'])) @min(10) score!: number
+    @Request(req => Number(req.headers['x-score'])) @Min(10) score!: number
     @Request(req => req.headers['x-optional']) @Optional() optionalField?: string
 }
 

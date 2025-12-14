@@ -1,9 +1,9 @@
-import { CargoFieldError, range } from '../../src'
+import { CargoFieldError, Range } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('range decorator', () => {
     class Sample {
-        @range(5, 15)
+        @Range(5, 15)
         number1!: number;
 
         number2!: number;

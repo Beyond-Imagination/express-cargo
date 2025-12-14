@@ -224,7 +224,7 @@ curl -X POST 'http://localhost:3000/virtual' \
 class OptionalExample {
     @Body()
     @Optional()
-    @equal(1)
+    @Equal(1)
     number?: number
 }
 
@@ -287,12 +287,12 @@ curl -X POST 'http://localhost:3000/default' \
 
 ---
 
-### @min
+### @Min
 
 ```typescript
 class MinExample {
     @Body()
-    @min(1)
+    @Min(1)
     number!: number
 }
 
@@ -312,12 +312,12 @@ curl -X POST 'http://localhost:3000/min' \
 
 ---
 
-### @max
+### @Max
 
 ```typescript
 class MaxExample {
     @Body()
-    @max(10)
+    @Max(10)
     number!: number
 }
 
@@ -337,12 +337,12 @@ curl -X POST 'http://localhost:3000/max' \
 
 ---
 
-### @range
+### @Range
 
 ```typescript
 class RangeExample {
     @Body()
-    @range(10, 20)
+    @Range(10, 20)
     number1!: number
 }
 
@@ -362,12 +362,12 @@ curl -X POST 'http://localhost:3000/range' \
 
 ---
 
-### @prefix
+### @Prefix
 
 ```typescript
 class PrefixExample {
     @Body()
-    @prefix('https://')
+    @Prefix('https://')
     url!: string
 }
 
@@ -385,12 +385,12 @@ curl -X POST 'http://localhost:3000/prefix' \
 
 ---
 
-### @suffix
+### @Suffix
 
 ```typescript
 class SuffixExample {
     @Body()
-    @suffix('.png')
+    @Suffix('.png')
     photo!: string
 }
 
@@ -408,20 +408,20 @@ curl -X POST 'http://localhost:3000/suffix' \
 
 ---
 
-### @equal
+### @Equal
 
 ```typescript
 class EqualExample {
     @Body()
-    @equal(3)
+    @Equal(3)
     number!: number
 
     @Body()
-    @equal('text')
+    @Equal('text')
     string!: string
 
     @Body()
-    @equal(true)
+    @Equal(true)
     boolean!: boolean
 }
 
@@ -443,20 +443,20 @@ curl -X POST 'http://localhost:3000/equal' \
 
 ---
 
-### @notEqual
+### @NotEqual
 
 ```typescript
 class NotEqualExample {
     @Body()
-    @notEqual(3)
+    @NotEqual(3)
     number!: number
 
     @Body()
-    @notEqual('text')
+    @NotEqual('text')
     string!: string
 
     @Body()
-    @notEqual(true)
+    @NotEqual(true)
     boolean!: boolean
 }
 
@@ -478,12 +478,12 @@ curl -X POST 'http://localhost:3000/not-equal' \
 
 ---
 
-### @isTrue
+### @IsTrue
 
 ```typescript
 class IsTrueExample {
     @Body()
-    @isTrue()
+    @IsTrue()
     booleanValue!: boolean
 }
 
@@ -501,12 +501,12 @@ curl -X POST 'http://localhost:3000/is-true' \
 
 ---
 
-### @isFalse
+### @IsFalse
 
 ```typescript
 class IsFalseExample {
     @Body()
-    @isFalse()
+    @IsFalse()
     booleanValue!: boolean
 }
 
@@ -524,12 +524,12 @@ curl -X POST 'http://localhost:3000/is-false' \
 
 ---
 
-### @length
+### @Length
 
 ```typescript
 class LengthExample {
     @Body()
-    @length(2)
+    @Length(2)
     name!: string
 }
 
@@ -547,12 +547,12 @@ curl -X POST 'http://localhost:3000/length' \
 
 ---
 
-### @maxLength
+### @MaxLength
 
 ```typescript
 class MaxLengthExample {
     @Body()
-    @maxLength(5)
+    @MaxLength(5)
     name!: string
 }
 
@@ -570,12 +570,12 @@ curl -X POST 'http://localhost:3000/max-length' \
 
 ---
 
-### @minLength
+### @MinLength
 
 ```typescript
 class MinLengthExample {
     @Body()
-    @minLength(2)
+    @MinLength(2)
     name!: string
 }
 
@@ -593,12 +593,12 @@ curl -X POST 'http://localhost:3000/min-length' \
 
 ---
 
-### @oneOf
+### @OneOf
 
 ```typescript
 class OneOfExample {
     @Body()
-    @oneOf(['js', 'ts', 'html', 'css'])
+    @OneOf(['js', 'ts', 'html', 'css'])
     language!: string
 }
 
@@ -616,12 +616,12 @@ curl -X POST 'http://localhost:3000/one-of' \
 
 ---
 
-### @validate
+### @Validate
 
 ```typescript
 class ValidateExample {
     @Body()
-    @validate(email => (email as string).split('@').length === 2)
+    @Validate(email => (email as string).split('@').length === 2)
     email!: string
 }
 
@@ -639,12 +639,12 @@ curl -X POST 'http://localhost:3000/validate' \
 
 ---
 
-### @regexp
+### @Regexp
 
 ```typescript
 class RegexpExample {
     @Body()
-    @regexp(/^01[016789]-\d{3,4}-\d{4}$/)
+    @Regexp(/^01[016789]-\d{3,4}-\d{4}$/)
     phone!: string
 }
 
@@ -662,12 +662,12 @@ curl -X POST 'http://localhost:3000/regexp' \
 
 ---
 
-### @email
+### @Email
 
 ```typescript
 class EmailExample {
     @Body()
-    @email()
+    @Email()
     email!: string
 }
 
@@ -685,16 +685,16 @@ curl -X POST 'http://localhost:3000/email' \
 
 ---
 
-### @uuid
+### @Uuid
 
 ```typescript
 class UuidExample {
     @Body()
-    @uuid()
+    @Uuid()
     uuidAll!: string
 
     @Body()
-    @uuid('v4')
+    @Uuid('v4')
     uuid!: string
 }
 
@@ -715,12 +715,12 @@ curl -X POST 'http://localhost:3000/uuid' \
 
 ---
 
-### alphanumeric
+### @Alphanumeric
 
 ```typescript
 class AlphanumericExample {
     @Body()
-    @alphanumeric()
+    @Alphanumeric()
     alphanumeric!: string
 }
 
@@ -947,11 +947,11 @@ const errorHandler = (error: Error, req: Request, res: Response, next: NextFunct
 
 class ErrorHandlerExample {
     @Body()
-    @maxLength(10)
+    @MaxLength(10)
     name!: string
 
     @Body()
-    @email()
+    @Email()
     @Transform((target: string) => target.toLowerCase())
     email!: string
 }
@@ -1063,7 +1063,7 @@ class IntegrationExample extends BodyExample {
     'content-type'!: string
 
     @Request((request: Request) => request.headers['authorization'])
-    @prefix('Bearer ')
+    @Prefix('Bearer ')
     @Transform((value: string) => value.substring(7))
     token!: string
 }

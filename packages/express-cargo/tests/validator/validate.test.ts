@@ -1,9 +1,9 @@
-import { CargoFieldError, validate } from '../../src'
+import { CargoFieldError, Validate } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('validate decorator', () => {
     class Sample {
-        @validate(number => number === 1, "number should be 1")
+        @Validate(number => number === 1, "number should be 1")
         number1!: number
 
         number2!: number

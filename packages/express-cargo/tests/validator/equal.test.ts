@@ -1,12 +1,12 @@
-import { CargoFieldError, equal } from '../../src'
+import { CargoFieldError, Equal } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('equal decorator', () => {
     class Sample {
-        @equal('admin')
+        @Equal('admin')
         role!: string
 
-        @equal(3)
+        @Equal(3)
         number1!: number
 
         number2!: number

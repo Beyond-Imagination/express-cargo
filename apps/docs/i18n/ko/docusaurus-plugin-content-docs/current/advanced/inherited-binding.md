@@ -12,13 +12,13 @@ Field 데코레이터는 부모 클래스에서 선언된 필드도 함께 적�
 ```typescript
 class BaseRequest {
   @Body()
-  @length(10)
+  @Length(10)
   id!: string
 }
 
 class CreateUserRequest extends BaseRequest {
   @Body()
-  @oneOf(["admin", "user"])
+  @OneOf(["admin", "user"])
   role!: string
 }
 ```

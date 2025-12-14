@@ -1,20 +1,20 @@
-import { CargoFieldError, oneOf } from '../../src'
+import { CargoFieldError, OneOf } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('oneOf decorator', () => {
     class Sample {
-        @oneOf([10, 20, 30] as const)
+        @OneOf([10, 20, 30] as const)
         element1!: number
 
-        @oneOf(['foo', 'bar'] as const)
+        @OneOf(['foo', 'bar'] as const)
         element2!: number
 
         element3!: number
 
-        @oneOf([] as const)
+        @OneOf([] as const)
         element4!: number
 
-        @oneOf([1, 'a'] as const)
+        @OneOf([1, 'a'] as const)
         element5!: 1 | 'a'
     }
 

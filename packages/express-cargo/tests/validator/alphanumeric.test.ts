@@ -1,9 +1,9 @@
-import { alphanumeric, CargoFieldError } from '../../src'
+import { Alphanumeric, CargoFieldError } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('alphanumeric decorator', () => {
     class Sample {
-        @alphanumeric()
+        @Alphanumeric()
         alphanumericValue!: string
 
         noValidatorValue!: boolean

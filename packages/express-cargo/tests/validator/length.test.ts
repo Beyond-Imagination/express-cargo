@@ -1,14 +1,14 @@
-import { CargoFieldError, length } from '../../src'
+import { CargoFieldError, Length } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('length decorator', () => {
     class Sample {
-        @length(5)
+        @Length(5)
         stringText!: string
 
         noValidatorText!: string
 
-        @length(3)
+        @Length(3)
         notStringType!: any
     }
 

@@ -1,9 +1,9 @@
-import { CargoFieldError, min, Body } from '../../src'
+import { CargoFieldError, Min, Body } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('min decorator', () => {
     class Sample {
-        @min(10)
+        @Min(10)
         @Body()
         number1!: number
 
@@ -30,7 +30,7 @@ describe('min decorator', () => {
 
     class ExtendedSample extends Sample {
         @Body()
-        @min(10)
+        @Min(10)
         number3!: number
     }
 

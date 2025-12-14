@@ -5,10 +5,10 @@ import {
     CargoFieldError,
     CargoTransformFieldError,
     CargoValidationError,
-    email,
+    Email,
     getCargo,
     getCargoErrorHandler,
-    maxLength,
+    MaxLength,
     setCargoErrorHandler,
     Transform,
 } from 'express-cargo'
@@ -51,11 +51,11 @@ const errorHandler = (error: Error, req: Request, res: Response, next: NextFunct
 
 class ErrorHandlerExample {
     @Body()
-    @maxLength(10)
+    @MaxLength(10)
     name!: string
 
     @Body()
-    @email()
+    @Email()
     @Transform((target: string) => target.toLowerCase())
     email!: string
 }

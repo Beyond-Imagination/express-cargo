@@ -1,12 +1,12 @@
-import { CargoFieldError, notEqual } from '../../src'
+import { CargoFieldError, NotEqual } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
-describe('notEqual decorator', () => {
+describe('NotEqual decorator', () => {
     class Sample {
-        @notEqual('admin')
+        @NotEqual('admin')
         role!: string
 
-        @notEqual(3)
+        @NotEqual(3)
         number1!: number
 
         number2!: number

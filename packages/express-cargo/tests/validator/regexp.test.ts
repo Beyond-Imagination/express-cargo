@@ -1,9 +1,9 @@
-import { CargoFieldError, regexp } from '../../src'
+import { CargoFieldError, Regexp } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('regexp decorator', () => {
     class Sample {
-        @regexp(/ab+c/, "Does not match regexp")
+        @Regexp(/ab+c/, "Does not match regexp")
         string1!: string
 
         string2!: string

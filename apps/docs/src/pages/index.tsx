@@ -11,7 +11,7 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import styles from './index.module.css';
 
 const quickStartCode = `import express from 'express'
-import { Body, bindingCargo, getCargo, min, Header, Params } from 'express-cargo'
+import { Body, bindingCargo, getCargo, Min, Header, Params } from 'express-cargo'
 
 const app = express()
 app.use(express.json())
@@ -21,7 +21,7 @@ class RequestExample {
     name!: string
 
     @Body()
-    @min(0)
+    @Min(0)
     age!: number
 
     @Params('id')
