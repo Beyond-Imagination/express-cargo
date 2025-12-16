@@ -111,11 +111,24 @@ Validates that the decorated field contains alphabetic characters only (uppercas
 
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-### `With(fieldName: string, message?: string)`
+### `@Alphanumeric(message?: string)`
+
+Validates that the decorated field contains only alphanumeric characters (uppercase or lowercase English letters A–Z / a–z and digits 0–9).
+
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+### `@With(fieldName: string, message?: string)`
 
 Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.
 
 - **`fieldName`**: The name of the target field that must also have a value if the decorated field has a value.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+### `@Uuid(version?: string, message?: string)`
+
+Validates that the decorated property is a valid UUID.
+
+- **`version`** (optional): The UUID version to validate against (for example, `4`). If omitted, any valid UUID version is accepted.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
 ## Usage Example
