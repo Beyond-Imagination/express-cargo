@@ -169,7 +169,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `With(fieldName: string, message?: string)`
+### `@With(fieldName: string, message?: string)`
 
 데코레이터가 적용된 속성이 값을 가질 경우, 지정된 대상 속성 또한 반드시 값을 가지고 있어야 함을 검증하여 두 속성 간에 필수적인 의존 관계를 설정합니다.
 
