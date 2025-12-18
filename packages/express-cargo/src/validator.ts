@@ -278,3 +278,21 @@ export function With(fieldName: string, message?: cargoErrorMessage): PropertyDe
         )
     }
 }
+
+export function Without(fieldName: string, message?: cargoErrorMessage): PropertyDecorator {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'without',
+                (value: unknown, instance?: Record<string | symbol, any>) => {
+                    if (!instance) return false
+                    return !(!!value && !!instance?.[fieldName])
+                },
+                message || `${String(propertyKey)} cannot exist with ${fieldName}`,
+            ),
+        )
+    }
+}

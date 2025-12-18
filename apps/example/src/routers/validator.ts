@@ -24,6 +24,7 @@ import {
     Uuid,
     Alphanumeric,
     With,
+    Without,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -280,6 +281,20 @@ class WithExample {
 
 router.post('/with', bindingCargo(WithExample), (req, res) => {
     const cargo = getCargo<WithExample>(req)
+    res.json(cargo)
+})
+
+class WithoutExample {
+    @Body()
+    isPickup!: boolean
+
+    @Body()
+    @Without('isPickup')
+    deliveryAddress?: string
+}
+
+router.post('/without', bindingCargo(WithoutExample), (req, res) => {
+    const cargo = getCargo<WithoutExample>(req)
     res.json(cargo)
 })
 
