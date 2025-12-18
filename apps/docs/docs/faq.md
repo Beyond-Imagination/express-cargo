@@ -26,7 +26,7 @@ Find answers to common questions about using the library. Click on a question to
 - `experimentalDecorators: true`
 - `emitDecoratorMetadata: true`
 
-Additionally, importing the `reflect-metadata` package at the entry point of your application is required to read type information at runtime.
+Additionally, the `reflect-metadata` package must be installed to read type information at runtime.
 </details>
 
 ### 2. Data Binding & Decorators
@@ -57,7 +57,7 @@ Additionally, importing the `reflect-metadata` package at the entry point of you
 <details>
 <summary><b>Q: How are validation failures handled?</b></summary>
 
-**A:** Validation is performed internally using decorators such as `@Min`, `@Max`, and `@Length`. If invalid data is detected, the middleware automatically returns an error response or throws an exception based on your configuration to block entry into the business logic.
+**A:** Validation is performed internally using decorators such as `@Min`, `@Max`, and `@Length`. If invalid data is detected, the middleware automatically returns an error response or throws an exception.
 </details>
 
 <details>

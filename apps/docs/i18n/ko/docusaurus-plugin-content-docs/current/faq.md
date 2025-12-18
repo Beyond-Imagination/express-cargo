@@ -26,7 +26,7 @@ title: 자주 묻는 질문
 - `experimentalDecorators: true`
 - `emitDecoratorMetadata: true`
 
-또한, 런타임에서 타입 정보를 읽기 위해 `reflect-metadata` 패키지 설치 및 임포트가 필수입니다.
+또한, 런타임에서 타입 정보를 읽기 위해 `reflect-metadata` 패키지 설치가 필요합니다.
 </details>
 
 ### 2. 데이터 바인딩 및 데코레이터
@@ -57,7 +57,7 @@ title: 자주 묻는 질문
 <details>
 <summary><b>Q: 검증(Validation) 실패 시 어떻게 처리되나요?</b></summary>
 
-**A:** 내부적으로 `@Min`, `@Max`, `@Length` 등의 데코레이터를 통해 검증이 수행됩니다. 유효하지 않은 데이터가 들어올 경우, 자동으로 에러 응답을 반환하거나 예외를 발생시켜 비즈니스 로직 진입을 차단합니다.
+**A:** 내부적으로 `@Min`, `@Max`, `@Length` 등의 데코레이터를 통해 검증이 수행됩니다. 유효하지 않은 데이터가 들어올 경우, 자동으로 에러 응답을 반환하거나 예외를 발생시킵니다.
 </details>
 
 <details>
