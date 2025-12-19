@@ -74,11 +74,11 @@ enum StringRole {
     USER = 'user',
 }
 class EnumSample {
-    @body()
+    @Body()
     @Enum(Role)
     role!: Role
 
-    @body()
+    @Body()
     @Enum(StringRole)
     stringRole!: StringRole
 }
