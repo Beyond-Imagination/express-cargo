@@ -737,7 +737,7 @@ curl -X POST 'http://localhost:3000/alphanumeric' \
 ```
 ---
 
-### with
+### @With
 
 ```typescript
 class WithExample {
@@ -773,6 +773,44 @@ curl -X POST 'http://localhost:3000/with' \
 ```
 
 ---
+
+### @Without
+
+```typescript
+class WithoutExample {
+    @Body()
+    isPickup!: boolean
+
+    @Body()
+    @Without('isPickup')
+    deliveryAddress?: string
+}
+
+router.post('/without', bindingCargo(WithoutExample), (req, res) => {
+    const cargo = getCargo<WithoutExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST http://localhost:3000/without \
+-H "Content-Type: application/json" \
+-d '{
+  "deliveryAddress": "123 Magic Street, Seoul",
+  "isPickup": false
+}'
+```
+
+```shell
+curl -X POST http://localhost:3000/without \
+-H "Content-Type: application/json" \
+-d '{
+  "deliveryAddress": "123 Magic Street, Seoul",
+  "isPickup": true
+}'
+```
+
+___
 
 ## Transform
 필드의 값 or 타입을 변경

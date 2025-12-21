@@ -131,6 +131,13 @@ Validates that if the decorated field has a value, the specified target field (f
 - **`fieldName`**: The name of the target field that must also have a value if the decorated field has a value.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@Without(fieldName: string, message?: string)`
+
+Validates that if the decorated property has a value, the specified target property must NOT have a value, establishing a mutually exclusive relationship between the two properties.
+
+- **`fieldName`**: The name of the target property that must be empty if the decorated field has a value.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
