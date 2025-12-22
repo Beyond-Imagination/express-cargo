@@ -60,7 +60,7 @@ It is useful for passing server-side state, such as authenticated user informati
 
 ## Usage Example
 
-Here is a example of how to use source decorators within an Express application.
+Here is an example of how to use source decorators within an Express application.
 
 ```typescript
 class Request {
