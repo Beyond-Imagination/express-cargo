@@ -25,6 +25,7 @@ const config: Config = {
     // If you aren't using GitHub pages, you don't need these.
     organizationName: 'Beyond-Imagination', // Usually your GitHub org/user name.
     projectName: 'express-cargo', // Usually your repo name.
+    trailingSlash: false,
 
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
@@ -127,9 +128,16 @@ const config: Config = {
             darkTheme: prismThemes.dracula,
         },
         metadata: [
-            { name: 'keywords', content: 'express, middleware, express middleware, express-cargo, express decorator, request, express request, node.js, typescript, npm' },
+            {
+                name: 'keywords',
+                content:
+                    'express, middleware, express middleware, express-cargo, express decorator, request, express request, node.js, typescript, npm',
+            },
             { name: 'description', content: 'A TypeScript-based Express.js middleware for structured request data handling.' },
             { name: 'author', content: 'Beyond_Imagination' },
+            { name: 'twitter:card', content: 'summary_large_image' },
+            { name: 'og:site_name', content: 'express-cargo' },
+            { name: 'og:type', content: 'website' },
         ],
     } satisfies Preset.ThemeConfig,
 
@@ -138,21 +146,20 @@ const config: Config = {
             tagName: 'script',
             attributes: { type: 'application/ld+json' },
             innerHTML: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "SoftwareApplication",
-                "name": "express-cargo",
-                "applicationCategory": "Web development library",
-                "operatingSystem": "any",
-                "url": isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io/express-cargo',
-                "author": {
-                    "@type": "Organization",
-                    "name": "Beyond_Imagination"
+                '@context': 'https://schema.org',
+                '@type': 'SoftwareApplication',
+                name: 'express-cargo',
+                applicationCategory: 'Web development library',
+                operatingSystem: 'any',
+                url: isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io/express-cargo',
+                author: {
+                    '@type': 'Organization',
+                    name: 'Beyond_Imagination',
                 },
-                "description": "A TypeScript-based Express.js middleware for structured request data handling.",
+                description: 'A TypeScript-based Express.js middleware for structured request data handling.',
             }),
         },
     ],
 }
 
 export default config
-

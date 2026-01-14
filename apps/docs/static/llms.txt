@@ -1,0 +1,43 @@
+# express-cargo
+
+Express-cargo is a TypeScript-based Express.js middleware for structured request data handling using decorators. It simplifies validation, transformation, and data binding in your Express controllers.
+
+## Key Features
+
+- **Decorators**: Use `@Body`, `@Query`, `@Params`, etc., to bind request data.
+- **Validation**: Built-in validation using `class-validator` like decorators (e.g., `@IsString`, `@Min`, `@Max`).
+- **Transformation**: Transform request data automatically (e.g., string to number).
+- **Type Safety**: strict TypeScript support.
+
+## Installation
+
+```bash
+npm install express-cargo
+# or
+pnpm add express-cargo
+```
+
+## Basic Usage
+
+```typescript
+import { bindingCargo, getCargo, Query, Min } from 'express-cargo';
+import express from 'express';
+
+class UserRequest {
+    @Query('id')
+    @Min(1)
+    userId: number;
+}
+
+const app = express();
+
+app.get('/user', bindingCargo(UserRequest), (req, res) => {
+    // strictly typed
+    const { userId } = getCargo<UserRequest>(req);
+    res.json({ userId });
+});
+```
+
+## Documentation
+
+Full documentation is available at https://beyond-imagination.github.io/express-cargo/
