@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://beyond-imagination.github.io/express-cargo/sitemap.xml
