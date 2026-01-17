@@ -1,8 +1,10 @@
+import dotenv from 'dotenv'
 import { themes as prismThemes } from 'prism-react-renderer'
 import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+dotenv.config()
 const isVercel = process.env.VERCEL === '1'
 
 const config: Config = {
@@ -133,7 +135,10 @@ const config: Config = {
                 content:
                     'express, middleware, express middleware, express-cargo, express decorator, request, express request, node.js, typescript, npm',
             },
-            { name: 'description', content: 'A TypeScript-based Express.js middleware for structured request data handling.' },
+            {
+                name: 'description',
+                content: 'A TypeScript-based Express.js middleware for structured request data handling.',
+            },
             { name: 'author', content: 'Beyond_Imagination' },
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'og:site_name', content: 'express-cargo' },
@@ -148,18 +153,28 @@ const config: Config = {
             innerHTML: JSON.stringify({
                 '@context': 'https://schema.org',
                 '@type': 'SoftwareApplication',
-                name: 'express-cargo',
-                applicationCategory: 'Web development library',
-                operatingSystem: 'any',
-                url: isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io/express-cargo',
-                author: {
+                'name': 'express-cargo',
+                'applicationCategory': 'Web development library',
+                'operatingSystem': 'any',
+                'url': isVercel ? 'https://dev-docs.express-cargo.beyond-imagination.net/' : 'https://beyond-imagination.github.io/express-cargo',
+                'author': {
                     '@type': 'Organization',
-                    name: 'Beyond_Imagination',
+                    'name': 'Beyond_Imagination',
                 },
-                description: 'A TypeScript-based Express.js middleware for structured request data handling.',
+                'description': 'A TypeScript-based Express.js middleware for structured request data handling.',
             }),
         },
     ],
+
+    customFields: {
+        newRelic: {
+            accountID: process.env.NEW_RELIC_ACCOUNT_ID,
+            trustKey: process.env.NEW_RELIC_TRUST_KEY,
+            agentID: process.env.NEW_RELIC_AGENT_ID,
+            licenseKey: process.env.NEW_RELIC_LICENSE_KEY,
+            applicationID: process.env.NEW_RELIC_APP_ID,
+        },
+    },
 }
 
 export default config
