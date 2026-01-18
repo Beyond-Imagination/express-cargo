@@ -308,7 +308,7 @@ export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> |
             // Create a temporary class to determine if 'arg' is a decorator
             const tempClass = class {}
             const tempKey = 'temp'
-            let isDec = false
+            let rulesAdded: ValidatorRule[] = []
 
             try {
                 // Check the number of validators before applying the decorator
@@ -324,20 +324,20 @@ export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> |
                 const validatorsAfter = tempMetaAfter.getFieldMetadata(tempKey).getValidators()
 
                 if (validatorsAfter.length > validatorsBefore) {
-                    isDec = true
-                    rule = validatorsAfter[validatorsAfter.length - 1]
+                    rulesAdded = validatorsAfter.slice(validatorsBefore)
                 }
             } catch (e) {
                 // Ignore errors if 'arg' is not a valid decorator
             }
 
-            // If it's not a decorator but a plain function, treat it as a custom validator
-            if (!isDec && typeof arg === 'function') {
-                rule = new ValidatorRule(propertyKey, 'custom', arg as (value: any) => boolean, `Validation failed for ${String(propertyKey)}`)
-            }
-
             // Wrap the extracted/created rule with EachValidatorRule
-            if (rule) {
+            if (rulesAdded.length > 0) {
+                rulesAdded.forEach(rule => {
+                    fieldMeta.addValidator(new EachValidatorRule(propertyKey, rule))
+                })
+            } else if (typeof arg === 'function') {
+                // If it's not a decorator but a plain function, treat it as a custom validator
+                const rule = new ValidatorRule(propertyKey, 'custom', arg as (value: any) => boolean, `Validation failed for ${String(propertyKey)}`)
                 fieldMeta.addValidator(new EachValidatorRule(propertyKey, rule))
             }
         })
