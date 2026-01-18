@@ -135,10 +135,11 @@ app.listen(3000)
 
 ### 유틸리티 데코레이터
 
-| 데코레이터                  | 설명              | 예시                                |
-|------------------------|-----------------|-----------------------------------|
-| `@DefaultValue(value)` | 필드가 없을 때 기본값 설정 | `@DefaultValue(0) count!: number` |
-| `@Array(elementType)`  | 배열 요소 타입 지정     | `@Array(String) tags!: string[]`  |
+| 데코레이터                              | 설명                                  | 예시                                  |
+|------------------------------------|-------------------------------------|-------------------------------------|
+| `@DefaultValue(value)`             | 필드가 없을 때 기본값 설정                     | `@DefaultValue(0) count!: number`   |
+| `@Array(elementType)`              | 배열 요소 타입 지정                         | `@Array(String) tags!: string[]`    |
+| `@Each((validator \| function)[])` | 배열 내의 모든 요소에 대해 지정된 검증 규칙을 개별적으로 적용 | `@Each(Length(10)) tags!: string[]` |
 
 ### 에러 처리
 

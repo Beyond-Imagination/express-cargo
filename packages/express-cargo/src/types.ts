@@ -32,6 +32,28 @@ export class ValidatorRule {
     }
 }
 
+export class EachValidatorRule extends ValidatorRule {
+    private innerRule: ValidatorRule
+
+    constructor(propertyKey: string | symbol, innerRule: ValidatorRule) {
+        super(propertyKey, 'each', () => true, '')
+        this.innerRule = innerRule
+    }
+
+    validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
+        if (!Array.isArray(value)) return null
+
+        for (let i = 0; i < value.length; i++) {
+            const item = value[i]
+            const error = this.innerRule.validate(item, instance)
+            if (error) {
+                return new CargoFieldError(`${String(this.propertyKey)}[${i}]`, error.message)
+            }
+        }
+        return null
+    }
+}
+
 export class CargoFieldError extends Error {
     name: string
     field: string | symbol

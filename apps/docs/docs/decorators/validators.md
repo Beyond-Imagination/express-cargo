@@ -138,6 +138,12 @@ Validates that if the decorated property has a value, the specified target prope
 - **`fieldName`**: The name of the target property that must be empty if the decorated field has a value.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@Each(...args: (Validator | Function)[])`
+
+Validates every individual element within an array. It can accept other validation decorators or custom validation functions.
+
+- `args`: A validation decorator (e.g., @Min(5)) or a custom function (value: any) => boolean.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.

@@ -812,6 +812,36 @@ curl -X POST http://localhost:3000/without \
 
 ___
 
+### @Each
+
+```typescript
+class EachExample {
+    @Body()
+    @Each(MinLength(5), MaxLength(20))
+    tags!: string[]
+
+    @Body()
+    @Each((val: number) => val % 2 === 0)
+    evenNumbers!: number[]
+}
+
+router.post('/each', bindingCargo(EachExample), (req, res) => {
+    const cargo = getCargo<EachExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST http://localhost:3000/each \
+     -H "Content-Type: application/json" \
+     -d '{
+           "tags": ["typescript", "decorator", "backend"],
+           "evenNumbers": [2, 4, 10, 28]
+         }'
+```
+
+___
+
 ## Transform
 필드의 값 or 타입을 변경
 

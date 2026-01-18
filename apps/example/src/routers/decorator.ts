@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { bindingCargo, Body, Default, getCargo } from 'express-cargo'
+import { bindingCargo, Body, Default, Each, getCargo, Length, MaxLength, MinLength } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -19,6 +19,21 @@ class DefaultExample {
 
 router.post('/default', bindingCargo(DefaultExample), (req, res) => {
     const cargo = getCargo<DefaultExample>(req)
+    res.json(cargo)
+})
+
+class EachExample {
+    @Body()
+    @Each(MinLength(5), MaxLength(20))
+    tags!: string[]
+
+    @Body()
+    @Each((val: number) => val % 2 === 0)
+    evenNumbers!: number[]
+}
+
+router.post('/each', bindingCargo(EachExample), (req, res) => {
+    const cargo = getCargo<EachExample>(req)
     res.json(cargo)
 })
 
