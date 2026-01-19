@@ -17,7 +17,7 @@
     ],
     "scripts": {
         "build": "npm run clean && npm run build:types && npm run build:cjs && npm run build:esm",
-        "build:types": "tsc --emitDeclarationOnly --declaration --rootDir src --outDir dist/types && rimraf dist/types/tests",
+        "build:types": "tsc --emitDeclarationOnly --declaration --rootDir src --outDir dist/types",
         "build:cjs": "swc src -d dist/cjs --config-file .swcrc.cjs.json --strip-leading-paths",
         "build:esm": "swc src -d dist/esm --config-file .swcrc.esm.json --strip-leading-paths",
         "clean": "rimraf dist",
