@@ -1,4 +1,4 @@
-import { cargoErrorMessage, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
+import { cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
@@ -294,5 +294,54 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
                 message || `${String(propertyKey)} cannot exist with ${fieldName}`,
             ),
         )
+    }
+}
+
+export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> | ((value: any) => boolean))[]): PropertyDecorator {
+    return (target: any, propertyKey: string | symbol) => {
+        const classMeta = new CargoClassMetadata(target)
+        const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+
+        args.forEach(arg => {
+            let rule: ValidatorRule | undefined
+
+            // Create a temporary class to determine if 'arg' is a decorator
+            const tempClass = class {}
+            const tempKey = 'temp'
+            let rulesAdded: ValidatorRule[] = []
+
+            try {
+                // Check the number of validators before applying the decorator
+                const tempMetaBefore = new CargoClassMetadata(tempClass.prototype)
+                const fieldBefore = tempMetaBefore.getFieldMetadata(tempKey)
+                const validatorsBefore = fieldBefore.getValidators().length
+
+                // Attempt to execute as a PropertyDecorator
+                ;(arg as PropertyDecorator)(tempClass.prototype, tempKey)
+
+                // Check if a new validator rule has been added
+                const tempMetaAfter = new CargoClassMetadata(tempClass.prototype)
+                const validatorsAfter = tempMetaAfter.getFieldMetadata(tempKey).getValidators()
+
+                if (validatorsAfter.length > validatorsBefore) {
+                    rulesAdded = validatorsAfter.slice(validatorsBefore)
+                }
+            } catch (e) {
+                // Ignore errors if 'arg' is not a valid decorator
+            }
+
+            // Wrap the extracted/created rule with EachValidatorRule
+            if (rulesAdded.length > 0) {
+                rulesAdded.forEach(rule => {
+                    fieldMeta.addValidator(new EachValidatorRule(propertyKey, rule))
+                })
+            } else if (typeof arg === 'function') {
+                // If it's not a decorator but a plain function, treat it as a custom validator
+                const rule = new ValidatorRule(propertyKey, 'custom', arg as (value: any) => boolean, `Validation failed for ${String(propertyKey)}`)
+                fieldMeta.addValidator(new EachValidatorRule(propertyKey, rule))
+            }
+        })
+
+        classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
