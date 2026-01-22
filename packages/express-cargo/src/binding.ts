@@ -48,19 +48,12 @@ function resolveTargetClass(typeFn: TypeThunk | TypeResolver, data: any, options
         if (found) return found.value
     }
 
-    try {
-        // Execution-based detection (Resolver or Thunk)
-        const result = typeFn(data)
+    // Return immediately if it's a class (prevents invocation error)
+    if (isClass(typeFn)) return typeFn
 
-        // If the function returns another function/class, the result is the target
-        if (typeof result === 'function') return result
-
-        // If result is not a function, check if the input function itself is a class (e.g., @Type(User))
-        if (isClass(typeFn)) return typeFn
-    } catch (e) {
-        // ES6 classes throw an error when called as a regular function without 'new'
-        if (isClass(typeFn)) return typeFn
-    }
+    // Execute as Thunk/Resolver and return the resulting function
+    const result = typeFn(data)
+    if (typeof result === 'function') return result
 
     return undefined
 }
