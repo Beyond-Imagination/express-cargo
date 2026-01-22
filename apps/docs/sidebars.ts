@@ -43,6 +43,7 @@ const sidebars: SidebarsConfig = {
                 'advanced/custom-transformer',
                 'advanced/default',
                 'advanced/array-decorator',
+                'advanced/type-and-polymorphism',
             ],
         },
         {
