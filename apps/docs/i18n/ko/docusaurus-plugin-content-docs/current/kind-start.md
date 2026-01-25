@@ -66,7 +66,7 @@ pnpm tsc --init
 ```json
 {
   "compilerOptions": {
-    "target": "ES2020",                 // Decorator + 최신 문법 안정성
+    "target": "ES2017",                 // Decorator + 최신 문법 안정성
     "module": "commonjs",
     "moduleResolution": "node",
     "experimentalDecorators": true,     // express-cargo 필수
