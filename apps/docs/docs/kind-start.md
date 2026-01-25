@@ -213,7 +213,7 @@ app.post('/example', bindingCargo(ExampleRequest), (req, res) => {
 
     → Return a validated type-safe object
 
-### 9. 실행
+### 9. Run
 ```shell
 npm run dev
 ```
