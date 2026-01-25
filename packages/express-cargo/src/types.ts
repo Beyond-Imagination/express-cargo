@@ -1,9 +1,28 @@
 export type Source = 'body' | 'query' | 'params' | 'header' | 'session'
 
-type ClassConstructor = new () => any
+export type ClassConstructor<T = any> = new (...args: any[]) => T
 export type validArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
 export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
+
+/**
+ * A function that returns a class constructor without any arguments.
+ */
+export type TypeThunk = () => ClassConstructor
+
+/**
+ * A function that returns a class constructor based on the provided data.
+ */
+export type TypeResolver = (data: any) => ClassConstructor
+
+export interface DiscriminatorOptions {
+    property: string
+    subTypes: { value: ClassConstructor; name: string }[]
+}
+
+export interface TypeOptions {
+    discriminator?: DiscriminatorOptions
+}
 
 type ValidatorFunction = (value: any, instance?: Record<string | symbol, any>) => boolean
 type errorMessageFunction = (property: string | symbol, value: any) => string

@@ -134,11 +134,12 @@ Full guide and API reference:
 
 ### Utility Decorators
 
-| Decorator                          | Description                                                           | Example                             |
-|------------------------------------|-----------------------------------------------------------------------|-------------------------------------|
-| `@Default(value)`                  | Set default value when field is missing                               | `@Default(0) count!: number`        |
-| `@Array(elementType)`              | Specify array element type                                            | `@Array(String) tags!: string[]`    |
-| `@Each((validator \| function)[])` | Applies validation rules to every individual element within an array. | `@Each(Length(10)) tags!: string[]` |
+| Decorator                          | Description                                                                                                           | Example                             |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| `@Type(typeFn, options?)`          | Specifies the class used to transform raw data. Supports dynamic class resolution and resolves circular dependencies. | `@Type(() => User) user!: User`     |
+| `@Default(value)`                  | Set default value when field is missing                                                                               | `@Default(0) count!: number`        |
+| `@Array(elementType)`              | Specify array element type                                                                                            | `@Array(String) tags!: string[]`    |
+| `@Each((validator \| function)[])` | Applies validation rules to every individual element within an array.                                                 | `@Each(Length(10)) tags!: string[]` |
 
 ### Error Handling
 

@@ -954,6 +954,90 @@ curl -X POST 'http://localhost:3000/array' \
 
 ---
 
+### @Type
+```typescript
+class User {
+    @Body()
+    name!: string
+}
+
+class Profile {
+    @Body()
+    bio!: string
+
+    @Body()
+    @Type(() => User)
+    user!: User
+}
+
+abstract class Media {
+    @Body()
+    type!: 'video' | 'image'
+}
+
+class Video extends Media {
+    @Body()
+    duration!: number
+}
+
+class Image extends Media {
+    @Body()
+    format!: string
+}
+
+class TypeTest {
+    @Body()
+    name!: string
+
+    @Body()
+    @Type(() => Profile)
+    profile!: Profile
+
+    @Body()
+    @Type(data => (data.type === 'video' ? Video : Image))
+    featuredMedia!: Video | Image
+
+    @Body()
+    @Type(data => (data.type === 'video' ? Video : Image))
+    gallery!: (Video | Image)[]
+}
+
+router.post('/type', bindingCargo(TypeTest), (req, res) => {
+    const cargo = getCargo<TypeTest>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST http://localhost:3000/type \
+     -H "Content-Type: application/json" \
+     -d '{
+       "name": "Gemini Admin",
+       "profile": {
+         "bio": "Open Source Contributor",
+         "user": {
+           "name": "Cargo Maintainer"
+         }
+       },
+       "featuredMedia": {
+         "type": "video",
+         "duration": 3600
+       },
+       "gallery": [
+         {
+           "type": "image",
+           "format": "jpg"
+         },
+         {
+           "type": "video",
+           "duration": 500
+         }
+       ]
+     }'
+```
+
+---
+
 ### @Transform
 
 ```typescript
