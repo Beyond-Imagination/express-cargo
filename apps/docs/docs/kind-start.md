@@ -106,7 +106,7 @@ pnpm add -D @types/express
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
-    "build": "rm -rf dist && swc src -d dist --source-maps --copy-files"
+    "build": "rm -rf dist && swc src -d dist --source-maps --copy-files",
     "start": "node dist/src/app.js",
   },
   "dependencies": {
