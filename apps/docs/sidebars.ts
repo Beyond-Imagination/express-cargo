@@ -21,6 +21,7 @@ const sidebars: SidebarsConfig = {
                 'intro',
                 'installation',
                 'quick-start',
+                'kind-start',
             ],
         },
         {
