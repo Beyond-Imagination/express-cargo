@@ -58,7 +58,7 @@ pnpm init
 pnpm add -D typescript ts-node @types/node
 ```
 
-#### 4-2. Create tsconfig.json 생성
+#### 4-2. Create tsconfig.json
 ```shell
 pnpm tsc --init
 ```
