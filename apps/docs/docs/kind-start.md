@@ -167,9 +167,8 @@ pnpm add -D @types/express
 
 ```typescript
 import express from 'express'
-import cargo = require('express-cargo')
+import { bindingCargo, getCargo, Body, Query, Header, Params, Min, Max, Equal, NotEqual, Prefix, Suffix } from 'express-cargo'
 import errorHandlerRouter from './errorHandler'
-const { bindingCargo, getCargo, Body, Query, Header, Params, Min, Max, Equal, NotEqual, Prefix, Suffix } = cargo
 
 const app = express()
 
