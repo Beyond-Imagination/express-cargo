@@ -41,7 +41,7 @@ export class UserInfoRequest {
 ```typescript
 // order.request.ts
 import { Body, Min, Max } from 'express-cargo'
-import { UserInfoRequest } from './user.Request'
+import { UserInfoRequest } from './user.request'
 
 export class OrderRequest {
     @Body('productId')

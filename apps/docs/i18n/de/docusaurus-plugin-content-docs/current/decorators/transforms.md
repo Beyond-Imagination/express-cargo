@@ -53,7 +53,7 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
 Um diesen Endpunkt zu testen, senden Sie eine GET-Anfrage an /search.
 
 Beispiel-Anfrage-URL:
-http://localhost:3000/search?sortBy=TITLE&tags=typescript, javascript ,node
+http://localhost:3000/search?sortBy=TITLE&count=10
 */
 ```
 
