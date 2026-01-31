@@ -30,6 +30,12 @@ jobs:
 
             -   name: Build Docs
                 run: pnpm build:docs
+                env:
+                    NEW_RELIC_ACCOUNT_ID: ${{ secrets.NEW_RELIC_ACCOUNT_ID }}
+                    NEW_RELIC_AGENT_ID: ${{ secrets.NEW_RELIC_AGENT_ID }}
+                    NEW_RELIC_APP_ID: ${{ secrets.NEW_RELIC_APP_ID }}
+                    NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+                    NEW_RELIC_TRUST_KEY: ${{ secrets.NEW_RELIC_TRUST_KEY }}
 
             -   name: Upload Build Artifact
                 uses: actions/upload-pages-artifact@v3
