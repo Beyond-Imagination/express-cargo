@@ -1,6 +1,6 @@
-## liaison héritée
+## Liaison héritée
 
-Les decorators de champ sont également appliqués aux champs déclarés dans les classes parentes.
+Les décorateurs de champ sont également appliqués aux champs déclarés dans les classes parentes.
 Cela vous permet de définir des champs communs dans une **classe de base** puis de les étendre ou de les remplacer dans des **classes enfants**.
 
 ### Exemple

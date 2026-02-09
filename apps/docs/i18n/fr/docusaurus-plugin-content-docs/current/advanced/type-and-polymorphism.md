@@ -3,7 +3,7 @@ id: type-and-polymorphism
 title: Transformation de type et polymorphisme
 ---
 
-Le decorator `@Type` est un outil puissant pour convertir des objets JSON simples en instances de classe réelles.
+Le décorateur `@Type` est un outil puissant pour convertir des objets JSON simples en instances de classe réelles.
 
 Il est essentiel pour maintenir la sécurité des types, utiliser les méthodes de classe et gérer des structures de données complexes telles que des objets imbriqués et des tableaux polymorphes.
 
@@ -51,7 +51,7 @@ class User {
 
     /**
      * @Type détecte automatiquement le type de tableau via les métadonnées.
-     * Aucun decorator @Array(Post) explicite n'est requis.
+     * Aucun décorateur @Array(Post) explicite n'est requis.
      */
     @Body()
     @Type(() => Post)

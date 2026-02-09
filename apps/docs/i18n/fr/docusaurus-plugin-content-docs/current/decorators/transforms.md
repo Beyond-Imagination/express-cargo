@@ -1,18 +1,18 @@
-# Decorator de transformation
+# Décorateur de transformation
 
-Express-Cargo fournit un decorator pour transformer automatiquement les données de requête entrantes avant de les lier à une classe. Cela est utile pour des tâches telles que la normalisation des entrées utilisateur (par exemple, convertir une chaîne en minuscules) ou l'analyse d'une chaîne séparée par des virgules en un tableau.
+Express-Cargo fournit un décorateur pour transformer automatiquement les données de requête entrantes avant de les lier à une classe. Cela est utile pour des tâches telles que la normalisation des entrées utilisateur (par exemple, convertir une chaîne en minuscules) ou l'analyse d'une chaîne séparée par des virgules en un tableau.
 
-Contrairement aux champs virtuels, qui combinent des champs existants pour en créer un nouveau, ce decorator de transformation modifie directement la valeur d'un seul champ.
+Contrairement aux champs virtuels, qui combinent des champs existants pour en créer un nouveau, ce décorateur de transformation modifie directement la valeur d'un seul champ.
 
 ## `@Transform<T>(transformer: (value: T) => T)`
 
-C'est le decorator principal pour la transformation des données. Il prend une fonction transformer qui reçoit la valeur brute de la requête et retourne la nouvelle valeur transformée pour le champ.
+C'est le décorateur principal pour la transformation des données. Il prend une fonction transformer qui reçoit la valeur brute de la requête et retourne la nouvelle valeur transformée pour le champ.
 
 - `transformer` : Une fonction qui accepte la valeur brute et retourne la valeur transformée.
 
 ## Exemple d'utilisation
 
-Cet exemple montre comment le decorator `@Transform` peut être utilisé pour normaliser et traiter les données de requête dans un format désiré. Ceci est très utile pour gérer diverses entrées utilisateur et s'assurer que votre API les traite de manière cohérente, ce qui améliore la stabilité de votre application.
+Cet exemple montre comment le décorateur `@Transform` peut être utilisé pour normaliser et traiter les données de requête dans un format désiré. Ceci est très utile pour gérer diverses entrées utilisateur et s'assurer que votre API les traite de manière cohérente, ce qui améliore la stabilité de votre application.
 
 ```typescript
 import express, { Request, Response } from 'express'
@@ -59,7 +59,7 @@ http://localhost:3000/search?sortBy=TITLE&count=10
 
 ## Exemple de sortie
 
-Lorsque l'URL de requête d'exemple est accédée, le middleware `bindingCargo` traite les paramètres de requête. Les decorators `@Transform` normalisent ensuite la valeur `sortBy` en une chaîne en minuscules et doublent la valeur `count`. La fonction `getCargo` retourne un objet avec ces valeurs transformées.
+Lorsque l'URL de requête d'exemple est accédée, le middleware `bindingCargo` traite les paramètres de requête. Les décorateurs `@Transform` normalisent ensuite la valeur `sortBy` en une chaîne en minuscules et doublent la valeur `count`. La fonction `getCargo` retourne un objet avec ces valeurs transformées.
 
 ```json
 {

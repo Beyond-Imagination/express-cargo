@@ -57,7 +57,7 @@ export class OrderRequest {
 }
 ```
 
-Dans `UserInfoRequest`, nous utilisons le decorator `@header` sur la propriété `authorization` pour obtenir la valeur de l'en-tête `Authorization`. Ensuite, le decorator `@transform` extrait juste la valeur du jeton, en supprimant le préfixe `"Bearer "`.
+Dans `UserInfoRequest`, nous utilisons le décorateur `@Header` sur la propriété `authorization` pour obtenir la valeur de l'en-tête `Authorization`. Ensuite, le décorateur `@Transform` extrait juste la valeur du jeton, en supprimant le préfixe `"Bearer "`.
 
 ## 2. Utiliser dans une route Express
 

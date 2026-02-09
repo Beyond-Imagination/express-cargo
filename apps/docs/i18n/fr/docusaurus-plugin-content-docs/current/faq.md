@@ -10,7 +10,7 @@ Trouvez des réponses aux questions courantes concernant l'utilisation de la bib
 <details>
 <summary><b>Q : Qu'est-ce que le projet express-cargo ?</b></summary>
 
-**R :** Il s'agit d'un middleware conçu pour automatiser le traitement répétitif et fastidieux des données de requête (`req.body`, `req.query`, etc.) dans Express.js en utilisant une approche basée sur les classes. En utilisant les decorators TypeScript, vous pouvez gérer la liaison et la validation des données de manière déclarative en un seul endroit.
+**R :** Il s'agit d'un middleware conçu pour automatiser le traitement répétitif et fastidieux des données de requête (`req.body`, `req.query`, etc.) dans Express.js en utilisant une approche basée sur les classes. En utilisant les décorateurs TypeScript, vous pouvez gérer la liaison et la validation des données de manière déclarative en un seul endroit.
 </details>
 
 <details>
@@ -22,14 +22,14 @@ Trouvez des réponses aux questions courantes concernant l'utilisation de la bib
 <details>
 <summary><b>Q : La configuration TypeScript est-elle obligatoire ?</b></summary>
 
-**R :** Oui. Puisqu'elle utilise des decorators, les deux options suivantes doivent être définies sur `true` dans votre `tsconfig.json` :
+**R :** Oui. Puisqu'elle utilise des décorateurs, les deux options suivantes doivent être définies sur `true` dans votre `tsconfig.json` :
 - `experimentalDecorators: true`
 - `emitDecoratorMetadata: true`
 
 De plus, le package `reflect-metadata` doit être installé pour lire les informations de type à l'exécution.
 </details>
 
-### 2. Liaison de données et decorators
+### 2. Liaison de données et décorateurs
 
 <details>
 <summary><b>Q : Quelle est la différence entre `@Body` et `@Query` ?</b></summary>
@@ -57,19 +57,19 @@ De plus, le package `reflect-metadata` doit être installé pour lire les inform
 <details>
 <summary><b>Q : Comment les échecs de validation sont-ils gérés ?</b></summary>
 
-**R :** La validation est effectuée en interne en utilisant des decorators tels que `@Min`, `@Max` et `@Length`. Si des données invalides sont détectées, le middleware retourne automatiquement une réponse d'erreur ou lève une exception.
+**R :** La validation est effectuée en interne en utilisant des décorateurs tels que `@Min`, `@Max` et `@Length`. Si des données invalides sont détectées, le middleware retourne automatiquement une réponse d'erreur ou lève une exception.
 </details>
 
 <details>
 <summary><b>Q : Comment puis-je traiter ou transformer les valeurs de champ ?</b></summary>
 
-**R :** Utilisez le decorator **`@Transform()`**. Par exemple, écrire `@Transform(v => v.trim())` vous permet de transformer les données d'entrée dans le format souhaité avant la liaison.
+**R :** Utilisez le décorateur **`@Transform()`**. Par exemple, écrire `@Transform(v => v.trim())` vous permet de transformer les données d'entrée dans le format souhaité avant la liaison.
 </details>
 
 <details>
 <summary><b>Q : Comment éviter les erreurs si un champ spécifique est manquant ?</b></summary>
 
-**R :** Utilisez le decorator **`@Optional()`**. Le champ sera lié avec succès même si la valeur est `null` ou `undefined`, en sautant la validation pour ce champ.
+**R :** Utilisez le décorateur **`@Optional()`**. Le champ sera lié avec succès même si la valeur est `null` ou `undefined`, en sautant la validation pour ce champ.
 </details>
 
 ### 4. Compatibilité des frameworks
@@ -78,7 +78,7 @@ De plus, le package `reflect-metadata` doit être installé pour lire les inform
 <summary><b>Q : Puis-je l'utiliser avec Fastify ou NestJS ?</b></summary>
 
 **R :** Cette bibliothèque est spécifiquement conçue comme **middleware exclusif pour Express.js**.
-- **NestJS** : NestJS possède son propre `ValidationPipe` et ses decorators, qui peuvent chevaucher les fonctionnalités. Bien que techniquement possible si vous utilisez l'adaptateur Express, l'objectif principal de cette bibliothèque est d'améliorer l'expérience développeur dans les environnements Express purs.
+- **NestJS** : NestJS possède son propre `ValidationPipe` et ses décorateurs, qui peuvent chevaucher les fonctionnalités. Bien que techniquement possible si vous utilisez l'adaptateur Express, l'objectif principal de cette bibliothèque est d'améliorer l'expérience développeur dans les environnements Express purs.
 - **Fastify** : Actuellement non officiellement supporté.
 </details>
 
@@ -93,7 +93,7 @@ De plus, le package `reflect-metadata` doit être installé pour lire les inform
 </details>
 
 <details>
-<summary><b>Q : La conversion de type automatique se produit-elle ?</b></summary>
+<summary><b>Q : La conversion de type automatique a-t-elle lieu ?</b></summary>
 
 **R :** Oui. Elle tente de convertir automatiquement les valeurs en fonction des types définis dans les champs de classe (`string`, `number`, `boolean`, etc.). Par exemple, une chaîne `"123"` provenant de `@Query()` sera automatiquement convertie en nombre si le type du champ est défini comme `number`.
 </details>

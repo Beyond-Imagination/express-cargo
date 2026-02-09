@@ -1,7 +1,7 @@
-## Decorators intégrés
+## Décorateurs intégrés
 
-| Decorator    | Source        |
-|--------------|---------------|
+| Décorateur   | Source        |
+| ------------ | ------------- |
 | `@Body()`    | `req.body`    |
 | `@Query()`   | `req.query`   |
 | `@Header()`  | `req.headers` |
@@ -9,7 +9,7 @@
 | `@Params()`  | `req.params`  |
 | `@Session()` | `req.session` |
 
-## Détails des decorators
+## Détails des décorateurs
 
 ### `@Body()`
 
@@ -41,7 +41,7 @@ Il est couramment utilisé pour accéder aux métadonnées de requête telles qu
 Extrait les variables de chemin de l'URL de requête HTTP et les lie au champ correspondant.
 Ceci est généralement utilisé pour recevoir des identifiants de ressource (tels que `id`) dans les API REST en tant que partie d'un DTO.
 
-Les deux decorators effectuent le même comportement interne, et `@Uri()` est un alias de `@Params()`.
+Les deux décorateurs effectuent le même comportement interne, et `@Uri()` est un alias de `@Params()`.
 
 - source : `req.params`
 - Couramment utilisé dans les routes telles que `/users/:id`, `/posts/:postId`
@@ -60,7 +60,7 @@ Il est utile pour passer l'état côté serveur, tel que les informations d'util
 
 ## Exemple d'utilisation
 
-Voici un exemple de l'utilisation des decorators de source dans une application Express.
+Voici un exemple de l'utilisation des décorateurs de source dans une application Express.
 
 ```typescript
 class Request {

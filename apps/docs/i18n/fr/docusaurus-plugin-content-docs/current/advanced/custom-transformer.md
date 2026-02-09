@@ -1,6 +1,6 @@
-## transformer personnalisé
+## Transformateur personnalisé
 
-Vous pouvez transformer des tableaux stringifiés, des booléens, etc.
+Vous pouvez transformer des tableaux sous forme de chaîne, des booléens, etc.
 
 ```typescript
 class Request {

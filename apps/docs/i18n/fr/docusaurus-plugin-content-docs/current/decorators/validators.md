@@ -1,6 +1,6 @@
-# Decorators de validation
+# Décorateurs de validation
 
-Express-Cargo utilise des decorators pour valider les données de requête entrantes qui sont liées à une classe.
+Express-Cargo utilise des décorateurs pour valider les données de requête entrantes qui sont liées à une classe.
 
 La validation n'est pas effectuée par une fonction `validate` autonome. Au lieu de cela, elle est intégrée dans le middleware `bindingCargo`, qui valide automatiquement les données pendant le cycle de vie de la requête.
 
@@ -88,7 +88,7 @@ Valide que la valeur d'entrée est l'une des valeurs spécifiées.
 ### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Valide une valeur en utilisant une fonction de validation personnalisée.
-Ce decorator offre la flexibilité d'implémenter une logique de validation au-delà des validateurs intégrés.
+Ce décorateur offre la flexibilité d'implémenter une logique de validation au-delà des validateurs intégrés.
 
 - **`validateFn`** : Une fonction qui reçoit la valeur du champ et retourne true si valide, false sinon.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
@@ -96,7 +96,7 @@ Ce decorator offre la flexibilité d'implémenter une logique de validation au-d
 ### `@Regexp(pattern: RegExp, message?: string)`
 
 Valide que le champ décoré correspond au modèle d'expression régulière spécifié.
-Ce decorator est utile pour appliquer des règles de format telles que les e-mails, les numéros de téléphone, etc.
+Ce décorateur est utile pour appliquer des règles de format telles que les e-mails, les numéros de téléphone, etc.
 
 - **`pattern`** : Un objet RegExp utilisé pour tester la valeur du champ. La valeur est valide si elle correspond au modèle.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
@@ -140,13 +140,13 @@ Valide que si la propriété décorée a une valeur, la propriété cible spéci
 
 ### `@Each(...args: (Validator | Function)[])`
 
-Valide chaque élément individuel dans un tableau. Il peut accepter d'autres decorators de validation ou des fonctions de validation personnalisées.
+Valide chaque élément individuel dans un tableau. Il peut accepter d'autres décorateurs de validation ou des fonctions de validation personnalisées.
 
-- `args` : Un decorator de validation (par exemple, @Min(5)) ou une fonction personnalisée (value: any) => boolean.
+- `args` : Un décorateur de validation (par exemple, @Min(5)) ou une fonction personnalisée (value: any) => boolean.
 
 ## Exemple d'utilisation
 
-Voici un exemple complet de l'utilisation des decorators de validation dans une application Express.
+Voici un exemple complet de l'utilisation des décorateurs de validation dans une application Express.
 
 ```typescript
 import express, { Request, Response, NextFunction } from 'express'

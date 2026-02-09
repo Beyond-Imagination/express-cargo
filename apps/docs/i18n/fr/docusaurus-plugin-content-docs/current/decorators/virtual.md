@@ -1,4 +1,4 @@
-# Decorators de champs virtuels
+# Décorateurs de champs virtuels
 
 **Express-Cargo** fournit des decorators pour définir des **champs virtuels** et des **champs dérivés de requête**. Ces decorators vous permettent de calculer des valeurs dynamiquement ou de mapper des données depuis la `Request` directement dans la propriété de l'objet.
 
