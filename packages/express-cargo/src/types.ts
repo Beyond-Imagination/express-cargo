@@ -29,12 +29,34 @@ export type TypeThunk = () => ClassConstructor
  */
 export type TypeResolver = (data: any) => ClassConstructor
 
+/**
+ * Configuration for structural polymorphism using a discriminator field.
+ * This allows mapping different classes based on the value of a specific property.
+ */
 export interface DiscriminatorOptions {
+    /**
+     * The name of the property to check for the type discriminator.
+     * e.g., 'type', 'kind'
+     */
     property: string
-    subTypes: { value: ClassConstructor; name: string }[]
+    /**
+     * A list of mappings between discriminator values and their corresponding classes.
+     */
+    subTypes: {
+        /** The class constructor to use when the discriminator matches. */
+        value: ClassConstructor
+        /** The value of the discriminator property that triggers this class. */
+        name: string
+    }[]
 }
 
+/**
+ * Options for the `@Type` decorator.
+ */
 export interface TypeOptions {
+    /**
+     * Configuration for handling polymorphism via a discriminator field.
+     */
     discriminator?: DiscriminatorOptions
 }
 
