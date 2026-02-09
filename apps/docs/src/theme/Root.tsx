@@ -18,7 +18,6 @@ export default function Root({ children }: RootProps) {
 
         import('@newrelic/browser-agent/loaders/browser-agent').then(
             ({ BrowserAgent }) => {
-                console.log('newrelic',newRelicConfig)
                 const options = {
                     init: {
                         distributed_tracing: { enabled: true },
