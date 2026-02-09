@@ -55,7 +55,7 @@ export const Query = createSourceDecorator('query')
  * @param key - Optional path parameter name. Defaults to the property name.
  * @example
  * ```ts
- * class QueryExample {
+ * class ParamsExample {
  *      @Params('id')
  *      userId: string;
  * }
