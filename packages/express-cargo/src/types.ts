@@ -1,17 +1,31 @@
+/**
+ * Represents the source of the request data.
+ * - `body`: req.body
+ * - `query`: req.query
+ * - `params`: req.params
+ * - `header`: req.headers
+ * - `session`: req.session
+ */
 export type Source = 'body' | 'query' | 'params' | 'header' | 'session'
 
+/**
+ * Represents a class constructor.
+ */
 export type ClassConstructor<T = any> = new (...args: any[]) => T
+
 export type validArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
 export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 
 /**
  * A function that returns a class constructor without any arguments.
+ * Used for lazy evaluation of types to handle circular dependencies.
  */
 export type TypeThunk = () => ClassConstructor
 
 /**
  * A function that returns a class constructor based on the provided data.
+ * Used for polymorphic type resolution.
  */
 export type TypeResolver = (data: any) => ClassConstructor
 
@@ -28,6 +42,9 @@ type ValidatorFunction = (value: any, instance?: Record<string | symbol, any>) =
 type errorMessageFunction = (property: string | symbol, value: any) => string
 export type cargoErrorMessage = string | errorMessageFunction
 
+/**
+ * Represents a validation rule for a property.
+ */
 export class ValidatorRule {
     type: string
     propertyKey: string | symbol
@@ -41,9 +58,15 @@ export class ValidatorRule {
         this.message = message
     }
 
+    /**
+     * Validates a value against this rule.
+     * @param value - The value to validate.
+     * @param instance - The instance of the object being validated (optional).
+     * @returns A CargoFieldError if validation fails, null otherwise.
+     */
     validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
         if (!this.validateFunction(value, instance)) {
-            let message = typeof this.message === 'string' ? this.message : this.message(this.propertyKey, value)
+            const message = typeof this.message === 'string' ? this.message : this.message(this.propertyKey, value)
             return new CargoFieldError(this.propertyKey, message)
         }
 
@@ -51,6 +74,9 @@ export class ValidatorRule {
     }
 }
 
+/**
+ * Represents a validation rule that applies to each element of an array.
+ */
 export class EachValidatorRule extends ValidatorRule {
     private innerRule: ValidatorRule
 
@@ -73,6 +99,9 @@ export class EachValidatorRule extends ValidatorRule {
     }
 }
 
+/**
+ * Represents an error for a specific field validation failure.
+ */
 export class CargoFieldError extends Error {
     name: string
     field: string | symbol
@@ -84,6 +113,10 @@ export class CargoFieldError extends Error {
     }
 }
 
+/**
+ * Represents an error when validation fails for a request object.
+ * Contains a list of all field errors.
+ */
 export class CargoValidationError extends Error {
     name: string
     errors: CargoFieldError[]

@@ -2,6 +2,10 @@ import 'reflect-metadata'
 import type { Request } from 'express'
 import { Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, ValidatorRule } from './types'
 
+/**
+ * Manages metadata for a cargo class.
+ * Handles field registration, retrieval, and caching of metadata.
+ */
 export class CargoClassMetadata {
     private target: any
     private metadataFinalized: boolean = false
@@ -104,6 +108,10 @@ export class CargoClassMetadata {
     }
 }
 
+/**
+ * Stores metadata for a specific field in a cargo class.
+ * Contains information about source, validation rules, transformers, and type information.
+ */
 export class CargoFieldMetadata {
     readonly target: any
     readonly type: any
