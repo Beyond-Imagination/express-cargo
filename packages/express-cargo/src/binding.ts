@@ -1,14 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import {
-    CargoFieldError,
-    CargoValidationError,
-    CargoTransformFieldError,
-    Source,
-    TypeResolver,
-    TypeThunk,
-    TypeOptions,
-} from './types'
+import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 
@@ -300,6 +292,20 @@ function bindObject(
     return targetObject
 }
 
+/**
+ * Middleware that binds request data to a class instance and validates it.
+ *
+ * @param cargoClass - The class constructor to bind the request data to.
+ * @returns An Express RequestHandler.
+ *
+ * @example
+ * ```typescript
+ * app.post('/users', bindingCargo(CreateUser), (req, res) => {
+ *   const userDto = getCargo<CreateUser>(req);
+ *   // ...
+ * });
+ * ```
+ */
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
     return (req, res, next) => {
         try {
@@ -332,6 +338,12 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
     }
 }
 
+/**
+ * Retrieves the bound cargo object from the request.
+ *
+ * @param req - The Express Request object.
+ * @returns The bound class instance, or undefined if not found.
+ */
 export function getCargo<T extends object>(req: Request): T | undefined {
     return req._cargo as T
 }

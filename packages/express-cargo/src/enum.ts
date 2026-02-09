@@ -1,6 +1,27 @@
 import { CargoClassMetadata } from './metadata'
 import { cargoErrorMessage, TypedPropertyDecorator, ValidatorRule } from './types'
 
+/**
+ * Decorator that validates if the property value is a valid enum member.
+ * It also transforms the input value to the corresponding enum value if possible.
+ *
+ * @param enumObj - The enum object to validate against.
+ * @param message - Optional custom error message or function.
+ * @returns A property decorator.
+ *
+ * @example
+ * ```typescript
+ * enum UserRole {
+ *   ADMIN = 'admin',
+ *   USER = 'user'
+ * }
+ *
+ * class User {
+ *   @Enum(UserRole)
+ *   role: UserRole;
+ * }
+ * ```
+ */
 export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropertyDecorator<T> {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)

@@ -8,6 +8,10 @@ const TYPE_MAP = {
     date: Date,
 } as const
 
+/**
+ * Marks a property as optional.
+ * If the property is missing in the request, it will be ignored during validation.
+ */
 export function Optional(): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
@@ -17,6 +21,10 @@ export function Optional(): PropertyDecorator {
     }
 }
 
+/**
+ * Specifies the type of elements in an array property.
+ * @param elementType - The constructor or type name of the array elements.
+ */
 export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
@@ -27,6 +35,10 @@ export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Arr
     }
 }
 
+/**
+ * Sets a default value for a property if it is missing or undefined in the request.
+ * @param value - The default value to use.
+ */
 export function Default(value: any): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
