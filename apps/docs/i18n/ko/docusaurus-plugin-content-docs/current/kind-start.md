@@ -111,33 +111,16 @@ app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
 class ExampleRequest {
 
 
-  @Body()
-  @Equal('1')
+  @Body() // 요청 body에서 필드 추출
+  @Equal('1') // 값이 "1"이 아니면 validation error
   id!: string
 }
 
-app.post('/example', bindingCargo(ExampleRequest), (req, res) => {
-  const cargo = getCargo<ExampleRequest>(req)
+app.post('/example', bindingCargo(ExampleRequest), (req, res) => { // bindingCargo(Class): 요청 → DTO 변환 + 검증
+  const cargo = getCargo<ExampleRequest>(req) // 검증 완료된 타입 안전 객체 반환
   res.json(cargo)
 })
 ```
-**동작 설명**
-
-- `@Body()`
-
-    → 요청 body에서 필드 추출
-
-- `@Equal('1')`
-
-    → 값이 "1"이 아니면 validation error
-
-- `bindingCargo(Class)`
-
-    → 요청 → DTO 변환 + 검증
-
-- `getCargo(req)`
-
-    → 검증 완료된 타입 안전 객체 반환
 
 ### 8. 실행
 ```shell
@@ -162,89 +145,3 @@ Content-Type: application/json
 ```
 
 - ❌ `"id": "2"` → Validation Error 발생
-
-### 9. 에러 핸들러 설정
-`src/errorHandler.ts`
-```typescript
-import express, { NextFunction, Request, Response, Router } from 'express'
-import {
-    bindingCargo,
-    Body,
-    CargoFieldError,
-    CargoTransformFieldError,
-    CargoValidationError,
-    Email,
-    getCargo,
-    getCargoErrorHandler,
-    MaxLength,
-    setCargoErrorHandler,
-    Transform,
-} from 'express-cargo'
-
-const router: Router = express.Router()
-
-
-/**
- * express 기본 에러 핸들링으로 위임하기 위한 래퍼
- */
-const saveAndBypassErrorHandler = (req: Request, res: Response, next: NextFunction) => {
-    const originalHandler = getCargoErrorHandler()
-
-    res.on('finish', () => {
-        if (originalHandler) {
-            setCargoErrorHandler(originalHandler)
-        }
-    })
-
-    setCargoErrorHandler((error: CargoValidationError, req, res, next) => next(error))
-    next()
-}
-
-const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
-    if (error instanceof CargoValidationError) {
-        res.status(400).json({
-            name: error.name,
-            errors: error.errors,
-            message: error.message,
-        })
-    } else if (error instanceof CargoTransformFieldError || error instanceof CargoFieldError) {
-        res.status(400).json({
-            name: error.name,
-            field: error.field,
-            message: error.message,
-        })
-    } else {
-        res.status(500).json({
-            name: 'Internal Server Error',
-            message: error.message,
-        })
-    }
-}
-
-class ErrorHandlerExample {
-    @Body()
-    @MaxLength(10)
-    name!: string
-
-    @Body()
-    @Email()
-    @Transform((target: string) => target.toLowerCase())
-    email!: string
-}
-
-router.use(saveAndBypassErrorHandler)
-
-router.post('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
-    const cargo = getCargo<ErrorHandlerExample>(req)
-    res.json(cargo)
-})
-
-router.use(errorHandler)
-
-export default router
-
-```
-
-- Validation / Transform 에러를 구조화된 JSON으로 응답
-
-- express 전역 에러 핸들링과 충돌 없이 동작
