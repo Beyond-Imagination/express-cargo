@@ -1,4 +1,4 @@
-# docs
+# express-cargo docs
 
 Docusaurus app for the `express-cargo` documentation site.
 
@@ -53,8 +53,8 @@ The app includes a `deploy` script (`docusaurus deploy`). Use your CI/CD pipelin
 
 Base URL and site URL are environment-aware in `docusaurus.config.ts`:
 
-- development : Vercel deployment with env setting (`VERCEL=1`) 
-- production : GitHub Pages URL with `/express-cargo/` base path
+- development: Vercel deployment with env setting (`VERCEL=1`)
+- production: GitHub Pages URL with `/express-cargo/` base path
 
 ## Environment variables
 
