@@ -66,21 +66,12 @@ pnpm tsc --init
 ```json
 {
   "compilerOptions": {
-    "target": "ES2017",                 // Decorator + 최신 문법 안정성
-    "module": "commonjs",
-    "moduleResolution": "node",
+    ...,
     "experimentalDecorators": true,     // express-cargo 필수
     "emitDecoratorMetadata": true,      // 타입 메타데이터 사용
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
-    }
+    ...
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  ...
 }
 ```
 
@@ -96,39 +87,6 @@ pnpm add -D @types/express
 ```
 
 ---
-
-#### 6. tsconfig.json 예시
-```json
-{
-    "compileOnSave": false,
-    "compilerOptions": {
-        "target": "es2017",
-        "lib": ["es2017", "esnext.asynciterable"],
-        "typeRoots": ["node_modules/@types"],
-        "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node",
-        "module": "commonjs",
-        "pretty": true,
-        "sourceMap": true,
-        "declaration": true,
-        "outDir": "dist",
-        "allowJs": true,
-        "noEmit": false,
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "importHelpers": true,
-        "baseUrl": "./src",
-        "paths": {
-            "@/*": ["*"]
-        }
-    },
-    "include": ["src/**/*.ts", "src/**/*.json", ".env"],
-    "exclude": ["node_modules"]
-}
-```
 
 ### 7. 기본 서버 + express-cargo 설정
 #### 7-1. `src/app.ts`
