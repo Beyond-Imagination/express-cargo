@@ -66,21 +66,12 @@ pnpm tsc --init
 ```json
 {
   "compilerOptions": {
-    "target": "ES2017",                 // Decorator + 최신 문법 안정성
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "experimentalDecorators": true,     // express-cargo 필수
-    "emitDecoratorMetadata": true,      // 타입 메타데이터 사용
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
-    }
+    ...,
+    "experimentalDecorators": true,     // express-cargo required
+    "emitDecoratorMetadata": true,      // use type metadata
+    ...
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  ...
 }
 ```
 
@@ -93,77 +84,13 @@ pnpm tsc --init
 ```shell
 pnpm add express express-cargo
 pnpm add -D @types/express
+pnpm add reflect-metadata
 ```
 
 ---
 
-### 6. package.json example
-```json
-{
-  "name": "express-cargo-docs-example",
-  "version": "1.0.0",
-  "description": "express-cargo example",
-  "main": "index.js",
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon",
-    "build": "rm -rf dist && swc src -d dist --source-maps --copy-files",
-    "start": "node dist/src/app.js",
-  },
-  "dependencies": {
-    "express": "^5.2.1",
-    "express-cargo": "^0.5.1",
-    "express-session": "^1.19.0",
-    "cross-env": "^7.0.3",
-    "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@swc-node/register": "^1.11.1",
-    "@swc/cli": "^0.5.2",
-    "@swc/core": "^1.15.10",
-    "@swc/helpers": "^0.5.18",
-    "@types/express": "^5.0.6",
-    "@types/express-session": "^1.18.2",
-    "nodemon": "^3.1.11",
-    "swc-node": "^1.0.0"
-  }
-}
-```
-
-#### 7. tsconfig.json example
-```json
-{
-    "compileOnSave": false,
-    "compilerOptions": {
-        "target": "es2017",
-        "lib": ["es2017", "esnext.asynciterable"],
-        "typeRoots": ["node_modules/@types"],
-        "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node",
-        "module": "commonjs",
-        "pretty": true,
-        "sourceMap": true,
-        "declaration": true,
-        "outDir": "dist",
-        "allowJs": true,
-        "noEmit": false,
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "importHelpers": true,
-        "baseUrl": "./src",
-        "paths": {
-            "@/*": ["*"]
-        }
-    },
-    "include": ["src/**/*.ts", "src/**/*.json", ".env"],
-    "exclude": ["node_modules"]
-}
-```
-
-### 8. Base server + express-cargo settings
-#### 8-1. `src/app.ts`
+### 6. Base server + express-cargo settings
+#### 6-1. `src/app.ts`
 
 ```typescript
 import express from 'express'
@@ -181,39 +108,19 @@ app.use(errorHandlerRouter)
 
 app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
 
-
 class ExampleRequest {
-
-
-  @Body()
-  @Equal('1')
+  @Body() // Extract fields from the request body
+  @Equal('1') // If the value is not "1", a validation error occurs
   id!: string
 }
 
-app.post('/example', bindingCargo(ExampleRequest), (req, res) => {
-  const cargo = getCargo<ExampleRequest>(req)
+app.post('/example', bindingCargo(ExampleRequest), (req, res) => { // bindingCargo(Class): Request → DTO conversion + validation
+  const cargo = getCargo<ExampleRequest>(req) // Return a validated type-safe object
   res.json(cargo)
 })
 ```
-**Operation Description**
 
-- `@Body()`
-
-    → Extract fields from the request body
-
-- `@Equal('1')`
-
-    → If the value is not "1", a validation error occurs
-
-- `bindingCargo(Class)`
-
-    → Request → DTO conversion + validation
-
-- `getCargo(req)`
-
-    → Return a validated type-safe object
-
-### 9. Run
+### 7. Run
 ```shell
 npm run dev
 ```
@@ -236,89 +143,3 @@ response:
 ```
 
 - ❌ `"id": "2"` → Validation Error occurs
-
-### 10. Setting up an error handler
-`src/errorHandler.ts`
-```typescript
-import express, { NextFunction, Request, Response, Router } from 'express'
-import {
-    bindingCargo,
-    Body,
-    CargoFieldError,
-    CargoTransformFieldError,
-    CargoValidationError,
-    Email,
-    getCargo,
-    getCargoErrorHandler,
-    MaxLength,
-    setCargoErrorHandler,
-    Transform,
-} from 'express-cargo'
-
-const router: Router = express.Router()
-
-
-/**
- * Wrapper for delegating to Express' default error handling
- */
-const saveAndBypassErrorHandler = (req: Request, res: Response, next: NextFunction) => {
-    const originalHandler = getCargoErrorHandler()
-
-    res.on('finish', () => {
-        if (originalHandler) {
-            setCargoErrorHandler(originalHandler)
-        }
-    })
-
-    setCargoErrorHandler((error: CargoValidationError, req, res, next) => next(error))
-    next()
-}
-
-const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
-    if (error instanceof CargoValidationError) {
-        res.status(400).json({
-            name: error.name,
-            errors: error.errors,
-            message: error.message,
-        })
-    } else if (error instanceof CargoTransformFieldError || error instanceof CargoFieldError) {
-        res.status(400).json({
-            name: error.name,
-            field: error.field,
-            message: error.message,
-        })
-    } else {
-        res.status(500).json({
-            name: 'Internal Server Error',
-            message: error.message,
-        })
-    }
-}
-
-class ErrorHandlerExample {
-    @Body()
-    @MaxLength(10)
-    name!: string
-
-    @Body()
-    @Email()
-    @Transform((target: string) => target.toLowerCase())
-    email!: string
-}
-
-router.use(saveAndBypassErrorHandler)
-
-router.post('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
-    const cargo = getCargo<ErrorHandlerExample>(req)
-    res.json(cargo)
-})
-
-router.use(errorHandler)
-
-export default router
-
-```
-
-- Validation/Transform errors are returned as structured JSON
-
-- Works seamlessly with Express's global error handling

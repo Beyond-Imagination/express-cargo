@@ -84,12 +84,13 @@ express-cargo의 validation / transform이 동작하지 않습니다.
 ```shell
 pnpm add express express-cargo
 pnpm add -D @types/express
+pnpm add reflect-metadata
 ```
 
 ---
 
-### 7. 기본 서버 + express-cargo 설정
-#### 7-1. `src/app.ts`
+### 6. 기본 서버 + express-cargo 설정
+#### 6-1. `src/app.ts`
 
 ```typescript
 import express from 'express'
@@ -107,10 +108,7 @@ app.use(errorHandlerRouter)
 
 app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
 
-
 class ExampleRequest {
-
-
   @Body() // 요청 body에서 필드 추출
   @Equal('1') // 값이 "1"이 아니면 validation error
   id!: string
@@ -122,7 +120,7 @@ app.post('/example', bindingCargo(ExampleRequest), (req, res) => { // bindingCar
 })
 ```
 
-### 8. 실행
+### 7. 실행
 ```shell
 npm run dev
 ```
