@@ -97,39 +97,7 @@ pnpm add -D @types/express
 
 ---
 
-### 6. package.json 예시
-```json
-{
-  "name": "express-cargo-docs-example",
-  "version": "1.0.0",
-  "description": "express-cargo example",
-  "main": "index.js",
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon",
-    "build": "rm -rf dist && swc src -d dist --source-maps --copy-files",
-    "start": "node dist/src/app.js",
-  },
-  "dependencies": {
-    "express": "^5.2.1",
-    "express-cargo": "^0.5.1",
-    "express-session": "^1.19.0",
-    "cross-env": "^7.0.3",
-    "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@swc-node/register": "^1.11.1",
-    "@swc/cli": "^0.5.2",
-    "@swc/core": "^1.15.10",
-    "@swc/helpers": "^0.5.18",
-    "@types/express": "^5.0.6",
-    "@types/express-session": "^1.18.2",
-    "nodemon": "^3.1.11",
-    "swc-node": "^1.0.0"
-  }
-}
-```
-
-#### 7. tsconfig.json 예시
+#### 6. tsconfig.json 예시
 ```json
 {
     "compileOnSave": false,
@@ -162,8 +130,8 @@ pnpm add -D @types/express
 }
 ```
 
-### 8. 기본 서버 + express-cargo 설정
-#### 8-1. `src/app.ts`
+### 7. 기본 서버 + express-cargo 설정
+#### 7-1. `src/app.ts`
 
 ```typescript
 import express from 'express'
@@ -213,7 +181,7 @@ app.post('/example', bindingCargo(ExampleRequest), (req, res) => {
 
     → 검증 완료된 타입 안전 객체 반환
 
-### 9. 실행
+### 8. 실행
 ```shell
 npm run dev
 ```
@@ -237,7 +205,7 @@ Content-Type: application/json
 
 - ❌ `"id": "2"` → Validation Error 발생
 
-### 10. 에러 핸들러 설정
+### 9. 에러 핸들러 설정
 `src/errorHandler.ts`
 ```typescript
 import express, { NextFunction, Request, Response, Router } from 'express'
