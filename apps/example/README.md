@@ -616,6 +616,39 @@ curl -X POST 'http://localhost:3000/one-of' \
 
 ---
 
+### @Enum
+
+```typescript
+enum UserRole {
+    ADMIN = 'admin',
+    USER = 'user',
+}
+
+class EnumExample {
+    @Body()
+    @Enum(UserRole)
+    role!: UserRole
+}
+
+router.post('/enum', bindingCargo(EnumExample), (req, res) => {
+    const cargo = getCargo<EnumExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/enum' \
+    -H 'Content-Type: application/json' \
+    -d '{"role": "admin"}'
+
+# This will also be transformed to 'admin'
+curl -X POST 'http://localhost:3000/enum' \
+    -H 'Content-Type: application/json' \
+    -d '{"role": "ADMIN"}'
+```
+
+---
+
 ### @Validate
 
 ```typescript
@@ -762,9 +795,7 @@ curl -X POST 'http://localhost:3000/with' \
     "page": 1,
     "limit": 10
 }'
-```
 
-```shell
 curl -X POST 'http://localhost:3000/with' \
 -H 'Content-Type: application/json' \
 -d '{
@@ -799,9 +830,7 @@ curl -X POST http://localhost:3000/without \
   "deliveryAddress": "123 Magic Street, Seoul",
   "isPickup": false
 }'
-```
 
-```shell
 curl -X POST http://localhost:3000/without \
 -H "Content-Type: application/json" \
 -d '{

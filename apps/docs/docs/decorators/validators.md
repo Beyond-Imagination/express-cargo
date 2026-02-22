@@ -85,6 +85,14 @@ Validates that the input value is one of the specified values.
 
 - **`values`**: The array of allowed values.
 
+### `@Enum(enumObj: object, message?: string)`
+
+Validates that the input value matches one of the values in the specified enum object.
+It also automatically transforms the input value (e.g., string key) to the corresponding enum value.
+
+- **`enumObj`**: The enum object to validate against.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Validates a value using a custom validation function.

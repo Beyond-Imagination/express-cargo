@@ -85,6 +85,14 @@ Valide que la valeur d'entrée est l'une des valeurs spécifiées.
 
 - **`values`** : Le tableau des valeurs autorisées.
 
+### `@Enum(enumObj: object, message?: string)`
+
+Valide que la valeur d'entrée correspond à l'une des valeurs de l'objet enum spécifié.
+Il transforme également automatiquement la valeur d'entrée (par exemple, la clé de chaîne) en la valeur enum correspondante.
+
+- **`enumObj`**: L'objet enum à valider.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 ### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Valide une valeur en utilisant une fonction de validation personnalisée.
