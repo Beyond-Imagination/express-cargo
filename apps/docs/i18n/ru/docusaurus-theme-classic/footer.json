@@ -1,0 +1,30 @@
+{
+  "link.title.Docs": {
+    "message": "Документация",
+    "description": "The title of the footer links column"
+  },
+  "link.title.More": {
+    "message": "Больше",
+    "description": "Footer column title"
+  },
+  "link.item.label.Getting Started": {
+    "message": "Начало работы",
+    "description": "Link to intro page"
+  },
+  "link.item.label.Core Concepts": {
+    "message": "Основные концепции",
+    "description": "Link to core concepts page"
+  },
+  "link.item.label.Examples": {
+    "message": "Примеры",
+    "description": "Link to usage examples"
+  },
+  "link.item.label.GitHub": {
+    "message": "Посмотреть на GitHub",
+    "description": "GitHub project link"
+  },
+  "copyright": {
+    "message": "Copyright © 2025 Beyond_Imagination Team. Собрано с помощью Docusaurus.",
+    "description": "The footer copyright"
+  }
+}
