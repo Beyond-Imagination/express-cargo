@@ -25,6 +25,7 @@ import {
     Alphanumeric,
     With,
     Without,
+    Enum,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -295,6 +296,22 @@ class WithoutExample {
 
 router.post('/without', bindingCargo(WithoutExample), (req, res) => {
     const cargo = getCargo<WithoutExample>(req)
+    res.json(cargo)
+})
+
+enum UserRole {
+    ADMIN = 'admin',
+    USER = 'user',
+}
+
+class EnumExample {
+    @Body()
+    @Enum(UserRole)
+    role!: UserRole
+}
+
+router.post('/enum', bindingCargo(EnumExample), (req, res) => {
+    const cargo = getCargo<EnumExample>(req)
     res.json(cargo)
 })
 

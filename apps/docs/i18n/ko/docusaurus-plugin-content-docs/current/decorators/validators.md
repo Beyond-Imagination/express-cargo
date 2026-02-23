@@ -119,6 +119,13 @@ title: 유효성 검사 데코레이터
 
 ---
 
+### `@Enum(enumObj: object, message?: string)`
+
+입력 값이 지정된 열거형 객체의 값 중 하나와 일치하는지 검증합니다. 또한 입력 값을 해당하는 열거형 값으로 자동으로 변환합니다.
+
+- **`enumObj`**: 검증할 열거형 객체
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
 ### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 사용자 정의 검증 함수를 사용해 값을 검증합니다.

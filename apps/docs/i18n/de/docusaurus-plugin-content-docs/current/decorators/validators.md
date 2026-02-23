@@ -85,6 +85,14 @@ Validiert, dass der Eingabewert einer der angegebenen Werte ist.
 
 - **`values`**: Das Array der zulässigen Werte.
 
+### `@Enum(enumObj: object, message?: string)`
+
+Validiert, dass der Eingabewert mit einem der Werte im angegebenen Enum-Objekt übereinstimmt.
+Es transformiert auch automatisch den Eingabewert (z. B. einen Zeichenkettenschlüssel) in den entsprechenden Enum-Wert.
+
+- **`enumObj`**: Das Enum-Objekt, gegen das validiert werden soll.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Validiert einen Wert mithilfe einer benutzerdefinierten Validierungsfunktion.
