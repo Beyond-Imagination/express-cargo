@@ -933,34 +933,34 @@ class CustomClass {
     age!: number
 }
 
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 ```
@@ -1227,7 +1227,7 @@ class PostData {
 
 class BodyExample {
     @Body()
-    @Array(PostData)
+    @List(PostData)
     posts!: PostData[]
 }
 

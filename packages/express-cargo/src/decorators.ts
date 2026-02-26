@@ -25,7 +25,7 @@ export function Optional(): PropertyDecorator {
  * Specifies the type of elements in an array property.
  * @param elementType - The constructor or type name of the array elements.
  */
-export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
+export function List(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)

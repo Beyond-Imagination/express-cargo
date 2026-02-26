@@ -1,16 +1,20 @@
-# Array-Decorator
+---
+id: list-decorator
+title: List 데코레이터
+---
+# List 데코레이터
 
-Der `@Array`-Decorator von Express-Cargo ermöglicht es Ihnen, Array-Typen aus einer Anfrage automatisch zu binden und zu casten. Dies ist nützlich, wenn Sie erwarten, dass ein Feld ein Array eines bestimmten Typs ist, wie Strings, Zahlen oder sogar benutzerdefinierte Objekte.
+Express-Cargo의 `@List` 데코레이터를 사용하면 요청에서 배열 유형을 자동으로 바인딩하고 캐스팅할 수 있습니다. 이는 필드가 문자열, 숫자 또는 사용자 정의 객체와 같은 특정 유형의 배열일 것으로 예상될 때 유용합니다.
 
-## Anwendungsbeispiel
+## 사용 예시
 
 ```typescript
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
-// 1. Definieren Sie eine benutzerdefinierte Klasse (optional)
+// 1. 사용자 정의 클래스 정의 (선택 사항)
 class CustomClass {
     @Body()
     name!: string
@@ -19,45 +23,45 @@ class CustomClass {
     age!: number
 }
 
-// 2. Definieren Sie die Klasse mit Array-Feldern
-class ArraySample {
+// 2. 배열 필드를 사용하여 클래스 정의
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
-// 3. Express-Route einrichten
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+// 3. Express 라우트 설정
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 
 export default router
 ```
 
-## Ausgabebeispiel
+## 출력 예시
 
-Wenn Sie eine POST-Anfrage an `/array` mit dem folgenden JSON-Body senden:
+다음 JSON 본문과 함께 `/list`로 POST 요청을 보내는 경우:
 
 ```json
 {
@@ -73,22 +77,22 @@ Wenn Sie eine POST-Anfrage an `/array` mit dem folgenden JSON-Body senden:
 }
 ```
 
-Die `getCargo`-Funktion gibt ein vollständig gefülltes `ArraySample`-Objekt zurück:
+`getCargo` 함수는 완전히 채워진 `ListSample` 객체를 반환합니다:
 
 ```typescript
-// Von getCargo<ArraySample>(req) zurückgegebenes Objekt:
+// getCargo<ListSample>(req)에 의해 반환된 객체:
 const cargo = {
   stringArray: ["apple", "banana"],
   numberArray: [1, 2, 3],
   booleanArray: [true, false],
   dateArray: [
-    // Dies sind tatsächliche Date-Objekte
+    // 실제로는 Date 객체입니다
     new Date("2024-01-01T00:00:00.000Z"),
     new Date("2024-01-02T00:00:00.000Z")
   ],
   stringLiteralArray: ["one", "two"],
   customClassArray: [
-    // Dies sind Instanzen von CustomClass
+      // 실제로는 CustomClass의 인스턴스입니다
     { name: "John", age: 30 },
     { name: "Jane", age: 25 }
   ]

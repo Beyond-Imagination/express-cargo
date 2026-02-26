@@ -1,12 +1,12 @@
 # Décorateur de tableau
 
-Le décorateur `@Array` d'Express-Cargo vous permet de lier et de convertir automatiquement les types de tableau depuis une requête. Ceci est utile lorsque vous attendez qu'un champ soit un tableau d'un type spécifique, comme des chaînes, des nombres ou même des objets personnalisés.
+Le décorateur `@List` d'Express-Cargo vous permet de lier et de convertir automatiquement les types de tableau depuis une requête. Ceci est utile lorsque vous attendez qu'un champ soit un tableau d'un type spécifique, comme des chaînes, des nombres ou même des objets personnalisés.
 
 ## Exemple d'utilisation
 
 ```typescript
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -20,35 +20,35 @@ class CustomClass {
 }
 
 // 2. Définir la classe avec des champs de tableau
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
 // 3. Configuration de la route Express
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 
@@ -57,7 +57,7 @@ export default router
 
 ## Exemple de sortie
 
-Si vous envoyez une requête POST à `/array` avec le corps JSON suivant :
+Si vous envoyez une requête POST à `/list` avec le corps JSON suivant :
 
 ```json
 {
@@ -73,10 +73,10 @@ Si vous envoyez une requête POST à `/array` avec le corps JSON suivant :
 }
 ```
 
-La fonction `getCargo` retournera un objet `ArraySample` entièrement peuplé :
+La fonction `getCargo` retournera un objet `ListSample` entièrement peuplé :
 
 ```typescript
-// Objet retourné par getCargo<ArraySample>(req) :
+// Objet retourné par getCargo<ListSample>(req) :
 const cargo = {
   stringArray: ["pomme", "banane"],
   numberArray: [1, 2, 3],

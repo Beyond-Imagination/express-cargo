@@ -1,26 +1,26 @@
-import { Array } from '../../src'
+import { List } from '../../src'
 import { CargoClassMetadata } from '../../src/metadata'
 
 class CustomClass {}
 
 describe('array decorator', () => {
     class Sample {
-        @Array(String)
+        @List(String)
         stringArray!: string[]
 
-        @Array(Number)
+        @List(Number)
         numberArray!: number[]
 
-        @Array(Boolean)
+        @List(Boolean)
         booleanArray!: boolean[]
 
-        @Array(Date)
+        @List(Date)
         dateArray!: Date[]
 
-        @Array('string')
+        @List('string')
         stringLiteralArray!: string[]
 
-        @Array(CustomClass)
+        @List(CustomClass)
         customClassArray!: CustomClass[]
     }
 

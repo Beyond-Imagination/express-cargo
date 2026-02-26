@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { Body, Query, Params, Validate, Header, Prefix, Transform, Request, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, Query, Params, Validate, Header, Prefix, Transform, Request, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -13,7 +13,7 @@ class PostData {
 
 class BodyExample {
     @Body()
-    @Array(PostData)
+    @List(PostData)
     posts!: PostData[]
 }
 

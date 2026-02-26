@@ -1,12 +1,12 @@
 # Декоратор массива
 
-Декоратор `@Array` в Express-Cargo позволяет автоматически привязывать и приводить типы массивов из запроса. Это полезно, когда вы ожидаете, что поле будет массивом определенного типа, например, строк, чисел или даже пользовательских объектов.
+Декоратор `@List` в Express-Cargo позволяет автоматически привязывать и приводить типы массивов из запроса. Это полезно, когда вы ожидаете, что поле будет массивом определенного типа, например, строк, чисел или даже пользовательских объектов.
 
 ## Пример использования
 
 ```typescript
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -20,35 +20,35 @@ class CustomClass {
 }
 
 // 2. Определите класс с полями массива
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
 // 3. Настройте маршрут Express
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 
@@ -57,7 +57,7 @@ export default router
 
 ## Пример вывода
 
-Если вы отправите POST-запрос на `/array` со следующим телом JSON:
+Если вы отправите POST-запрос на `/list` со следующим телом JSON:
 
 ```json
 {
@@ -73,10 +73,10 @@ export default router
 }
 ```
 
-Функция `getCargo` вернет полностью заполненный объект `ArraySample`:
+Функция `getCargo` вернет полностью заполненный объект `ListSample`:
 
 ```typescript
-// Объект, возвращаемый getCargo<ArraySample>(req):
+// Объект, возвращаемый getCargo<ListSample>(req):
 const cargo = {
   stringArray: ["apple", "banana"],
   numberArray: [1, 2, 3],

@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo, Uri, Enum } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo, Uri, Enum } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -33,34 +33,34 @@ router.post('/type-casting/:number', bindingCargo(BasicTypeSample), (req, res) =
     res.json(cargo)
 })
 
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 

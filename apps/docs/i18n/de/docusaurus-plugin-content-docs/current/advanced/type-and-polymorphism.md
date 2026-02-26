@@ -51,7 +51,7 @@ class User {
 
     /**
      * @Type erkennt den Array-Typ automatisch über Metadaten.
-     * Kein expliziter @Array(Post)-Decorator erforderlich.
+     * Kein expliziter @List(Post)-Decorator erforderlich.
      */
     @Body()
     @Type(() => Post)
