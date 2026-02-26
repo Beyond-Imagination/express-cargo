@@ -1,4 +1,4 @@
-# List Decorator
+# Listen-Decorator
 
 Der `@List`-Decorator von Express-Cargo ermöglicht es Ihnen, Array-Typen aus einer Anfrage automatisch zu binden und zu casten. Dies ist nützlich, wenn Sie erwarten, dass ein Feld ein Array eines bestimmten Typs ist, wie Strings, Zahlen oder sogar benutzerdefinierte Objekte.
 

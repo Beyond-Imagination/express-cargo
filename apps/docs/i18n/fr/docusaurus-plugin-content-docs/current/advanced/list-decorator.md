@@ -1,4 +1,4 @@
-# Décorateur de tableau
+# Décorateur de liste
 
 Le décorateur `@List` d'Express-Cargo vous permet de lier et de convertir automatiquement les types de tableau depuis une requête. Ceci est utile lorsque vous attendez qu'un champ soit un tableau d'un type spécifique, comme des chaînes, des nombres ou même des objets personnalisés.
 
