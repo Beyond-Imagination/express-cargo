@@ -42,7 +42,7 @@ const sidebars: SidebarsConfig = {
                 'advanced/nested-binding',
                 'advanced/custom-transformer',
                 'advanced/default',
-                'advanced/array-decorator',
+                'advanced/list-decorator',
                 'advanced/type-and-polymorphism',
             ],
         },

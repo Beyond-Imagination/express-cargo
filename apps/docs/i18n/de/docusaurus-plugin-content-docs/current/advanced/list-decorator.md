@@ -1,12 +1,12 @@
-# Array-Decorator
+# Listen-Decorator
 
-Der `@Array`-Decorator von Express-Cargo ermöglicht es Ihnen, Array-Typen aus einer Anfrage automatisch zu binden und zu casten. Dies ist nützlich, wenn Sie erwarten, dass ein Feld ein Array eines bestimmten Typs ist, wie Strings, Zahlen oder sogar benutzerdefinierte Objekte.
+Der `@List`-Decorator von Express-Cargo ermöglicht es Ihnen, Array-Typen aus einer Anfrage automatisch zu binden und zu casten. Dies ist nützlich, wenn Sie erwarten, dass ein Feld ein Array eines bestimmten Typs ist, wie Strings, Zahlen oder sogar benutzerdefinierte Objekte.
 
 ## Anwendungsbeispiel
 
 ```typescript
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -20,35 +20,35 @@ class CustomClass {
 }
 
 // 2. Definieren Sie die Klasse mit Array-Feldern
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
 // 3. Express-Route einrichten
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 
@@ -57,7 +57,7 @@ export default router
 
 ## Ausgabebeispiel
 
-Wenn Sie eine POST-Anfrage an `/array` mit dem folgenden JSON-Body senden:
+Wenn Sie eine POST-Anfrage an `/list` mit dem folgenden JSON-Body senden:
 
 ```json
 {
@@ -73,10 +73,10 @@ Wenn Sie eine POST-Anfrage an `/array` mit dem folgenden JSON-Body senden:
 }
 ```
 
-Die `getCargo`-Funktion gibt ein vollständig gefülltes `ArraySample`-Objekt zurück:
+Die `getCargo`-Funktion gibt ein vollständig gefülltes `ListSample`-Objekt zurück:
 
 ```typescript
-// Von getCargo<ArraySample>(req) zurückgegebenes Objekt:
+// Von getCargo<ListSample>(req) zurückgegebenes Objekt:
 const cargo = {
   stringArray: ["apple", "banana"],
   numberArray: [1, 2, 3],

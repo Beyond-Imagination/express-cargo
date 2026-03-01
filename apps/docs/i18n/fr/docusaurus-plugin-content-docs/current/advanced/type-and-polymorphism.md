@@ -51,7 +51,7 @@ class User {
 
     /**
      * @Type détecte automatiquement le type de tableau via les métadonnées.
-     * Aucun décorateur @Array(Post) explicite n'est requis.
+     * Aucun décorateur @List(Post) explicite n'est requis.
      */
     @Body()
     @Type(() => Post)

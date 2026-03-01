@@ -1,12 +1,12 @@
-# Array Decorator
+# List Decorator
 
-Express-Cargo's `@Array` decorator allows you to automatically bind and cast array types from a request. This is useful when you expect a field to be an array of a specific type, like strings, numbers, or even custom objects.
+Express-Cargo's `@List` decorator allows you to automatically bind and cast array types from a request. This is useful when you expect a field to be an array of a specific type, like strings, numbers, or even custom objects.
 
 ## Usage Example
 
 ```typescript
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -20,35 +20,35 @@ class CustomClass {
 }
 
 // 2. Define the class with array fields
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
 // 3. Setup Express route
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 
@@ -57,7 +57,7 @@ export default router
 
 ## Output Example
 
-If you send a POST request to `/array` with the following JSON body:
+If you send a POST request to `/list` with the following JSON body:
 
 ```json
 {
@@ -73,10 +73,10 @@ If you send a POST request to `/array` with the following JSON body:
 }
 ```
 
-The `getCargo` function will return a fully populated `ArraySample` object:
+The `getCargo` function will return a fully populated `ListSample` object:
 
 ```typescript
-// Object returned by getCargo<ArraySample>(req):
+// Object returned by getCargo<ListSample>(req):
 const cargo = {
   stringArray: ["apple", "banana"],
   numberArray: [1, 2, 3],
