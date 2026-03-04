@@ -4,7 +4,7 @@
     "description": "The title in the navbar"
   },
   "logo.alt": {
-    "message": "My Site Logo",
+    "message": "Le logo d'express-cargo",
     "description": "The alt text of navbar logo"
   },
   "item.label.Docs": {
