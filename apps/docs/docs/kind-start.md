@@ -32,19 +32,6 @@ If successful, the version will be displayed.
 ---
 
 ### 3. Create a new project (pnpm)
-
-[//]: # (####   npm)
-
-[//]: # (```typescript)
-
-[//]: # (mkdir express-cargo-example)
-
-[//]: # (cd express-cargo-example)
-
-[//]: # (npm init -y)
-
-[//]: # (```)
-
 #### pnpm
 ```shell
 mkdir express-cargo-example

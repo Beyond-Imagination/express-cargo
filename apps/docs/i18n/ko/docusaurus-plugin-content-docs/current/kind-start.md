@@ -32,19 +32,6 @@ pnpm -v
 ---
 
 ### 3. 새 프로젝트 생성 (pnpm)
-
-[//]: # (####   npm)
-
-[//]: # (```typescript)
-
-[//]: # (mkdir express-cargo-example)
-
-[//]: # (cd express-cargo-example)
-
-[//]: # (npm init -y)
-
-[//]: # (```)
-
 #### pnpm
 ```shell
 mkdir express-cargo-example
