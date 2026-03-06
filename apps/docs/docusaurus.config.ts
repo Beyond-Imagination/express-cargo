@@ -82,7 +82,7 @@ const config: Config = {
         image: 'img/logo.png',
         navbar: {
             logo: {
-                alt: 'My Site Logo',
+                alt: 'express-cargo Logo',
                 src: 'img/logo.png',
                 srcDark: 'img/logo_dark.png',
             },
@@ -97,7 +97,6 @@ const config: Config = {
                     position: 'left',
                     label: 'Docs',
                 },
-                // {to: '/blog', label: 'Blog', position: 'left'},
                 {
                     href: 'https://github.com/Beyond-Imagination/express-cargo',
                     label: 'GitHub',
