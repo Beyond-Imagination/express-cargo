@@ -1,0 +1,30 @@
+{
+  "link.title.Docs": {
+    "message": "Documentation",
+    "description": "The title of the footer links column"
+  },
+  "link.title.More": {
+    "message": "Plus",
+    "description": "Footer column title"
+  },
+  "link.item.label.Getting Started": {
+    "message": "Commencer",
+    "description": "Link to intro page"
+  },
+  "link.item.label.Core Concepts": {
+    "message": "Concepts fondamentaux",
+    "description": "Link to core concepts page"
+  },
+  "link.item.label.Examples": {
+    "message": "Exemples",
+    "description": "Link to usage examples"
+  },
+  "link.item.label.GitHub": {
+    "message": "Voir sur GitHub",
+    "description": "GitHub project link"
+  },
+  "copyright": {
+    "message": "Copyright © 2025 Beyond_Imagination Team. Créé avec Docusaurus.",
+    "description": "The footer copyright"
+  }
+}

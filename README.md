@@ -114,10 +114,12 @@ Full guide and API reference:
 | `@IsTrue()`                          | Value must be `true`.                                                                                                                                            | `@IsTrue() acceptedTerms!: boolean`                                                        |
 | `@IsFalse()`                         | Value must be `false`.                                                                                                                                           | `@IsFalse() blocked!: boolean`                                                             |
 | `@OneOf(options: readonly any[])`    | Value must be one of `options`.                                                                                                                                  | `@OneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                         |
+| `@Enum(enumObj: object, message?)`   | Value must be a member of `enumObj`.                                                                                                                             | `@Enum(UserRole) role!: UserRole`                                                          |
 | `@Validate(validateFn, message?)`    | Custom validation function.                                                                                                                                      | `@Validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@Regexp(pattern: RegExp, message?)` | String must match the given regular expression.                                                                                                                  | `@Regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
 | `@Email()`                           | String must be email format.                                                                                                                                     | `@Email() email!: string`                                                                  |
 | `@Uuid(version?, message?)`          | Validates that the field is a valid UUID, optionally restricted to a specific version (v1, v3, v4, or v5).                                                       | `@Uuid('v4') requestId!: string`                                                           |
+| `@Alpha(message?: string)`           | Validates that the field contains alphabetic characters (A–Z, a–z) only.                                                                                         | @Alpha() firstName!: string                                                                |
 | `@Alphanumeric(message?: string)`    | Validates that the field contains alphanumeric characters (A-Z, a-z, 0-9) only.                                                                                  | `@Alphanumeric() productCode!: string`                                                     |
 | `@With(fieldName: string)`           | Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency.           | `@With('price') discountRate?: number`                                                     |
 | `@Without(fieldName: string)`        | Validates that if the decorated field has a value, the specified target field (fieldName) must NOT have a value, establishing a mutually exclusive relationship. | `@Without('isGuest') password?: string`                                                    |
@@ -134,10 +136,12 @@ Full guide and API reference:
 
 ### Utility Decorators
 
-| Decorator             | Description                             | Example                          |
-|-----------------------|-----------------------------------------|----------------------------------|
-| `@Default(value)`     | Set default value when field is missing | `@Default(0) count!: number`     |
-| `@Array(elementType)` | Specify array element type              | `@Array(String) tags!: string[]` |
+| Decorator                          | Description                                                                                                           | Example                             |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| `@Type(typeFn, options?)`          | Specifies the class used to transform raw data. Supports dynamic class resolution and resolves circular dependencies. | `@Type(() => User) user!: User`     |
+| `@Default(value)`                  | Set default value when field is missing                                                                               | `@Default(0) count!: number`        |
+| `@List(elementType)`               | Specify array element type                                                                                            | `@List(String) tags!: string[]`     |
+| `@Each((validator \| function)[])` | Applies validation rules to every individual element within an array.                                                 | `@Each(Length(10)) tags!: string[]` |
 
 ### Error Handling
 

@@ -1,5 +1,5 @@
 import { CargoClassMetadata } from './metadata'
-import { ArrayElementType, TypedPropertyDecorator } from './types'
+import { ArrayElementType, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk } from './types'
 
 const TYPE_MAP = {
     string: String,
@@ -8,6 +8,10 @@ const TYPE_MAP = {
     date: Date,
 } as const
 
+/**
+ * Marks a property as optional.
+ * If the property is missing in the request, it will be ignored during validation.
+ */
 export function Optional(): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
@@ -17,7 +21,11 @@ export function Optional(): PropertyDecorator {
     }
 }
 
-export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
+/**
+ * Specifies the type of elements in an array property.
+ * @param elementType - The constructor or type name of the array elements.
+ */
+export function List(elementType: ArrayElementType): TypedPropertyDecorator<Array<unknown>> {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
@@ -27,11 +35,72 @@ export function Array(elementType: ArrayElementType): TypedPropertyDecorator<Arr
     }
 }
 
+/**
+ * Sets a default value for a property if it is missing or undefined in the request.
+ * @param value - The default value to use.
+ */
 export function Default(value: any): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         fieldMeta.setDefault(value)
+        classMeta.setFieldMetadata(propertyKey, fieldMeta)
+    }
+}
+
+/**
+ * Decorator to define the target class type for a property.
+ * * Supports three strategies:
+ * 1. **Thunk**: `() => Class` (Static types & circular refs)
+ * 2. **Resolver**: `(data) => Class` (Dynamic polymorphism)
+ * 3. **Discriminator**: Structural mapping via `options.discriminator`.
+ * @param typeFn - A function returning the target class (Thunk or Resolver).
+ * @param options - Additional configuration for type resolution.
+ * @returns {PropertyDecorator}
+ * @example
+ * ```ts
+ * class Example {
+ *      // Basic usage with Thunk
+ *      @Type(() => User)
+ *      user!: User;
+ *
+ *      // Dynamic resolution (Polymorphism)
+ *      @Type((data) => data.type === 'video' ? Video : Photo)
+ *      content!: Video | Photo;
+ *
+ *      // Discriminator usage
+ *      @Type(() => Shape, {
+ *          discriminator: {
+ *              property: 'kind',
+ *              subTypes: [
+ *                  { name: 'circle', value: Circle },
+ *                  { name: 'square', value: Square },
+ *              ],
+ *          },
+ *      })
+ *      shapes!: Shape[];
+ * }
+ * ```
+ */
+export function Type(typeFn: TypeThunk | TypeResolver, options?: TypeOptions): PropertyDecorator {
+    return (target: any, propertyKey: string | symbol) => {
+        const classMeta = new CargoClassMetadata(target)
+        const fieldMeta = classMeta.getFieldMetadata(propertyKey)
+
+        fieldMeta.setTypeInfo(typeFn, options)
+
+        const designType = Reflect.getMetadata('design:type', target, propertyKey)
+        const isArrayType = designType === Array || (typeof designType === 'function' && designType.name === 'Array')
+        if (isArrayType) {
+            try {
+                const potentialClass = (typeFn as TypeThunk)()
+                if (typeof potentialClass === 'function') fieldMeta.setArrayElementType(potentialClass)
+            } catch (e) {
+                // If execution fails, it's likely a Resolver that requires 'data'.
+                // We skip pre-determination and handle it dynamically in the typeCasting phase.
+            }
+        }
+
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }

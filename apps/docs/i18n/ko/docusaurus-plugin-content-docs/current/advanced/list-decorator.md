@@ -1,16 +1,16 @@
 ---
-id: array-decorator
-title: Array 데코레이터
+id: list-decorator
+title: List 데코레이터
 ---
-# Array 데코레이터
+# List 데코레이터
 
-Express-Cargo의 `@Array` 데코레이터를 사용하면 요청에서 배열 유형을 자동으로 바인딩하고 캐스팅할 수 있습니다. 이는 필드가 문자열, 숫자 또는 사용자 정의 객체와 같은 특정 유형의 배열일 것으로 예상될 때 유용합니다.
+Express-Cargo의 `@List` 데코레이터를 사용하면 요청에서 배열 유형을 자동으로 바인딩하고 캐스팅할 수 있습니다. 이는 필드가 문자열, 숫자 또는 사용자 정의 객체와 같은 특정 유형의 배열일 것으로 예상될 때 유용합니다.
 
 ## 사용 예시
 
 ```typescript
 import express, { Router } from 'express'
-import { Body, Array, bindingCargo, getCargo } from 'express-cargo'
+import { Body, List, bindingCargo, getCargo } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -24,35 +24,35 @@ class CustomClass {
 }
 
 // 2. 배열 필드를 사용하여 클래스 정의
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
 // 3. Express 라우트 설정
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 
@@ -61,7 +61,7 @@ export default router
 
 ## 출력 예시
 
-다음 JSON 본문과 함께 `/array`로 POST 요청을 보내는 경우:
+다음 JSON 본문과 함께 `/list`로 POST 요청을 보내는 경우:
 
 ```json
 {
@@ -77,10 +77,10 @@ export default router
 }
 ```
 
-`getCargo` 함수는 완전히 채워진 `ArraySample` 객체를 반환합니다:
+`getCargo` 함수는 완전히 채워진 `ListSample` 객체를 반환합니다:
 
 ```typescript
-// getCargo<ArraySample>(req)에 의해 반환된 객체:
+// getCargo<ListSample>(req)에 의해 반환된 객체:
 const cargo = {
   stringArray: ["apple", "banana"],
   numberArray: [1, 2, 3],

@@ -616,6 +616,39 @@ curl -X POST 'http://localhost:3000/one-of' \
 
 ---
 
+### @Enum
+
+```typescript
+enum UserRole {
+    ADMIN = 'admin',
+    USER = 'user',
+}
+
+class EnumExample {
+    @Body()
+    @Enum(UserRole)
+    role!: UserRole
+}
+
+router.post('/enum', bindingCargo(EnumExample), (req, res) => {
+    const cargo = getCargo<EnumExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/enum' \
+    -H 'Content-Type: application/json' \
+    -d '{"role": "admin"}'
+
+# This will also be transformed to 'admin'
+curl -X POST 'http://localhost:3000/enum' \
+    -H 'Content-Type: application/json' \
+    -d '{"role": "ADMIN"}'
+```
+
+---
+
 ### @Validate
 
 ```typescript
@@ -762,9 +795,7 @@ curl -X POST 'http://localhost:3000/with' \
     "page": 1,
     "limit": 10
 }'
-```
 
-```shell
 curl -X POST 'http://localhost:3000/with' \
 -H 'Content-Type: application/json' \
 -d '{
@@ -799,15 +830,43 @@ curl -X POST http://localhost:3000/without \
   "deliveryAddress": "123 Magic Street, Seoul",
   "isPickup": false
 }'
-```
 
-```shell
 curl -X POST http://localhost:3000/without \
 -H "Content-Type: application/json" \
 -d '{
   "deliveryAddress": "123 Magic Street, Seoul",
   "isPickup": true
 }'
+```
+
+___
+
+### @Each
+
+```typescript
+class EachExample {
+    @Body()
+    @Each(MinLength(5), MaxLength(20))
+    tags!: string[]
+
+    @Body()
+    @Each((val: number) => val % 2 === 0)
+    evenNumbers!: number[]
+}
+
+router.post('/each', bindingCargo(EachExample), (req, res) => {
+    const cargo = getCargo<EachExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST http://localhost:3000/each \
+     -H "Content-Type: application/json" \
+     -d '{
+           "tags": ["typescript", "decorator", "backend"],
+           "evenNumbers": [2, 4, 10, 28]
+         }'
 ```
 
 ___
@@ -874,34 +933,34 @@ class CustomClass {
     age!: number
 }
 
-class ArraySample {
+class ListSample {
     @Body()
-    @Array(String)
+    @List(String)
     stringArray!: string[]
 
     @Body()
-    @Array(Number)
+    @List(Number)
     numberArray!: number[]
 
     @Body()
-    @Array(Boolean)
+    @List(Boolean)
     booleanArray!: boolean[]
 
     @Body()
-    @Array(Date)
+    @List(Date)
     dateArray!: Date[]
 
     @Body()
-    @Array('string')
+    @List('string')
     stringLiteralArray!: string[]
 
     @Body()
-    @Array(CustomClass)
+    @List(CustomClass)
     customClassArray!: CustomClass[]
 }
 
-router.post('/array', bindingCargo(ArraySample), (req, res) => {
-    const cargo = getCargo<ArraySample>(req)
+router.post('/list', bindingCargo(ListSample), (req, res) => {
+    const cargo = getCargo<ListSample>(req)
     res.json(cargo)
 })
 ```
@@ -920,6 +979,90 @@ curl -X POST 'http://localhost:3000/array' \
             { "name": "Bob", "age": 25 }
         ]
     }'
+```
+
+---
+
+### @Type
+```typescript
+class User {
+    @Body()
+    name!: string
+}
+
+class Profile {
+    @Body()
+    bio!: string
+
+    @Body()
+    @Type(() => User)
+    user!: User
+}
+
+abstract class Media {
+    @Body()
+    type!: 'video' | 'image'
+}
+
+class Video extends Media {
+    @Body()
+    duration!: number
+}
+
+class Image extends Media {
+    @Body()
+    format!: string
+}
+
+class TypeTest {
+    @Body()
+    name!: string
+
+    @Body()
+    @Type(() => Profile)
+    profile!: Profile
+
+    @Body()
+    @Type(data => (data.type === 'video' ? Video : Image))
+    featuredMedia!: Video | Image
+
+    @Body()
+    @Type(data => (data.type === 'video' ? Video : Image))
+    gallery!: (Video | Image)[]
+}
+
+router.post('/type', bindingCargo(TypeTest), (req, res) => {
+    const cargo = getCargo<TypeTest>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST http://localhost:3000/type \
+     -H "Content-Type: application/json" \
+     -d '{
+       "name": "Gemini Admin",
+       "profile": {
+         "bio": "Open Source Contributor",
+         "user": {
+           "name": "Cargo Maintainer"
+         }
+       },
+       "featuredMedia": {
+         "type": "video",
+         "duration": 3600
+       },
+       "gallery": [
+         {
+           "type": "image",
+           "format": "jpg"
+         },
+         {
+           "type": "video",
+           "duration": 500
+         }
+       ]
+     }'
 ```
 
 ---
@@ -1084,7 +1227,7 @@ class PostData {
 
 class BodyExample {
     @Body()
-    @Array(PostData)
+    @List(PostData)
     posts!: PostData[]
 }
 

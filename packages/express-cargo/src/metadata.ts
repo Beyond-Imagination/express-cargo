@@ -1,7 +1,11 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import { Source, validArrayElementType, ValidatorRule } from './types'
+import { Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, ValidatorRule } from './types'
 
+/**
+ * Manages metadata for a cargo class.
+ * Handles field registration, retrieval, and caching of metadata.
+ */
 export class CargoClassMetadata {
     private target: any
     private metadataFinalized: boolean = false
@@ -104,6 +108,10 @@ export class CargoClassMetadata {
     }
 }
 
+/**
+ * Stores metadata for a specific field in a cargo class.
+ * Contains information about source, validation rules, transformers, and type information.
+ */
 export class CargoFieldMetadata {
     readonly target: any
     readonly type: any
@@ -117,6 +125,8 @@ export class CargoFieldMetadata {
     private requestTransformer: ((req: Request) => any) | undefined
     private virtualTransformer: ((obj: object) => any) | undefined
     private enumType: object | undefined
+    private typeFn: TypeThunk | TypeResolver | undefined
+    private typeOptions: TypeOptions | undefined
 
     constructor(target: any, key: string | symbol) {
         this.target = target
@@ -210,5 +220,18 @@ export class CargoFieldMetadata {
 
     getEnumType(): object | undefined {
         return this.enumType
+    }
+
+    setTypeInfo(fn: TypeThunk | TypeResolver, options?: TypeOptions): void {
+        this.typeFn = fn
+        this.typeOptions = options
+    }
+
+    getTypeFn(): TypeThunk | TypeResolver | undefined {
+        return this.typeFn
+    }
+
+    getTypeOptions(): TypeOptions | undefined {
+        return this.typeOptions
     }
 }

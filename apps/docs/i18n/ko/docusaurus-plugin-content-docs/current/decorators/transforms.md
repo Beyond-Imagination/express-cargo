@@ -58,7 +58,7 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
 이 엔드포인트를 테스트하려면, /search로 GET 요청을 보냅니다.
 
 요청 URL 예시:
-http://localhost:3000/search?page=10&isPublished=true
+http://localhost:3000/search?sortBy=TITLE&count=10
 */
 ```
 

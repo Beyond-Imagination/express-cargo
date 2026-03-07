@@ -85,6 +85,14 @@ Validates that the input value is one of the specified values.
 
 - **`values`**: The array of allowed values.
 
+### `@Enum(enumObj: object, message?: string)`
+
+Validates that the input value matches one of the values in the specified enum object.
+It also automatically transforms the input value (e.g., string key) to the corresponding enum value.
+
+- **`enumObj`**: The enum object to validate against.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
 
 Validates a value using a custom validation function.
@@ -137,6 +145,12 @@ Validates that if the decorated property has a value, the specified target prope
 
 - **`fieldName`**: The name of the target property that must be empty if the decorated field has a value.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+### `@Each(...args: (Validator | Function)[])`
+
+Validates every individual element within an array. It can accept other validation decorators or custom validation functions.
+
+- `args`: A validation decorator (e.g., @Min(5)) or a custom function (value: any) => boolean.
 
 ## Usage Example
 
