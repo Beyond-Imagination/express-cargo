@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
             items: [
                 'intro',
                 'installation',
-                'quick-start',
+                'getting-started'
             ],
         },
         {
