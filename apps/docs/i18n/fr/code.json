@@ -7,38 +7,6 @@
     "message": "Retour en haut",
     "description": "The ARIA label for the back to top button"
   },
-  "theme.blog.archive.title": {
-    "message": "Archive",
-    "description": "The page & hero title of the blog archive page"
-  },
-  "theme.blog.archive.description": {
-    "message": "Archive",
-    "description": "The page & hero description of the blog archive page"
-  },
-  "theme.blog.paginator.navAriaLabel": {
-    "message": "Navigation de la liste des articles du blog",
-    "description": "The ARIA label for the blog pagination"
-  },
-  "theme.blog.paginator.newerEntries": {
-    "message": "Entrées plus récentes",
-    "description": "The label used to navigate to the newer blog posts page (previous page)"
-  },
-  "theme.blog.paginator.olderEntries": {
-    "message": "Entrées plus anciennes",
-    "description": "The label used to navigate to the older blog posts page (next page)"
-  },
-  "theme.blog.post.paginator.navAriaLabel": {
-    "message": "Navigation des articles du blog",
-    "description": "The ARIA label for the blog posts pagination"
-  },
-  "theme.blog.post.paginator.newerPost": {
-    "message": "Article plus récent",
-    "description": "The blog post button label to navigate to the newer/previous post"
-  },
-  "theme.blog.post.paginator.olderPost": {
-    "message": "Article plus ancien",
-    "description": "The blog post button label to navigate to the older/next post"
-  },
   "theme.tags.tagsPageLink": {
     "message": "Voir tous les tags",
     "description": "The label of the link targeting the tag list page"
@@ -166,10 +134,6 @@
     "message": "Fermer",
     "description": "The ARIA label for close button of announcement bar"
   },
-  "theme.blog.sidebar.navAriaLabel": {
-    "message": "Navigation de la barre latérale du blog",
-    "description": "The ARIA label for recent posts in the blog sidebar"
-  },
   "theme.DocSidebarItem.expandCategoryAriaLabel": {
     "message": "Développer la catégorie '{label}'",
     "description": "The ARIA label to expand the sidebar category"
@@ -197,18 +161,6 @@
   "theme.navbar.mobileLanguageDropdown.label": {
     "message": "Langues",
     "description": "The label for the mobile language switcher dropdown"
-  },
-  "theme.blog.post.readingTime.plurals": {
-    "message": "{readingTime} min de lecture",
-    "description": "Pluralized label for \"{readingTime} min read\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
-  },
-  "theme.blog.post.readMore": {
-    "message": "Lire plus",
-    "description": "The label used in blog post item excerpts to link to full blog posts"
-  },
-  "theme.blog.post.readMoreLabel": {
-    "message": "Lire plus à propos de {title}",
-    "description": "The ARIA label for the link to full blog posts from excerpts"
   },
   "theme.CodeBlock.wordWrapToggle": {
     "message": "Basculer le retour à la ligne",
@@ -269,30 +221,6 @@
   "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
     "message": "Réduire le menu déroulant",
     "description": "The ARIA label of the button to collapse the mobile dropdown navbar item"
-  },
-  "theme.blog.post.plurals": {
-    "message": "{count} articles",
-    "description": "Pluralized label for \"{count} posts\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
-  },
-  "theme.blog.tagTitle": {
-    "message": "{nPosts} articles tagués avec \"{tagName}\"",
-    "description": "The title of the page for a blog tag"
-  },
-  "theme.blog.author.pageTitle": {
-    "message": "{authorName} - {nPosts}",
-    "description": "The title of the page for a blog author"
-  },
-  "theme.blog.authorsList.pageTitle": {
-    "message": "Auteurs",
-    "description": "The title of the authors page"
-  },
-  "theme.blog.authorsList.viewAll": {
-    "message": "Voir tous les auteurs",
-    "description": "The label of the link targeting the blog authors page"
-  },
-  "theme.blog.author.noPosts": {
-    "message": "Aucun article",
-    "description": "The text for authors with 0 blog post"
   },
   "theme.contentVisibility.unlistedBanner.title": {
     "message": "Contenu non répertorié",
