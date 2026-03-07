@@ -1,4 +1,9 @@
-## 🚀 Getting Started with express-cargo
+---
+id: getting-started
+title: 시작하기
+---
+
+## 🚀 express-cargo와 함께 프로젝트 시작하기
 이 문서는 **TypeScript + Express 환경에서 express-cargo를 빠르게 체험**하기 위한 최소 구성 가이드입니다.
 예제는 **pnpm + Node.js 18 이상**을 기준으로 설명합니다.
 
