@@ -446,7 +446,7 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
  * @param values - The values that must be present in the array.
  * @param message - Optional custom error message.
  */
-export function ArrayContains(values: any[], message?: cargoErrorMessage): PropertyDecorator {
+export function ArrayContains(values: any[], message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
@@ -454,7 +454,13 @@ export function ArrayContains(values: any[], message?: cargoErrorMessage): Prope
             new ValidatorRule(
                 propertyKey,
                 'arrayContains',
-                (val: any) => Array.isArray(val) && values.every(v => val.includes(v)),
+                (value: unknown) => {
+                    if (!Array.isArray(value)) {
+                        return false
+                    }
+                    const valueSet = new Set(value)
+                    return values.every(v => valueSet.has(v))
+                },
                 message || `${String(propertyKey)} must contain ${values.join(', ')}`,
             ),
         )
