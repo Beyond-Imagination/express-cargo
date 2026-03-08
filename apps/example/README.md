@@ -649,6 +649,29 @@ curl -X POST 'http://localhost:3000/enum' \
 
 ---
 
+### @ArrayContains
+
+```typescript
+class ArrayContainsExample {
+    @Body()
+    @ArrayContains([1, 2])
+    numbers!: number[]
+}
+
+router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
+    const cargo = getCargo<ArrayContainsExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/array-contains' \
+    -H 'Content-Type: application/json' \
+    -d '{"numbers": [1, 2, 3]}'
+```
+
+---
+
 ### @Validate
 
 ```typescript

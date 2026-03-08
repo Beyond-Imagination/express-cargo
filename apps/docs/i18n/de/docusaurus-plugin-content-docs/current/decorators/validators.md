@@ -85,6 +85,13 @@ Validiert, dass der Eingabewert einer der angegebenen Werte ist.
 
 - **`values`**: Das Array der zulässigen Werte.
 
+### `@ArrayContains(values: any[], message?: string)`
+
+Validiert, dass das Array alle angegebenen Werte enthält.
+
+- **`values`**: Die Werte, die im Array vorhanden sein müssen.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@Enum(enumObj: object, message?: string)`
 
 Validiert, dass der Eingabewert mit einem der Werte im angegebenen Enum-Objekt übereinstimmt.

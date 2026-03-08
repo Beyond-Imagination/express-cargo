@@ -26,6 +26,7 @@ import {
     With,
     Without,
     Enum,
+    ArrayContains,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -312,6 +313,17 @@ class EnumExample {
 
 router.post('/enum', bindingCargo(EnumExample), (req, res) => {
     const cargo = getCargo<EnumExample>(req)
+    res.json(cargo)
+})
+
+class ArrayContainsExample {
+    @Body()
+    @ArrayContains([1, 2])
+    numbers!: number[]
+}
+
+router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
+    const cargo = getCargo<ArrayContainsExample>(req)
     res.json(cargo)
 })
 

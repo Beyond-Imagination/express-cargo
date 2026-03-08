@@ -85,6 +85,13 @@ Valide que la valeur d'entrée est l'une des valeurs spécifiées.
 
 - **`values`** : Le tableau des valeurs autorisées.
 
+### `@ArrayContains(values: any[], message?: string)`
+
+Valide que le tableau contient toutes les valeurs spécifiées.
+
+- **`values`**: Les valeurs qui doivent être présentes dans le tableau.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 ### `@Enum(enumObj: object, message?: string)`
 
 Valide que la valeur d'entrée correspond à l'une des valeurs de l'objet enum spécifié.
