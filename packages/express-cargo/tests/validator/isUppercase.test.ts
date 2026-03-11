@@ -10,19 +10,15 @@ describe('isUppercase decorator', () => {
     }
 
     const classMeta = new CargoClassMetadata(Sample.prototype)
+    const meta = classMeta.getFieldMetadata('uppercaseValue')
+    const isUppercaseRule = meta.getValidators()?.find(v => v.type === 'isUppercase')
 
     it('should have isUppercase validator', () => {
-        const meta = classMeta.getFieldMetadata('uppercaseValue')
-        const isUppercaseRule = meta.getValidators()?.find(v => v.type === 'isUppercase')
-
         expect(isUppercaseRule).toBeDefined()
         expect(isUppercaseRule?.message).toBe('uppercaseValue should be uppercase')
     })
 
     it('should pass for all-uppercase strings', () => {
-        const meta = classMeta.getFieldMetadata('uppercaseValue')
-        const isUppercaseRule = meta.getValidators()?.find(v => v.type === 'isUppercase')
-
         expect(isUppercaseRule?.validate('HELLO')).toBeNull()
         expect(isUppercaseRule?.validate('HELLO WORLD')).toBeNull()
         expect(isUppercaseRule?.validate('HELLO123')).toBeNull()
@@ -30,18 +26,12 @@ describe('isUppercase decorator', () => {
     })
 
     it('should fail for strings with lowercase characters', () => {
-        const meta = classMeta.getFieldMetadata('uppercaseValue')
-        const isUppercaseRule = meta.getValidators()?.find(v => v.type === 'isUppercase')
-
         expect(isUppercaseRule?.validate('hello')).toBeInstanceOf(CargoFieldError)
         expect(isUppercaseRule?.validate('Hello')).toBeInstanceOf(CargoFieldError)
         expect(isUppercaseRule?.validate('helloWorld')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should fail for non-string values', () => {
-        const meta = classMeta.getFieldMetadata('uppercaseValue')
-        const isUppercaseRule = meta.getValidators()?.find(v => v.type === 'isUppercase')
-
         expect(isUppercaseRule?.validate(null)).toBeInstanceOf(CargoFieldError)
         expect(isUppercaseRule?.validate(undefined)).toBeInstanceOf(CargoFieldError)
         expect(isUppercaseRule?.validate(123)).toBeInstanceOf(CargoFieldError)
