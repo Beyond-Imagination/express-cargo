@@ -410,7 +410,7 @@ export function IsUppercase(message?: cargoErrorMessage): TypedPropertyDecorator
             new ValidatorRule(
                 propertyKey,
                 'isUppercase',
-                (value: unknown) => typeof value === 'string' && value === value.toUpperCase(),
+                (value: unknown) => typeof value === 'string' && !/[a-z]/.test(value),
                 message || `${String(propertyKey)} should be uppercase`,
             ),
         )
