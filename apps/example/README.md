@@ -792,6 +792,28 @@ curl -X POST 'http://localhost:3000/is-uppercase' \
 ```
 ---
 
+### @IsLowercase
+
+```typescript
+class IsLowercaseExample {
+    @Body()
+    @IsLowercase()
+    text!: string
+}
+
+router.post('/is-lowercase', bindingCargo(IsLowercaseExample), (req, res) => {
+    const cargo = getCargo<IsLowercaseExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/is-lowercase' \
+    -H 'Content-Type: application/json' \
+    -d '{ "text": "hello" }'
+```
+---
+
 ### @With
 
 ```typescript

@@ -123,6 +123,7 @@ app.listen(3000)
 | `@Alpha(message?: string)`           | 문자열에 알파벳(A–Z, a–z)만 포함되어야 합니다.                                                                 | @Alpha() firstName!: string                                                                |
 | `@Alphanumeric(message?: string)`    | 필드에 알파벳과 숫자(A-Z, a-z, 0-9)만 포함되어야 합니다.                                                         | `@Alphanumeric() productCode!: string`                                                     |
 | `@IsUppercase(message?: string)`     | 필드에 대문자만 포함되어야 합니다.                                                                               | `@IsUppercase() countryCode!: string`                                                      |
+| `@IsLowercase(message?: string)`     | 필드에 소문자만 포함되어야 합니다.                                                                               | `@IsLowercase() username!: string`                                                         |
 | `@With(fieldName: string)`           | 데코레이터가 적용된 필드에 값이 있을 경우, 지정된 대상 필드 (fieldName)도 반드시 값을 가져야 함을 검증하여, 두 필드 간의 필수적인 의존 관계를 설정합니다. | `@With('price') discountRate?: number`                                                     |
 | `@Without(fieldName: string)`        | 데코레이터가 선언된 필드에 값이 있을 경우, 지정된 타겟 필드(fieldName)는 반드시 값이 없어야 함을 검증하여 상호 배타적 관계를 설정합니다.            | `@Without('isGuest') password?: string`                                                    |
 

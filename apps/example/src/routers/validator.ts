@@ -24,6 +24,7 @@ import {
     Uuid,
     Alphanumeric,
     IsUppercase,
+    IsLowercase,
     With,
     Without,
     Enum,
@@ -280,6 +281,17 @@ class IsUppercaseExample {
 
 router.post('/is-uppercase', bindingCargo(IsUppercaseExample), (req, res) => {
     const cargo = getCargo<IsUppercaseExample>(req)
+    res.json(cargo)
+})
+
+class IsLowercaseExample {
+    @Body()
+    @IsLowercase()
+    text!: string
+}
+
+router.post('/is-lowercase', bindingCargo(IsLowercaseExample), (req, res) => {
+    const cargo = getCargo<IsLowercaseExample>(req)
     res.json(cargo)
 })
 
