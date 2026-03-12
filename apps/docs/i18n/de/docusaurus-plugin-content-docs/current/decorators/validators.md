@@ -132,6 +132,12 @@ Validiert, dass das dekorierte Feld nur alphanumerische Zeichen enthält (englis
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@IsLowercase(message?: string)`
+
+Validiert, dass das dekorierte Feld nur Kleinbuchstaben enthält.
+
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@With(fieldName: string, message?: string)`
 
 Validiert, dass, wenn das dekorierte Feld einen Wert hat, das angegebene Zielfeld (fieldName) ebenfalls einen Wert haben muss, wodurch eine zwingende Abhängigkeit zwischen den beiden Feldern hergestellt wird.
