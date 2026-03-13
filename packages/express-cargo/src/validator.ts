@@ -1,5 +1,6 @@
 import { cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
+import { isDeepEqual } from './utils'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
     const classMeta = new CargoClassMetadata(target)
@@ -447,6 +448,9 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
  * @param message - Optional custom error message.
  */
 export function ArrayContains(values: any[], message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+    const expectedPrimitives = values.filter(v => v === null || typeof v !== 'object')
+    const expectedObjects = values.filter(v => v !== null && typeof v === 'object')
+
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
@@ -458,10 +462,31 @@ export function ArrayContains(values: any[], message?: cargoErrorMessage): Typed
                     if (!Array.isArray(value)) {
                         return false
                     }
-                    const valueSet = new Set(value)
-                    return values.every(v => valueSet.has(v))
+                    const actualPrimitiveSet = new Set()
+                    const actualObjects: any[] = []
+
+                    for (const item of value) {
+                        if (item === null || typeof item !== 'object') {
+                            actualPrimitiveSet.add(item)
+                        } else {
+                            actualObjects.push(item)
+                        }
+                    }
+
+                    // Verify all expected primitive values exist in the actual array
+                    for (const req of expectedPrimitives) {
+                        if (!actualPrimitiveSet.has(req)) return false
+                    }
+
+                    // Verify all expected objects exist in the actual array using deep equality
+                    for (const reqObj of expectedObjects) {
+                        const found = actualObjects.some(actObj => isDeepEqual(actObj, reqObj))
+                        if (!found) return false
+                    }
+
+                    return true
                 },
-                message || `${String(propertyKey)} must contain ${values.join(', ')}`,
+                message || `${String(propertyKey)} must contain all specified values`,
             ),
         )
     }
