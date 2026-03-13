@@ -652,10 +652,34 @@ curl -X POST 'http://localhost:3000/enum' \
 ### @ArrayContains
 
 ```typescript
+class ArrayContainsNested {
+    @Body()
+    name!: string
+}
+
 class ArrayContainsExample {
     @Body()
+    @List('number')
     @ArrayContains([1, 2])
     numbers!: number[]
+
+    @Body()
+    @List(ArrayContainsNested)
+    @ArrayContains([{ name: 'test1' }])
+    objects!: ArrayContainsNested[]
+
+    @Body()
+    @List(Date)
+    @ArrayContains([new Date('2024-01-01')])
+    dates!: Date[]
+
+    @Body()
+    @Type(data => {
+        if (typeof data !== 'object') return Number
+        else return ArrayContainsNested
+    })
+    @ArrayContains([1, { name: 'test1' }])
+    mixed!: (number | ArrayContainsNested)[]
 }
 
 router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
@@ -667,7 +691,12 @@ router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) =>
 ```shell
 curl -X POST 'http://localhost:3000/array-contains' \
     -H 'Content-Type: application/json' \
-    -d '{"numbers": [1, 2, 3]}'
+    -d '{
+        "numbers": [1, 2, 3],
+        "objects": [{ "name": "test1" }, { "name": "test2" }],
+        "dates": ["2024-01-01T00:00:00.000Z"],
+        "mixed": [1, { "name": "test1" }]
+    }'
 ```
 
 ---

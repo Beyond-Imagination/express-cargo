@@ -26,7 +26,7 @@ import {
     With,
     Without,
     Enum,
-    ArrayContains,
+    ArrayContains, Type, List,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -316,10 +316,34 @@ router.post('/enum', bindingCargo(EnumExample), (req, res) => {
     res.json(cargo)
 })
 
+class ArrayContainsNested {
+    @Body()
+    name!: string
+}
+
 class ArrayContainsExample {
     @Body()
+    @List('number')
     @ArrayContains([1, 2])
     numbers!: number[]
+
+    @Body()
+    @List(ArrayContainsNested)
+    @ArrayContains([{ name: 'test1' }])
+    objects!: ArrayContainsNested[]
+
+    @Body()
+    @List(Date)
+    @ArrayContains([new Date('2024-01-01')])
+    dates!: Date[]
+
+    @Body()
+    @Type(data => {
+        if (typeof data !== 'object') return Number
+        else return ArrayContainsNested
+    })
+    @ArrayContains([1, { name: 'test1' }])
+    mixed!: (number | ArrayContainsNested)[]
 }
 
 router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
