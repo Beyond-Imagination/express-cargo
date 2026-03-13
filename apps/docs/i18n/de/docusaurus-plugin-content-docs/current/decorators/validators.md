@@ -132,11 +132,18 @@ Validiert, dass das dekorierte Feld nur alphanumerische Zeichen enthält (englis
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@IsUppercase(message?: string)`
+
+Validiert, dass das dekorierte Feld nur Großbuchstaben enthält.
+
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@IsLowercase(message?: string)`
 
 Validiert, dass das dekorierte Feld nur Kleinbuchstaben enthält.
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 
 ### `@With(fieldName: string, message?: string)`
 
