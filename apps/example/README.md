@@ -675,7 +675,7 @@ class ArrayContainsExample {
 
     @Body()
     @Type(data => {
-        if (typeof data !== 'object') return Number
+        if (typeof data !== 'object' || data === null) return Number
         else return ArrayContainsNested
     })
     @ArrayContains([1, { name: 'test1' }])
