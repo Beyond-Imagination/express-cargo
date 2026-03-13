@@ -87,10 +87,12 @@ Valide que la valeur d'entrée est l'une des valeurs spécifiées.
 
 ### `@ArrayContains(values: any[], message?: string)`
 
-Valide que le tableau contient toutes les valeurs spécifiées.
+Valide que le tableau contient toutes les valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
 
 - **`values`**: Les valeurs qui doivent être présentes dans le tableau.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
+> **Avertissement** : La comparaison d'objets utilise l'égalité profonde. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées.
 
 ### `@Enum(enumObj: object, message?: string)`
 

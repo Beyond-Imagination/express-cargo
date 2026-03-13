@@ -87,10 +87,12 @@ Validates that the input value is one of the specified values.
 
 ### `@ArrayContains(values: any[], message?: string)`
 
-Validates that the array contains all the specified values.
+Validates that the array contains all the specified values. Supports primitive values, objects, Date, and mixed types.
 
 - **`values`**: The values that must be present in the array.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+> **Warning**: Object comparison uses deep equality. Performance may degrade when `values` contains many objects or deeply nested structures.
 
 ### `@Enum(enumObj: object, message?: string)`
 

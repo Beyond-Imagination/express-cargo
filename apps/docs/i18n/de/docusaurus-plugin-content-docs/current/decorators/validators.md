@@ -87,10 +87,12 @@ Validiert, dass der Eingabewert einer der angegebenen Werte ist.
 
 ### `@ArrayContains(values: any[], message?: string)`
 
-Validiert, dass das Array alle angegebenen Werte enthält.
+Validiert, dass das Array alle angegebenen Werte enthält. Unterstützt primitive Werte, Objekte, Date und gemischte Typen.
 
 - **`values`**: Die Werte, die im Array vorhanden sein müssen.
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
+> **Warnung**: Der Objektvergleich verwendet Tiefengleichheit. Die Leistung kann sich verschlechtern, wenn `values` viele Objekte oder tief verschachtelte Strukturen enthält.
 
 ### `@Enum(enumObj: object, message?: string)`
 
