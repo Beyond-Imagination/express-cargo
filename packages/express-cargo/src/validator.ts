@@ -1,4 +1,4 @@
-import { cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
+import { ArrayComparator, cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 import { isDeepEqual } from './utils'
 
@@ -445,11 +445,15 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
 /**
  * Checks if the array contains all the specified values.
  * @param values - The values that must be present in the array.
+ * @param comparator - Optional custom comparison function (expected, actual) => boolean.
+ *                     When provided, all comparisons are delegated to this function,
+ *                     including primitives.
  * @param message - Optional custom error message.
  */
-export function ArrayContains(values: any[], message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
-    const expectedPrimitives = values.filter(v => v === null || typeof v !== 'object')
-    const expectedObjects = values.filter(v => v !== null && typeof v === 'object')
+export function ArrayContains(values: any[], comparator?: ArrayComparator, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+    // Pre-split only when using default comparison (Set + deepEqual optimization)
+    const expectedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
+    const expectedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
 
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
@@ -462,6 +466,12 @@ export function ArrayContains(values: any[], message?: cargoErrorMessage): Typed
                     if (!Array.isArray(value)) {
                         return false
                     }
+
+                    // Delegate all comparisons to the custom comparator, including primitives
+                    if (comparator) {
+                        return values.every(expected => value.some(actual => comparator(expected, actual)))
+                    }
+
                     const actualPrimitiveSet = new Set()
                     const actualObjects: any[] = []
 
@@ -480,7 +490,7 @@ export function ArrayContains(values: any[], message?: cargoErrorMessage): Typed
 
                     // Verify all expected objects exist in the actual array using deep equality
                     for (const reqObj of expectedObjects) {
-                        const found = actualObjects.some(actObj => isDeepEqual(actObj, reqObj))
+                        const found = actualObjects.some(actObj => isDeepEqual(reqObj, actObj))
                         if (!found) return false
                     }
 

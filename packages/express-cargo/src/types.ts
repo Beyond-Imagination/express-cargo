@@ -60,6 +60,14 @@ export interface TypeOptions {
     discriminator?: DiscriminatorOptions
 }
 
+/**
+ * Custom comparator function for array element comparison.
+ * @param expected - The value that is expected to be present in the array.
+ * @param actual - The value from the actual array being validated.
+ * @returns true if the two values are considered equal, false otherwise.
+ */
+export type ArrayComparator = (expected: any, actual: any) => boolean
+
 type ValidatorFunction = (value: any, instance?: Record<string | symbol, any>) => boolean
 type errorMessageFunction = (property: string | symbol, value: any) => string
 export type cargoErrorMessage = string | errorMessageFunction

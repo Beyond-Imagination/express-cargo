@@ -4,7 +4,17 @@ import { CargoClassMetadata } from '../../src/metadata'
 describe('ArrayContains Validator', () => {
     class TestClass {
         @Body()
-        @ArrayContains([1, 2])
+        @ArrayContains(
+            ['hello', 'world'],
+            (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase()
+        )
+        strings!: string[]
+
+        @Body()
+        @ArrayContains(
+            [1, 2],
+            (expected, actual) => Math.abs(actual - expected) <= 1
+        )
         numbers!: number[]
 
         @Body()
@@ -24,6 +34,22 @@ describe('ArrayContains Validator', () => {
 
     const classMeta = new CargoClassMetadata(TestClass.prototype)
 
+    it('should pass when comparator returns true for all expected values', () => {
+        const meta = classMeta.getFieldMetadata('strings')
+        const rule = meta.getValidators()?.find(v => v.type === 'arrayContains')
+
+        expect(rule?.validate(['HELLO', 'WORLD'])).toBeNull()
+        expect(rule?.validate(['Hello', 'World', 'extra'])).toBeNull()
+    })
+
+    it('should fail when comparator returns false for any expected value', () => {
+        const meta = classMeta.getFieldMetadata('strings')
+        const rule = meta.getValidators()?.find(v => v.type === 'arrayContains')
+
+        expect(rule?.validate(['HELLO'])).toBeInstanceOf(CargoFieldError)
+        expect(rule?.validate([])).toBeInstanceOf(CargoFieldError)
+    })
+
     it('should have arrayContains validator metadata', () => {
         const meta = classMeta.getFieldMetadata('numbers')
         const rule = meta.getValidators()?.find(v => v.type === 'arrayContains')
@@ -31,22 +57,20 @@ describe('ArrayContains Validator', () => {
         expect(rule).toBeDefined()
     })
 
-    it('should pass validation when array contains all required primitive values', () => {
+    it('should delegate primitive comparison to comparator', () => {
         const meta = classMeta.getFieldMetadata('numbers')
         const rule = meta.getValidators()?.find(v => v.type === 'arrayContains')
 
-        expect(rule?.validate([1, 2, 3])).toBeNull()
         expect(rule?.validate([1, 2])).toBeNull()
-        expect(rule?.validate([2, 1])).toBeNull()
+        expect(rule?.validate([0, 3])).toBeNull()
+        expect(rule?.validate([5, 6])).toBeInstanceOf(CargoFieldError)
     })
 
     it('should fail validation when array is missing required primitive values', () => {
         const meta = classMeta.getFieldMetadata('numbers')
         const rule = meta.getValidators()?.find(v => v.type === 'arrayContains')
 
-        expect(rule?.validate([1])).toBeInstanceOf(CargoFieldError)
-        expect(rule?.validate([2])).toBeInstanceOf(CargoFieldError)
-        expect(rule?.validate([3, 4])).toBeInstanceOf(CargoFieldError)
+        expect(rule?.validate([5, 6])).toBeInstanceOf(CargoFieldError)
         expect(rule?.validate([])).toBeInstanceOf(CargoFieldError)
     })
 
