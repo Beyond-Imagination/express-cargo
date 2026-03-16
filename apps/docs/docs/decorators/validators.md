@@ -85,14 +85,15 @@ Validates that the input value is one of the specified values.
 
 - **`values`**: The array of allowed values.
 
-### `@ArrayContains(values: any[], message?: string)`
+### `@ArrayContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
 Validates that the array contains all the specified values. Supports primitive values, objects, Date, and mixed types.
 
 - **`values`**: The values that must be present in the array.
+- **`comparator`** (optional): A custom comparison function `(expected, actual) => boolean`. When provided, all comparisons are delegated to this function, including primitives.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-> **Warning**: Object comparison uses deep equality. Performance may degrade when `values` contains many objects or deeply nested structures.
+> **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
 
 ### `@Enum(enumObj: object, message?: string)`
 

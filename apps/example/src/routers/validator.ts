@@ -344,6 +344,11 @@ class ArrayContainsExample {
     })
     @ArrayContains([1, { name: 'test1' }])
     mixed!: (number | ArrayContainsNested)[]
+
+    @Body()
+    @List('string')
+    @ArrayContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())
+    strings!: string[]
 }
 
 router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {

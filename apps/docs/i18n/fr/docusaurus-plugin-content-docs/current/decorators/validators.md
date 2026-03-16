@@ -85,14 +85,15 @@ Valide que la valeur d'entrée est l'une des valeurs spécifiées.
 
 - **`values`** : Le tableau des valeurs autorisées.
 
-### `@ArrayContains(values: any[], message?: string)`
+### `@ArrayContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
 Valide que le tableau contient toutes les valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
 
 - **`values`**: Les valeurs qui doivent être présentes dans le tableau.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+- **`comparator`** (optionnel): Une fonction de comparaison personnalisée `(expected, actual) => boolean`. Lorsqu'elle est fournie, toutes les comparaisons lui sont déléguées, y compris les primitives.
+- **`message`** (optionnel): Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
 
-> **Avertissement** : La comparaison d'objets utilise l'égalité profonde. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées.
+> **Avertissement**: La comparaison d'objets utilise l'égalité profonde par défaut. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées. Envisagez d'utiliser un `comparator` pour une comparaison plus efficace ou flexible.
 
 ### `@Enum(enumObj: object, message?: string)`
 

@@ -680,6 +680,14 @@ class ArrayContainsExample {
     })
     @ArrayContains([1, { name: 'test1' }])
     mixed!: (number | ArrayContainsNested)[]
+
+    @Body()
+    @List('string')
+    @ArrayContains(
+        ['hello', 'world'],
+        (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase()
+    )
+    strings!: string[]
 }
 
 router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
@@ -695,7 +703,8 @@ curl -X POST 'http://localhost:3000/array-contains' \
         "numbers": [1, 2, 3],
         "objects": [{ "name": "test1" }, { "name": "test2" }],
         "dates": ["2024-01-01T00:00:00.000Z"],
-        "mixed": [1, { "name": "test1" }]
+        "mixed": [1, { "name": "test1" }],
+        "strings": ["HELLO", "WORLD"]
     }'
 ```
 
