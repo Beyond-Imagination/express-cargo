@@ -142,6 +142,19 @@ Valide que le champ décoré contient uniquement des caractères alphanumérique
 
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@IsUppercase(message?: string)`
+
+Valide que le champ décoré contient uniquement des caractères en majuscules.
+
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
+### `@IsLowercase(message?: string)`
+
+Valide que le champ décoré contient uniquement des caractères en minuscules.
+
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
+
 ### `@With(fieldName: string, message?: string)`
 
 Valide que si le champ décoré a une valeur, le champ cible spécifié (fieldName) doit également avoir une valeur, établissant une dépendance obligatoire entre les deux champs.

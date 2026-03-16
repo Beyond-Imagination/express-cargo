@@ -400,6 +400,44 @@ export function Alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorato
 }
 
 /**
+ * Checks if the string contains only uppercase characters.
+ * @param message - Optional custom error message.
+ */
+export function IsUppercase(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isUppercase',
+                (value: unknown) => typeof value === 'string' && value.toUpperCase() === value,
+                message || `${String(propertyKey)} should be uppercase`,
+            ),
+        )
+    }
+}
+
+/**
+ * Checks if the string contains only lowercase characters.
+ * @param message - Optional custom error message.
+ */
+export function IsLowercase(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isLowercase',
+                (value: unknown) => typeof value === 'string' && value.toLowerCase() === value,
+                message || `${String(propertyKey)} should be lowercase`,
+            ),
+        )
+    }
+}
+
+/**
  * Validates that if the decorated property has a value, the specified field must also be present.
  * @param fieldName - The name of the required field.
  * @param message - Optional custom error message.
