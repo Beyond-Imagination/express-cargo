@@ -28,6 +28,7 @@ import {
     With,
     Without,
     Enum,
+    ArrayContains, Type, List,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -336,6 +337,46 @@ class EnumExample {
 
 router.post('/enum', bindingCargo(EnumExample), (req, res) => {
     const cargo = getCargo<EnumExample>(req)
+    res.json(cargo)
+})
+
+class ArrayContainsNested {
+    @Body()
+    name!: string
+}
+
+class ArrayContainsExample {
+    @Body()
+    @List('number')
+    @ArrayContains([1, 2])
+    numbers!: number[]
+
+    @Body()
+    @List(ArrayContainsNested)
+    @ArrayContains([{ name: 'test1' }])
+    objects!: ArrayContainsNested[]
+
+    @Body()
+    @List(Date)
+    @ArrayContains([new Date('2024-01-01')])
+    dates!: Date[]
+
+    @Body()
+    @Type(data => {
+        if (typeof data !== 'object' || data === null) return Number
+        else return ArrayContainsNested
+    })
+    @ArrayContains([1, { name: 'test1' }])
+    mixed!: (number | ArrayContainsNested)[]
+
+    @Body()
+    @List('string')
+    @ArrayContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())
+    strings!: string[]
+}
+
+router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
+    const cargo = getCargo<ArrayContainsExample>(req)
     res.json(cargo)
 })
 

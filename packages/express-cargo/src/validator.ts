@@ -1,5 +1,6 @@
-import { cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
+import { ArrayComparator, cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
+import { isDeepEqual } from './utils'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
     const classMeta = new CargoClassMetadata(target)
@@ -474,6 +475,66 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
                     return !(!!value && !!instance?.[fieldName])
                 },
                 message || `${String(propertyKey)} cannot exist with ${fieldName}`,
+            ),
+        )
+    }
+}
+
+/**
+ * Checks if the array contains all the specified values.
+ * @param values - The values that must be present in the array.
+ * @param comparator - Optional custom comparison function (expected, actual) => boolean.
+ *                     When provided, all comparisons are delegated to this function,
+ *                     including primitives.
+ * @param message - Optional custom error message.
+ */
+export function ArrayContains(values: any[], comparator?: ArrayComparator, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+    // Pre-split only when using default comparison (Set + deepEqual optimization)
+    const expectedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
+    const expectedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
+
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'arrayContains',
+                (value: unknown) => {
+                    if (!Array.isArray(value)) {
+                        return false
+                    }
+
+                    // Delegate all comparisons to the custom comparator, including primitives
+                    if (comparator) {
+                        return values.every(expected => value.some(actual => comparator(expected, actual)))
+                    }
+
+                    const actualPrimitiveSet = new Set()
+                    const actualObjects: any[] = []
+
+                    for (const item of value) {
+                        if (item === null || typeof item !== 'object') {
+                            actualPrimitiveSet.add(item)
+                        } else {
+                            actualObjects.push(item)
+                        }
+                    }
+
+                    // Verify all expected primitive values exist in the actual array
+                    for (const req of expectedPrimitives) {
+                        if (!actualPrimitiveSet.has(req)) return false
+                    }
+
+                    // Verify all expected objects exist in the actual array using deep equality
+                    for (const reqObj of expectedObjects) {
+                        const found = actualObjects.some(actObj => isDeepEqual(reqObj, actObj))
+                        if (!found) return false
+                    }
+
+                    return true
+                },
+                message || `${String(propertyKey)} must contain all specified values`,
             ),
         )
     }

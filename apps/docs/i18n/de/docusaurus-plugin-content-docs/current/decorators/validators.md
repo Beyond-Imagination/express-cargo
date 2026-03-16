@@ -85,6 +85,16 @@ Validiert, dass der Eingabewert einer der angegebenen Werte ist.
 
 - **`values`**: Das Array der zulässigen Werte.
 
+### `@ArrayContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
+
+Überprüft, ob das Array alle angegebenen Werte enthält. Unterstützt primitive Werte, Objekte, Date und gemischte Typen.
+
+- **`values`**: Die Werte, die im Array vorhanden sein müssen.
+- **`comparator`** (optional): Eine benutzerdefinierte Vergleichsfunktion `(expected, actual) => boolean`. Wenn angegeben, werden alle Vergleiche an diese Funktion delegiert, einschließlich primitiver Werte.
+- **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
+> **Warnung**: Der Objektvergleich verwendet standardmäßig tiefe Gleichheit. Die Leistung kann beeinträchtigt werden, wenn `values` viele Objekte oder tief verschachtelte Strukturen enthält. Erwägen Sie die Verwendung eines `comparator` für einen effizienteren oder flexibleren Vergleich.
+
 ### `@Enum(enumObj: object, message?: string)`
 
 Validiert, dass der Eingabewert mit einem der Werte im angegebenen Enum-Objekt übereinstimmt.
