@@ -175,6 +175,13 @@ Validiert jedes einzelne Element innerhalb eines Arrays. Es kann andere Validier
 
 - `args`: Ein Validierungs-Decorator (z. B. @Min(5)) oder eine benutzerdefinierte Funktion (value: any) => boolean.
 
+### `@ArrayMaxSize(max: number, message?: string)`
+
+Überprüft, ob die Anzahl der Elemente im Array den angegebenen Höchstwert nicht überschreitet.
+
+- **`max`**: Die maximale Anzahl von Elementen, die im Array erlaubt sind.
+- **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ## Anwendungsbeispiel
 
 Hier ist ein vollständiges Beispiel, wie Validierungs-Decorators innerhalb einer Express-Anwendung verwendet werden.

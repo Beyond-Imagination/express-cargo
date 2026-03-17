@@ -976,6 +976,38 @@ curl -X POST http://localhost:3000/each \
 
 ___
 
+### @ArrayMaxSize
+
+```typescript
+class ArrayMaxSizeExample {
+    @Body()
+    @List('number')
+    @ArrayMaxSize(5)
+    numbers!: number[]
+
+    @Body()
+    @List('string')
+    @ArrayMaxSize(3)
+    tags!: string[]
+}
+
+router.post('/array-max-size', bindingCargo(ArrayMaxSizeExample), (req, res) => {
+    const cargo = getCargo<ArrayMaxSizeExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/array-max-size' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "numbers": [1, 2, 3],
+        "tags": ["ts", "node"]
+    }'
+```
+
+___
+
 ## Transform
 필드의 값 or 타입을 변경
 

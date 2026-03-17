@@ -541,6 +541,26 @@ export function ArrayContains(values: any[], comparator?: ArrayComparator, messa
 }
 
 /**
+ * Checks if the array length does not exceed the specified maximum size.
+ * @param max - The maximum number of elements allowed in the array.
+ * @param message - Optional custom error message.
+ */
+export function ArrayMaxSize(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'arrayMaxSize',
+                (value: unknown) => Array.isArray(value) && value.length <= max,
+                message || `${String(propertyKey)} must contain no more than ${max} elements`,
+            ),
+        )
+    }
+}
+
+/**
  * Applies validation rules to each element of an array.
  * @param args - Validation decorators or functions to apply to each element.
  */
