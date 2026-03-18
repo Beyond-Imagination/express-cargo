@@ -875,6 +875,28 @@ curl -X POST 'http://localhost:3000/is-lowercase' \
 ```
 ---
 
+### @IsJwt
+
+```typescript
+class IsJwtExample {
+    @Body()
+    @IsJwt()
+    token!: string
+}
+
+router.post('/is-jwt', bindingCargo(IsJwtExample), (req, res) => {
+    const cargo = getCargo<IsJwtExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/is-jwt' \
+    -H 'Content-Type: application/json' \
+    -d '{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U" }'
+```
+---
+
 ### @With
 
 ```typescript

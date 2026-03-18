@@ -154,6 +154,12 @@ Validiert, dass das dekorierte Feld nur Kleinbuchstaben enthält.
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@IsJwt(message?: string)`
+
+Validiert, dass das dekorierte Feld dem JWT-Format (`header.payload.signature`) entspricht. Jeder Teil muss aus Base64URL-Zeichen (A-Z, a-z, 0-9, `-`, `_`) bestehen. Dieser Dekorator prüft nur das Format — er überprüft nicht die Signatur oder die Token-Gültigkeit.
+
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 
 ### `@With(fieldName: string, message?: string)`
 
