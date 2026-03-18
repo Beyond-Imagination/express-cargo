@@ -419,6 +419,27 @@ export function IsUppercase(message?: cargoErrorMessage): TypedPropertyDecorator
 }
 
 /**
+ * Checks if the string is a valid JSON Web Token (JWT).
+ * @param message - Optional custom error message.
+ */
+const JWT_PATTERN = /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]*$/
+
+export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isJwt',
+                (value: unknown) => typeof value === 'string' && JWT_PATTERN.test(value),
+                message || `${String(propertyKey)} should be a valid JWT`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string contains only lowercase characters.
  * @param message - Optional custom error message.
  */

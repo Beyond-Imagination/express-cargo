@@ -154,6 +154,12 @@ Valide que le champ décoré contient uniquement des caractères en minuscules.
 
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@IsJwt(message?: string)`
+
+Valide que le champ décoré suit le format JWT (`header.payload.signature`). Chaque partie doit être composée de caractères Base64URL (A-Z, a-z, 0-9, `-`, `_`). Ce décorateur vérifie uniquement le format — il ne valide pas la signature ni la validité du token.
+
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 
 ### `@With(fieldName: string, message?: string)`
 

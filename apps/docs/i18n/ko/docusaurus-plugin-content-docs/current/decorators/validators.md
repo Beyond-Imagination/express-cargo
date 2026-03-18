@@ -196,6 +196,12 @@ title: 유효성 검사 데코레이터
 
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
+### `@IsJwt(message?: string)`
+
+데코레이터가 적용된 필드가 JWT 형식(`header.payload.signature`)을 따르는지 검증합니다. 각 파트는 Base64URL 문자(A-Z, a-z, 0-9, `-`, `_`)로 구성되어야 합니다. 이 데코레이터는 형식만 검사하며, 서명의 유효성은 확인하지 않습니다.
+
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
 ---
 
 ### `@With(fieldName: string, message?: string)`

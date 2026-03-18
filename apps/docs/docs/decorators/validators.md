@@ -154,6 +154,12 @@ Validates that the decorated field contains only lowercase characters.
 
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsJwt(message?: string)`
+
+Validates that the decorated field follows the JWT format (`header.payload.signature`). Each part must consist of Base64URL characters (A-Z, a-z, 0-9, `-`, `_`). This decorator only checks the format — it does not verify the signature or token validity.
+
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@With(fieldName: string, message?: string)`
 
 Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.
