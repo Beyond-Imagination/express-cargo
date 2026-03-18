@@ -29,7 +29,7 @@ import {
     With,
     Without,
     Enum,
-    ArrayContains, Type, List,
+    ArrayContains, ArrayMaxSize, Type, List,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -389,6 +389,23 @@ class ArrayContainsExample {
 
 router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
     const cargo = getCargo<ArrayContainsExample>(req)
+    res.json(cargo)
+})
+
+class ArrayMaxSizeExample {
+    @Body()
+    @List('number')
+    @ArrayMaxSize(5)
+    numbers!: number[]
+
+    @Body()
+    @List('string')
+    @ArrayMaxSize(3)
+    tags!: string[]
+}
+
+router.post('/array-max-size', bindingCargo(ArrayMaxSizeExample), (req, res) => {
+    const cargo = getCargo<ArrayMaxSizeExample>(req)
     res.json(cargo)
 })
 

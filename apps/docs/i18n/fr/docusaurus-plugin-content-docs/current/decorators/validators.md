@@ -181,6 +181,13 @@ Valide chaque élément individuel dans un tableau. Il peut accepter d'autres d�
 
 - `args` : Un décorateur de validation (par exemple, @Min(5)) ou une fonction personnalisée (value: any) => boolean.
 
+### `@ArrayMaxSize(max: number, message?: string)`
+
+Valide que le tableau ne contient pas plus que le nombre d'éléments spécifié.
+
+- **`max`**: Le nombre maximum d'éléments autorisés dans le tableau.
+- **`message`** (optionnel) : Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
+
 ## Exemple d'utilisation
 
 Voici un exemple complet de l'utilisation des décorateurs de validation dans une application Express.
