@@ -19,13 +19,12 @@ describe('isJwt decorator', () => {
     })
 
     it('should pass for valid JWT strings', () => {
-        const validJwt =
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+        const validJwt = 'header-part.payload-part.signature-part'
         expect(isJwtRule?.validate(validJwt)).toBeNull()
     })
 
     it('should pass for JWT with empty signature', () => {
-        const unsignedJwt = 'eyJhbGciOiJub25lIn0.eyJzdWIiOiIxMjM0NTY3ODkwIn0.'
+        const unsignedJwt = 'header-part.payload-part.'
         expect(isJwtRule?.validate(unsignedJwt)).toBeNull()
     })
 
