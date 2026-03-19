@@ -387,7 +387,7 @@ class ListContainsExample {
     strings!: string[]
 }
 
-router.post('/array-contains', bindingCargo(ListContainsExample), (req, res) => {
+router.post('/list-contains', bindingCargo(ListContainsExample), (req, res) => {
     const cargo = getCargo<ListContainsExample>(req)
     res.json(cargo)
 })
@@ -404,7 +404,7 @@ class ListMaxSizeExample {
     tags!: string[]
 }
 
-router.post('/array-max-size', bindingCargo(ListMaxSizeExample), (req, res) => {
+router.post('/list-max-size', bindingCargo(ListMaxSizeExample), (req, res) => {
     const cargo = getCargo<ListMaxSizeExample>(req)
     res.json(cargo)
 })

@@ -520,7 +520,7 @@ export function ListContains(values: any[], comparator?: ArrayComparator, messag
             propertyKey,
             new ValidatorRule(
                 propertyKey,
-                'arrayContains',
+                'listContains',
                 (value: unknown) => {
                     if (!Array.isArray(value)) {
                         return false
@@ -573,7 +573,7 @@ export function ListMaxSize(max: number, message?: cargoErrorMessage): TypedProp
             propertyKey,
             new ValidatorRule(
                 propertyKey,
-                'arrayMaxSize',
+                'listMaxSize',
                 (value: unknown) => Array.isArray(value) && value.length <= max,
                 message || `${String(propertyKey)} must contain no more than ${max} elements`,
             ),
