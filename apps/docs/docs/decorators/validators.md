@@ -85,7 +85,7 @@ Validates that the input value is one of the specified values.
 
 - **`values`**: The array of allowed values.
 
-### `@ArrayContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
 Validates that the array contains all the specified values. Supports primitive values, objects, Date, and mixed types.
 
@@ -180,7 +180,7 @@ Validates every individual element within an array. It can accept other validati
 
 - `args`: A validation decorator (e.g., @Min(5)) or a custom function (value: any) => boolean.
 
-### `@ArrayMaxSize(max: number, message?: string)`
+### `@ListMaxSize(max: number, message?: string)`
 
 Validates that the array contains no more than the specified number of elements.
 

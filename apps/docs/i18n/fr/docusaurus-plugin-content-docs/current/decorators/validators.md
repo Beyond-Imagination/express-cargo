@@ -85,7 +85,7 @@ Valide que la valeur d'entrée est l'une des valeurs spécifiées.
 
 - **`values`** : Le tableau des valeurs autorisées.
 
-### `@ArrayContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
 Valide que le tableau contient toutes les valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
 
@@ -181,7 +181,7 @@ Valide chaque élément individuel dans un tableau. Il peut accepter d'autres d�
 
 - `args` : Un décorateur de validation (par exemple, @Min(5)) ou une fonction personnalisée (value: any) => boolean.
 
-### `@ArrayMaxSize(max: number, message?: string)`
+### `@ListMaxSize(max: number, message?: string)`
 
 Valide que le tableau ne contient pas plus que le nombre d'éléments spécifié.
 
