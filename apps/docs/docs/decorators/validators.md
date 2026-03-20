@@ -160,6 +160,14 @@ Validates that the decorated field follows the JWT format (`header.payload.signa
 
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsUrl(options?: IsUrlOptions, message?: string)`
+
+Validates that the decorated field is a valid URL. By default, only `http` and `https` protocols are allowed.
+
+- **`options`** (optional):
+  - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https']`.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@With(fieldName: string, message?: string)`
 
 Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.

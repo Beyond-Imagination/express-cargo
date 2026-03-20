@@ -897,6 +897,28 @@ curl -X POST 'http://localhost:3000/is-jwt' \
 ```
 ---
 
+### @IsUrl
+
+```typescript
+class IsUrlExample {
+    @Body()
+    @IsUrl()
+    url!: string
+}
+
+router.post('/is-url', bindingCargo(IsUrlExample), (req, res) => {
+    const cargo = getCargo<IsUrlExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/is-url' \
+    -H 'Content-Type: application/json' \
+    -d '{ "url": "https://example.com" }'
+```
+---
+
 ### @With
 
 ```typescript
