@@ -30,8 +30,11 @@ describe('isUrl decorator', () => {
         expect(isUrlRule?.validate('')).toBeInstanceOf(CargoFieldError)
     })
 
+    it('should pass for ftp protocol by default', () => {
+        expect(isUrlRule?.validate('ftp://example.com')).toBeNull()
+    })
+
     it('should fail for disallowed protocols by default', () => {
-        expect(isUrlRule?.validate('ftp://example.com')).toBeInstanceOf(CargoFieldError)
         expect(isUrlRule?.validate('ws://example.com')).toBeInstanceOf(CargoFieldError)
     })
 

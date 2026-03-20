@@ -445,7 +445,7 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
  * @param message - Optional custom error message.
  */
 export function IsUrl(options?: IsUrlOptions, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
-    const protocols = options?.protocols ?? ['http', 'https']
+    const protocols = options?.protocols ?? ['http', 'https', 'ftp']
     return (target, propertyKey): void => {
         addValidator(
             target,
