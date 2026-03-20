@@ -162,10 +162,10 @@ Validates that the decorated field follows the JWT format (`header.payload.signa
 
 ### `@IsUrl(options?: IsUrlOptions, message?: string)`
 
-Validates that the decorated field is a valid URL. By default, only `http` and `https` protocols are allowed.
+Validates that the decorated field is a valid URL. By default, `http`, `https`, and `ftp` protocols are allowed.
 
 - **`options`** (optional):
-  - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https']`.
+  - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https', 'ftp']`.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
 ### `@With(fieldName: string, message?: string)`

@@ -162,10 +162,10 @@ Validiert, dass das dekorierte Feld dem JWT-Format (`header.payload.signature`) 
 
 ### `@IsUrl(options?: IsUrlOptions, message?: string)`
 
-Validiert, dass das dekorierte Feld eine gültige URL ist. Standardmäßig sind nur die Protokolle `http` und `https` erlaubt.
+Validiert, dass das dekorierte Feld eine gültige URL ist. Standardmäßig sind die Protokolle `http`, `https` und `ftp` erlaubt.
 
 - **`options`** (optional):
-  - **`protocols`**: Ein Array erlaubter Protokolle. Standard: `['http', 'https']`.
+  - **`protocols`**: Ein Array erlaubter Protokolle. Standard: `['http', 'https', 'ftp']`.
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
 
