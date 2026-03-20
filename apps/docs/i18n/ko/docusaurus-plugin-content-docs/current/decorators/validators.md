@@ -202,6 +202,14 @@ title: 유효성 검사 데코레이터
 
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
+### `@IsUrl(options?: IsUrlOptions, message?: string)`
+
+데코레이터가 적용된 필드가 유효한 URL인지 검증합니다. 기본적으로 `http`, `https`, `ftp` 프로토콜을 허용합니다.
+
+- **`options`** (선택 사항):
+  - **`protocols`**: 허용할 프로토콜 배열. 기본값은 `['http', 'https', 'ftp']`.
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
 ---
 
 ### `@With(fieldName: string, message?: string)`

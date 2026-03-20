@@ -18,6 +18,16 @@ export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'bo
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 
 /**
+ * Options for the `@IsUrl` decorator.
+ */
+export interface IsUrlOptions {
+    /**
+     * Allowed protocols. Defaults to `['http', 'https', 'ftp']`.
+     */
+    protocols?: string[]
+}
+
+/**
  * A function that returns a class constructor without any arguments.
  * Used for lazy evaluation of types to handle circular dependencies.
  */

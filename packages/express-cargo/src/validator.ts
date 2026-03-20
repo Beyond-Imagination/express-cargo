@@ -1,4 +1,4 @@
-import { ArrayComparator, cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
+import { ArrayComparator, cargoErrorMessage, EachValidatorRule, IsUrlOptions, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 import { isDeepEqual } from './utils'
 
@@ -434,6 +434,36 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
                 'isJwt',
                 (value: unknown) => typeof value === 'string' && JWT_PATTERN.test(value),
                 message || `${String(propertyKey)} should be a valid JWT`,
+            ),
+        )
+    }
+}
+
+/**
+ * Checks if the string is a valid URL.
+ * @param options - Optional configuration (e.g., allowed protocols).
+ * @param message - Optional custom error message.
+ */
+export function IsUrl(options?: IsUrlOptions, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    const protocols = options?.protocols ?? ['http', 'https', 'ftp']
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isUrl',
+                (value: unknown) => {
+                    if (typeof value !== 'string') return false
+                    try {
+                        const url = new URL(value)
+                        const protocol = url.protocol.replace(/:$/, '')
+                        return protocols.includes(protocol)
+                    } catch {
+                        return false
+                    }
+                },
+                message || `${String(propertyKey)} should be a valid URL`,
             ),
         )
     }

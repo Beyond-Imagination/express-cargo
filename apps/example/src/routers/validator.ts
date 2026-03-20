@@ -26,6 +26,7 @@ import {
     IsUppercase,
     IsLowercase,
     IsJwt,
+    IsUrl,
     With,
     Without,
     Enum,
@@ -305,6 +306,17 @@ class IsJwtExample {
 
 router.post('/is-jwt', bindingCargo(IsJwtExample), (req, res) => {
     const cargo = getCargo<IsJwtExample>(req)
+    res.json(cargo)
+})
+
+class IsUrlExample {
+    @Body()
+    @IsUrl()
+    url!: string
+}
+
+router.post('/is-url', bindingCargo(IsUrlExample), (req, res) => {
+    const cargo = getCargo<IsUrlExample>(req)
     res.json(cargo)
 })
 

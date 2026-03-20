@@ -160,6 +160,14 @@ Valide que le champ décoré suit le format JWT (`header.payload.signature`). Ch
 
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@IsUrl(options?: IsUrlOptions, message?: string)`
+
+Valide que le champ décoré est une URL valide. Par défaut, les protocoles `http`, `https` et `ftp` sont autorisés.
+
+- **`options`** (optionnel) :
+  - **`protocols`** : Un tableau des protocoles autorisés. Par défaut : `['http', 'https', 'ftp']`.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 
 ### `@With(fieldName: string, message?: string)`
 
