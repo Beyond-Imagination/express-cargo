@@ -188,6 +188,13 @@ Validiert jedes einzelne Element innerhalb eines Arrays. Es kann andere Validier
 - **`max`**: Die maximale Anzahl von Elementen, die im Array erlaubt sind.
 - **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@ListMinSize(min: number, message?: string)`
+
+Überprüft, ob das Array nicht weniger Elemente enthält als die angegebene Mindestanzahl.
+
+- **`min`**: Die Mindestanzahl der im Array erlaubten Elemente.
+- **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wird dieser Parameter weggelassen, wird eine Standardmeldung verwendet.
+
 ## Anwendungsbeispiel
 
 Hier ist ein vollständiges Beispiel, wie Validierungs-Decorators innerhalb einer Express-Anwendung verwendet werden.

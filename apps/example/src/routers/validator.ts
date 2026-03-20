@@ -409,4 +409,21 @@ router.post('/list-max-size', bindingCargo(ListMaxSizeExample), (req, res) => {
     res.json(cargo)
 })
 
+class ListMinSizeExample {
+    @Body()
+    @List('number')
+    @ListMaxSize(3)
+    numbers!: number[]
+
+    @Body()
+    @List('string')
+    @ListMaxSize(1)
+    tags!: string[]
+}
+
+router.post('/list-min-size', bindingCargo(ListMinSizeExample), (req, res) => {
+    const cargo = getCargo<ListMinSizeExample>(req)
+    res.json(cargo)
+})
+
 export default router

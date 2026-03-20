@@ -1030,6 +1030,38 @@ curl -X POST 'http://localhost:3000/list-max-size' \
 
 ___
 
+### @ListMinSize
+
+```typescript
+class ListMinSizeExample {
+    @Body()
+    @List('number')
+    @ListMaxSize(3)
+    numbers!: number[]
+
+    @Body()
+    @List('string')
+    @ListMaxSize(1)
+    tags!: string[]
+}
+
+router.post('/list-min-size', bindingCargo(ListMinSizeExample), (req, res) => {
+    const cargo = getCargo<ListMinSizeExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/list-min-size' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "numbers": [1, 2, 3, 4, 5],
+        "tags": ["ts", "node"]
+    }'
+```
+
+---
+
 ## Transform
 필드의 값 or 타입을 변경
 
