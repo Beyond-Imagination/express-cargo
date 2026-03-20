@@ -22,7 +22,7 @@ export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
  */
 export interface IsUrlOptions {
     /**
-     * Allowed protocols. Defaults to `['http', 'https']`.
+     * Allowed protocols. Defaults to `['http', 'https', 'ftp']`.
      */
     protocols?: string[]
 }
