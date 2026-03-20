@@ -119,7 +119,7 @@ title: 유효성 검사 데코레이터
 
 ---
 
-### `@ArrayContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
 배열이 지정된 모든 값을 포함하는지 검증합니다. 원시값, 객체, Date 및 혼합 타입을 지원합니다.
 
@@ -234,7 +234,7 @@ title: 유효성 검사 데코레이터
 
 - `args`: `@Min(5)`와 같은 검증 데코레이터 또는 `(value: any) => boolean` 형식의 커스텀 검증 함수를 가변 인자로 전달합니다.
 
-### `@ArrayMaxSize(max: number, message?: string)`
+### `@ListMaxSize(max: number, message?: string)`
 
 배열의 요소 수가 지정된 최대 개수를 초과하지 않는지 검증합니다.
 

@@ -539,7 +539,7 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
  *                     including primitives.
  * @param message - Optional custom error message.
  */
-export function ArrayContains(values: any[], comparator?: ArrayComparator, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+export function ListContains(values: any[], comparator?: ArrayComparator, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
     // Pre-split only when using default comparison (Set + deepEqual optimization)
     const expectedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
     const expectedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
@@ -550,7 +550,7 @@ export function ArrayContains(values: any[], comparator?: ArrayComparator, messa
             propertyKey,
             new ValidatorRule(
                 propertyKey,
-                'arrayContains',
+                'listContains',
                 (value: unknown) => {
                     if (!Array.isArray(value)) {
                         return false
@@ -596,14 +596,14 @@ export function ArrayContains(values: any[], comparator?: ArrayComparator, messa
  * @param max - The maximum number of elements allowed in the array.
  * @param message - Optional custom error message.
  */
-export function ArrayMaxSize(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+export function ListMaxSize(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
             propertyKey,
             new ValidatorRule(
                 propertyKey,
-                'arrayMaxSize',
+                'listMaxSize',
                 (value: unknown) => Array.isArray(value) && value.length <= max,
                 message || `${String(propertyKey)} must contain no more than ${max} elements`,
             ),

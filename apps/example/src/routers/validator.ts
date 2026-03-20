@@ -30,7 +30,7 @@ import {
     With,
     Without,
     Enum,
-    ArrayContains, ArrayMaxSize, Type, List,
+    ListContains, ListMaxSize, Type, List,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -364,60 +364,60 @@ router.post('/enum', bindingCargo(EnumExample), (req, res) => {
     res.json(cargo)
 })
 
-class ArrayContainsNested {
+class ListContainsNested {
     @Body()
     name!: string
 }
 
-class ArrayContainsExample {
+class ListContainsExample {
     @Body()
     @List('number')
-    @ArrayContains([1, 2])
+    @ListContains([1, 2])
     numbers!: number[]
 
     @Body()
-    @List(ArrayContainsNested)
-    @ArrayContains([{ name: 'test1' }])
-    objects!: ArrayContainsNested[]
+    @List(ListContainsNested)
+    @ListContains([{ name: 'test1' }])
+    objects!: ListContainsNested[]
 
     @Body()
     @List(Date)
-    @ArrayContains([new Date('2024-01-01')])
+    @ListContains([new Date('2024-01-01')])
     dates!: Date[]
 
     @Body()
     @Type(data => {
         if (typeof data !== 'object' || data === null) return Number
-        else return ArrayContainsNested
+        else return ListContainsNested
     })
-    @ArrayContains([1, { name: 'test1' }])
-    mixed!: (number | ArrayContainsNested)[]
+    @ListContains([1, { name: 'test1' }])
+    mixed!: (number | ListContainsNested)[]
 
     @Body()
     @List('string')
-    @ArrayContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())
+    @ListContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())
     strings!: string[]
 }
 
-router.post('/array-contains', bindingCargo(ArrayContainsExample), (req, res) => {
-    const cargo = getCargo<ArrayContainsExample>(req)
+router.post('/list-contains', bindingCargo(ListContainsExample), (req, res) => {
+    const cargo = getCargo<ListContainsExample>(req)
     res.json(cargo)
 })
 
-class ArrayMaxSizeExample {
+class ListMaxSizeExample {
     @Body()
     @List('number')
-    @ArrayMaxSize(5)
+    @ListMaxSize(5)
     numbers!: number[]
 
     @Body()
     @List('string')
-    @ArrayMaxSize(3)
+    @ListMaxSize(3)
     tags!: string[]
 }
 
-router.post('/array-max-size', bindingCargo(ArrayMaxSizeExample), (req, res) => {
-    const cargo = getCargo<ArrayMaxSizeExample>(req)
+router.post('/list-max-size', bindingCargo(ListMaxSizeExample), (req, res) => {
+    const cargo = getCargo<ListMaxSizeExample>(req)
     res.json(cargo)
 })
 
