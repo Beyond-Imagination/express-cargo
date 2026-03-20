@@ -595,7 +595,7 @@ export function ListMinSize(min: number, message?: cargoErrorMessage): TypedProp
                 propertyKey,
                 'listMinSize',
                 (value: unknown) => Array.isArray(value) && value.length >= min,
-                message || `${String(propertyKey)} must contain no more than ${min} elements`,
+                message || `${String(propertyKey)} must contain at least ${min} elements`,
             ),
         )
     }

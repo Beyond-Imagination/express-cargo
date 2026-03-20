@@ -29,7 +29,7 @@ import {
     With,
     Without,
     Enum,
-    ListContains, ListMaxSize, Type, List,
+    ListContains, ListMaxSize, Type, List, ListMinSize,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -412,12 +412,12 @@ router.post('/list-max-size', bindingCargo(ListMaxSizeExample), (req, res) => {
 class ListMinSizeExample {
     @Body()
     @List('number')
-    @ListMaxSize(3)
+    @ListMinSize(3)
     numbers!: number[]
 
     @Body()
     @List('string')
-    @ListMaxSize(1)
+    @ListMinSize(1)
     tags!: string[]
 }
 

@@ -18,10 +18,10 @@ describe('ListMinSize Validator', () => {
         const rule = meta.getValidators()?.find(v => v.type === 'listMinSize')
 
         expect(rule).toBeDefined()
-        expect(rule?.message).toBe('items must contain no more than 3 elements')
+        expect(rule?.message).toBe('items must contain at least 3 elements')
     })
 
-    it('should pass when list length exceeds the limit', () => {
+    it('should pass when list length meets or exceeds the minimum size', () => {
         const meta = classMeta.getFieldMetadata('items')
         const rule = meta.getValidators()?.find(v => v.type === 'listMinSize')
 
@@ -30,7 +30,7 @@ describe('ListMinSize Validator', () => {
         expect(rule?.validate([1, 2, 3, 4, 5, 6, 7])).toBeNull()
     })
 
-    it('should fail when list length is lower then the limit', () => {
+    it('should fail when list length is lower than the limit', () => {
         const meta = classMeta.getFieldMetadata('items')
         const rule = meta.getValidators()?.find(v => v.type === 'listMinSize')
 

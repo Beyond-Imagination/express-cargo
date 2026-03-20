@@ -1036,12 +1036,12 @@ ___
 class ListMinSizeExample {
     @Body()
     @List('number')
-    @ListMaxSize(3)
+    @ListMinxSize(3)
     numbers!: number[]
 
     @Body()
     @List('string')
-    @ListMaxSize(1)
+    @ListMinSize(1)
     tags!: string[]
 }
 
