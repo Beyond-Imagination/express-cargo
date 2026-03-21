@@ -27,6 +27,7 @@ import {
     IsLowercase,
     IsJwt,
     IsUrl,
+    IsHexadecimal,
     With,
     Without,
     Enum,
@@ -317,6 +318,17 @@ class IsUrlExample {
 
 router.post('/is-url', bindingCargo(IsUrlExample), (req, res) => {
     const cargo = getCargo<IsUrlExample>(req)
+    res.json(cargo)
+})
+
+class IsHexadecimalExample {
+    @Body()
+    @IsHexadecimal()
+    value!: string
+}
+
+router.post('/is-hexadecimal', bindingCargo(IsHexadecimalExample), (req, res) => {
+    const cargo = getCargo<IsHexadecimalExample>(req)
     res.json(cargo)
 })
 
