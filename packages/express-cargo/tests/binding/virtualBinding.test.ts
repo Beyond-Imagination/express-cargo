@@ -10,6 +10,16 @@ class VirtualDTO {
     @Virtual((dto: VirtualDTO) => `${dto.firstName} ${dto.lastName}`) fullName!: string
     @Virtual((dto: VirtualDTO) => dto.firstName?.toUpperCase()) @Optional() upperName?: string
     @Virtual((dto: VirtualDTO) => dto.firstName.length + dto.lastName.length) @Min(5) nameLength!: number
+    @Virtual((dto: VirtualDTO) => (dto.firstName ? dto.firstName.length : undefined)) @Optional() @Min(3) optionalNameLength?: number
+}
+
+class RequiredVirtualDTO {
+    @Body('firstName') firstName!: string
+    @Body('lastName') lastName!: string
+
+    @Virtual((dto: RequiredVirtualDTO) => (dto.firstName ? dto.firstName.length : undefined))
+    @Min(3)
+    requiredNameLength!: number
 }
 
 describe('virtual binding', () => {
@@ -60,5 +70,41 @@ describe('virtual binding', () => {
 
         const dto = getCargo<VirtualDTO>(req)!
         expect(dto.upperName).toBe('')
+        expect(dto.optionalNameLength).toBeNull()
+    })
+
+    it('optional virtual field가 비어 있으면 validation을 건너뛴다', () => {
+        const middleware = bindingCargo(VirtualDTO)
+
+        const req = makeMockReq({
+            body: { firstName: '', lastName: 'Kimmaria' },
+        })
+        const res = makeMockRes()
+        const next = makeNext()
+
+        middleware(req, res, next)
+
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<VirtualDTO>(req)!
+        expect(dto.optionalNameLength).toBeNull()
+    })
+
+    it('required virtual field가 없으면 validator를 건너뛴다', () => {
+        const middleware = bindingCargo(RequiredVirtualDTO)
+
+        const req = makeMockReq({
+            body: { firstName: '', lastName: 'Kimmaria' },
+        })
+        const res = makeMockRes()
+        const next = makeNext()
+
+        middleware(req, res, next)
+
+        const err = next.mock.calls[0][0]
+        expect(err).toBeInstanceOf(CargoValidationError)
+
+        const messages = err.errors.map((error: CargoValidationError['errors'][number]) => error.message)
+        expect(messages).toContain('requiredNameLength is required')
+        expect(messages).not.toContain('requiredNameLength must be >= 3')
     })
 })
