@@ -15,28 +15,28 @@ describe('isHexadecimal decorator', () => {
 
     it('should have isHexadecimal validator', () => {
         expect(isHexRule).toBeDefined()
-        expect(isHexRule?.message).toBe('value should be a hexadecimal number')
+        expect(isHexRule!.message).toBe('value should be a hexadecimal number')
     })
 
     it('should pass for valid hexadecimal strings', () => {
-        expect(isHexRule?.validate('0')).toBeNull()
-        expect(isHexRule?.validate('ff')).toBeNull()
-        expect(isHexRule?.validate('FF')).toBeNull()
-        expect(isHexRule?.validate('deadbeef')).toBeNull()
-        expect(isHexRule?.validate('0123456789abcdefABCDEF')).toBeNull()
+        expect(isHexRule!.validate('0')).toBeNull()
+        expect(isHexRule!.validate('ff')).toBeNull()
+        expect(isHexRule!.validate('FF')).toBeNull()
+        expect(isHexRule!.validate('deadbeef')).toBeNull()
+        expect(isHexRule!.validate('0123456789abcdefABCDEF')).toBeNull()
     })
 
     it('should fail for strings with non-hex characters', () => {
-        expect(isHexRule?.validate('xyz')).toBeInstanceOf(CargoFieldError)
-        expect(isHexRule?.validate('0x1A')).toBeInstanceOf(CargoFieldError)
-        expect(isHexRule?.validate('gg')).toBeInstanceOf(CargoFieldError)
-        expect(isHexRule?.validate('')).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate('xyz')).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate('0x1A')).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate('gg')).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate('')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should fail for non-string values', () => {
-        expect(isHexRule?.validate(null)).toBeInstanceOf(CargoFieldError)
-        expect(isHexRule?.validate(undefined)).toBeInstanceOf(CargoFieldError)
-        expect(isHexRule?.validate(255)).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate(null)).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate(undefined)).toBeInstanceOf(CargoFieldError)
+        expect(isHexRule!.validate(255)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have isHexadecimal validator on undecorated field', () => {
