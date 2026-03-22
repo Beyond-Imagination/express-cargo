@@ -24,11 +24,13 @@ describe('isHexadecimal decorator', () => {
         expect(isHexRule!.validate('FF')).toBeNull()
         expect(isHexRule!.validate('deadbeef')).toBeNull()
         expect(isHexRule!.validate('0123456789abcdefABCDEF')).toBeNull()
+        expect(isHexRule!.validate('0x1A')).toBeNull()
+        expect(isHexRule!.validate('0xFF')).toBeNull()
+        expect(isHexRule!.validate('0hFF')).toBeNull()
     })
 
     it('should fail for strings with non-hex characters', () => {
         expect(isHexRule!.validate('xyz')).toBeInstanceOf(CargoFieldError)
-        expect(isHexRule!.validate('0x1A')).toBeInstanceOf(CargoFieldError)
         expect(isHexRule!.validate('gg')).toBeInstanceOf(CargoFieldError)
         expect(isHexRule!.validate('')).toBeInstanceOf(CargoFieldError)
     })

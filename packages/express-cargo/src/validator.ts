@@ -443,7 +443,7 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
  * Checks if the string is a valid hexadecimal number.
  * @param message - Optional custom error message.
  */
-const HEX_PATTERN = /^[0-9a-fA-F]+$/
+const HEX_PATTERN = /^(0x|0h)?[0-9a-fA-F]+$/i
 
 export function IsHexadecimal(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
