@@ -15,34 +15,34 @@ describe('isJwt decorator', () => {
 
     it('should have isJwt validator', () => {
         expect(isJwtRule).toBeDefined()
-        expect(isJwtRule!.message).toBe('token should be a valid JWT')
+        expect(isJwtRule?.message).toBe('token should be a valid JWT')
     })
 
     it('should pass for valid JWT strings', () => {
         const validJwt = 'header-part.payload-part.signature-part'
-        expect(isJwtRule!.validate(validJwt)).toBeNull()
+        expect(isJwtRule?.validate(validJwt)).toBeNull()
     })
 
     it('should pass for JWT with empty signature', () => {
         const unsignedJwt = 'header-part.payload-part.'
-        expect(isJwtRule!.validate(unsignedJwt)).toBeNull()
+        expect(isJwtRule?.validate(unsignedJwt)).toBeNull()
     })
 
     it('should fail for strings missing parts', () => {
-        expect(isJwtRule!.validate('onlyone')).toBeInstanceOf(CargoFieldError)
-        expect(isJwtRule!.validate('only.two')).toBeInstanceOf(CargoFieldError)
-        expect(isJwtRule!.validate('too.many.dots.here')).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate('onlyone')).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate('only.two')).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate('too.many.dots.here')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should fail for strings with invalid characters', () => {
-        expect(isJwtRule!.validate('hea!der.payload.signature')).toBeInstanceOf(CargoFieldError)
-        expect(isJwtRule!.validate('header.pay load.signature')).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate('hea!der.payload.signature')).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate('header.pay load.signature')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should fail for non-string values', () => {
-        expect(isJwtRule!.validate(null)).toBeInstanceOf(CargoFieldError)
-        expect(isJwtRule!.validate(undefined)).toBeInstanceOf(CargoFieldError)
-        expect(isJwtRule!.validate(123)).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate(null)).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate(undefined)).toBeInstanceOf(CargoFieldError)
+        expect(isJwtRule?.validate(123)).toBeInstanceOf(CargoFieldError)
     })
 
     it('should not have isJwt validator on undecorated field', () => {
