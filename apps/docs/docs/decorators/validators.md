@@ -168,6 +168,12 @@ Validates that the decorated field is a valid URL. By default, `http`, `https`, 
   - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https', 'ftp']`.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsHexadecimal(message?: string)`
+
+Validates that the decorated field is a hexadecimal number. The value must contain only characters `0-9` and `a-f` (case-insensitive). The `0x` prefix is not allowed.
+
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@With(fieldName: string, message?: string)`
 
 Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.

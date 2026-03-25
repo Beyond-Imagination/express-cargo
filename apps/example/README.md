@@ -919,6 +919,28 @@ curl -X POST 'http://localhost:3000/is-url' \
 ```
 ---
 
+### @IsHexadecimal
+
+```typescript
+class IsHexadecimalExample {
+    @Body()
+    @IsHexadecimal()
+    value!: string
+}
+
+router.post('/is-hexadecimal', bindingCargo(IsHexadecimalExample), (req, res) => {
+    const cargo = getCargo<IsHexadecimalExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/is-hexadecimal' \
+    -H 'Content-Type: application/json' \
+    -d '{ "value": "deadbeef" }'
+```
+---
+
 ### @With
 
 ```typescript

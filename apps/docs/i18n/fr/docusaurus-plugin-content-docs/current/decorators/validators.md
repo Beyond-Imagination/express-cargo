@@ -168,6 +168,12 @@ Valide que le champ décoré est une URL valide. Par défaut, les protocoles `ht
   - **`protocols`** : Un tableau des protocoles autorisés. Par défaut : `['http', 'https', 'ftp']`.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@IsHexadecimal(message?: string)`
+
+Valide que le champ décoré est un nombre hexadécimal. Seuls les caractères `0-9` et `a-f` (insensible à la casse) sont autorisés. Le préfixe `0x` n'est pas autorisé.
+
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 
 ### `@With(fieldName: string, message?: string)`
 

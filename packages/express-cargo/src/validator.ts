@@ -440,6 +440,27 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
 }
 
 /**
+ * Checks if the string is a valid hexadecimal number.
+ * @param message - Optional custom error message.
+ */
+const HEX_PATTERN = /^(0x|0h)?[0-9a-fA-F]+$/i
+
+export function IsHexadecimal(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isHexadecimal',
+                (value: unknown) => typeof value === 'string' && HEX_PATTERN.test(value),
+                message || `${String(propertyKey)} should be a hexadecimal number`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string is a valid URL.
  * @param options - Optional configuration (e.g., allowed protocols).
  * @param message - Optional custom error message.
