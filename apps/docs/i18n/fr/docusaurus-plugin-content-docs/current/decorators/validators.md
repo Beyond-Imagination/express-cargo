@@ -174,6 +174,13 @@ Valide que le champ décoré est un nombre hexadécimal. Seuls les caractères `
 
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@MinDate(min: Date | (() => Date), message?: string)`
+
+Valide que le champ décoré est un `Date` égal ou postérieur à la date minimale donnée. Accepte un `Date` fixe ou une fonction qui retourne un `Date` pour une comparaison dynamique.
+
+- **`min`** : La date minimale autorisée, ou une fonction qui la retourne.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 
 ### `@With(fieldName: string, message?: string)`
 
