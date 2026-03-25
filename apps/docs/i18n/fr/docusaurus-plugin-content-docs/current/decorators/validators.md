@@ -202,6 +202,13 @@ Valide que le tableau ne contient pas plus que le nombre d'éléments spécifié
 - **`max`**: Le nombre maximum d'éléments autorisés dans le tableau.
 - **`message`** (optionnel) : Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
 
+### `@ListMinSize(min: number, message?: string)`
+
+Vérifie que le tableau contient au moins le nombre d'éléments spécifié.
+
+- **`min`**: Le nombre minimum d'éléments autorisés dans le tableau.
+- **`message`** (facultatif): Le message d'erreur à afficher en cas d'échec de la validation. Si omis, un message par défaut sera utilisé.
+
 ## Exemple d'utilisation
 
 Voici un exemple complet de l'utilisation des décorateurs de validation dans une application Express.
