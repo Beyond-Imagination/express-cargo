@@ -181,7 +181,6 @@ Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder nach dem ang
 - **`min`**: Das minimal erlaubte Datum oder eine Funktion, die es zurückgibt.
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
-
 ### `@With(fieldName: string, message?: string)`
 
 Validiert, dass, wenn das dekorierte Feld einen Wert hat, das angegebene Zielfeld (fieldName) ebenfalls einen Wert haben muss, wodurch eine zwingende Abhängigkeit zwischen den beiden Feldern hergestellt wird.
@@ -208,6 +207,13 @@ Validiert jedes einzelne Element innerhalb eines Arrays. Es kann andere Validier
 
 - **`max`**: Die maximale Anzahl von Elementen, die im Array erlaubt sind.
 - **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
+### `@ListMinSize(min: number, message?: string)`
+
+Überprüft, ob das Array nicht weniger Elemente enthält als die angegebene Mindestanzahl.
+
+- **`min`**: Die Mindestanzahl der im Array erlaubten Elemente.
+- **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wird dieser Parameter weggelassen, wird eine Standardmeldung verwendet.
 
 ## Anwendungsbeispiel
 

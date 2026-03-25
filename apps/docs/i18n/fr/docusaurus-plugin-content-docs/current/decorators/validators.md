@@ -181,7 +181,6 @@ Valide que le champ décoré est un `Date` égal ou postérieur à la date minim
 - **`min`** : La date minimale autorisée, ou une fonction qui la retourne.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
-
 ### `@With(fieldName: string, message?: string)`
 
 Valide que si le champ décoré a une valeur, le champ cible spécifié (fieldName) doit également avoir une valeur, établissant une dépendance obligatoire entre les deux champs.
@@ -208,6 +207,13 @@ Valide que le tableau ne contient pas plus que le nombre d'éléments spécifié
 
 - **`max`**: Le nombre maximum d'éléments autorisés dans le tableau.
 - **`message`** (optionnel) : Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
+
+### `@ListMinSize(min: number, message?: string)`
+
+Vérifie que le tableau contient au moins le nombre d'éléments spécifié.
+
+- **`min`**: Le nombre minimum d'éléments autorisés dans le tableau.
+- **`message`** (facultatif): Le message d'erreur à afficher en cas d'échec de la validation. Si omis, un message par défaut sera utilisé.
 
 ## Exemple d'utilisation
 

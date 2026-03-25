@@ -656,6 +656,26 @@ export function ListMaxSize(max: number, message?: cargoErrorMessage): TypedProp
 }
 
 /**
+ * Checks if the array length does not fall below the specified minimum size.
+ * @param min - The minimum number of elements allowed in the array.
+ * @param message - Optional custom error message.
+ */
+export function ListMinSize(min: number, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+    return (target: Object, propertyKey: string | symbol): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'listMinSize',
+                (value: unknown) => Array.isArray(value) && value.length >= min,
+                message || `${String(propertyKey)} must contain at least ${min} elements`,
+            ),
+        )
+    }
+}
+
+/**
  * Applies validation rules to each element of an array.
  * @param args - Validation decorators or functions to apply to each element.
  */

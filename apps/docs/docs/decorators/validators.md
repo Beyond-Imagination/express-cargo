@@ -208,6 +208,13 @@ Validates that the array contains no more than the specified number of elements.
 - **`max`**: The maximum number of elements allowed in the array.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@ListMinSize(min: number, message?: string)`
+
+Validates that the array contains at least the specified number of elements.
+
+- **`min`**: The minimum number of elements allowed in the array.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ## Usage Example
 
 Here is a complete example of how to use validation decorators within an Express application.
