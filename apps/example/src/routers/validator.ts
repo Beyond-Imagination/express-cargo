@@ -28,6 +28,7 @@ import {
     IsJwt,
     IsUrl,
     IsHexadecimal,
+    MinDate,
     With,
     Without,
     Enum,
@@ -329,6 +330,17 @@ class IsHexadecimalExample {
 
 router.post('/is-hexadecimal', bindingCargo(IsHexadecimalExample), (req, res) => {
     const cargo = getCargo<IsHexadecimalExample>(req)
+    res.json(cargo)
+})
+
+class MinDateExample {
+    @Body()
+    @MinDate(new Date('2000-01-01'))
+    date!: Date
+}
+
+router.post('/min-date', bindingCargo(MinDateExample), (req, res) => {
+    const cargo = getCargo<MinDateExample>(req)
     res.json(cargo)
 })
 
