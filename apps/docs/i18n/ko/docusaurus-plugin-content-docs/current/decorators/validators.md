@@ -129,6 +129,16 @@ title: 유효성 검사 데코레이터
 
 > **주의**: 객체 비교는 기본적으로 깊은 동등성(deep equality)을 사용합니다. `values`에 많은 객체나 깊이 중첩된 구조가 포함된 경우 성능이 저하될 수 있습니다. 보다 효율적이거나 유연한 비교를 위해 `comparator` 사용을 고려하세요.
 
+### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
+
+배열이 지정된 값을 포함하지 않는지 검증합니다. 원시값, 객체, Date 및 혼합 타입을 지원합니다.
+
+- **`values`**: 배열에 포함되어서는 안 되는 값들입니다.
+- **`comparator`** (선택): 커스텀 비교 함수 `(expected, actual) => boolean`. 제공된 경우 원시값을 포함한 모든 비교가 이 함수에 위임됩니다.
+- **`message`** (선택): 검증 실패 시 표시할 오류 메시지입니다. 생략하면 기본 메시지가 사용됩니다.
+
+> **주의**: 객체 비교는 기본적으로 깊은 동등성(deep equality)을 사용합니다. `values`에 많은 객체나 깊이 중첩된 구조가 포함된 경우 성능이 저하될 수 있습니다. 보다 효율적이거나 유연한 비교를 위해 `comparator` 사용을 고려하세요.
+
 ### `@Enum(enumObj: object, message?: string)`
 
 입력 값이 지정된 열거형 객체의 값 중 하나와 일치하는지 검증합니다. 또한 입력 값을 해당하는 열거형 값으로 자동으로 변환합니다.
