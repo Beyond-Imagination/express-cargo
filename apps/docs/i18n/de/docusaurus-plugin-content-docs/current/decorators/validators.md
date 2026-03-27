@@ -174,6 +174,12 @@ Validiert, dass das dekorierte Feld eine hexadezimale Zahl ist. Nur die Zeichen 
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@MinDate(min: Date | (() => Date), message?: string)`
+
+Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder nach dem angegebenen Mindestdatum liegt. Akzeptiert ein festes `Date` oder eine Funktion, die ein `Date` zurückgibt.
+
+- **`min`**: Das minimal erlaubte Datum oder eine Funktion, die es zurückgibt.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
 ### `@With(fieldName: string, message?: string)`
 

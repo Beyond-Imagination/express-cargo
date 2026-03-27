@@ -461,6 +461,29 @@ export function IsHexadecimal(message?: cargoErrorMessage): TypedPropertyDecorat
 }
 
 /**
+ * Checks if the Date value is greater than or equal to the given minimum date.
+ * @param min - The minimum allowed date, or a function that returns it.
+ * @param message - Optional custom error message.
+ */
+export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): TypedPropertyDecorator<Date> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'minDate',
+                (value: unknown) => {
+                    const minDate = typeof min === 'function' ? min() : min
+                    return value instanceof Date && !isNaN(value.getTime()) && value >= minDate
+                },
+                message || `${String(propertyKey)} must be after ${typeof min === 'function' ? min() : min}`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string is a valid URL.
  * @param options - Optional configuration (e.g., allowed protocols).
  * @param message - Optional custom error message.
