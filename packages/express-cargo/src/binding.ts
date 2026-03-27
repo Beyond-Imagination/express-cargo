@@ -14,7 +14,7 @@ function getFieldKey(meta: CargoFieldMetadata, sourceKey: string, errors: CargoF
     const key = typeof metaKey === 'string' ? metaKey : metaKey.description
 
     if (!key) {
-        errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
+        errors.push(new CargoFieldError(getErrorKey(sourceKey, String(metaKey)), 'empty string or symbol is not allowed'))
         return undefined
     }
 

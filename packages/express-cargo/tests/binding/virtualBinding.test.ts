@@ -57,7 +57,7 @@ describe('virtual binding', () => {
         expect(err.errors).toEqual(expect.arrayContaining([expect.objectContaining({ message: expect.stringContaining('nameLength') })]))
     })
 
-    it('optional virtual field가 빈 문자열을 반환하는 경우', () => {
+    it('optional virtual field가 빈 문자열을 반환해도 optional 검증을 건너뛴다', () => {
         const middleware = bindingCargo(VirtualDTO)
 
         const req = makeMockReq({
@@ -70,22 +70,6 @@ describe('virtual binding', () => {
 
         const dto = getCargo<VirtualDTO>(req)!
         expect(dto.upperName).toBe('')
-        expect(dto.optionalNameLength).toBeNull()
-    })
-
-    it('optional virtual field가 비어 있으면 validation을 건너뛴다', () => {
-        const middleware = bindingCargo(VirtualDTO)
-
-        const req = makeMockReq({
-            body: { firstName: '', lastName: 'Kimmaria' },
-        })
-        const res = makeMockRes()
-        const next = makeNext()
-
-        middleware(req, res, next)
-
-        expect(next).toHaveBeenCalledWith()
-        const dto = getCargo<VirtualDTO>(req)!
         expect(dto.optionalNameLength).toBeNull()
     })
 
