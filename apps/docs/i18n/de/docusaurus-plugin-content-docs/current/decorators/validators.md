@@ -170,7 +170,7 @@ Validiert, dass das dekorierte Feld eine gültige URL ist. Standardmäßig sind 
 
 ### `@IsHexadecimal(message?: string)`
 
-Validiert, dass das dekorierte Feld eine hexadezimale Zahl ist. Nur die Zeichen `0-9` und `a-f` (Groß-/Kleinschreibung egal) sind erlaubt. Das Präfix `0x` ist nicht erlaubt.
+Validiert, dass das dekorierte Feld eine hexadezimale Zahl ist. Nur die Zeichen `0-9` und `a-f` (Groß-/Kleinschreibung egal) sind erlaubt. Die Präfixe `0x` und `0h` sind ebenfalls erlaubt.
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
