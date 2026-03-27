@@ -95,6 +95,16 @@ Validates that the array contains all the specified values. Supports primitive v
 
 > **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
 
+### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
+
+Validates that the array does NOT contain any of the specified values. Supports primitive values, objects, Date, and mixed types.
+
+- **`values`**: The values that must NOT be present in the array.
+- **`comparator`** (optional): A custom comparison function `(expected, actual) => boolean`. When provided, all comparisons are delegated to this function, including primitives.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+> **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
+
 ### `@Enum(enumObj: object, message?: string)`
 
 Validates that the input value matches one of the values in the specified enum object.

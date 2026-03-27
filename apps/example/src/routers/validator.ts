@@ -32,7 +32,7 @@ import {
     With,
     Without,
     Enum,
-    ListContains, ListMaxSize, Type, List, ListMinSize,
+    ListContains, ListNotContains, ListMaxSize, Type, List, ListMinSize,
 } from 'express-cargo'
 
 const router: Router = express.Router()
@@ -425,6 +425,38 @@ class ListContainsExample {
 
 router.post('/list-contains', bindingCargo(ListContainsExample), (req, res) => {
     const cargo = getCargo<ListContainsExample>(req)
+    res.json(cargo)
+})
+
+class ListNotContainsNested {
+    @Body()
+    name!: string
+}
+
+class ListNotContainsExample {
+    @Body()
+    @List('number')
+    @ListNotContains([1, 2])
+    numbers!: number[]
+
+    @Body()
+    @List(ListNotContainsNested)
+    @ListNotContains([{ name: 'banned' }])
+    objects!: ListNotContainsNested[]
+
+    @Body()
+    @List(Date)
+    @ListNotContains([new Date('2024-01-01')])
+    dates!: Date[]
+
+    @Body()
+    @List('string')
+    @ListNotContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())
+    strings!: string[]
+}
+
+router.post('/list-not-contain', bindingCargo(ListNotContainsExample), (req, res) => {
+    const cargo = getCargo<ListNotContainsExample>(req)
     res.json(cargo)
 })
 
