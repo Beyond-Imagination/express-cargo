@@ -490,6 +490,7 @@ export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): 
  */
 export function MaxDate(max: Date | (() => Date), message?: cargoErrorMessage): TypedPropertyDecorator<Date> {
     return (target, propertyKey): void => {
+        let maxDate: Date
         addValidator(
             target,
             propertyKey,
@@ -497,10 +498,10 @@ export function MaxDate(max: Date | (() => Date), message?: cargoErrorMessage): 
                 propertyKey,
                 'maxDate',
                 (value: unknown) => {
-                    const maxDate = typeof max === 'function' ? max() : max
+                    maxDate = typeof max === 'function' ? max() : max
                     return value instanceof Date && !isNaN(value.getTime()) && value <= maxDate
                 },
-                message || `${String(propertyKey)} must be before ${typeof max === 'function' ? max() : max}`,
+                message || (() => `${String(propertyKey)} must be before ${maxDate}`),
             ),
         )
     }
