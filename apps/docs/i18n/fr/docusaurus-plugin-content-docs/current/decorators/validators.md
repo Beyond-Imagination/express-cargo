@@ -191,6 +191,13 @@ Valide que le champ décoré est un `Date` égal ou postérieur à la date minim
 - **`min`** : La date minimale autorisée, ou une fonction qui la retourne.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@MaxDate(max: Date | (() => Date), message?: string)`
+
+Valide que le champ décoré est un `Date` égal ou antérieur à la date maximale donnée. Accepte un `Date` fixe ou une fonction qui retourne un `Date` pour une comparaison dynamique.
+
+- **`max`** : La date maximale autorisée, ou une fonction qui la retourne.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 ### `@With(fieldName: string, message?: string)`
 
 Valide que si le champ décoré a une valeur, le champ cible spécifié (fieldName) doit également avoir une valeur, établissant une dépendance obligatoire entre les deux champs.
