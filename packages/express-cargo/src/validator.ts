@@ -484,6 +484,29 @@ export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): 
 }
 
 /**
+ * Checks if the Date value is less than or equal to the given maximum date.
+ * @param max - The maximum allowed date, or a function that returns it.
+ * @param message - Optional custom error message.
+ */
+export function MaxDate(max: Date | (() => Date), message?: cargoErrorMessage): TypedPropertyDecorator<Date> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'maxDate',
+                (value: unknown) => {
+                    const maxDate = typeof max === 'function' ? max() : max
+                    return value instanceof Date && !isNaN(value.getTime()) && value <= maxDate
+                },
+                message || `${String(propertyKey)} must be before ${typeof max === 'function' ? max() : max}`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string is a valid URL.
  * @param options - Optional configuration (e.g., allowed protocols).
  * @param message - Optional custom error message.
