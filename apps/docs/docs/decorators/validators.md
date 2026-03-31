@@ -191,6 +191,13 @@ Validates that the decorated field is a `Date` that is on or after the given min
 - **`min`**: The minimum allowed date, or a function that returns it.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@MaxDate(max: Date | (() => Date), message?: string)`
+
+Validates that the decorated field is a `Date` that is on or before the given maximum date. Accepts a fixed `Date` or a function that returns a `Date` for dynamic comparison.
+
+- **`max`**: The maximum allowed date, or a function that returns it.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@With(fieldName: string, message?: string)`
 
 Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.

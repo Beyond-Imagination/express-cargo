@@ -191,6 +191,13 @@ Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder nach dem ang
 - **`min`**: Das minimal erlaubte Datum oder eine Funktion, die es zurückgibt.
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@MaxDate(max: Date | (() => Date), message?: string)`
+
+Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder vor dem angegebenen Höchstdatum liegt. Akzeptiert ein festes `Date` oder eine Funktion, die ein `Date` zurückgibt.
+
+- **`max`**: Das maximal erlaubte Datum oder eine Funktion, die es zurückgibt.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@With(fieldName: string, message?: string)`
 
 Validiert, dass, wenn das dekorierte Feld einen Wert hat, das angegebene Zielfeld (fieldName) ebenfalls einen Wert haben muss, wodurch eine zwingende Abhängigkeit zwischen den beiden Feldern hergestellt wird.
