@@ -26,7 +26,7 @@ describe('isHexadecimal decorator', () => {
         expect(isHexRule!.validate('0123456789abcdefABCDEF')).toBeNull()
         expect(isHexRule!.validate('0x1A')).toBeNull()
         expect(isHexRule!.validate('0xFF')).toBeNull()
-        expect(isHexRule!.validate('0hFF')).toBeNull()
+        expect(isHexRule!.validate('0hFF')).toBeInstanceOf(CargoFieldError)
     })
 
     it('should fail for strings with non-hex characters', () => {
