@@ -77,4 +77,27 @@ describe('source decorator binding', () => {
         const dto = getCargo<TestDTO>(req)!
         expect(dto.nickname).toBeNull()
     })
+
+    it('required source field가 없으면 validator를 건너뛴다', () => {
+        const middleware = bindingCargo(TestDTO)
+
+        const req = makeMockReq({
+            body: { name: 'Delta' },
+            query: { age: '35' },
+            params: { id: '30' },
+            headers: { isAdmin: 'true' },
+            session: { loginAt: '2025-09-20T17:00:00.000Z' },
+        })
+        const res = makeMockRes()
+        const next = makeNext()
+
+        middleware(req, res, next)
+
+        const err = next.mock.calls[0][0]
+        expect(err).toBeInstanceOf(CargoValidationError)
+
+        const messages = err.errors.map((error: CargoValidationError['errors'][number]) => error.message)
+        expect(messages).toContain('score is required')
+        expect(messages).not.toContain('score must be >= 3')
+    })
 })

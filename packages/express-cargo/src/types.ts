@@ -1,3 +1,6 @@
+import type { Request } from 'express'
+import type { CargoClassMetadata } from './metadata'
+
 /**
  * Represents the source of the request data.
  * - `body`: req.body
@@ -176,3 +179,20 @@ export class CargoTransformFieldError extends CargoFieldError {
 }
 
 export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T }, propertyKey: K) => void
+
+export type BindSources = {
+    req: Request
+    body: any
+    query: any
+    params: any
+    header: any
+    session: any
+}
+
+export type BindContext = {
+    metaClass: CargoClassMetadata
+    targetObject: any
+    sources: BindSources
+    errors: CargoFieldError[]
+    sourceKey: string
+}

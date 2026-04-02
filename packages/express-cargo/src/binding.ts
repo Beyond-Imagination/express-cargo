@@ -1,11 +1,83 @@
 import type { Request, RequestHandler } from 'express'
 
+import type { BindContext, BindSources } from './types'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
+}
+
+function getFieldKey(meta: CargoFieldMetadata, sourceKey: string, errors: CargoFieldError[]): string | undefined {
+    const metaKey = meta.getKey()
+    const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+
+    if (!key) {
+        errors.push(new CargoFieldError(getErrorKey(sourceKey, String(metaKey)), 'empty string or symbol is not allowed'))
+        return undefined
+    }
+
+    return key
+}
+
+function validateField(meta: CargoFieldMetadata, property: string | symbol, targetObject: any, errors: CargoFieldError[]): void {
+    for (const rule of meta.getValidators()) {
+        const error = rule.validate(targetObject[property], targetObject)
+        if (error) {
+            errors.push(error)
+        }
+    }
+}
+
+function handleMissing(
+    meta: CargoFieldMetadata,
+    property: string | symbol,
+    key: string,
+    value: any,
+    targetObject: any,
+    errors: CargoFieldError[],
+    sourceKey: string,
+): boolean {
+    if (value !== undefined && value !== null) {
+        return false
+    }
+
+    if (meta.getDefault() !== undefined) {
+        targetObject[property] = meta.getDefault()
+        return true
+    }
+
+    if (meta.getOptional()) {
+        targetObject[property] = null
+        return true
+    }
+
+    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+    return true
+}
+
+function transformSource(
+    meta: CargoFieldMetadata,
+    property: string | symbol,
+    key: string,
+    value: any,
+    targetObject: any,
+    errors: CargoFieldError[],
+    sources: BindSources,
+    sourceKey: string,
+    currentSource: Source,
+): void {
+    if (meta.getEnumType() !== undefined) {
+        targetObject[property] = value
+    } else {
+        targetObject[property] = typeCasting(meta.type, meta, sourceKey, key, value, errors, sources, currentSource)
+    }
+
+    const transformer = meta.getTransformer()
+    if (transformer) {
+        targetObject[property] = transformer(targetObject[property])
+    }
 }
 
 /**
@@ -121,61 +193,50 @@ function typeCasting(
     return value
 }
 
-function bindObject(
-    objectClass: any,
-    sources: { req: Request; body: any; query: any; params: any; header: any; session: any },
-    errors: CargoFieldError[],
-    sourceKey: string = '',
-): any {
+function bindObject(objectClass: any, sources: BindSources, errors: CargoFieldError[], sourceKey: string = ''): any {
     const metaClass = new CargoClassMetadata(objectClass.prototype)
 
     metaClass.markBindingCargoCalled()
 
     const targetObject = new objectClass()
-    const fields = metaClass.getFieldList()
-    const requestFields = metaClass.getRequestFieldList()
-    const virtualFields = metaClass.getVirtualFieldList()
+    const context: BindContext = {
+        metaClass,
+        targetObject,
+        sources,
+        errors,
+        sourceKey,
+    }
 
-    // request transform
-    for (const property of requestFields) {
-        const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
-        if (!meta) continue
+    bindRequest(context)
+    bindSource(context)
+    bindVirtual(context)
 
-        let value
-        const metaKey = meta.getKey()
-        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
+    return targetObject
+}
 
-        if (!key) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
-            continue
-        }
+function bindRequest({ metaClass, targetObject, sources, errors, sourceKey }: BindContext): void {
+    for (const property of metaClass.getRequestFieldList()) {
+        const meta = metaClass.getFieldMetadata(property)
+        const key = getFieldKey(meta, sourceKey, errors)
+        if (!key) continue
 
         const requestTransformer = meta.getRequestTransformer()
+
         if (!requestTransformer) {
             errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
             continue
         }
 
         try {
-            value = requestTransformer(sources.req)
-            if (value === undefined || value === null) {
-                if (meta.getDefault() !== undefined) {
-                    targetObject[property] = meta.getDefault()
-                    continue
-                } else if (meta.getOptional()) {
-                    targetObject[property] = null
-                } else {
-                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
-                }
-            } else {
-                targetObject[property] = value
+            const value = requestTransformer(sources.req)
+            const shouldSkipField = handleMissing(meta, property, key, value, targetObject, errors, sourceKey)
+
+            if (shouldSkipField) {
+                continue
             }
-            for (const rule of meta.getValidators()) {
-                const error = rule.validate(targetObject[property], targetObject)
-                if (error) {
-                    errors.push(error)
-                }
-            }
+
+            targetObject[property] = value
+            validateField(meta, property, targetObject, errors)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
@@ -185,100 +246,58 @@ function bindObject(
             )
         }
     }
+}
 
-    // source decorator parsing
-    for (const property of fields) {
-        const meta: CargoFieldMetadata = metaClass.getFieldMetadata(property)
-        if (!meta) continue
+function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: BindContext): void {
+    for (const property of metaClass.getFieldList()) {
+        const meta = metaClass.getFieldMetadata(property)
+        if (meta.getRequestTransformer()) continue
+
+        const key = getFieldKey(meta, sourceKey, errors)
+        if (!key) continue
 
         let value
-        const metaKey = meta.getKey()
-        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
-
-        if (!key) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
-            continue
-        }
-
         const currentSource = meta.getSource()
-        const currentSourceData = sources[currentSource as keyof typeof sources]
+        const currentSourceData = sources[currentSource as keyof BindSources]
 
         if (currentSourceData) {
             value = currentSourceData[key]
         }
 
-        if (value === undefined || value === null) {
-            if (meta.getDefault() !== undefined) {
-                targetObject[property] = meta.getDefault()
-                continue
-            } else if (meta.getOptional()) {
-                targetObject[property] = null
-                continue
-            } else {
-                errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
-                continue
-            }
-        }
+        const shouldSkipField = handleMissing(meta, property, key, value, targetObject, errors, sourceKey)
 
-        if (meta.getEnumType() !== undefined) {
-            targetObject[property] = value
-        } else {
-            targetObject[property] = typeCasting(meta.type, meta, sourceKey, key, value, errors, sources, currentSource)
-        }
-
-        const transformer = meta.getTransformer()
-        if (transformer) {
-            targetObject[property] = transformer(targetObject[property])
-        }
-
-        for (const rule of meta.getValidators()) {
-            const error = rule.validate(targetObject[property], targetObject)
-            if (error) {
-                errors.push(error)
-            }
-        }
-    }
-
-    // virtual transform
-    for (const property of virtualFields) {
-        const meta = metaClass.getFieldMetadata(property)
-        if (!meta) continue
-
-        let value
-        const metaKey = meta.getKey()
-        const key = typeof metaKey === 'string' ? metaKey : metaKey.description
-
-        if (!key) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key!), 'empty string or symbol is not allowed'))
+        if (shouldSkipField) {
             continue
         }
 
+        transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource)
+        validateField(meta, property, targetObject, errors)
+    }
+}
+
+function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext): void {
+    for (const property of metaClass.getVirtualFieldList()) {
+        const meta = metaClass.getFieldMetadata(property)
+        const key = getFieldKey(meta, sourceKey, errors)
+        if (!key) continue
+
         const virtualTransformer = meta.getVirtualTransformer()
+
         if (!virtualTransformer) {
             errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
             continue
         }
 
         try {
-            value = virtualTransformer(targetObject)
-            if (value === undefined || value === null) {
-                if (meta.getDefault() !== undefined) {
-                    targetObject[property] = meta.getDefault()
-                    continue
-                } else if (meta.getOptional()) {
-                    targetObject[property] = null
-                } else {
-                    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
-                }
-            } else {
-                targetObject[property] = value
+            const value = virtualTransformer(targetObject)
+            const shouldSkipField = handleMissing(meta, property, key, value, targetObject, errors, sourceKey)
+
+            if (shouldSkipField) {
+                continue
             }
-            for (const rule of meta.getValidators()) {
-                const error = rule.validate(targetObject[property], targetObject)
-                if (error) {
-                    errors.push(error)
-                }
-            }
+
+            targetObject[property] = value
+            validateField(meta, property, targetObject, errors)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
@@ -288,8 +307,6 @@ function bindObject(
             )
         }
     }
-
-    return targetObject
 }
 
 /**
