@@ -1,0 +1,26 @@
+{
+  "projectTitle": "express-cargo",
+  "description": "TypeScript decorator-based Express.js middleware for class-based request parsing and validation",
+  "branch": "main",
+  "folders": [
+    "apps/docs/docs",
+    "packages/express-cargo/src",
+    "apps/example/src"
+  ],
+  "excludeFolders": [
+    "node_modules",
+    "**/dist",
+    "**/coverage",
+    "apps/example-cjs"
+  ],
+  "excludeFiles": [
+    "*.test.ts",
+    "*.spec.ts"
+  ],
+  "rules": [
+    "experimentalDecorators and emitDecoratorMetadata must be enabled in tsconfig.json",
+    "Use bindingCargo() middleware to bind request data to class instances",
+    "Validation decorators can be stacked on class properties",
+    "Supports nested objects and polymorphic binding via type decorators"
+  ]
+}
