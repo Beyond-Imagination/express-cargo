@@ -467,6 +467,7 @@ export function IsHexadecimal(message?: cargoErrorMessage): TypedPropertyDecorat
  */
 export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): TypedPropertyDecorator<Date> {
     return (target, propertyKey): void => {
+        let minDate: Date
         addValidator(
             target,
             propertyKey,
@@ -474,10 +475,10 @@ export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): 
                 propertyKey,
                 'minDate',
                 (value: unknown) => {
-                    const minDate = typeof min === 'function' ? min() : min
+                    minDate = typeof min === 'function' ? min() : min
                     return value instanceof Date && !isNaN(value.getTime()) && value >= minDate
                 },
-                message || `${String(propertyKey)} must be after ${typeof min === 'function' ? min() : min}`,
+                message || (() => `${String(propertyKey)} must be after ${minDate}`),
             ),
         )
     }
