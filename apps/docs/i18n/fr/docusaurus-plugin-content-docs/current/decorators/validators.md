@@ -29,6 +29,13 @@ Valide qu'un nombre est dans la plage spécifiée, inclusivement des valeurs min
 - **`min`** : La valeur minimale autorisée.
 - **`max`** : La valeur maximale autorisée.
 
+### `@Contains(seed: string)`
+
+Valide qu'une chaîne contient la sous-chaîne spécifiée.
+
+- **`seed`** : La sous-chaîne qui doit être présente dans la chaîne.
+- **`message`** (optionnel) : Le message d'erreur à afficher en cas d'échec de la validation. Si omis, un message par défaut sera utilisé.
+
 ### `@Prefix(value: string)`
 
 Valide qu'une chaîne commence par le préfixe spécifié.

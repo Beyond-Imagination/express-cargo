@@ -29,6 +29,13 @@ Validiert, dass eine Zahl innerhalb des angegebenen Bereichs liegt, einschließl
 - **`min`**: Der zulässige Mindestwert.
 - **`max`**: Der zulässige Höchstwert.
 
+### `@Contains(seed: string)`
+
+Validiert, dass ein String den angegebenen Teilstring enthält.
+
+- **`seed`**: Der Teilstring, der im String enthalten sein muss.
+- **`message`** (optional): Die Fehlermeldung, die bei fehlgeschlagener Validierung angezeigt wird. Wenn nicht angegeben, wird eine Standardmeldung verwendet.
+
 ### `@Prefix(value: string)`
 
 Validiert, dass ein String mit dem angegebenen Präfix beginnt.

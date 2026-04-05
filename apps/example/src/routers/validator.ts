@@ -33,6 +33,7 @@ import {
     With,
     Without,
     Enum,
+    Contains,
     ListContains, ListNotContains, ListMaxSize, Type, List, ListMinSize,
 } from 'express-cargo'
 
@@ -118,6 +119,17 @@ class NotEqualExample {
 
 router.post('/not-equal', bindingCargo(NotEqualExample), (req, res) => {
     const cargo = getCargo<NotEqualExample>(req)
+    res.json(cargo)
+})
+
+class ContainsExample {
+    @Body()
+    @Contains('hello')
+    greeting!: string
+}
+
+router.post('/contains', bindingCargo(ContainsExample), (req, res) => {
+    const cargo = getCargo<ContainsExample>(req)
     res.json(cargo)
 })
 
