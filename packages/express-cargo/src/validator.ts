@@ -50,6 +50,26 @@ export function Max(maximum: number, message?: cargoErrorMessage): TypedProperty
 }
 
 /**
+ * Checks if the string contains the specified substring.
+ * @param seed - The substring to search for.
+ * @param message - Optional custom error message.
+ */
+export function Contains(seed: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey) => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'contains',
+                val => typeof val === 'string' && val.includes(seed),
+                message || `${String(propertyKey)} must contain ${seed}`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string starts with the specified prefix.
  * @param prefixText - The prefix string.
  * @param message - Optional custom error message.

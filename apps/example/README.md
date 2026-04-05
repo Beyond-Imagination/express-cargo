@@ -362,6 +362,29 @@ curl -X POST 'http://localhost:3000/range' \
 
 ---
 
+### @Contains
+
+```typescript
+class ContainsExample {
+    @Body()
+    @Contains('hello')
+    greeting!: string
+}
+
+router.post('/contains', bindingCargo(ContainsExample), (req, res) => {
+    const cargo = getCargo<ContainsExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl -X POST 'http://localhost:3000/contains' \
+    -H 'Content-Type: application/json' \
+    -d '{"greeting": "hello world"}'
+```
+
+---
+
 ### @Prefix
 
 ```typescript

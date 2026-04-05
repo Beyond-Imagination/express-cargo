@@ -29,6 +29,13 @@ Validates that a number is within the specified range, inclusive of the minimum 
 - **`min`**: The minimum allowed value.
 - **`max`**: The maximum allowed value.
 
+### `@Contains(seed: string)`
+
+Validates that the string contains the specified substring.
+
+- **`seed`**: The substring that must be present in the string.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@Prefix(value: string)`
 
 Validates that a string starts with the specified prefix.
