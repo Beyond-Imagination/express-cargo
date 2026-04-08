@@ -185,6 +185,12 @@ Valide que le champ décoré est une URL valide. Par défaut, les protocoles `ht
   - **`protocols`** : Un tableau des protocoles autorisés. Par défaut : `['http', 'https', 'ftp']`.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@IsHexColor(message?: string)`
+
+Valide que le champ décoré est un code couleur hexadécimal valide. Prend en charge les formats `#RGB`, `#RGBA`, `#RRGGBB` et `#RRGGBBAA` (insensible à la casse). Le préfixe `#` est obligatoire.
+
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 ### `@IsHexadecimal(message?: string)`
 
 Valide que le champ décoré est un nombre hexadécimal. Seuls les caractères `0-9` et `a-f` (insensible à la casse) sont autorisés. Le préfixe `0x` est également autorisé.
