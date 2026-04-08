@@ -460,6 +460,28 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
 }
 
 /**
+ * Checks if the string is a valid hex color code.
+ * Supports #RGB, #RGBA, #RRGGBB, #RRGGBBAA formats.
+ * @param message - Optional custom error message.
+ */
+const HEX_COLOR_PATTERN = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i
+
+export function IsHexColor(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isHexColor',
+                (value: unknown) => typeof value === 'string' && HEX_COLOR_PATTERN.test(value),
+                message || `${String(propertyKey)} should be a hex color code`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string is a valid hexadecimal number.
  * @param message - Optional custom error message.
  */

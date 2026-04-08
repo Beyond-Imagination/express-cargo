@@ -27,6 +27,7 @@ import {
     IsLowercase,
     IsJwt,
     IsUrl,
+    IsHexColor,
     IsHexadecimal,
     MinDate,
     MaxDate,
@@ -332,6 +333,17 @@ class IsUrlExample {
 
 router.post('/is-url', bindingCargo(IsUrlExample), (req, res) => {
     const cargo = getCargo<IsUrlExample>(req)
+    res.json(cargo)
+})
+
+class IsHexColorExample {
+    @Body()
+    @IsHexColor()
+    color!: string
+}
+
+router.post('/is-hex-color', bindingCargo(IsHexColorExample), (req, res) => {
+    const cargo = getCargo<IsHexColorExample>(req)
     res.json(cargo)
 })
 
