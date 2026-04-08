@@ -120,6 +120,21 @@ describe('isHash decorator', () => {
         })
     })
 
+    describe('crc32b', () => {
+        const meta = classMeta.getFieldMetadata('crc32bHash')
+        const rule = meta.getValidators()?.find(v => v.type === 'isHash')
+
+        it('should pass for valid crc32b hash', () => {
+            expect(rule!.validate('00000000')).toBeNull()
+            expect(rule!.validate('cbf43926')).toBeNull()
+        })
+
+        it('should fail for invalid crc32b hash', () => {
+            expect(rule!.validate('0000000')).toBeInstanceOf(CargoFieldError)
+            expect(rule!.validate('cbf439260')).toBeInstanceOf(CargoFieldError)
+        })
+    })
+
     it('should fail for non-string values', () => {
         const meta = classMeta.getFieldMetadata('md5Hash')
         const rule = meta.getValidators()?.find(v => v.type === 'isHash')
