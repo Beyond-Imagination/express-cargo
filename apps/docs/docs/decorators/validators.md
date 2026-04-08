@@ -185,6 +185,12 @@ Validates that the decorated field is a valid URL. By default, `http`, `https`, 
   - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https', 'ftp']`.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsHexColor(message?: string)`
+
+Validates that the decorated field is a valid hex color code. Supports `#RGB`, `#RGBA`, `#RRGGBB`, and `#RRGGBBAA` formats (case-insensitive). The `#` prefix is required.
+
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@IsHexadecimal(message?: string)`
 
 Validates that the decorated field is a hexadecimal number. The value must contain only characters `0-9` and `a-f` (case-insensitive). The `0x` prefix is also allowed.
