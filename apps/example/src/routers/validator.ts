@@ -29,6 +29,7 @@ import {
     IsUrl,
     IsHexColor,
     IsHexadecimal,
+    IsHash,
     MinDate,
     MaxDate,
     With,
@@ -355,6 +356,21 @@ class IsHexadecimalExample {
 
 router.post('/is-hexadecimal', bindingCargo(IsHexadecimalExample), (req, res) => {
     const cargo = getCargo<IsHexadecimalExample>(req)
+    res.json(cargo)
+})
+
+class IsHashExample {
+    @Body()
+    @IsHash('md5')
+    md5!: string
+
+    @Body()
+    @IsHash('sha256')
+    sha256!: string
+}
+
+router.post('/is-hash', bindingCargo(IsHashExample), (req, res) => {
+    const cargo = getCargo<IsHashExample>(req)
     res.json(cargo)
 })
 
