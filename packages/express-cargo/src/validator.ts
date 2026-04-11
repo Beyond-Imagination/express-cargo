@@ -1,4 +1,4 @@
-import { ArrayComparator, cargoErrorMessage, EachValidatorRule, IsUrlOptions, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
+import { ArrayComparator, cargoErrorMessage, EachValidatorRule, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 import { isDeepEqual } from './utils'
 
@@ -497,6 +497,38 @@ export function IsHexadecimal(message?: cargoErrorMessage): TypedPropertyDecorat
                 'isHexadecimal',
                 (value: unknown) => typeof value === 'string' && HEX_PATTERN.test(value),
                 message || `${String(propertyKey)} should be a hexadecimal number`,
+            ),
+        )
+    }
+}
+
+const hashPatterns: Record<HashAlgorithm, RegExp> = {
+    md5: /^[0-9a-f]{32}$/i,
+    sha1: /^[0-9a-f]{40}$/i,
+    sha256: /^[0-9a-f]{64}$/i,
+    sha384: /^[0-9a-f]{96}$/i,
+    sha512: /^[0-9a-f]{128}$/i,
+    crc32: /^[0-9a-f]{8}$/i,
+    crc32b: /^[0-9a-f]{8}$/i,
+}
+
+/**
+ * Checks if the string is a valid hash for the specified algorithm.
+ * Supported algorithms: md5, sha1, sha256, sha384, sha512, crc32, crc32b.
+ * @param algorithm - The hash algorithm to validate against.
+ * @param message - Optional custom error message.
+ */
+export function IsHash(algorithm: HashAlgorithm, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    const pattern = hashPatterns[algorithm]
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isHash',
+                (value: unknown) => typeof value === 'string' && pattern.test(value),
+                message || `${String(propertyKey)} should be a valid ${algorithm} hash`,
             ),
         )
     }

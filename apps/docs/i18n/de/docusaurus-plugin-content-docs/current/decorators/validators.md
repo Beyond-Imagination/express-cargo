@@ -197,6 +197,13 @@ Validiert, dass das dekorierte Feld eine hexadezimale Zahl ist. Nur die Zeichen 
 
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@IsHash(algorithm: HashAlgorithm, message?: string)`
+
+Validiert, dass das dekorierte Feld ein gültiger Hash-String für den angegebenen Algorithmus ist. Unterstützte Algorithmen: `md5`, `sha1`, `sha256`, `sha384`, `sha512`, `crc32`, `crc32b`. Der Wert muss ein hexadezimaler String mit der exakten Länge sein, die der Algorithmus erfordert.
+
+- **`algorithm`**: Der Hash-Algorithmus, gegen den validiert werden soll.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@MinDate(min: Date | (() => Date), message?: string)`
 
 Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder nach dem angegebenen Mindestdatum liegt. Akzeptiert ein festes `Date` oder eine Funktion, die ein `Date` zurückgibt.
