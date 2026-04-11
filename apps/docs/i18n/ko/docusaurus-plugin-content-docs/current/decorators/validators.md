@@ -229,6 +229,12 @@ title: 유효성 검사 데코레이터
   - **`protocols`**: 허용할 프로토콜 배열. 기본값은 `['http', 'https', 'ftp']`.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
+### `@IsTimeZone(message?: string)`
+
+데코레이터가 적용된 필드가 유효한 IANA 타임존 식별자인지 검증합니다(예: `Asia/Seoul`, `America/New_York`, `UTC`). 내장 `Intl` API를 사용하여 검증하므로 외부 의존성이 필요 없습니다.
+
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
 ### `@IsHexColor(message?: string)`
 
 데코레이터가 적용된 필드가 유효한 16진수 색상 코드인지 검증합니다. `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA` 형식을 지원합니다(대소문자 구분 없음). `#` 접두사가 필요합니다.

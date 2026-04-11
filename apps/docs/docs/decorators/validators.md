@@ -185,6 +185,12 @@ Validates that the decorated field is a valid URL. By default, `http`, `https`, 
   - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https', 'ftp']`.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsTimeZone(message?: string)`
+
+Validates that the decorated field is a valid IANA timezone identifier (e.g., `Asia/Seoul`, `America/New_York`, `UTC`). Uses the built-in `Intl` API for validation — no external dependencies required.
+
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@IsHexColor(message?: string)`
 
 Validates that the decorated field is a valid hex color code. Supports `#RGB`, `#RGBA`, `#RRGGBB`, and `#RRGGBBAA` formats (case-insensitive). The `#` prefix is required.
