@@ -1,0 +1,30 @@
+{
+  "link.title.Docs": {
+    "message": "ドキュメント",
+    "description": "フッターリンクカラムのタイトル"
+  },
+  "link.title.More": {
+    "message": "その他",
+    "description": "フッターカラムタイトル"
+  },
+  "link.item.label.Getting Started": {
+    "message": "はじめに",
+    "description": "紹介ページリンク"
+  },
+  "link.item.label.Core Concepts": {
+    "message": "ガイド",
+    "description": "コアコンセプトページリンク"
+  },
+  "link.item.label.Examples": {
+    "message": "使用例",
+    "description": "使用例ページリンク"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHubで見る",
+    "description": "GitHubプロジェクトリンク"
+  },
+  "copyright": {
+    "message": "Copyright © 2025 Beyond_Imagination Team. Built with Docusaurus.",
+    "description": "フッター著作権表記"
+  }
+}
