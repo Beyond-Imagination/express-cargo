@@ -1,0 +1,285 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "ページにエラーが発生しました。",
+    "description": "The title of the fallback page when the page crashed"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "トップへスクロール",
+    "description": "The ARIA label for the back to top button"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "すべてのタグを表示",
+    "description": "The label of the link targeting the tag list page"
+  },
+  "theme.colorToggle.ariaLabel.mode.system": {
+    "message": "システムモード",
+    "description": "The name for the system color mode"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "ライトモード",
+    "description": "The name for the light color mode"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "ダークモード",
+    "description": "The name for the dark color mode"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "ダークモードとライトモードを切り替える（現在 {mode}）",
+    "description": "The ARIA label for the color mode toggle"
+  },
+  "theme.docs.DocCard.categoryDescription.plurals": {
+    "message": "{count} 件",
+    "description": "The default description for a category card in the generated index about how many items this category includes"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "パンくずリスト",
+    "description": "The ARIA label for the breadcrumbs"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "ドキュメントページ",
+    "description": "The ARIA label for the docs pagination"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "前へ",
+    "description": "The label used to navigate to the previous doc"
+  },
+  "theme.docs.paginator.next": {
+    "message": "次へ",
+    "description": "The label used to navigate to the next doc"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "{siteTitle} {versionLabel} のドキュメントはまだ正式にリリースされていません。",
+    "description": "The label used to tell the user that he's browsing an unreleased doc version"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "{siteTitle} {versionLabel} のドキュメントはメンテナンスされていません。",
+    "description": "The label used to tell the user that he's browsing an unmaintained doc version"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "最新のドキュメントは {latestVersionLink}（{versionLabel}）をご覧ください。",
+    "description": "The label used to tell the user to check the latest version"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "最新バージョン",
+    "description": "The label used for the latest version suggestion link label"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "{count} 件のドキュメントが",
+    "description": "Pluralized label for \"{count} docs tagged\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged} 「{tagName}」タグに分類されています",
+    "description": "The title of the page for a docs tag"
+  },
+  "theme.common.editThisPage": {
+    "message": "ページを編集",
+    "description": "The link label to edit the current page"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "バージョン: {versionLabel}"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "{heading}への直接リンク",
+    "description": "Title for link to heading"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " {date}に",
+    "description": "The words used to describe on which date a page has been last updated"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " {user}が",
+    "description": "The words used to describe by who the page has been last updated"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "最終更新: {atDate}{byUser}",
+    "description": "The sentence used to display when a page has been last updated, and by who"
+  },
+  "theme.NotFound.title": {
+    "message": "ページが見つかりません。",
+    "description": "The title of the 404 page"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "バージョン",
+    "description": "The label for the navbar versions dropdown on mobile view"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "タグ:",
+    "description": "The label alongside a tag list"
+  },
+  "theme.admonition.caution": {
+    "message": "注意",
+    "description": "The default label used for the Caution admonition (:::caution)"
+  },
+  "theme.admonition.danger": {
+    "message": "危険",
+    "description": "The default label used for the Danger admonition (:::danger)"
+  },
+  "theme.admonition.info": {
+    "message": "情報",
+    "description": "The default label used for the Info admonition (:::info)"
+  },
+  "theme.admonition.note": {
+    "message": "ノート",
+    "description": "The default label used for the Note admonition (:::note)"
+  },
+  "theme.admonition.tip": {
+    "message": "ヒント",
+    "description": "The default label used for the Tip admonition (:::tip)"
+  },
+  "theme.admonition.warning": {
+    "message": "警告",
+    "description": "The default label used for the Warning admonition (:::warning)"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "閉じる",
+    "description": "The ARIA label for close button of announcement bar"
+  },
+  "theme.DocSidebarItem.expandCategoryAriaLabel": {
+    "message": "サイドバーカテゴリ '{label}' を展開",
+    "description": "The ARIA label to expand the sidebar category"
+  },
+  "theme.DocSidebarItem.collapseCategoryAriaLabel": {
+    "message": "サイドバーカテゴリ '{label}' を折りたたむ",
+    "description": "The ARIA label to collapse the sidebar category"
+  },
+  "theme.NavBar.navAriaLabel": {
+    "message": "メイン",
+    "description": "The ARIA label for the main navigation"
+  },
+  "theme.NotFound.p1": {
+    "message": "お探しのページが見つかりませんでした。",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "サイト管理者にリンクが壊れていることをお知らせください。",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "このページの内容",
+    "description": "The label used by the button on the collapsible TOC component"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "言語",
+    "description": "The label for the mobile language switcher dropdown"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "行の折り返しを切り替え",
+    "description": "The title attribute for toggle word wrapping button of code block lines"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "コピー",
+    "description": "The copy button label on code blocks"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "コピーしました",
+    "description": "The copied button label on code blocks"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "クリップボードにコードをコピー",
+    "description": "The ARIA label for copy code blocks button"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "ホーム",
+    "description": "The ARIA label for the home page in the breadcrumbs"
+  },
+  "theme.docs.sidebar.navAriaLabel": {
+    "message": "ドキュメントサイドバー",
+    "description": "The ARIA label for the sidebar navigation"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "サイドバーを非表示",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "サイドバーを非表示",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.docs.sidebar.closeSidebarButtonAriaLabel": {
+    "message": "サイドバーを閉じる",
+    "description": "The ARIA label for close button of mobile sidebar"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← メインメニューに戻る",
+    "description": "The label of the back button to return to main menu, inside the mobile navbar sidebar secondary menu (notably used to display the docs sidebar)"
+  },
+  "theme.docs.sidebar.toggleSidebarButtonAriaLabel": {
+    "message": "サイドバーの展開・折りたたみ",
+    "description": "The ARIA label for hamburger menu button of mobile navigation"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "サイドバーを開く",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "サイドバーを開く",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
+    "message": "ドロップダウンを展開",
+    "description": "The ARIA label of the button to expand the mobile dropdown navbar item"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
+    "message": "ドロップダウンを折りたたむ",
+    "description": "The ARIA label of the button to collapse the mobile dropdown navbar item"
+  },
+  "theme.contentVisibility.unlistedBanner.title": {
+    "message": "インデックスされていないドキュメント",
+    "description": "The unlisted content banner title"
+  },
+  "theme.contentVisibility.unlistedBanner.message": {
+    "message": "このドキュメントはインデックスされていません。検索エンジンはこのドキュメントをインデックスせず、URLを知っているユーザーのみがアクセスできます。",
+    "description": "The unlisted content banner message"
+  },
+  "theme.contentVisibility.draftBanner.title": {
+    "message": "作成中のページ",
+    "description": "The draft content banner title"
+  },
+  "theme.contentVisibility.draftBanner.message": {
+    "message": "このページはまだ作成中です。開発環境でのみ表示され、本番ビルドには含まれません。",
+    "description": "The draft content banner message"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "もう一度試す",
+    "description": "The label of the button to try again rendering when the React error boundary captures an error"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "本文へスキップ",
+    "description": "The skip to content label used for accessibility, allowing to rapidly navigate to main content with keyboard tab/enter navigation"
+  },
+  "theme.tags.tagsPageTitle": {
+    "message": "タグ",
+    "description": "The title of the tag list page"
+  },
+  "theme.tagline": {
+    "message": "Express.js向けの宣言的デコレータベースのリクエストデータ処理。",
+    "description": "The tagline of the site"
+  },
+  "theme.homepage.getStarted": {
+    "message": "はじめる",
+    "description": "The label of the getting started button on the homepage"
+  },
+  "theme.homepage.feature.declarative.title": {
+    "message": "宣言的データバインディング",
+    "description": "Title for the 'Declarative Data Binding' feature on the homepage."
+  },
+  "theme.homepage.feature.declarative.description": {
+    "message": "直感的なデコレータを活用して、リクエストデータ（ボディ、クエリ、パラメータ）をクラスインスタンスに簡単にバインディングし、クリーンでまとまりのあるルーティングロジックを構築できます。",
+    "description": "Description of the declarative data binding feature. Emphasizes ease of use and clean code."
+  },
+  "theme.homepage.feature.validation.title": {
+    "message": "堅牢なデータバリデーション",
+    "description": "Title for the 'Robust Data Validation' feature on the homepage."
+  },
+  "theme.homepage.feature.validation.description": {
+    "message": "豊富な組み込みデコレータでデータの妥当性を簡単に検証し、データ処理前に整合性を保証できます。",
+    "description": "Description of the data validation feature. Highlights the use of built-in decorators and the benefit of data integrity."
+  },
+  "theme.homepage.feature.typeSafe.title": {
+    "message": "型安全性と拡張性",
+    "description": "Title for the 'Type-Safe & Extensible' feature on the homepage."
+  },
+  "theme.homepage.feature.typeSafe.description": {
+    "message": "TypeScriptベースで開発されており、完全な型安全性を提供します。カスタムデコレータやトランスフォーマーを通じてライブラリを自由に拡張できます。",
+    "description": "Description of the library's type safety and extensibility. Mentions TypeScript and custom decorators/transformers."
+  }
+}
