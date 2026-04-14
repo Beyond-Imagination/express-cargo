@@ -185,6 +185,12 @@ Valide que le champ décoré est une URL valide. Par défaut, les protocoles `ht
   - **`protocols`** : Un tableau des protocoles autorisés. Par défaut : `['http', 'https', 'ftp']`.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+### `@IsTimeZone(message?: string)`
+
+Valide que le champ décoré est un identifiant de fuseau horaire IANA valide (ex. : `Asia/Seoul`, `America/New_York`, `UTC`). Utilise l'API `Intl` intégrée — aucune dépendance externe requise.
+
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
 ### `@IsHexColor(message?: string)`
 
 Valide que le champ décoré est un code couleur hexadécimal valide. Prend en charge les formats `#RGB`, `#RGBA`, `#RRGGBB` et `#RRGGBBAA` (insensible à la casse). Le préfixe `#` est obligatoire.

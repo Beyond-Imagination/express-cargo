@@ -28,6 +28,7 @@ import {
     IsJwt,
     IsUrl,
     IsHexColor,
+    IsTimeZone,
     IsHexadecimal,
     IsHash,
     MinDate,
@@ -334,6 +335,17 @@ class IsUrlExample {
 
 router.post('/is-url', bindingCargo(IsUrlExample), (req, res) => {
     const cargo = getCargo<IsUrlExample>(req)
+    res.json(cargo)
+})
+
+class IsTimeZoneExample {
+    @Body()
+    @IsTimeZone()
+    timezone!: string
+}
+
+router.post('/is-timezone', bindingCargo(IsTimeZoneExample), (req, res) => {
+    const cargo = getCargo<IsTimeZoneExample>(req)
     res.json(cargo)
 })
 

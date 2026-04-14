@@ -185,6 +185,12 @@ Validiert, dass das dekorierte Feld eine gültige URL ist. Standardmäßig sind 
   - **`protocols`**: Ein Array erlaubter Protokolle. Standard: `['http', 'https', 'ftp']`.
 - **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
 
+### `@IsTimeZone(message?: string)`
+
+Validiert, dass das dekorierte Feld ein gültiger IANA-Zeitzonenbezeichner ist (z. B. `Asia/Seoul`, `America/New_York`, `UTC`). Verwendet die eingebaute `Intl`-API zur Validierung — keine externen Abhängigkeiten erforderlich.
+
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+
 ### `@IsHexColor(message?: string)`
 
 Validiert, dass das dekorierte Feld ein gültiger Hex-Farbcode ist. Unterstützt die Formate `#RGB`, `#RGBA`, `#RRGGBB` und `#RRGGBBAA` (Groß-/Kleinschreibung egal). Das Präfix `#` ist erforderlich.

@@ -460,6 +460,33 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
 }
 
 /**
+ * Checks if the string is a valid IANA timezone identifier.
+ * @param message - Optional custom error message.
+ */
+export function IsTimeZone(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isTimeZone',
+                (value: unknown) => {
+                    if (typeof value !== 'string') return false
+                    try {
+                        Intl.DateTimeFormat(undefined, { timeZone: value })
+                        return true
+                    } catch {
+                        return false
+                    }
+                },
+                message || `${String(propertyKey)} must be a valid IANA timezone`,
+            ),
+        )
+    }
+}
+
+/**
  * Checks if the string is a valid hex color code.
  * Supports #RGB, #RGBA, #RRGGBB, #RRGGBBAA formats.
  * @param message - Optional custom error message.
