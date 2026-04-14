@@ -19,6 +19,7 @@ export type ClassConstructor<T = any> = new (...args: any[]) => T
 export type validArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
 export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
+export type HashAlgorithm = 'md5' | 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'crc32' | 'crc32b'
 
 /**
  * Options for the `@IsUrl` decorator.

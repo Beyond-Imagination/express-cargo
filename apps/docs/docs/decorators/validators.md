@@ -203,6 +203,13 @@ Validates that the decorated field is a hexadecimal number. The value must conta
 
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsHash(algorithm: HashAlgorithm, message?: string)`
+
+Validates that the decorated field is a valid hash string for the given algorithm. Supported algorithms: `md5`, `sha1`, `sha256`, `sha384`, `sha512`, `crc32`, `crc32b`. The value must be a hexadecimal string with the exact length required by the algorithm.
+
+- **`algorithm`**: The hash algorithm to validate against.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@MinDate(min: Date | (() => Date), message?: string)`
 
 Validates that the decorated field is a `Date` that is on or after the given minimum date. Accepts a fixed `Date` or a function that returns a `Date` for dynamic comparison.

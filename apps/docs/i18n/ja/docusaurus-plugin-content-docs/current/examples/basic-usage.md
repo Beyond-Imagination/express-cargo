@@ -1,0 +1,1 @@
+> bindingCargo を使用した基本的な POST ハンドラ
