@@ -1,13 +1,13 @@
 import type { Request, RequestHandler } from 'express'
 
-import type { BindContext, BindSources } from './types'
+import { BindContext, BindSources, ClassConstructor } from './types'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 
-const metaCache = new Map<Function, CargoClassMetadata>()
+const metaCache = new Map<ClassConstructor, CargoClassMetadata>()
 
-function getOrCreateMeta(classConstructor: any): CargoClassMetadata {
+function getOrCreateMeta(classConstructor: ClassConstructor): CargoClassMetadata {
     let meta = metaCache.get(classConstructor)
     if (!meta) {
         meta = new CargoClassMetadata(classConstructor.prototype)
