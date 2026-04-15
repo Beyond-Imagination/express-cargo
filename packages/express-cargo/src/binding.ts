@@ -11,6 +11,7 @@ function getOrCreateMeta(classConstructor: ClassConstructor): CargoClassMetadata
     let meta = metaCache.get(classConstructor)
     if (!meta) {
         meta = new CargoClassMetadata(classConstructor.prototype)
+        meta.markBindingCargoCalled()
         metaCache.set(classConstructor, meta)
     }
     return meta
@@ -206,8 +207,6 @@ function typeCasting(
 }
 
 function bindObject(objectClass: any, metaClass: CargoClassMetadata, sources: BindSources, errors: CargoFieldError[], sourceKey: string = ''): any {
-    metaClass.markBindingCargoCalled()
-
     const targetObject = new objectClass()
     const context: BindContext = {
         metaClass,
