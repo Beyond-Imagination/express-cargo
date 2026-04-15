@@ -229,6 +229,15 @@ title: 유효성 검사 데코레이터
   - **`protocols`**: 허용할 프로토콜 배열. 기본값은 `['http', 'https', 'ftp']`.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
+### `@IsPhoneNumber(region?: CountryCode, message?: string)`
+
+데코레이터가 적용된 필드가 유효한 전화번호인지 검증합니다. [libphonenumber-js](https://github.com/catamphetamine/libphonenumber-js)를 사용해 전 세계 모든 국가의 번호를 정확하게 검증합니다.
+
+지역 코드를 지정하면 국가 코드 없는 로컬 형식도 허용됩니다. 지역 코드를 생략하면 국가 코드 포함(예: `+82`) 국제 형식이어야 합니다. `+`로 시작하는 번호는 region 파라미터와 무관하게 번호 자체의 국가 코드로 검증됩니다.
+
+- **`region`** (선택 사항): ISO 3166-1 alpha-2 지역 코드(예: `'KR'`, `'US'`). 생략하면 국제 형식이 요구됩니다.
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
 ### `@IsTimeZone(message?: string)`
 
 데코레이터가 적용된 필드가 유효한 IANA 타임존 식별자인지 검증합니다(예: `Asia/Seoul`, `America/New_York`, `UTC`). 내장 `Intl` API를 사용하여 검증하므로 외부 의존성이 필요 없습니다.
