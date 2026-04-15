@@ -475,7 +475,7 @@ export function IsPhoneNumber(region?: CountryCode, message?: cargoErrorMessage)
                 propertyKey,
                 'isPhoneNumber',
                 (value: unknown) => typeof value === 'string' && isValidPhoneNumber(value, region),
-                message || `${String(propertyKey)} must be a valid phone number`,
+                message || `${String(propertyKey)} must be a valid phone number${region ? ` for ${region}` : ''}`,
             ),
         )
     }

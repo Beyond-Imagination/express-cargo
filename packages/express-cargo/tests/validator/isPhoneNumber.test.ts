@@ -42,6 +42,10 @@ describe('isPhoneNumber decorator', () => {
             .getValidators()
             ?.find(v => v.type === 'isPhoneNumber')
 
+        it('should have region in default message', () => {
+            expect(krRule?.message).toBe('phone must be a valid phone number for KR')
+        })
+
         it('should pass for valid Korean numbers', () => {
             expect(krRule!.validate('+821012345678')).toBeNull()
             expect(krRule!.validate('01012345678')).toBeNull()
