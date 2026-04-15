@@ -27,6 +27,7 @@ import {
     IsLowercase,
     IsJwt,
     IsUrl,
+    IsPhoneNumber,
     IsHexColor,
     IsTimeZone,
     IsHexadecimal,
@@ -335,6 +336,17 @@ class IsUrlExample {
 
 router.post('/is-url', bindingCargo(IsUrlExample), (req, res) => {
     const cargo = getCargo<IsUrlExample>(req)
+    res.json(cargo)
+})
+
+class IsPhoneNumberExample {
+    @Body()
+    @IsPhoneNumber('KR')
+    phone!: string
+}
+
+router.post('/is-phone-number', bindingCargo(IsPhoneNumberExample), (req, res) => {
+    const cargo = getCargo<IsPhoneNumberExample>(req)
     res.json(cargo)
 })
 

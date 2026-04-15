@@ -1,6 +1,7 @@
 import { ArrayComparator, cargoErrorMessage, EachValidatorRule, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
 import { CargoClassMetadata } from './metadata'
 import { isDeepEqual } from './utils'
+import { isValidPhoneNumber, CountryCode } from 'libphonenumber-js'
 
 function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
     const classMeta = new CargoClassMetadata(target)
@@ -454,6 +455,27 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
                 'isJwt',
                 (value: unknown) => typeof value === 'string' && JWT_PATTERN.test(value),
                 message || `${String(propertyKey)} should be a valid JWT`,
+            ),
+        )
+    }
+}
+
+/**
+ * Checks if the string is a valid phone number for the given region.
+ * If no region is provided, validates as an international number (must include country code).
+ * @param region - Optional ISO 3166-1 alpha-2 region code (e.g., 'KR', 'US').
+ * @param message - Optional custom error message.
+ */
+export function IsPhoneNumber(region?: CountryCode, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+    return (target, propertyKey): void => {
+        addValidator(
+            target,
+            propertyKey,
+            new ValidatorRule(
+                propertyKey,
+                'isPhoneNumber',
+                (value: unknown) => typeof value === 'string' && isValidPhoneNumber(value, region),
+                message || `${String(propertyKey)} must be a valid phone number`,
             ),
         )
     }
