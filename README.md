@@ -201,7 +201,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 })
 ```
 
-> If `setCargoErrorHandler` is registered, it takes priority over the Express error middleware.
+> If `setCargoErrorHandler` is registered, it takes priority over the Express error middleware. The Express error middleware will only receive the error if `next(err)` is called inside `setCargoErrorHandler`.
 
 ## License
 
