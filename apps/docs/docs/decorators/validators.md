@@ -185,6 +185,15 @@ Validates that the decorated field is a valid URL. By default, `http`, `https`, 
   - **`protocols`**: An array of allowed protocols. Defaults to `['http', 'https', 'ftp']`.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+### `@IsPhoneNumber(region?: CountryCode, message?: string)`
+
+Validates that the decorated field is a valid phone number. Uses [libphonenumber-js](https://github.com/catamphetamine/libphonenumber-js) for accurate validation across all countries.
+
+When a region is provided, local formats (without country code) are accepted. When no region is provided, the number must include a country code (e.g., `+82`). If the number includes a `+` country code prefix, the region parameter is ignored and the number is validated against its own country code.
+
+- **`region`** (optional): ISO 3166-1 alpha-2 region code (e.g., `'KR'`, `'US'`). If omitted, the number must be in international format.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
 ### `@IsTimeZone(message?: string)`
 
 Validates that the decorated field is a valid IANA timezone identifier (e.g., `Asia/Seoul`, `America/New_York`, `UTC`). Uses the built-in `Intl` API for validation — no external dependencies required.
