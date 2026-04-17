@@ -1,21 +1,9 @@
 import type { Request, RequestHandler } from 'express'
 
-import { BindContext, BindSources, ClassConstructor } from './types'
+import { BindContext, BindSources } from './types'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
-
-const metaCache = new Map<ClassConstructor, CargoClassMetadata>()
-
-function getOrCreateMeta(classConstructor: ClassConstructor): CargoClassMetadata {
-    let meta = metaCache.get(classConstructor)
-    if (!meta) {
-        meta = new CargoClassMetadata(classConstructor.prototype)
-        meta.markBindingCargoCalled()
-        metaCache.set(classConstructor, meta)
-    }
-    return meta
-}
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
@@ -198,7 +186,8 @@ function typeCasting(
     // Recursive binding: Transform nested plain objects into class instances
     if (isClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
-        const nestedMeta = getOrCreateMeta(targetClass)
+        const nestedMeta = new CargoClassMetadata(targetClass.prototype)
+        nestedMeta.markBindingCargoCalled()
         return bindObject(targetClass, nestedMeta, nextSources, errors, getErrorKey(sourceKey, key))
     }
 
@@ -333,7 +322,8 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
  * ```
  */
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
-    const metaClass = getOrCreateMeta(cargoClass)
+    const metaClass = new CargoClassMetadata(cargoClass.prototype)
+    metaClass.markBindingCargoCalled()
 
     return (req, res, next) => {
         try {
