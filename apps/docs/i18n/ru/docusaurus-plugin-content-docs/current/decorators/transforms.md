@@ -44,8 +44,7 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
         data: searchParams,
         // Проверьте тип преобразованных данных
         sortByType: typeof searchParams.sortBy,
-        countType: typeof searchParams.count,
-        doubleCount: searchParams.count,
+        countType: typeof searchParams.count
     })
 })
 
@@ -66,10 +65,9 @@ http://localhost:3000/search?sortBy=TITLE&count=10
     "message": "Параметры поиска успешно преобразованы!", 
     "data": {
         "sortBy": "title",
-        "count": 10
+        "count": 20
     },
     "sortByType": "string",
-    "countType": "number",
-    "doubleCount": 10
+    "countType": "number"
 }
 ```

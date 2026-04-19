@@ -45,7 +45,6 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
         // Überprüfen Sie den Typ der transformierten Daten
         sortByType: typeof searchParams.sortBy,
         countType: typeof searchParams.count,
-        doubleCount: searchParams.count,
     })
 })
 
@@ -66,10 +65,9 @@ Wenn auf die Beispiel-Anfrage-URL zugegriffen wird, verarbeitet die `bindingCarg
     "message": "Suchparameter erfolgreich transformiert!", 
     "data": {
         "sortBy": "title",
-        "count": 10
+        "count": 20
     },
     "sortByType": "string",
-    "countType": "number",
-    "doubleCount": 10
+    "countType": "number"
 }
 ```
