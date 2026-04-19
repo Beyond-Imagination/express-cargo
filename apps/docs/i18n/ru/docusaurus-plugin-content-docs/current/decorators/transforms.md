@@ -44,7 +44,7 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
         data: searchParams,
         // Проверьте тип преобразованных данных
         sortByType: typeof searchParams.sortBy,
-        countType: typeof searchParams.count
+        countType: typeof searchParams.count,
     })
 })
 
