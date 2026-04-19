@@ -161,24 +161,47 @@ Full guide and API reference:
 
 ### Error Handling
 
+When validation fails, `bindingCargo` throws a `CargoValidationError` containing a list of `CargoFieldError` objects. You can handle it using `setCargoErrorHandler` (recommended) or Express's built-in error middleware.
+
+**Option 1: `setCargoErrorHandler` (Recommended)**
+
+Register a global handler once at app startup:
+
 ```ts
 import { setCargoErrorHandler, CargoValidationError } from 'express-cargo'
 
-// Custom error handler
 setCargoErrorHandler((err, req, res, next) => {
-    if (err instanceof CargoValidationError) {
-        res.status(400).json({
+    res.status(400).json({
         error: 'Validation failed',
         details: err.errors.map(e => ({
-                field: e.field,
-                message: e.name
-            }))
-        })
-    } else {
-        next(err)
-    }
+            field: e.field,
+            message: e.message,
+        })),
+    })
 })
 ```
+
+**Option 2: Express Error Middleware**
+
+```ts
+import { CargoValidationError } from 'express-cargo'
+import { Request, Response, NextFunction } from 'express'
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof CargoValidationError) {
+        return res.status(400).json({
+            error: 'Validation failed',
+            details: err.errors.map(e => ({
+                field: e.field,
+                message: e.message,
+            })),
+        })
+    }
+    next(err)
+})
+```
+
+> If `setCargoErrorHandler` is registered, it takes priority over the Express error middleware. The Express error middleware will only receive the error if `next(err)` is called inside `setCargoErrorHandler`.
 
 ## License
 
