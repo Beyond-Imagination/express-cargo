@@ -1,8 +1,14 @@
 # カスタムトランスフォーマー
 
-`@Transform` デコレーターを使用すると、Express-Cargoの組み込み型キャスティングの**後に**実行されるカスタム変換ロジックを定義できます。単純な型変換を超えた高度な入力正規化に最適です。
+`@Transform` デコレーターを使用すると、Express-Cargoの組み込み型キャスティングの**後に**実行されるカスタム変換ロジックを定義できます。型がすでに確定した値を正規化・範囲制限・サニタイズするなど、**値を洗練させる**ためのものであり、フィールドの型を変更するためのものではありません。
 
 基本的な `@Transform` の使い方は [Transformation Decorator](/decorators/transforms) ページをご覧ください。
+
+:::note `@Transform` は型ではなく値を洗練させます
+組み込み型キャスティング（`String`、`Number`、`Boolean`、`Date`、`Array`）がトランスフォーマーより先に実行されるため、関数はすでにキャストされた値を受け取り、同じ型を返す必要があります。生のリクエスト値が宣言された型と一致しない場合（例：`string[]` として宣言されたフィールドにカンマ区切り文字列が届く場合）、トランスフォーマーが実行される前に型キャスティングの段階で失敗します。
+
+生のソースと異なる形状の値を生成する必要がある場合（区切り文字で分割された文字列を配列にパース、複数の truthy 表現を boolean として受け取るなど）は、代わりに [`@Request`](/decorators/virtual) デコレーターを使用してください。組み込み型キャスティングを完全にバイパスし、`Request` オブジェクトを直接扱えます。下記の [`@Request` を使うべきケース](#when-to-use-request-instead) セクションを参照してください。
+:::
 
 ## 実行順序
 
@@ -16,36 +22,6 @@
 つまり、トランスフォーマー関数は生の文字列ではなく、型キャスティング済みの値を受け取ります。
 
 ## 実用レシピ
-
-### カンマ区切り文字列を配列に変換
-
-クエリパラメータは常に文字列です。APIがカンマ区切りリスト（例：`?tags=a,b,c`）を受け付ける場合、配列に分割できます：
-
-```typescript
-class SearchRequest {
-    @Query()
-    @Transform((value: string) => value.split(',').map(v => v.trim()))
-    tags!: string[]
-}
-
-// GET /search?tags=node,express,cargo
-// 結果: { tags: ['node', 'express', 'cargo'] }
-```
-
-### Boolean風文字列のキャスティング
-
-Express-Cargoは `"true"` を `true` に自動キャストしますが、`"yes"`、`"1"`、`"on"` などの他のtruthy値を処理する必要がある場合があります：
-
-```typescript
-class FilterRequest {
-    @Query()
-    @Transform((value: string) => ['true', 'yes', '1', 'on'].includes(String(value).toLowerCase()))
-    active!: boolean
-}
-
-// GET /filter?active=yes → { active: true }
-// GET /filter?active=0   → { active: false }
-```
 
 ### Enumの正規化
 
@@ -147,3 +123,36 @@ class Request {
 }
 ```
 :::
+
+## `@Request` を使うべきケース {#when-to-use-request-instead}
+
+リクエスト値を単に洗練するのではなく、**別の型に再構成**する必要がある場合、`@Transform` は適切ではありません。組み込み型キャスティングが先に実行され、トランスフォーマーに到達する前に失敗するか、期待と異なる値に強制変換されてしまうためです。このような場合は、[`@Request`](/decorators/virtual) を使って型キャスティングをバイパスし、`Request` オブジェクトを直接扱ってください。
+
+### カンマ区切り文字列を配列に
+
+```typescript
+class SearchRequest {
+    @Request(req => String(req.query.tags ?? '').split(',').map(v => v.trim()))
+    tags!: string[]
+}
+
+// GET /search?tags=node,express,cargo
+// 結果: { tags: ['node', 'express', 'cargo'] }
+```
+
+### 柔軟な boolean パース
+
+`"true"` だけでなく `"yes"`、`"1"`、`"on"` など複数の truthy 表現を許可します：
+
+```typescript
+class FilterRequest {
+    @Request(req => {
+        const raw = String(req.query.active ?? '').toLowerCase()
+        return ['true', 'yes', '1', 'on'].includes(raw)
+    })
+    active!: boolean
+}
+
+// GET /filter?active=yes → { active: true }
+// GET /filter?active=0   → { active: false }
+```

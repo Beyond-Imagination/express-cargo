@@ -1,8 +1,14 @@
 # Custom Transformer
 
-The `@Transform` decorator lets you define custom transformation logic that runs **after** Express-Cargo's built-in type casting. This makes it ideal for advanced input normalization that goes beyond simple type conversion.
+The `@Transform` decorator lets you define custom transformation logic that runs **after** Express-Cargo's built-in type casting. It is designed to **refine values** — normalizing, clamping, or sanitizing a value whose type has already been settled — not to change the field's type.
 
 For basic `@Transform` usage, see the [Transformation Decorator](/decorators/transforms) page.
+
+:::note `@Transform` refines values, not types
+Because built-in type casting (`String`, `Number`, `Boolean`, `Date`, `Array`) runs before the transformer, your function receives the already-casted value and should return the same type. If the raw request value doesn't match the declared type (for example, a comma-separated string arriving on a field declared as `string[]`), type casting will fail before your transformer ever runs.
+
+When you need to produce a value of a different shape than the raw source — parsing a delimited string into an array, accepting multiple truthy spellings for a boolean, and so on — use the [`@Request`](/decorators/virtual) decorator instead. It bypasses built-in type casting entirely and hands you the `Request` object directly. See the [When to use `@Request` instead](#when-to-use-request-instead) section below.
+:::
 
 ## Execution Order
 
@@ -16,36 +22,6 @@ Understanding when `@Transform` runs is important:
 This means your transformer function receives the type-casted value, not the raw string.
 
 ## Practical Recipes
-
-### Comma-Separated String to Array
-
-Query parameters are always strings. If your API accepts a comma-separated list (e.g., `?tags=a,b,c`), you can split it into an array:
-
-```typescript
-class SearchRequest {
-    @Query()
-    @Transform((value: string) => value.split(',').map(v => v.trim()))
-    tags!: string[]
-}
-
-// GET /search?tags=node,express,cargo
-// Result: { tags: ['node', 'express', 'cargo'] }
-```
-
-### Boolean-Like String Casting
-
-While Express-Cargo casts `"true"` to `true` automatically, you may need to handle other truthy values like `"yes"`, `"1"`, or `"on"`:
-
-```typescript
-class FilterRequest {
-    @Query()
-    @Transform((value: string) => ['true', 'yes', '1', 'on'].includes(String(value).toLowerCase()))
-    active!: boolean
-}
-
-// GET /filter?active=yes → { active: true }
-// GET /filter?active=0   → { active: false }
-```
 
 ### Enum Normalization
 
@@ -147,3 +123,36 @@ class Request {
 }
 ```
 :::
+
+## When to use `@Request` instead
+
+When the request value needs to be reshaped into a different type — not just refined — `@Transform` is the wrong tool, because built-in type casting runs first and will either fail or coerce the value away from what you expected. Use [`@Request`](/decorators/virtual) to bypass type casting and work with the `Request` object directly.
+
+### Comma-separated string to array
+
+```typescript
+class SearchRequest {
+    @Request(req => String(req.query.tags ?? '').split(',').map(v => v.trim()))
+    tags!: string[]
+}
+
+// GET /search?tags=node,express,cargo
+// Result: { tags: ['node', 'express', 'cargo'] }
+```
+
+### Flexible boolean parsing
+
+Accept multiple truthy spellings such as `"yes"`, `"1"`, or `"on"` rather than only `"true"`:
+
+```typescript
+class FilterRequest {
+    @Request(req => {
+        const raw = String(req.query.active ?? '').toLowerCase()
+        return ['true', 'yes', '1', 'on'].includes(raw)
+    })
+    active!: boolean
+}
+
+// GET /filter?active=yes → { active: true }
+// GET /filter?active=0   → { active: false }
+```

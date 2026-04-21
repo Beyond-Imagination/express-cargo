@@ -1,8 +1,14 @@
 # Benutzerdefinierter Transformer
 
-Mit dem `@Transform`-Dekorator können Sie benutzerdefinierte Transformationslogik definieren, die **nach** dem integrierten Type-Casting von Express-Cargo ausgeführt wird. Dies ist ideal für fortgeschrittene Eingabenormalisierung, die über einfache Typkonvertierung hinausgeht.
+Mit dem `@Transform`-Dekorator können Sie benutzerdefinierte Transformationslogik definieren, die **nach** dem integrierten Type-Casting von Express-Cargo ausgeführt wird. Er ist darauf ausgelegt, **Werte zu verfeinern** — einen bereits typisierten Wert zu normalisieren, zu begrenzen oder zu bereinigen — und nicht dazu, den Typ des Feldes zu ändern.
 
 Grundlegende Informationen zur Verwendung von `@Transform` finden Sie auf der Seite [Transformation Decorator](/decorators/transforms).
+
+:::note `@Transform` verfeinert Werte, nicht Typen
+Da das integrierte Type-Casting (`String`, `Number`, `Boolean`, `Date`, `Array`) vor dem Transformer läuft, erhält Ihre Funktion den bereits gecasteten Wert und sollte denselben Typ zurückgeben. Wenn der rohe Request-Wert nicht zum deklarierten Typ passt (z.B. ein kommagetrennter String auf einem als `string[]` deklarierten Feld), schlägt das Type-Casting fehl, bevor Ihr Transformer überhaupt ausgeführt wird.
+
+Wenn Sie einen Wert in einer anderen Form als der Rohquelle erzeugen müssen — einen begrenzerbasierten String in ein Array parsen, mehrere truthy-Schreibweisen für einen Boolean akzeptieren usw. — verwenden Sie stattdessen den [`@Request`](/decorators/virtual)-Dekorator. Er umgeht das integrierte Type-Casting vollständig und übergibt Ihnen das `Request`-Objekt direkt. Siehe den Abschnitt [Wann stattdessen `@Request` verwenden](#when-to-use-request-instead) weiter unten.
+:::
 
 ## Ausführungsreihenfolge
 
@@ -16,36 +22,6 @@ Es ist wichtig zu verstehen, wann `@Transform` ausgeführt wird:
 Das bedeutet, dass Ihre Transformer-Funktion den typgecasteten Wert erhält, nicht den rohen String.
 
 ## Praktische Rezepte
-
-### Kommagetrennte Zeichenkette in Array umwandeln
-
-Query-Parameter sind immer Strings. Wenn Ihre API eine kommagetrennte Liste akzeptiert (z.B. `?tags=a,b,c`), können Sie diese in ein Array aufteilen:
-
-```typescript
-class SearchRequest {
-    @Query()
-    @Transform((value: string) => value.split(',').map(v => v.trim()))
-    tags!: string[]
-}
-
-// GET /search?tags=node,express,cargo
-// Ergebnis: { tags: ['node', 'express', 'cargo'] }
-```
-
-### Boolean-ähnliche String-Konvertierung
-
-Express-Cargo castet `"true"` automatisch zu `true`, aber Sie müssen möglicherweise andere truthy Werte wie `"yes"`, `"1"` oder `"on"` verarbeiten:
-
-```typescript
-class FilterRequest {
-    @Query()
-    @Transform((value: string) => ['true', 'yes', '1', 'on'].includes(String(value).toLowerCase()))
-    active!: boolean
-}
-
-// GET /filter?active=yes → { active: true }
-// GET /filter?active=0   → { active: false }
-```
 
 ### Enum-Normalisierung
 
@@ -147,3 +123,36 @@ class Request {
 }
 ```
 :::
+
+## Wann stattdessen `@Request` verwenden {#when-to-use-request-instead}
+
+Wenn der Anfragewert nicht nur verfeinert, sondern **in einen anderen Typ umgeformt** werden muss, ist `@Transform` das falsche Werkzeug, weil das integrierte Type-Casting zuerst läuft und den Wert entweder fehlschlagen lässt oder von Ihrer Erwartung wegzwingt. Verwenden Sie [`@Request`](/decorators/virtual), um das Type-Casting zu umgehen und direkt mit dem `Request`-Objekt zu arbeiten.
+
+### Kommagetrennter String zu Array
+
+```typescript
+class SearchRequest {
+    @Request(req => String(req.query.tags ?? '').split(',').map(v => v.trim()))
+    tags!: string[]
+}
+
+// GET /search?tags=node,express,cargo
+// Ergebnis: { tags: ['node', 'express', 'cargo'] }
+```
+
+### Flexibles Boolean-Parsing
+
+Mehrere truthy-Schreibweisen wie `"yes"`, `"1"` oder `"on"` akzeptieren, nicht nur `"true"`:
+
+```typescript
+class FilterRequest {
+    @Request(req => {
+        const raw = String(req.query.active ?? '').toLowerCase()
+        return ['true', 'yes', '1', 'on'].includes(raw)
+    })
+    active!: boolean
+}
+
+// GET /filter?active=yes → { active: true }
+// GET /filter?active=0   → { active: false }
+```

@@ -5,9 +5,15 @@ title: 커스텀 변환기
 
 # 커스텀 변환기
 
-`@Transform` 데코레이터를 사용하면 Express-Cargo의 내장 타입 캐스팅 **이후에** 실행되는 커스텀 변환 로직을 정의할 수 있습니다. 단순한 타입 변환을 넘어서는 고급 입력 정규화에 적합합니다.
+`@Transform` 데코레이터를 사용하면 Express-Cargo의 내장 타입 캐스팅 **이후에** 실행되는 커스텀 변환 로직을 정의할 수 있습니다. 타입이 이미 확정된 값을 정규화·범위 제한·정리하는 등 **값을 다듬는 용도**로 설계되었으며, 필드의 타입을 바꾸는 용도는 아닙니다.
 
 기본적인 `@Transform` 사용법은 [Transformation Decorator](/decorators/transforms) 페이지를 참고하세요.
+
+:::note `@Transform`은 타입이 아닌 값을 다듬습니다
+내장 타입 캐스팅(`String`, `Number`, `Boolean`, `Date`, `Array`)이 변환 함수보다 먼저 실행되기 때문에, 함수는 이미 캐스팅된 값을 받고 동일한 타입을 반환해야 합니다. 원본 요청 값이 선언된 타입과 맞지 않으면(예: `string[]`로 선언된 필드에 쉼표로 구분된 문자열이 들어오는 경우), 변환 함수가 실행되기도 전에 타입 캐스팅 단계에서 실패합니다.
+
+원본과 다른 형태의 값을 만들어내야 하는 경우(구분자로 나뉜 문자열을 배열로 파싱, 여러 truthy 표현을 boolean으로 받기 등)에는 [`@Request`](/decorators/virtual) 데코레이터를 사용하세요. 내장 타입 캐스팅을 완전히 건너뛰고 `Request` 객체에 직접 접근할 수 있습니다. 아래 [`@Request`를 사용해야 하는 경우](#when-to-use-request-instead) 섹션을 참고하세요.
+:::
 
 ## 실행 순서
 
@@ -21,36 +27,6 @@ title: 커스텀 변환기
 즉, 변환 함수는 원시 문자열이 아닌 타입 캐스팅이 완료된 값을 받습니다.
 
 ## 실용 레시피
-
-### 쉼표로 구분된 문자열을 배열로 변환
-
-쿼리 파라미터는 항상 문자열입니다. API가 쉼표로 구분된 목록(예: `?tags=a,b,c`)을 받는 경우, 배열로 분리할 수 있습니다:
-
-```typescript
-class SearchRequest {
-    @Query()
-    @Transform((value: string) => value.split(',').map(v => v.trim()))
-    tags!: string[]
-}
-
-// GET /search?tags=node,express,cargo
-// 결과: { tags: ['node', 'express', 'cargo'] }
-```
-
-### Boolean 유사 문자열 캐스팅
-
-Express-Cargo는 `"true"`를 `true`로 자동 캐스팅하지만, `"yes"`, `"1"`, `"on"` 같은 다른 truthy 값을 처리해야 할 수 있습니다:
-
-```typescript
-class FilterRequest {
-    @Query()
-    @Transform((value: string) => ['true', 'yes', '1', 'on'].includes(String(value).toLowerCase()))
-    active!: boolean
-}
-
-// GET /filter?active=yes → { active: true }
-// GET /filter?active=0   → { active: false }
-```
 
 ### Enum 정규화
 
@@ -152,3 +128,36 @@ class Request {
 }
 ```
 :::
+
+## `@Request`를 사용해야 하는 경우 {#when-to-use-request-instead}
+
+요청 값을 단순히 다듬는 것이 아니라 **다른 타입으로 재구성**해야 하는 경우에는 `@Transform`이 적절하지 않습니다. 내장 타입 캐스팅이 먼저 실행되어 변환 함수에 도달하기 전에 실패하거나 예상과 다른 값으로 변형되기 때문입니다. 이런 경우 [`@Request`](/decorators/virtual)를 사용하여 타입 캐스팅을 우회하고 `Request` 객체를 직접 다루세요.
+
+### 쉼표로 구분된 문자열을 배열로
+
+```typescript
+class SearchRequest {
+    @Request(req => String(req.query.tags ?? '').split(',').map(v => v.trim()))
+    tags!: string[]
+}
+
+// GET /search?tags=node,express,cargo
+// 결과: { tags: ['node', 'express', 'cargo'] }
+```
+
+### 유연한 boolean 파싱
+
+`"true"`뿐 아니라 `"yes"`, `"1"`, `"on"` 같은 여러 truthy 표현을 허용합니다:
+
+```typescript
+class FilterRequest {
+    @Request(req => {
+        const raw = String(req.query.active ?? '').toLowerCase()
+        return ['true', 'yes', '1', 'on'].includes(raw)
+    })
+    active!: boolean
+}
+
+// GET /filter?active=yes → { active: true }
+// GET /filter?active=0   → { active: false }
+```

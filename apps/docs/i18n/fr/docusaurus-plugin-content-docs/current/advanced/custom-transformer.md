@@ -1,8 +1,14 @@
 # Transformateur personnalisé
 
-Le décorateur `@Transform` vous permet de définir une logique de transformation personnalisée qui s'exécute **après** le casting de type intégré d'Express-Cargo. C'est idéal pour la normalisation avancée des entrées qui va au-delà de la simple conversion de type.
+Le décorateur `@Transform` vous permet de définir une logique de transformation personnalisée qui s'exécute **après** le casting de type intégré d'Express-Cargo. Il est conçu pour **affiner des valeurs** — normaliser, borner ou nettoyer une valeur dont le type est déjà fixé — et non pour changer le type du champ.
 
 Pour l'utilisation de base de `@Transform`, consultez la page [Transformation Decorator](/decorators/transforms).
+
+:::note `@Transform` affine les valeurs, pas les types
+Comme le casting de type intégré (`String`, `Number`, `Boolean`, `Date`, `Array`) s'exécute avant le transformateur, votre fonction reçoit la valeur déjà castée et doit retourner le même type. Si la valeur brute de la requête ne correspond pas au type déclaré (par exemple, une chaîne séparée par des virgules arrivant sur un champ déclaré `string[]`), le casting de type échouera avant même que votre transformateur ne s'exécute.
+
+Lorsque vous devez produire une valeur d'une forme différente de la source brute — analyser une chaîne délimitée en tableau, accepter plusieurs orthographes truthy pour un booléen, etc. — utilisez plutôt le décorateur [`@Request`](/decorators/virtual). Il contourne entièrement le casting de type intégré et vous remet directement l'objet `Request`. Voir la section [Quand utiliser `@Request` à la place](#when-to-use-request-instead) ci-dessous.
+:::
 
 ## Ordre d'exécution
 
@@ -16,36 +22,6 @@ Il est important de comprendre quand `@Transform` s'exécute :
 Cela signifie que votre fonction de transformation reçoit la valeur castée, pas la chaîne brute.
 
 ## Recettes pratiques
-
-### Chaîne séparée par des virgules vers un tableau
-
-Les paramètres de requête sont toujours des chaînes. Si votre API accepte une liste séparée par des virgules (ex : `?tags=a,b,c`), vous pouvez la diviser en tableau :
-
-```typescript
-class SearchRequest {
-    @Query()
-    @Transform((value: string) => value.split(',').map(v => v.trim()))
-    tags!: string[]
-}
-
-// GET /search?tags=node,express,cargo
-// Résultat : { tags: ['node', 'express', 'cargo'] }
-```
-
-### Casting de chaînes similaires aux booléens
-
-Express-Cargo caste automatiquement `"true"` en `true`, mais vous pourriez avoir besoin de gérer d'autres valeurs truthy comme `"yes"`, `"1"` ou `"on"` :
-
-```typescript
-class FilterRequest {
-    @Query()
-    @Transform((value: string) => ['true', 'yes', '1', 'on'].includes(String(value).toLowerCase()))
-    active!: boolean
-}
-
-// GET /filter?active=yes → { active: true }
-// GET /filter?active=0   → { active: false }
-```
 
 ### Normalisation d'Enum
 
@@ -147,3 +123,36 @@ class Request {
 }
 ```
 :::
+
+## Quand utiliser `@Request` à la place {#when-to-use-request-instead}
+
+Lorsque la valeur de la requête doit être **remodelée en un type différent** — et pas simplement affinée — `@Transform` n'est pas le bon outil, car le casting de type intégré s'exécute en premier et fera soit échouer la valeur, soit la forcera loin de ce que vous attendiez. Utilisez [`@Request`](/decorators/virtual) pour contourner le casting de type et travailler directement avec l'objet `Request`.
+
+### Chaîne séparée par des virgules vers un tableau
+
+```typescript
+class SearchRequest {
+    @Request(req => String(req.query.tags ?? '').split(',').map(v => v.trim()))
+    tags!: string[]
+}
+
+// GET /search?tags=node,express,cargo
+// Résultat : { tags: ['node', 'express', 'cargo'] }
+```
+
+### Analyse booléenne flexible
+
+Accepter plusieurs orthographes truthy telles que `"yes"`, `"1"` ou `"on"`, et pas seulement `"true"` :
+
+```typescript
+class FilterRequest {
+    @Request(req => {
+        const raw = String(req.query.active ?? '').toLowerCase()
+        return ['true', 'yes', '1', 'on'].includes(raw)
+    })
+    active!: boolean
+}
+
+// GET /filter?active=yes → { active: true }
+// GET /filter?active=0   → { active: false }
+```
