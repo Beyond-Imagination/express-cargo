@@ -2,7 +2,7 @@
 
 The `@Transform` decorator lets you define custom transformation logic that runs **after** Express-Cargo's built-in type casting. This makes it ideal for advanced input normalization that goes beyond simple type conversion.
 
-For basic `@Transform` usage, see the [Transformation Decorator](/docs/decorators/transforms) page.
+For basic `@Transform` usage, see the [Transformation Decorator](/decorators/transforms) page.
 
 ## Execution Order
 

@@ -2,7 +2,7 @@
 
 Mit dem `@Transform`-Dekorator können Sie benutzerdefinierte Transformationslogik definieren, die **nach** dem integrierten Type-Casting von Express-Cargo ausgeführt wird. Dies ist ideal für fortgeschrittene Eingabenormalisierung, die über einfache Typkonvertierung hinausgeht.
 
-Grundlegende Informationen zur Verwendung von `@Transform` finden Sie auf der Seite [Transformation Decorator](/docs/decorators/transforms).
+Grundlegende Informationen zur Verwendung von `@Transform` finden Sie auf der Seite [Transformation Decorator](/decorators/transforms).
 
 ## Ausführungsreihenfolge
 

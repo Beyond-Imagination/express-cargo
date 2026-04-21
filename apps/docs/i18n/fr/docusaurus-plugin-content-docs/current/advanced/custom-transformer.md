@@ -2,7 +2,7 @@
 
 Le décorateur `@Transform` vous permet de définir une logique de transformation personnalisée qui s'exécute **après** le casting de type intégré d'Express-Cargo. C'est idéal pour la normalisation avancée des entrées qui va au-delà de la simple conversion de type.
 
-Pour l'utilisation de base de `@Transform`, consultez la page [Transformation Decorator](/docs/decorators/transforms).
+Pour l'utilisation de base de `@Transform`, consultez la page [Transformation Decorator](/decorators/transforms).
 
 ## Ordre d'exécution
 

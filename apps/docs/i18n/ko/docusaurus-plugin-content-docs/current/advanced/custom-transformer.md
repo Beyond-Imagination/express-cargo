@@ -7,7 +7,7 @@ title: 커스텀 변환기
 
 `@Transform` 데코레이터를 사용하면 Express-Cargo의 내장 타입 캐스팅 **이후에** 실행되는 커스텀 변환 로직을 정의할 수 있습니다. 단순한 타입 변환을 넘어서는 고급 입력 정규화에 적합합니다.
 
-기본적인 `@Transform` 사용법은 [Transformation Decorator](/docs/decorators/transforms) 페이지를 참고하세요.
+기본적인 `@Transform` 사용법은 [Transformation Decorator](/decorators/transforms) 페이지를 참고하세요.
 
 ## 실행 순서
 

@@ -2,7 +2,7 @@
 
 `@Transform` デコレーターを使用すると、Express-Cargoの組み込み型キャスティングの**後に**実行されるカスタム変換ロジックを定義できます。単純な型変換を超えた高度な入力正規化に最適です。
 
-基本的な `@Transform` の使い方は [Transformation Decorator](/docs/decorators/transforms) ページをご覧ください。
+基本的な `@Transform` の使い方は [Transformation Decorator](/decorators/transforms) ページをご覧ください。
 
 ## 実行順序
 
