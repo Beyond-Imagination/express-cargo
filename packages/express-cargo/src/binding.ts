@@ -186,7 +186,7 @@ function typeCasting(
     // Recursive binding: Transform nested plain objects into class instances
     if (isClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
-        const nestedMeta = new CargoClassMetadata(targetClass.prototype)
+        const nestedMeta = new CargoClassMetadata(targetClass.prototype, true)
         return bindObject(targetClass, nestedMeta, nextSources, errors, getErrorKey(sourceKey, key))
     }
 
@@ -321,7 +321,7 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
  * ```
  */
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
-    const metaClass = new CargoClassMetadata(cargoClass.prototype)
+    const metaClass = new CargoClassMetadata(cargoClass.prototype, true)
 
     return (req, res, next) => {
         try {
