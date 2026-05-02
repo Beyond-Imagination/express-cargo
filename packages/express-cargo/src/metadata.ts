@@ -8,7 +8,6 @@ import { Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, Va
  */
 export class CargoClassMetadata {
     private target: any
-    private metadataFinalized: boolean = false
 
     constructor(target: any) {
         this.target = target
@@ -34,10 +33,6 @@ export class CargoClassMetadata {
         return `__cache__${metadataKey}`
     }
 
-    markBindingCargoCalled() {
-        this.metadataFinalized = true
-    }
-
     getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
         const metadataKey = this.getMetadataKey(propertyKey)
         return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
@@ -49,10 +44,9 @@ export class CargoClassMetadata {
     }
 
     private getFieldListByKey(metadataKey: string): (string | symbol)[] {
-        if (this.metadataFinalized) {
-            const cached = Reflect.getMetadata(this.getCacheKey(metadataKey), this.target)
-            if (cached) return cached
-        }
+        const cacheKey = this.getCacheKey(metadataKey)
+        const cached = Reflect.getMetadata(cacheKey, this.target)
+        if (cached) return cached
 
         const fields = new Set<string | symbol>()
         let current = this.target
@@ -63,11 +57,7 @@ export class CargoClassMetadata {
         }
 
         const fieldList = Array.from(fields)
-
-        // flag가 true일 때만 캐싱
-        if (this.metadataFinalized) {
-            Reflect.defineMetadata(this.getCacheKey(metadataKey), fieldList, this.target)
-        }
+        Reflect.defineMetadata(cacheKey, fieldList, this.target)
 
         return fieldList
     }
@@ -76,10 +66,7 @@ export class CargoClassMetadata {
         const existing = this.getFieldListByKey(metadataKey)
         if (!existing.includes(propertyKey)) {
             Reflect.defineMetadata(metadataKey, [...existing, propertyKey], this.target)
-
-            if (this.metadataFinalized) {
-                Reflect.deleteMetadata(this.getCacheKey(metadataKey), this.target)
-            }
+            Reflect.deleteMetadata(this.getCacheKey(metadataKey), this.target)
         }
     }
 
