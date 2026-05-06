@@ -50,7 +50,6 @@ app.get('/search', bindingCargo(SearchRequest), (req: Request, res: Response) =>
         // 변환된 데이터와 그 타입 확인
         sortByType: typeof searchParams.sortBy,
         countType: typeof searchParams.count,
-        doubleCount: searchParams.count,
     })
 })
 
@@ -71,10 +70,9 @@ http://localhost:3000/search?sortBy=TITLE&count=10
     "message": "Search parameters transformed successfully!",
     "data": {
         "sortBy": "title",
-        "count": 10
+        "count": 20
     },
     "sortByType": "string",
-    "countType": "number",
-    "doubleCount": 10
+    "countType": "number"
 }
 ```

@@ -1,0 +1,22 @@
+{
+    "version.label": {
+        "message": "Siguiente",
+        "description": "The label for version current"
+    },
+    "sidebar.docs.category.Getting Started": {
+        "message": "Primeros pasos",
+        "description": "The label for category Getting Started in sidebar docs"
+    },
+    "sidebar.docs.category.Core Concepts": {
+        "message": "Conceptos principales",
+        "description": "The label for category Core Concepts in sidebar docs"
+    },
+    "sidebar.docs.category.Advanced Usage": {
+        "message": "Uso avanzado",
+        "description": "The label for category Advanced Usage in sidebar docs"
+    },
+    "sidebar.docs.category.Examples": {
+        "message": "Ejemplos",
+        "description": "The label for category Examples in sidebar docs"
+    }
+}

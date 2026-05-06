@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express'
 
-import type { BindContext, BindSources } from './types'
+import { BindContext, BindSources } from './types'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
@@ -186,18 +186,16 @@ function typeCasting(
     // Recursive binding: Transform nested plain objects into class instances
     if (isClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
-        return bindObject(targetClass, nextSources, errors, getErrorKey(sourceKey, key))
+        const nestedMeta = new CargoClassMetadata(targetClass.prototype)
+        nestedMeta.markBindingCargoCalled()
+        return bindObject(targetClass, nestedMeta, nextSources, errors, getErrorKey(sourceKey, key))
     }
 
     // Fallback: Return raw value if no further transformation is possible
     return value
 }
 
-function bindObject(objectClass: any, sources: BindSources, errors: CargoFieldError[], sourceKey: string = ''): any {
-    const metaClass = new CargoClassMetadata(objectClass.prototype)
-
-    metaClass.markBindingCargoCalled()
-
+function bindObject(objectClass: any, metaClass: CargoClassMetadata, sources: BindSources, errors: CargoFieldError[], sourceKey: string = ''): any {
     const targetObject = new objectClass()
     const context: BindContext = {
         metaClass,
@@ -324,6 +322,9 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
  * ```
  */
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
+    const metaClass = new CargoClassMetadata(cargoClass.prototype)
+    metaClass.markBindingCargoCalled()
+
     return (req, res, next) => {
         try {
             const errors: CargoFieldError[] = []
@@ -335,7 +336,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 header: req.headers,
                 session: (req as any).session,
             }
-            const cargo = bindObject(cargoClass, sources, errors)
+            const cargo = bindObject(cargoClass, metaClass, sources, errors)
 
             if (errors.length > 0) {
                 throw new CargoValidationError(errors)
