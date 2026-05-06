@@ -39,7 +39,9 @@ describe('binding with class inheritance', () => {
         const parentReq = makeMockReq({
             body: { parentField: 'parent-value' },
         })
-        parentMiddleware(parentReq, makeMockRes(), makeNext())
+        const parentNext = makeNext()
+        parentMiddleware(parentReq, makeMockRes(), parentNext)
+        expect(parentNext).toHaveBeenCalledWith()
 
         const childMiddleware = bindingCargo(Child)
         const childReq = makeMockReq({
@@ -133,7 +135,7 @@ describe('binding with class inheritance', () => {
 
         const err = next.mock.calls[0][0]
         expect(err).toBeInstanceOf(CargoValidationError)
-        expect(err.errors.some((e: CargoValidationError['errors'][number]) => e.message.includes('score'))).toBe(true)
+        expect(err.errors.some((e: any) => e.field === 'score')).toBe(true)
     })
 
     it('should respect parent field source when binding through child', () => {
