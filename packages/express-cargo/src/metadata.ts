@@ -44,7 +44,7 @@ export class CargoClassMetadata {
 
     private getFieldListByKey(metadataKey: string): (string | symbol)[] {
         if (this.cacheable) {
-            const cached = Reflect.getMetadata(this.getCacheKey(metadataKey), this.target)
+            const cached = Reflect.getOwnMetadata(this.getCacheKey(metadataKey), this.target)
             if (cached) return cached
         }
 
