@@ -7,12 +7,10 @@ import { Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, Va
  * Handles field registration, retrieval, and caching of metadata.
  */
 export class CargoClassMetadata {
-    private target: any
-    private metadataFinalized: boolean = false
-
-    constructor(target: any) {
-        this.target = target
-    }
+    constructor(
+        private target: any,
+        private cacheable: boolean = false,
+    ) {}
 
     getMetadataKey(propertyKey: string | symbol): string {
         return `cargo:${String(propertyKey)}`
@@ -34,10 +32,6 @@ export class CargoClassMetadata {
         return `__cache__${metadataKey}`
     }
 
-    markBindingCargoCalled() {
-        this.metadataFinalized = true
-    }
-
     getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
         const metadataKey = this.getMetadataKey(propertyKey)
         return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
@@ -49,7 +43,7 @@ export class CargoClassMetadata {
     }
 
     private getFieldListByKey(metadataKey: string): (string | symbol)[] {
-        if (this.metadataFinalized) {
+        if (this.cacheable) {
             const cached = Reflect.getOwnMetadata(this.getCacheKey(metadataKey), this.target)
             if (cached) return cached
         }
@@ -65,7 +59,7 @@ export class CargoClassMetadata {
         const fieldList = Array.from(fields)
 
         // flag가 true일 때만 캐싱
-        if (this.metadataFinalized) {
+        if (this.cacheable) {
             Reflect.defineMetadata(this.getCacheKey(metadataKey), fieldList, this.target)
         }
 
@@ -77,7 +71,7 @@ export class CargoClassMetadata {
         if (!existing.includes(propertyKey)) {
             Reflect.defineMetadata(metadataKey, [...existing, propertyKey], this.target)
 
-            if (this.metadataFinalized) {
+            if (this.cacheable) {
                 Reflect.deleteMetadata(this.getCacheKey(metadataKey), this.target)
             }
         }
