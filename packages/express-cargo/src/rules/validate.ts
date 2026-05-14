@@ -6,10 +6,11 @@ import { CargoSchemaError } from './errors'
 import { RuleContext, RuleViolation } from './types'
 
 // `Object` is included because reflect-metadata falls back to it for unresolvable
-// design:type entries — pushing it onto the validation queue is pure waste.
-const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object])
+// design:type entries; `Array` guards against a malformed `@List(Array)`.
+// Both pass the isClass heuristic but should never be descended into.
+const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
 
-/** A value is safe to push onto the validation queue only if it's a class (heuristic) and not a primitive constructor. */
+/** A value is safe to traverse during schema validation only if it's a class (heuristic) and not a primitive constructor. */
 function isValidatableClass(value: unknown): value is ClassConstructor {
     return isClass(value) && !PRIMITIVE_TYPES.has(value)
 }
@@ -84,10 +85,10 @@ export function validateCargoSchema(cargoClass: ClassConstructor): void {
 
     const violations: RuleViolation[] = []
     const visited = new Set<ClassConstructor>()
-    const queue: ClassConstructor[] = [cargoClass]
+    const stack: ClassConstructor[] = [cargoClass]
 
-    while (queue.length > 0) {
-        const currentClass = queue.shift() as ClassConstructor
+    while (stack.length > 0) {
+        const currentClass = stack.pop() as ClassConstructor
         if (visited.has(currentClass) || VALIDATED.has(currentClass)) continue
         visited.add(currentClass)
 
@@ -99,7 +100,7 @@ export function validateCargoSchema(cargoClass: ClassConstructor): void {
         }
 
         for (const nested of collectNestedClasses(classMeta)) {
-            if (!visited.has(nested) && !VALIDATED.has(nested)) queue.push(nested)
+            if (!visited.has(nested) && !VALIDATED.has(nested)) stack.push(nested)
         }
     }
 
