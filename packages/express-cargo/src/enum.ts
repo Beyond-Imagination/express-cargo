@@ -33,6 +33,7 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
 
         // 1. enum 타입 정보 저장
         fieldMeta.setEnumType(enumObj)
+        fieldMeta.pushAppliedDecorator({ name: Enum.name, category: 'type-helper' })
 
         // 2. enum validator 추가
         fieldMeta.addValidator(

@@ -181,6 +181,18 @@ export class CargoTransformFieldError extends CargoFieldError {
 
 export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T }, propertyKey: K) => void
 
+/** Top-level category that classifies what a decorator does. */
+export type DecoratorCategory = 'source' | 'request' | 'virtual' | 'transform' | 'missing-handler' | 'type-helper' | 'validator'
+
+/** Whether a decorator tag was applied to the field itself or inside a wrapper like `@Each(...)`. */
+export type DecoratorScope = 'self' | 'each'
+
+/** Record of a single decorator application on a field. */
+export interface AppliedDecorator {
+    name: string
+    category: DecoratorCategory
+}
+
 export type BindSources = {
     req: Request
     body: any

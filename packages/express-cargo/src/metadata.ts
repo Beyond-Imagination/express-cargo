@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import { Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, ValidatorRule } from './types'
+import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, ValidatorRule } from './types'
 
 /**
  * Manages metadata for a cargo class.
@@ -28,6 +28,10 @@ export class CargoClassMetadata {
         return 'cargo:virtualFields'
     }
 
+    getAllFieldsKey(): string {
+        return 'cargo:allFields'
+    }
+
     private getCacheKey(metadataKey: string) {
         return `__cache__${metadataKey}`
     }
@@ -40,6 +44,7 @@ export class CargoClassMetadata {
     setFieldMetadata(propertyKey: string | symbol, meta: CargoFieldMetadata): void {
         const metaKey = this.getMetadataKey(propertyKey)
         Reflect.defineMetadata(metaKey, meta, this.target)
+        this.setFieldListByKey(this.getAllFieldsKey(), propertyKey)
     }
 
     private getFieldListByKey(metadataKey: string): (string | symbol)[] {
@@ -100,6 +105,10 @@ export class CargoClassMetadata {
     setVirtualFieldList(propertyKey: string | symbol): void {
         this.setFieldListByKey(this.getVirtualFieldKey(), propertyKey)
     }
+
+    getAllFieldsList(): (string | symbol)[] {
+        return this.getFieldListByKey(this.getAllFieldsKey())
+    }
 }
 
 /**
@@ -121,6 +130,7 @@ export class CargoFieldMetadata {
     private enumType: object | undefined
     private typeFn: TypeThunk | TypeResolver | undefined
     private typeOptions: TypeOptions | undefined
+    private readonly decoratorTags: { scope: DecoratorScope; tag: AppliedDecorator }[]
 
     constructor(target: any, key: string | symbol) {
         this.target = target
@@ -134,6 +144,7 @@ export class CargoFieldMetadata {
         this.requestTransformer = undefined
         this.virtualTransformer = undefined
         this.enumType = undefined
+        this.decoratorTags = []
     }
 
     getKey(): string | symbol {
@@ -227,5 +238,23 @@ export class CargoFieldMetadata {
 
     getTypeOptions(): TypeOptions | undefined {
         return this.typeOptions
+    }
+
+    /**
+     * Records that a decorator has been applied to this field.
+     *
+     * Entries are accumulated (not overwritten) so that rule checkers can spot
+     * repeated applications of the same decorator.
+     *
+     * The `scope` distinguishes decorators applied directly to the field (`'self'`) from those passed as
+     * arguments to a wrapping decorator like `@Each(...)` (`'each'`); without this split,
+     * `@Body() @Each(Body())` would look like two source decorators on the same field.
+     */
+    pushAppliedDecorator(tag: AppliedDecorator, scope: DecoratorScope = 'self'): void {
+        this.decoratorTags.push({ scope, tag })
+    }
+
+    getAppliedDecorators(scope: DecoratorScope = 'self'): readonly AppliedDecorator[] {
+        return this.decoratorTags.filter(entry => entry.scope === scope).map(entry => entry.tag)
     }
 }

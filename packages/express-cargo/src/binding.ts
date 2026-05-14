@@ -4,6 +4,7 @@ import { BindContext, BindSources } from './types'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
+import { validateCargoSchema } from './rules'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
@@ -321,6 +322,10 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
  * ```
  */
 export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
+    // Fail fast on schema mistakes at route-registration time instead of on the first request.
+    // `validateCargoSchema` caches its result, so repeat calls for the same class are essentially free.
+    validateCargoSchema(cargoClass)
+
     const metaClass = new CargoClassMetadata(cargoClass.prototype, true)
 
     return (req, res, next) => {

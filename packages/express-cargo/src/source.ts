@@ -3,15 +3,18 @@ import { CargoClassMetadata } from './metadata'
 
 /**
  * Factory function to create property decorators for request data sourcing.
+ * @param source - The internal source key used at binding time.
+ * @param decoratorName - The public decorator name reported by the schema validator.
  * @internal
  */
-function createSourceDecorator(source: Source) {
+function createSourceDecorator(source: Source, decoratorName: string) {
     return (key?: string): PropertyDecorator => {
         return (target: any, propertyKey: string | symbol) => {
             const classMeta = new CargoClassMetadata(target)
             const fieldMeta = classMeta.getFieldMetadata(propertyKey)
             fieldMeta.setKey(key ?? propertyKey)
             fieldMeta.setSource(source)
+            fieldMeta.pushAppliedDecorator({ name: decoratorName, category: 'source' })
             classMeta.setFieldMetadata(propertyKey, fieldMeta)
             classMeta.setFieldList(propertyKey)
         }
@@ -32,7 +35,7 @@ function createSourceDecorator(source: Source) {
  * }
  * ```
  */
-export const Body = createSourceDecorator('body')
+export const Body = createSourceDecorator('body', 'Body')
 
 /**
  * Extracts a value from the URL query parameters.
@@ -48,7 +51,7 @@ export const Body = createSourceDecorator('body')
  * }
  * ```
  */
-export const Query = createSourceDecorator('query')
+export const Query = createSourceDecorator('query', 'Query')
 
 /**
  * Extracts a value from the URL path parameters.
@@ -61,7 +64,7 @@ export const Query = createSourceDecorator('query')
  * }
  * ```
  */
-export const Params = createSourceDecorator('params')
+export const Params = createSourceDecorator('params', 'Params')
 
 /**
  * Alias for `@Params`. Extracts a value from the URL path parameters.
@@ -79,7 +82,7 @@ export const Uri = Params
  * }
  * ```
  */
-export const Header = createSourceDecorator('header')
+export const Header = createSourceDecorator('header', 'Header')
 
 /**
  * Extracts a value from the session object.
@@ -92,4 +95,4 @@ export const Header = createSourceDecorator('header')
  * }
  * ```
  */
-export const Session = createSourceDecorator('session')
+export const Session = createSourceDecorator('session', 'Session')

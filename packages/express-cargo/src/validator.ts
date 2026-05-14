@@ -1,4 +1,13 @@
-import { ArrayComparator, cargoErrorMessage, EachValidatorRule, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion, ValidatorRule } from './types'
+import {
+    ArrayComparator,
+    cargoErrorMessage,
+    EachValidatorRule,
+    HashAlgorithm,
+    IsUrlOptions,
+    TypedPropertyDecorator,
+    UuidVersion,
+    ValidatorRule,
+} from './types'
 import { CargoClassMetadata } from './metadata'
 import { isDeepEqual } from './utils'
 import { isValidPhoneNumber, CountryCode } from 'libphonenumber-js'
@@ -909,11 +918,15 @@ export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> |
 
                 // Check if a new validator rule has been added
                 const tempMetaAfter = new CargoClassMetadata(tempClass.prototype)
-                const validatorsAfter = tempMetaAfter.getFieldMetadata(tempKey).getValidators()
+                const tempFieldAfter = tempMetaAfter.getFieldMetadata(tempKey)
+                const validatorsAfter = tempFieldAfter.getValidators()
 
                 if (validatorsAfter.length > validatorsBefore) {
                     rulesAdded = validatorsAfter.slice(validatorsBefore)
                 }
+
+                // Record any decorator tags applied by `arg` so schema-validation rule checkers can inspect what was nested inside `@Each`.
+                tempFieldAfter.getAppliedDecorators().forEach(tag => fieldMeta.pushAppliedDecorator(tag, 'each'))
             } catch (e) {
                 // Ignore errors if 'arg' is not a valid decorator
             }
@@ -930,6 +943,7 @@ export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> |
             }
         })
 
+        fieldMeta.pushAppliedDecorator({ name: Each.name, category: 'validator' })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
