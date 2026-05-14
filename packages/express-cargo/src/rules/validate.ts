@@ -5,7 +5,9 @@ import { ACTIVE_CHECKERS } from './registry'
 import { CargoSchemaError } from './errors'
 import { RuleContext, RuleViolation } from './types'
 
-const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date])
+// `Object` is included because reflect-metadata falls back to it for unresolvable
+// design:type entries — pushing it onto the validation queue is pure waste.
+const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object])
 
 /** A value is safe to push onto the validation queue only if it's a class (heuristic) and not a primitive constructor. */
 function isValidatableClass(value: unknown): value is ClassConstructor {
@@ -86,7 +88,7 @@ export function validateCargoSchema(cargoClass: ClassConstructor): void {
 
     while (queue.length > 0) {
         const currentClass = queue.shift() as ClassConstructor
-        if (visited.has(currentClass)) continue
+        if (visited.has(currentClass) || VALIDATED.has(currentClass)) continue
         visited.add(currentClass)
 
         const classMeta = new CargoClassMetadata(currentClass.prototype, true)
@@ -97,7 +99,7 @@ export function validateCargoSchema(cargoClass: ClassConstructor): void {
         }
 
         for (const nested of collectNestedClasses(classMeta)) {
-            if (!visited.has(nested)) queue.push(nested)
+            if (!visited.has(nested) && !VALIDATED.has(nested)) queue.push(nested)
         }
     }
 
@@ -105,5 +107,9 @@ export function validateCargoSchema(cargoClass: ClassConstructor): void {
         throw new CargoSchemaError(cargoClass, violations)
     }
 
-    VALIDATED.add(cargoClass)
+    // Only on a fully-clean round do we mark classes as validated.
+    // Marking incrementally would let a child with violations be cached as "OK" if its parent happened to finish first.
+    for (const cls of visited) {
+        VALIDATED.add(cls)
+    }
 }
