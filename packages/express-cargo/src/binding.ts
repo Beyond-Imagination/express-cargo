@@ -5,6 +5,7 @@ import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
 import { validateCargoSchema } from './rules'
+import { isClass } from './utils'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
@@ -79,25 +80,6 @@ function transformSource(
     if (transformer) {
         targetObject[property] = transformer(targetObject[property])
     }
-}
-
-/**
- * Determines if a given function is a class constructor.
- * This is a heuristic check to support various transpilation environments (ES6+, Babel, etc.).
- */
-function isClass(fn: any): boolean {
-    if (typeof fn !== 'function') return false
-
-    // Standard ES6 class declaration starts with 'class '
-    if (fn.toString().startsWith('class ')) return true
-
-    // Arrow functions and bound functions may not have a prototype
-    if (!fn.prototype) return false
-
-    // Heuristic: PascalCase naming and a valid constructor link usually indicate a class
-    const hasPrototype = fn.prototype && fn.prototype.constructor === fn
-    const isPascalCase = fn.name && /^[A-Z]/.test(fn.name)
-    return isPascalCase && hasPrototype
 }
 
 /**
