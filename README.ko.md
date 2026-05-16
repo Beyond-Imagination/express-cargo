@@ -151,6 +151,49 @@ app.listen(3000)
 | `@Request(transformer)`   | Express Request 객체에서 값 추출 | `@Request(req => req.ip) clientIp!: string`                             |
 | `@Virtual(transformer)`   | 다른 필드들을 기반으로 값 계산         | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
+### 바인딩 순서와 우선순위
+
+`bindingCargo()`는 각 request object를 정해진 순서대로 채웁니다. 필드에 transformer가 있거나 계산 필드가 다른 필드에 의존할 때 이 순서가 중요합니다.
+
+1. `@Request()` 필드가 먼저 실행됩니다. raw Express `Request` 객체를 받고, source 조회와 기본 타입 캐스팅을 건너뜁니다.
+2. Source 데코레이터가 다음에 실행됩니다: `@Body()`, `@Query()`, `@Params()`, `@Uri()`, `@Header()`, `@Session()`.
+   선택된 request source에서 값을 읽고, 선언된 property 타입으로 캐스팅한 뒤, `@Transform()`이 있으면 실행하고, 그 다음 검증합니다.
+3. `@Virtual()` 필드는 마지막에 실행됩니다. request field와 source field가 바인딩된 뒤의 request object를 받습니다.
+
+```ts
+class OrderRequest {
+    @Body()
+    price!: number
+
+    @Body()
+    quantity!: number
+
+    @Virtual((order: OrderRequest) => order.price * order.quantity)
+    total!: number
+}
+```
+
+이 예시에서는 `price`와 `quantity`가 먼저 바인딩되고, 그 다음 `total`이 계산됩니다.
+
+같은 property에 데코레이터를 함께 사용할 때는 아래 규칙을 따릅니다:
+
+| 조합                                  | 결과                                                                 |
+|-------------------------------------|--------------------------------------------------------------------|
+| `@Request()` + source decorator      | `@Request()`가 우선합니다. 해당 property의 source decorator는 바인딩에 사용되지 않습니다. |
+| `@Transform()` + source decorator    | Source 값이 먼저 타입 캐스팅되고, 그 다음 `@Transform()`과 validator가 실행됩니다.       |
+| `@Virtual()` + source 또는 `@Request()` | 피하는 것이 좋습니다. `@Virtual()`이 마지막에 실행되어 최종 값을 덮어쓸 수 있습니다.          |
+| 여러 source decorator                  | 피하는 것이 좋습니다. Property 하나에는 source decorator 하나만 사용하세요. fallback chain이 아닙니다. |
+
+`@Virtual()`을 source decorator나 `@Request()`와 같은 property에 섞으면, virtual 값이 필드를 덮어쓰기 전에 validation이 먼저 실행될 수 있습니다.
+
+값이 없을 때는 transform과 validation보다 먼저 아래 처리가 적용됩니다:
+
+| 데코레이터              | 값이 없을 때 동작                                                    |
+|--------------------|---------------------------------------------------------------|
+| `@Default(value)`  | 기본값을 사용하고, 해당 필드의 transform과 validation을 건너뜁니다.              |
+| `@Optional()`      | Property를 `null`로 설정하고, 해당 필드의 transform과 validation을 건너뜁니다. |
+| Default/Optional 없음 | required field 에러를 추가하고, 해당 필드의 이후 validator를 건너뜁니다.        |
+
 ### 유틸리티 데코레이터
 
 | 데코레이터                              | 설명                                                | 예시                                  |
