@@ -24,7 +24,6 @@ export type FieldRuleFn = (state: FieldState) => string | null
 
 /** A single rule violation produced by the schema validator. */
 export interface RuleViolation {
-    ruleId: string
     cargoClass: ClassConstructor
     field: string | symbol
     message: string

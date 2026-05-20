@@ -3,33 +3,33 @@ import { validateCargoSchema } from '../../src/rules'
 import { expectViolation } from './testUtils'
 
 describe('schema validation — @Each usage rules', () => {
-    it('H2: @Each 인자로 Source 데코레이터가 들어가면 거부', () => {
-        class H2Dto {
+    it('@Each 인자로 Source 데코레이터가 들어가면 거부', () => {
+        class EachWrapsSourceDto {
             @Body()
             @Each(Body())
             foo!: number[]
         }
 
-        expectViolation(() => validateCargoSchema(H2Dto), 'H2', 'foo')
+        expectViolation(() => validateCargoSchema(EachWrapsSourceDto), 'foo', '@Each cannot wrap source decorator')
     })
 
-    it('H3: @Each 인자로 Missing-Handler 데코레이터(@Optional)가 들어가면 거부', () => {
-        class H3OptionalDto {
+    it('@Each 인자로 Missing-Handler 데코레이터(@Optional)가 들어가면 거부', () => {
+        class EachWrapsOptionalDto {
             @Body()
             @Each(Optional())
             foo!: number[]
         }
 
-        expectViolation(() => validateCargoSchema(H3OptionalDto), 'H3', 'foo')
+        expectViolation(() => validateCargoSchema(EachWrapsOptionalDto), 'foo', '@Each cannot wrap missing-handler decorator')
     })
 
-    it('H3: @Each 인자로 Missing-Handler 데코레이터(@Default)가 들어가면 거부', () => {
-        class H3DefaultDto {
+    it('@Each 인자로 Missing-Handler 데코레이터(@Default)가 들어가면 거부', () => {
+        class EachWrapsDefaultDto {
             @Body()
             @Each(Default(0))
             foo!: number[]
         }
 
-        expectViolation(() => validateCargoSchema(H3DefaultDto), 'H3', 'foo')
+        expectViolation(() => validateCargoSchema(EachWrapsDefaultDto), 'foo', '@Each cannot wrap missing-handler decorator')
     })
 })

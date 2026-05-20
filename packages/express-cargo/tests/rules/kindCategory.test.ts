@@ -3,56 +3,56 @@ import { validateCargoSchema } from '../../src/rules'
 import { expectViolation } from './testUtils'
 
 describe('schema validation — kind category rules', () => {
-    it('B1: 두 Source 데코레이터 공존 시 거부', () => {
-        class B1Dto {
+    it('두 Source 데코레이터 공존 시 거부', () => {
+        class MultipleSourcesDto {
             @Body()
             @Query()
             foo!: string
         }
 
-        expectViolation(() => validateCargoSchema(B1Dto), 'B1', 'foo')
+        expectViolation(() => validateCargoSchema(MultipleSourcesDto), 'foo', 'pick a single source')
     })
 
-    it('B2: Source + @Request 공존 시 거부', () => {
-        class B2Dto {
+    it('Source + @Request 공존 시 거부', () => {
+        class SourceWithRequestDto {
             @Body()
             @Request(req => req.headers['x-foo'])
             foo!: string
         }
 
-        expectViolation(() => validateCargoSchema(B2Dto), 'B2', 'foo')
+        expectViolation(() => validateCargoSchema(SourceWithRequestDto), 'foo', 'cannot be combined with @Request')
     })
 
-    it('B3: Source + @Virtual 공존 시 거부', () => {
-        class B3Dto {
+    it('Source + @Virtual 공존 시 거부', () => {
+        class SourceWithVirtualDto {
             @Body()
             @Virtual(obj => obj.bar)
             foo!: string
         }
 
-        expectViolation(() => validateCargoSchema(B3Dto), 'B3', 'foo')
+        expectViolation(() => validateCargoSchema(SourceWithVirtualDto), 'foo', 'cannot be combined with @Virtual')
     })
 
-    it('B4: @Request + @Virtual 공존 시 거부', () => {
-        class B4Dto {
+    it('@Request + @Virtual 공존 시 거부', () => {
+        class RequestWithVirtualDto {
             @Request(req => req.ip)
             @Virtual(obj => obj.bar)
             foo!: string
         }
 
-        expectViolation(() => validateCargoSchema(B4Dto), 'B4', 'foo')
+        expectViolation(() => validateCargoSchema(RequestWithVirtualDto), 'foo', '@Request cannot be combined with @Virtual')
     })
 
-    it('B5 (top-level): kind 데코레이터 없는 필드 거부', () => {
-        class B5Dto {
+    it('top-level: kind 데코레이터 없는 필드 거부', () => {
+        class MissingKindDto {
             @Optional()
             foo!: string
         }
 
-        expectViolation(() => validateCargoSchema(B5Dto), 'B5', 'foo')
+        expectViolation(() => validateCargoSchema(MissingKindDto), 'foo', 'field must be decorated')
     })
 
-    it('B5 (nested): @Type 으로 참조된 클래스의 필드도 검증', () => {
+    it('nested: @Type 으로 참조된 클래스의 필드도 검증', () => {
         class NestedDto {
             @Optional()
             foo!: string
@@ -63,10 +63,10 @@ describe('schema validation — kind category rules', () => {
             nested!: NestedDto
         }
 
-        expectViolation(() => validateCargoSchema(OuterDto), 'B5', 'foo')
+        expectViolation(() => validateCargoSchema(OuterDto), 'foo', 'field must be decorated')
     })
 
-    it('B5 (nested via @List): 배열 요소 클래스의 필드도 검증', () => {
+    it('nested via @List: 배열 요소 클래스의 필드도 검증', () => {
         class ItemDto {
             @Optional()
             foo!: string
@@ -77,7 +77,7 @@ describe('schema validation — kind category rules', () => {
             items!: ItemDto[]
         }
 
-        expectViolation(() => validateCargoSchema(ListContainerDto), 'B5', 'foo')
+        expectViolation(() => validateCargoSchema(ListContainerDto), 'foo', 'field must be decorated')
     })
 
     it('정상 케이스: 단일 Source 데코레이터는 통과', () => {
