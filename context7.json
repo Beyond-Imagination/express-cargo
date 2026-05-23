@@ -1,4 +1,6 @@
 {
+  "url": "https://context7.com/beyond-imagination/express-cargo",
+  "public_key": "pk_yysGltaLPcaBZNGLJpTmz",
   "projectTitle": "express-cargo",
   "description": "TypeScript decorator-based Express.js middleware for class-based request parsing and validation",
   "branch": "main",
