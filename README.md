@@ -154,10 +154,12 @@ Full guide and API reference:
 
 `bindingCargo()` fills each request object in a fixed order. This matters when a field uses a transformer or when a computed field depends on other fields.
 
-1. `@Request()` fields run first. They receive the raw Express `Request` object and bypass source lookup and built-in type casting.
+#### When the Value Exists
+
+1. The `@Request()` decorator runs first. Its transformer receives the raw Express `Request` object and bypasses source lookup and built-in type casting.
 2. Source decorators run next: `@Body()`, `@Query()`, `@Params()`, `@Uri()`, `@Header()`, and `@Session()`.
    The value is read from the selected request source, type-cast to the declared property type, passed through `@Transform()` when present, and then validated.
-3. `@Virtual()` fields run last. They receive the request object after request and source fields have been bound.
+3. The `@Virtual()` decorator runs last. Its transformer receives the request object after request and source fields have been bound.
 
 ```ts
 class OrderRequest {
@@ -174,24 +176,15 @@ class OrderRequest {
 
 In this example, `price` and `quantity` are bound before `total` is computed.
 
-When decorators are combined on the same property, use these rules:
+#### When the Value Is Missing
 
-| Combination                         | Result                                                                                          |
-|-------------------------------------|-------------------------------------------------------------------------------------------------|
-| `@Request()` + source decorator      | `@Request()` wins. The source decorator is ignored for binding that property.                    |
-| `@Transform()` + source decorator    | Source value is type-cast first, then `@Transform()` runs, then validators run.                 |
-| `@Virtual()` + source or `@Request()` | Avoid this. `@Virtual()` runs last and may overwrite the final value.                           |
-| Multiple source decorators           | Avoid this. Use one source decorator per property; source decorators are not a fallback chain.   |
+When a value is `undefined` or `null`, express-cargo handles it in this order:
 
-If `@Virtual()` is mixed with a source decorator or `@Request()` on the same property, validation can run before the virtual value overwrites the field.
+1. `@Default(value)` uses the default value.
+2. `@Optional()` sets the property to `null`.
+3. If neither is present, a required-field error is added.
 
-Missing values are handled before transform and validation:
-
-| Decorator          | Missing value behavior                                                       |
-|--------------------|------------------------------------------------------------------------------|
-| `@Default(value)`  | Uses the default value and skips transform and validation for that field.     |
-| `@Optional()`      | Sets the property to `null` and skips transform and validation for that field. |
-| No default/optional | Adds a required-field error and skips later validators for that field.        |
+After a missing value is handled by one of these paths, the remaining transform and validation steps for that field are skipped.
 
 ### Utility Decorators
 
