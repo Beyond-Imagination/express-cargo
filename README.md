@@ -150,6 +150,42 @@ Full guide and API reference:
 | `@Request(transformer)`   | Extract value from Express Request object | `@Request(req => req.ip) clientIp!: string`                             |
 | `@Virtual(transformer)`   | Compute value from other fields           | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
+### Binding Order and Priority
+
+`bindingCargo()` fills each request object in a fixed order. This matters when a field uses a transformer or when a computed field depends on other fields.
+
+#### When the Value Exists
+
+1. The `@Request()` decorator runs first. Its transformer receives the raw Express `Request` object and bypasses source lookup and built-in type casting.
+2. Source decorators run next: `@Body()`, `@Query()`, `@Params()`, `@Uri()`, `@Header()`, and `@Session()`.
+   The value is read from the selected request source, type-cast to the declared property type, passed through `@Transform()` when present, and then validated.
+3. The `@Virtual()` decorator runs last. Its transformer receives the request object after request and source fields have been bound.
+
+```ts
+class OrderRequest {
+    @Body()
+    price!: number
+
+    @Body()
+    quantity!: number
+
+    @Virtual((order: OrderRequest) => order.price * order.quantity)
+    total!: number
+}
+```
+
+In this example, `price` and `quantity` are bound before `total` is computed.
+
+#### When the Value Is Missing
+
+When a value is `undefined` or `null`, express-cargo handles it in this order:
+
+1. `@Default(value)` uses the default value.
+2. `@Optional()` sets the property to `null`.
+3. If neither is present, a required-field error is added.
+
+After a missing value is handled by one of these paths, the remaining transform and validation steps for that field are skipped.
+
 ### Utility Decorators
 
 | Decorator                          | Description                                                                                                           | Example                             |

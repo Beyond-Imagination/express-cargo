@@ -151,6 +151,42 @@ app.listen(3000)
 | `@Request(transformer)`   | Express Request 객체에서 값 추출 | `@Request(req => req.ip) clientIp!: string`                             |
 | `@Virtual(transformer)`   | 다른 필드들을 기반으로 값 계산         | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
+### 바인딩 순서와 우선순위
+
+`bindingCargo()`는 각 request object를 정해진 순서대로 채웁니다. 필드에 transformer가 있거나 계산 필드가 다른 필드에 의존할 때 이 순서가 중요합니다.
+
+#### 값이 있을 때
+
+1. `@Request()` 데코레이터가 먼저 실행됩니다. raw Express `Request` 객체를 받고, source 조회와 기본 타입 캐스팅을 건너뜁니다.
+2. Source 데코레이터가 다음에 실행됩니다: `@Body()`, `@Query()`, `@Params()`, `@Uri()`, `@Header()`, `@Session()`.
+   선택된 request source에서 값을 읽고, 선언된 property 타입으로 캐스팅한 뒤, `@Transform()`이 있으면 실행하고, 그 다음 검증합니다.
+3. `@Virtual()` 데코레이터는 마지막에 실행됩니다. request field와 source field가 바인딩된 뒤의 request object를 받습니다.
+
+```ts
+class OrderRequest {
+    @Body()
+    price!: number
+
+    @Body()
+    quantity!: number
+
+    @Virtual((order: OrderRequest) => order.price * order.quantity)
+    total!: number
+}
+```
+
+이 예시에서는 `price`와 `quantity`가 먼저 바인딩되고, 그 다음 `total`이 계산됩니다.
+
+#### 값이 없을 때
+
+값이 `undefined` 또는 `null`이면 express-cargo는 아래 순서로 처리합니다:
+
+1. `@Default(value)`가 있으면 기본값을 사용합니다.
+2. `@Optional()`이 있으면 property를 `null`로 설정합니다.
+3. 둘 다 없으면 required field 에러를 추가합니다.
+
+위 값 없음 처리 경로에 들어가면 해당 필드의 남은 transform과 validation 단계는 건너뜁니다.
+
 ### 유틸리티 데코레이터
 
 | 데코레이터                              | 설명                                                | 예시                                  |
