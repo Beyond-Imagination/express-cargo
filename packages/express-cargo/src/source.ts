@@ -3,6 +3,7 @@ import { CargoClassMetadata } from './metadata'
 
 /**
  * Factory function to create property decorators for request data sourcing.
+ * @param source - The internal source key used at binding time.
  * @internal
  */
 function createSourceDecorator(source: Source) {
@@ -12,6 +13,7 @@ function createSourceDecorator(source: Source) {
             const fieldMeta = classMeta.getFieldMetadata(propertyKey)
             fieldMeta.setKey(key ?? propertyKey)
             fieldMeta.setSource(source)
+            fieldMeta.pushAppliedDecorator({ name: source, category: 'source' })
             classMeta.setFieldMetadata(propertyKey, fieldMeta)
             classMeta.setFieldList(propertyKey)
         }

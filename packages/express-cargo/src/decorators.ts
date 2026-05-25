@@ -17,6 +17,7 @@ export function Optional(): PropertyDecorator {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         fieldMeta.setOptional(true)
+        fieldMeta.pushAppliedDecorator({ name: Optional.name, category: 'missing-handler' })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
@@ -31,6 +32,7 @@ export function List(elementType: ArrayElementType): TypedPropertyDecorator<Arra
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         const actualType = typeof elementType === 'string' ? TYPE_MAP[elementType] : elementType
         fieldMeta.setArrayElementType(actualType)
+        fieldMeta.pushAppliedDecorator({ name: List.name, category: 'type-helper' })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
@@ -44,6 +46,7 @@ export function Default(value: any): PropertyDecorator {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         fieldMeta.setDefault(value)
+        fieldMeta.pushAppliedDecorator({ name: Default.name, category: 'missing-handler' })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
@@ -88,6 +91,7 @@ export function Type(typeFn: TypeThunk | TypeResolver, options?: TypeOptions): P
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
 
         fieldMeta.setTypeInfo(typeFn, options)
+        fieldMeta.pushAppliedDecorator({ name: Type.name, category: 'type-helper' })
 
         const designType = Reflect.getMetadata('design:type', target, propertyKey)
         const isArrayType = designType === Array || (typeof designType === 'function' && designType.name === 'Array')
