@@ -109,6 +109,11 @@ describe('request binding', () => {
         expect(() => getCargo<RequestDTO>(req)).toThrow(/bindingCargo/)
     })
 
+    it('_cargo가 null이어도 getCargo는 에러를 던진다', () => {
+        const req = makeMockReq({ _cargo: null } as any)
+        expect(() => getCargo<RequestDTO>(req)).toThrow(/bindingCargo/)
+    })
+
     it('required request field가 없으면 validator를 건너뛴다', () => {
         const middleware = bindingCargo(RequiredRequestDTO)
 

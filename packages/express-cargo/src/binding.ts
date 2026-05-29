@@ -350,7 +350,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
  */
 export function getCargo<T extends object>(req: Request): T {
     const cargo = req._cargo
-    if (cargo === undefined) {
+    if (cargo == null) {
         throw new Error('Cargo not found on the request. Register the bindingCargo() middleware on this route before calling getCargo().')
     }
     return cargo as T
