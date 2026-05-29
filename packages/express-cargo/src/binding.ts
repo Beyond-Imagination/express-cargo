@@ -345,8 +345,13 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
  * Retrieves the bound cargo object from the request.
  *
  * @param req - The Express Request object.
- * @returns The bound class instance, or undefined if not found.
+ * @returns The bound class instance.
+ * @throws If the binding middleware has not run for this request.
  */
-export function getCargo<T extends object>(req: Request): T | undefined {
-    return req._cargo as T
+export function getCargo<T extends object>(req: Request): T {
+    const cargo = req._cargo
+    if (cargo === undefined) {
+        throw new Error('Cargo not found on the request. Register the bindingCargo() middleware on this route before calling getCargo().')
+    }
+    return cargo as T
 }
