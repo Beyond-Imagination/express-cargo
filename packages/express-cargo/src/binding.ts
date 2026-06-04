@@ -172,8 +172,11 @@ function typeCasting(
     // Recursive binding: Transform nested plain objects into class instances
     if (isClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
-        const nestedMeta = analysis.metadataMap.get(targetClass) || new CargoClassMetadata(targetClass.prototype, true)
-        return bindObject(targetClass, nestedMeta, nextSources, errors, analysis, getErrorKey(sourceKey, key))
+        const nestedMetaFromMap = analysis.metadataMap.get(targetClass)
+        const targetAnalysis = nestedMetaFromMap ? analysis : analyzeCargoSchema(targetClass)
+        const nestedMeta = nestedMetaFromMap || targetAnalysis.rootMeta
+
+        return bindObject(targetClass, nestedMeta, nextSources, errors, targetAnalysis, getErrorKey(sourceKey, key))
     }
 
     // Fallback: Return raw value if no further transformation is possible
