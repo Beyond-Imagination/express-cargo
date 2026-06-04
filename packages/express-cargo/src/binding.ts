@@ -173,7 +173,11 @@ function typeCasting(
     if (isClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
         const nestedMetaFromMap = analysis.metadataMap.get(targetClass)
-        const targetAnalysis = nestedMetaFromMap ? analysis : analyzeCargoSchema(targetClass)
+        let targetAnalysis = analysis
+        if (!nestedMetaFromMap) {
+            targetAnalysis = analyzeCargoSchema(targetClass)
+            validateAnalysis(targetAnalysis)
+        }
         const nestedMeta = nestedMetaFromMap || targetAnalysis.rootMeta
 
         return bindObject(targetClass, nestedMeta, nextSources, errors, targetAnalysis, getErrorKey(sourceKey, key))

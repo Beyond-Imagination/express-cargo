@@ -27,7 +27,7 @@ function collectNestedClasses(classMeta: CargoClassMetadata): ClassConstructor[]
             // (ES6 class can't be invoked without `new`), so handle it before the Thunk path.
             if (isValidatableClass(typeFn)) {
                 nested.push(typeFn)
-            } else {
+            } else if (typeFn.length === 0) {
                 // @Type(() => Foo) — Thunk form. Resolver form (`(data) => Foo`) can't be
                 // evaluated statically and will throw on the no-arg call; we catch and skip.
                 try {
