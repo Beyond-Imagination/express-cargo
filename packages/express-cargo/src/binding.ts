@@ -170,7 +170,7 @@ function typeCasting(
     }
 
     // Recursive binding: Transform nested plain objects into class instances
-    if (isClass(targetClass) && typeof value === 'object' && value !== null) {
+    if (isClass(targetClass) && targetClass !== Object && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
         const nestedMetaFromMap = analysis.metadataMap.get(targetClass)
         let targetAnalysis = analysis
