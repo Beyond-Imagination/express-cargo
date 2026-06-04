@@ -1,11 +1,12 @@
 import type { Request, RequestHandler } from 'express'
 
-import { BindContext, BindSources } from './types'
+import { AnalysisResult, BindContext, BindSources, ClassConstructor } from './types'
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
-import { validateCargoSchema } from './rules'
+import { validateAnalysis } from './rules/validate'
 import { isClass } from './utils'
+import { analyzeCargoSchema } from './analysis'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
     return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
@@ -69,11 +70,12 @@ function transformSource(
     sources: BindSources,
     sourceKey: string,
     currentSource: Source,
+    analysis: AnalysisResult,
 ): void {
     if (meta.getEnumType() !== undefined) {
         targetObject[property] = value
     } else {
-        targetObject[property] = typeCasting(meta.type, meta, sourceKey, key, value, errors, sources, currentSource)
+        targetObject[property] = typeCasting(meta.type, meta, sourceKey, key, value, errors, sources, currentSource, analysis)
     }
 
     const transformer = meta.getTransformer()
@@ -117,6 +119,7 @@ function typeCasting(
     errors: CargoFieldError[],
     sources: any,
     currentSource: Source,
+    analysis: AnalysisResult,
 ): any {
     // Handle Array types: Recursively process each element
     if (baseType === Array || Array.isArray(value)) {
@@ -130,7 +133,7 @@ function typeCasting(
 
         return value.map((element, i) => {
             // Pass the current meta to support polymorphism for array elements
-            return typeCasting(elementType, meta, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource)
+            return typeCasting(elementType, meta, sourceKey, `${key}[${i}]`, element, errors, sources, currentSource, analysis)
         })
     }
 
@@ -169,15 +172,22 @@ function typeCasting(
     // Recursive binding: Transform nested plain objects into class instances
     if (isClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
-        const nestedMeta = new CargoClassMetadata(targetClass.prototype, true)
-        return bindObject(targetClass, nestedMeta, nextSources, errors, getErrorKey(sourceKey, key))
+        const nestedMeta = analysis.metadataMap.get(targetClass) || new CargoClassMetadata(targetClass.prototype, true)
+        return bindObject(targetClass, nestedMeta, nextSources, errors, analysis, getErrorKey(sourceKey, key))
     }
 
     // Fallback: Return raw value if no further transformation is possible
     return value
 }
 
-function bindObject(objectClass: any, metaClass: CargoClassMetadata, sources: BindSources, errors: CargoFieldError[], sourceKey: string = ''): any {
+function bindObject(
+    objectClass: any,
+    metaClass: CargoClassMetadata,
+    sources: BindSources,
+    errors: CargoFieldError[],
+    analysis: AnalysisResult,
+    sourceKey: string = '',
+): any {
     const targetObject = new objectClass()
     const context: BindContext = {
         metaClass,
@@ -188,7 +198,7 @@ function bindObject(objectClass: any, metaClass: CargoClassMetadata, sources: Bi
     }
 
     bindRequest(context)
-    bindSource(context)
+    bindSource(context, analysis)
     bindVirtual(context)
 
     return targetObject
@@ -228,7 +238,7 @@ function bindRequest({ metaClass, targetObject, sources, errors, sourceKey }: Bi
     }
 }
 
-function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: BindContext): void {
+function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: BindContext, analysis: AnalysisResult): void {
     for (const property of metaClass.getFieldList()) {
         const meta = metaClass.getFieldMetadata(property)
         if (meta.getRequestTransformer()) continue
@@ -250,7 +260,7 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
             continue
         }
 
-        transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource)
+        transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource, analysis)
         validateField(meta, property, targetObject, errors)
     }
 }
@@ -303,12 +313,10 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
  * });
  * ```
  */
-export function bindingCargo<T extends object = any>(cargoClass: new () => T): RequestHandler {
+export function bindingCargo<T extends object = any>(cargoClass: ClassConstructor<T>): RequestHandler {
     // Fail fast on schema mistakes at route-registration time instead of on the first request.
-    // `validateCargoSchema` caches its result, so repeat calls for the same class are essentially free.
-    validateCargoSchema(cargoClass)
-
-    const metaClass = new CargoClassMetadata(cargoClass.prototype, true)
+    const result = analyzeCargoSchema(cargoClass)
+    validateAnalysis(result)
 
     return (req, res, next) => {
         try {
@@ -321,7 +329,7 @@ export function bindingCargo<T extends object = any>(cargoClass: new () => T): R
                 header: req.headers,
                 session: (req as any).session,
             }
-            const cargo = bindObject(cargoClass, metaClass, sources, errors)
+            const cargo = bindObject(cargoClass, result.rootMeta, sources, errors, result)
 
             if (errors.length > 0) {
                 throw new CargoValidationError(errors)

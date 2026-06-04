@@ -1,6 +1,5 @@
 import { Body, Each, Header, List, Min, Optional, Params, Query, Request, Session, Type, Virtual } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
-import { expectViolation } from './testUtils'
+import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — kind category rules', () => {
     it('두 Source 데코레이터 공존 시 거부', () => {

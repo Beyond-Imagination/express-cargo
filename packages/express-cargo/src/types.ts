@@ -209,3 +209,13 @@ export type BindContext = {
     errors: CargoFieldError[]
     sourceKey: string
 }
+
+/**
+ * Result of the class analysis phase.
+ * Contains metadata for the root class and all its nested DTOs.
+ */
+export interface AnalysisResult {
+    rootClass: ClassConstructor
+    rootMeta: CargoClassMetadata
+    metadataMap: Map<ClassConstructor, CargoClassMetadata>
+}

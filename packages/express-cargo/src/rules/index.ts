@@ -1,1 +1,1 @@
-export { validateCargoSchema } from './validate'
+export { validateAnalysis } from './validate'
