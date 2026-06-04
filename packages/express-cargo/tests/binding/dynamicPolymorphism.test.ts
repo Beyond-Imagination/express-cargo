@@ -91,24 +91,4 @@ describe('Dynamic Polymorphism Binding', () => {
         expect(err).toBeInstanceOf(Error)
         expect(err.message).toContain('InvalidDTO')
     })
-
-    it('should preserve raw object data when targetClass is Object (e.g. any type)', () => {
-        class AnyDataDTO {
-            @Body('data')
-            data!: any // This will be reflected as Object
-        }
-
-        const middleware = bindingCargo(AnyDataDTO)
-        const rawData = { foo: 'bar', nested: { a: 1 } }
-        const req = makeMockReq({ body: { data: rawData } })
-        const res = makeMockRes()
-        const next = makeNext()
-
-        middleware(req, res, next)
-
-        expect(next).toHaveBeenCalledWith()
-        const dto = getCargo<AnyDataDTO>(req)!
-        // Should be deeply equal to original data, not an empty object
-        expect(dto.data).toEqual(rawData)
-    })
 })

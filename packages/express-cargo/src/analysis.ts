@@ -77,7 +77,8 @@ export function analyzeCargoSchema(cargoClass: ClassConstructor): AnalysisResult
         visited.add(currentClass)
 
         // Metadata is collected once per class and shared across all contexts.
-        const classMeta = new CargoClassMetadata(currentClass.prototype, true)
+        const prototype = currentClass.prototype
+        const classMeta = new CargoClassMetadata(prototype && typeof prototype === 'object' ? prototype : {}, true)
         metadataMap.set(currentClass, classMeta)
 
         for (const nested of collectNestedClasses(classMeta)) {

@@ -78,6 +78,26 @@ describe('source decorator binding', () => {
         expect(dto.nickname).toBeNull()
     })
 
+    it('targetClass가 Object인 경우(any 타입 등) 원본 객체 데이터를 보존함', () => {
+        class AnyDataDTO {
+            @Body('data')
+            data!: any // Object로 리플렉션됨
+        }
+
+        const middleware = bindingCargo(AnyDataDTO)
+        const rawData = { foo: 'bar', nested: { a: 1 } }
+        const req = makeMockReq({ body: { data: rawData } })
+        const res = makeMockRes()
+        const next = makeNext()
+
+        middleware(req, res, next)
+
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<AnyDataDTO>(req)!
+        // 빈 객체 {}가 아닌 원본 데이터와 일치해야 함
+        expect(dto.data).toEqual(rawData)
+    })
+
     it('required source field가 없으면 validator를 건너뛴다', () => {
         const middleware = bindingCargo(TestDTO)
 
