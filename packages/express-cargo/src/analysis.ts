@@ -77,8 +77,10 @@ export function analyzeCargoSchema(cargoClass: ClassConstructor): AnalysisResult
         visited.add(currentClass)
 
         // Metadata is collected once per class and shared across all contexts.
+        // resolve() precomputes the merged field lists here, after decoration is complete,
+        // so binding-time reads never walk the prototype chain.
         const prototype = currentClass.prototype
-        const classMeta = new CargoClassMetadata(prototype && typeof prototype === 'object' ? prototype : {}, true)
+        const classMeta = new CargoClassMetadata(prototype && typeof prototype === 'object' ? prototype : {}).resolve()
         metadataMap.set(currentClass, classMeta)
 
         for (const nested of collectNestedClasses(classMeta)) {

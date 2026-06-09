@@ -219,3 +219,13 @@ export interface AnalysisResult {
     rootMeta: CargoClassMetadata
     metadataMap: Map<ClassConstructor, CargoClassMetadata>
 }
+
+/**
+ * Merged field lists for a class, precomputed once by {@link CargoClassMetadata.resolve}.
+ */
+export interface ResolvedFieldLists {
+    fields: (string | symbol)[]
+    requestFields: (string | symbol)[]
+    virtualFields: (string | symbol)[]
+    allFields: (string | symbol)[]
+}
