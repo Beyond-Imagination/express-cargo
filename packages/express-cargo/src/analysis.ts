@@ -54,6 +54,10 @@ const ANALYSIS_CACHE = new WeakMap<ClassConstructor, AnalysisResult>()
  * This function caches its results, so subsequent calls for the same class are free.
  */
 export function analyzeCargoSchema(cargoClass: ClassConstructor): AnalysisResult {
+    if (typeof cargoClass !== 'function') {
+        throw new TypeError(`analyzeCargoSchema expects a class constructor, but received ${cargoClass === null ? 'null' : typeof cargoClass}.`)
+    }
+
     const cached = ANALYSIS_CACHE.get(cargoClass)
     if (cached) return cached
 
