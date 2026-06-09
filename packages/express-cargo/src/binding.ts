@@ -4,8 +4,8 @@ import { AnalysisResult, BindContext, BindSources, ClassConstructor } from './ty
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
-import { validateAnalysis } from './rules/validate'
-import { isClass } from './utils'
+import { validateAnalysis } from './rules'
+import { isClass, isUserDefinedClass } from './utils'
 import { analyzeCargoSchema } from './analysis'
 
 function getErrorKey(sourceKey: string, currentKey: string): string {
@@ -170,7 +170,7 @@ function typeCasting(
     }
 
     // Recursive binding: Transform nested plain objects into class instances
-    if (isClass(targetClass) && targetClass !== Object && typeof value === 'object' && value !== null) {
+    if (isUserDefinedClass(targetClass) && typeof value === 'object' && value !== null) {
         const nextSources = { ...sources, [currentSource]: value }
         const nestedMetaFromMap = analysis.metadataMap.get(targetClass)
         let targetAnalysis = analysis

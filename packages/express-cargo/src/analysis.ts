@@ -1,16 +1,6 @@
 import { CargoClassMetadata } from './metadata'
 import { AnalysisResult, ClassConstructor, TypeThunk } from './types'
-import { isClass } from './utils'
-
-// `Object` is included because reflect-metadata falls back to it for unresolvable
-// design:type entries; `Array` guards against a malformed `@List(Array)`.
-// Both pass the isClass heuristic but should never be descended into.
-const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
-
-/** A value is safe to traverse during schema validation only if it's a class (heuristic) and not a primitive constructor. */
-function isValidatableClass(value: unknown): value is ClassConstructor {
-    return isClass(value) && !PRIMITIVE_TYPES.has(value)
-}
+import { isUserDefinedClass } from './utils'
 
 /**
  * Walks the `@Type` / `@List` references on a class's fields and yields every nested class that should also be validated.
@@ -25,14 +15,14 @@ function collectNestedClasses(classMeta: CargoClassMetadata): ClassConstructor[]
         if (typeFn) {
             // @Type(User) — class passed directly. Calling it as a Thunk would throw
             // (ES6 class can't be invoked without `new`), so handle it before the Thunk path.
-            if (isValidatableClass(typeFn)) {
+            if (isUserDefinedClass(typeFn)) {
                 nested.push(typeFn)
             } else if (typeFn.length === 0) {
                 // @Type(() => Foo) — Thunk form. Resolver form (`(data) => Foo`) can't be
                 // evaluated statically and will throw on the no-arg call; we catch and skip.
                 try {
                     const result = (typeFn as TypeThunk)()
-                    if (isValidatableClass(result)) nested.push(result)
+                    if (isUserDefinedClass(result)) nested.push(result)
                 } catch {
                     // Resolver-shaped functions need runtime data; ignore.
                 }
@@ -42,14 +32,14 @@ function collectNestedClasses(classMeta: CargoClassMetadata): ClassConstructor[]
             const options = fieldMeta.getTypeOptions()
             if (options?.discriminator) {
                 for (const sub of options.discriminator.subTypes) {
-                    if (isValidatableClass(sub.value)) nested.push(sub.value)
+                    if (isUserDefinedClass(sub.value)) nested.push(sub.value)
                 }
             }
         }
 
         // @List(Foo) / array element type set by @Type-on-array.
         const elementType = fieldMeta.getArrayElementType()
-        if (isValidatableClass(elementType)) nested.push(elementType)
+        if (isUserDefinedClass(elementType)) nested.push(elementType)
     }
 
     return nested
