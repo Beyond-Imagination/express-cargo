@@ -1,6 +1,5 @@
 import { Body, Default, Each, Optional } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
-import { expectViolation } from './testUtils'
+import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — @Each usage rules', () => {
     it('@Each 인자로 Source 데코레이터가 들어가면 거부', () => {

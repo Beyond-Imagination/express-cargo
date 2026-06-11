@@ -1,5 +1,5 @@
 import { Body, List, Type } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
+import { validateCargoSchema } from './testUtils'
 
 describe('schema validation — primitive constructor skip', () => {
     it('@List(String)같은 프리미티브 element는 nested 검증 대상에서 제외', () => {

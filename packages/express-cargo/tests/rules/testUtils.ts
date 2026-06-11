@@ -1,5 +1,16 @@
 import { CargoSchemaError } from '../../src'
+import { analyzeCargoSchema } from '../../src/analysis'
+import { validateAnalysis } from '../../src/rules/validate'
+import { ClassConstructor } from '../../src/types'
 import type { RuleViolation } from '../../src/rules/types'
+
+/**
+ * Test utility to analyze and validate a DTO class in one step.
+ */
+export function validateCargoSchema(cargoClass: ClassConstructor): void {
+    const result = analyzeCargoSchema(cargoClass)
+    validateAnalysis(result)
+}
 
 /**
  * Invokes `fn` and asserts that it throws a `CargoSchemaError` whose `violations`
