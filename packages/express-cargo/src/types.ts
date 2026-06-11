@@ -191,6 +191,7 @@ export type DecoratorScope = 'self' | 'each'
 export interface AppliedDecorator {
     name: string
     category: DecoratorCategory
+    args: readonly unknown[]
 }
 
 export type BindSources = {

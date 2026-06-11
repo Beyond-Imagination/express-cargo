@@ -1,4 +1,5 @@
 import {
+    AppliedDecorator,
     ArrayComparator,
     cargoErrorMessage,
     EachValidatorRule,
@@ -12,10 +13,11 @@ import { CargoClassMetadata } from './metadata'
 import { isDeepEqual } from './utils'
 import { isValidPhoneNumber, CountryCode } from 'libphonenumber-js'
 
-function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule) {
+function addValidator(target: any, propertyKey: string | symbol, rule: ValidatorRule, applied?: AppliedDecorator) {
     const classMeta = new CargoClassMetadata(target)
     const fieldMeta = classMeta.getFieldMetadata(propertyKey)
     fieldMeta.addValidator(rule)
+    if (applied) fieldMeta.pushAppliedDecorator(applied)
     classMeta.setFieldMetadata(propertyKey, fieldMeta)
 }
 
@@ -705,6 +707,7 @@ export function With(fieldName: string, message?: cargoErrorMessage): PropertyDe
                 (value: unknown, instance?: Record<string | symbol, any>) => !(!!value && !instance?.[fieldName]),
                 message || `${String(propertyKey)} requires ${fieldName}`,
             ),
+            { name: With.name, category: 'validator', args: [fieldName] },
         )
     }
 }
@@ -728,6 +731,7 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
                 },
                 message || `${String(propertyKey)} cannot exist with ${fieldName}`,
             ),
+            { name: Without.name, category: 'validator', args: [fieldName] },
         )
     }
 }
@@ -943,7 +947,7 @@ export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> |
             }
         })
 
-        fieldMeta.pushAppliedDecorator({ name: Each.name, category: 'validator' })
+        fieldMeta.pushAppliedDecorator({ name: Each.name, category: 'validator', args })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }

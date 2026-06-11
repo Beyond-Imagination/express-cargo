@@ -1,3 +1,5 @@
+import { Each } from '../validator'
+import { isKnownNonArray } from './utils'
 import { FieldRuleFn } from './types'
 
 const eachWrapsSource: FieldRuleFn = s => {
@@ -10,5 +12,7 @@ const eachWrapsMissingHandler: FieldRuleFn = s => {
     return offenders.length === 0 ? null : `@Each cannot wrap missing-handler decorator(s): ${offenders.map(t => `@${t.name}`).join(', ')}`
 }
 
-/** Misuse of `@Each(...)` arguments. */
-export const EACH_USAGE_RULES: readonly FieldRuleFn[] = [eachWrapsSource, eachWrapsMissingHandler]
+const eachOnNonArray: FieldRuleFn = s =>
+    s.appliedSelf.some(d => d.name === Each.name) && isKnownNonArray(s.fieldType) ? `@Each can only be applied to array fields` : null
+
+export const EACH_USAGE_RULES: readonly FieldRuleFn[] = [eachWrapsSource, eachWrapsMissingHandler, eachOnNonArray]
