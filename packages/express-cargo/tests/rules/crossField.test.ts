@@ -1,6 +1,5 @@
 import { Body, With, Without } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
-import { expectViolation } from './testUtils'
+import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — cross-field reference rules', () => {
     it('rejects @With referencing a non-existent field (G1)', () => {

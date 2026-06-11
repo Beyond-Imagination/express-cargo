@@ -1,16 +1,43 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType, ValidatorRule } from './types'
+import {
+    AppliedDecorator,
+    DecoratorScope,
+    ResolvedFieldLists,
+    Source,
+    TypeOptions,
+    TypeResolver,
+    TypeThunk,
+    validArrayElementType,
+    ValidatorRule,
+} from './types'
 
 /**
  * Manages metadata for a cargo class.
- * Handles field registration, retrieval, and caching of metadata.
+ * Handles field registration and retrieval; call {@link CargoClassMetadata.resolve}
+ * to precompute the merged field lists once decoration is complete.
  */
 export class CargoClassMetadata {
-    constructor(
-        private target: any,
-        private cacheable: boolean = false,
-    ) {}
+    private resolved?: ResolvedFieldLists
+
+    constructor(private target: any) {}
+
+    /**
+     * Precomputes every merged field list once and stores the result on this instance.
+     *
+     * Call this after decoration is complete (i.e. during {@link analyzeCargoSchema}); from then on
+     * the read accessors return the precomputed lists instead of walking the prototype chain.
+     * Because the schema is frozen by analysis time, no cache invalidation is needed.
+     */
+    resolve(): this {
+        this.resolved = {
+            fields: this.getFieldListByKey(this.getFieldKey()),
+            requestFields: this.getFieldListByKey(this.getRequestFieldKey()),
+            virtualFields: this.getFieldListByKey(this.getVirtualFieldKey()),
+            allFields: this.getFieldListByKey(this.getAllFieldsKey()),
+        }
+        return this
+    }
 
     getMetadataKey(propertyKey: string | symbol): string {
         return `cargo:${String(propertyKey)}`
@@ -32,10 +59,6 @@ export class CargoClassMetadata {
         return 'cargo:allFields'
     }
 
-    private getCacheKey(metadataKey: string) {
-        return `__cache__${metadataKey}`
-    }
-
     getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
         const metadataKey = this.getMetadataKey(propertyKey)
         return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
@@ -48,11 +71,6 @@ export class CargoClassMetadata {
     }
 
     private getFieldListByKey(metadataKey: string): (string | symbol)[] {
-        if (this.cacheable) {
-            const cached = Reflect.getOwnMetadata(this.getCacheKey(metadataKey), this.target)
-            if (cached) return cached
-        }
-
         const fields = new Set<string | symbol>()
         let current = this.target
         while (current && current !== Object.prototype) {
@@ -61,29 +79,18 @@ export class CargoClassMetadata {
             current = Object.getPrototypeOf(current)
         }
 
-        const fieldList = Array.from(fields)
-
-        // flag가 true일 때만 캐싱
-        if (this.cacheable) {
-            Reflect.defineMetadata(this.getCacheKey(metadataKey), fieldList, this.target)
-        }
-
-        return fieldList
+        return Array.from(fields)
     }
 
     private setFieldListByKey(metadataKey: string, propertyKey: string | symbol): void {
         const existing = this.getFieldListByKey(metadataKey)
         if (!existing.includes(propertyKey)) {
             Reflect.defineMetadata(metadataKey, [...existing, propertyKey], this.target)
-
-            if (this.cacheable) {
-                Reflect.deleteMetadata(this.getCacheKey(metadataKey), this.target)
-            }
         }
     }
 
     getFieldList(): (string | symbol)[] {
-        return this.getFieldListByKey(this.getFieldKey())
+        return this.resolved?.fields ?? this.getFieldListByKey(this.getFieldKey())
     }
 
     setFieldList(propertyKey: string | symbol): void {
@@ -91,7 +98,7 @@ export class CargoClassMetadata {
     }
 
     getRequestFieldList(): (string | symbol)[] {
-        return this.getFieldListByKey(this.getRequestFieldKey())
+        return this.resolved?.requestFields ?? this.getFieldListByKey(this.getRequestFieldKey())
     }
 
     setRequestFieldList(propertyKey: string | symbol): void {
@@ -99,7 +106,7 @@ export class CargoClassMetadata {
     }
 
     getVirtualFieldList(): (string | symbol)[] {
-        return this.getFieldListByKey(this.getVirtualFieldKey())
+        return this.resolved?.virtualFields ?? this.getFieldListByKey(this.getVirtualFieldKey())
     }
 
     setVirtualFieldList(propertyKey: string | symbol): void {
@@ -107,7 +114,7 @@ export class CargoClassMetadata {
     }
 
     getAllFieldsList(): (string | symbol)[] {
-        return this.getFieldListByKey(this.getAllFieldsKey())
+        return this.resolved?.allFields ?? this.getFieldListByKey(this.getAllFieldsKey())
     }
 }
 

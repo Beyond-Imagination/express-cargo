@@ -1,6 +1,5 @@
 import { Body, CargoSchemaError } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
-import { expectViolation } from './testUtils'
+import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — basic rules', () => {
     it('rejects a symbol property without a description (A1)', () => {

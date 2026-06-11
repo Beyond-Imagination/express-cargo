@@ -1,6 +1,5 @@
 import { Body, List, Type } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
-import { expectViolation } from './testUtils'
+import { expectViolation, validateCargoSchema } from './testUtils'
 
 class Nested {
     @Body()

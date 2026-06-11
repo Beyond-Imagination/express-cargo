@@ -1,3 +1,5 @@
+import { ClassConstructor } from './types'
+
 /**
  * Determines if a given function is a class constructor.
  * This is a heuristic check to support various transpilation environments (ES6+, Babel, etc.).
@@ -15,6 +17,20 @@ export function isClass(fn: unknown): fn is new (...args: any[]) => any {
     const hasPrototype = fn.prototype && fn.prototype.constructor === fn
     const isPascalCase = fn.name && /^[A-Z]/.test(fn.name)
     return Boolean(isPascalCase && hasPrototype)
+}
+
+// `Object` is included because reflect-metadata falls back to it for unresolvable
+// design:type entries; `Array` guards against a malformed `@List(Array)`.
+// Both pass the isClass heuristic but should never be descended into.
+const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
+
+/**
+ * Returns true when a value is a user-defined class worth descending into (a nested DTO),
+ * excluding the built-in constructors that pass the {@link isClass} heuristic but must be
+ * treated as leaves. Shared by schema analysis (traversal) and binding (recursive binding).
+ */
+export function isUserDefinedClass(value: unknown): value is ClassConstructor {
+    return isClass(value) && !PRIMITIVE_TYPES.has(value)
 }
 
 export function isDeepEqual(obj1: any, obj2: any): boolean {

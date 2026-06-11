@@ -1,6 +1,5 @@
 import { Body, Default, Each, Min, Optional } from '../../src'
-import { validateCargoSchema } from '../../src/rules'
-import { expectViolation } from './testUtils'
+import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — @Each usage rules', () => {
     it('rejects a source decorator inside @Each (H2)', () => {
