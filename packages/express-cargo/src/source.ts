@@ -13,7 +13,7 @@ function createSourceDecorator(source: Source) {
             const fieldMeta = classMeta.getFieldMetadata(propertyKey)
             fieldMeta.setKey(key ?? propertyKey)
             fieldMeta.setSource(source)
-            fieldMeta.pushAppliedDecorator({ name: source, category: 'source' })
+            fieldMeta.pushAppliedDecorator({ name: source, category: 'source', args: [key] })
             classMeta.setFieldMetadata(propertyKey, fieldMeta)
             classMeta.setFieldList(propertyKey)
         }

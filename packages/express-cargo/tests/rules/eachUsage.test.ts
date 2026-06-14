@@ -1,8 +1,8 @@
-import { Body, Default, Each, Optional } from '../../src'
+import { Body, Default, Each, Min, Optional } from '../../src'
 import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — @Each usage rules', () => {
-    it('@Each 인자로 Source 데코레이터가 들어가면 거부', () => {
+    it('rejects a source decorator inside @Each (H2)', () => {
         class EachWrapsSourceDto {
             @Body()
             @Each(Body())
@@ -12,7 +12,7 @@ describe('schema validation — @Each usage rules', () => {
         expectViolation(() => validateCargoSchema(EachWrapsSourceDto), 'foo', '@Each cannot wrap source decorator')
     })
 
-    it('@Each 인자로 Missing-Handler 데코레이터(@Optional)가 들어가면 거부', () => {
+    it('rejects @Optional inside @Each (H3)', () => {
         class EachWrapsOptionalDto {
             @Body()
             @Each(Optional())
@@ -22,7 +22,7 @@ describe('schema validation — @Each usage rules', () => {
         expectViolation(() => validateCargoSchema(EachWrapsOptionalDto), 'foo', '@Each cannot wrap missing-handler decorator')
     })
 
-    it('@Each 인자로 Missing-Handler 데코레이터(@Default)가 들어가면 거부', () => {
+    it('rejects @Default inside @Each (H3)', () => {
         class EachWrapsDefaultDto {
             @Body()
             @Each(Default(0))
@@ -30,5 +30,25 @@ describe('schema validation — @Each usage rules', () => {
         }
 
         expectViolation(() => validateCargoSchema(EachWrapsDefaultDto), 'foo', '@Each cannot wrap missing-handler decorator')
+    })
+
+    it('rejects @Each on a non-array field (H1)', () => {
+        class EachOnNonArrayDto {
+            @Body()
+            @Each(Min(0))
+            foo!: string
+        }
+
+        expectViolation(() => validateCargoSchema(EachOnNonArrayDto), 'foo', '@Each can only be applied to array fields')
+    })
+
+    it('accepts @Each on an array field', () => {
+        class EachOnArrayDto {
+            @Body()
+            @Each(Min(0))
+            foo!: number[]
+        }
+
+        expect(() => validateCargoSchema(EachOnArrayDto)).not.toThrow()
     })
 })

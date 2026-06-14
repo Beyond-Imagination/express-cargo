@@ -17,6 +17,8 @@ export interface FieldState {
     hasSource: boolean
     hasRequest: boolean
     hasVirtual: boolean
+    sourceKey: string | symbol
+    siblingFields: ReadonlySet<string | symbol>
 }
 
 /** A single field-level rule. Returns a violation message, or `null` if the field passes. */

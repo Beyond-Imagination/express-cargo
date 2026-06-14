@@ -16,7 +16,7 @@ export function Transform<T>(transformer: (value: T) => T): TypedPropertyDecorat
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
         fieldMeta.setTransformer(transformer)
-        fieldMeta.pushAppliedDecorator({ name: Transform.name, category: 'transform' })
+        fieldMeta.pushAppliedDecorator({ name: Transform.name, category: 'transform', args: [transformer] })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }
@@ -36,7 +36,7 @@ export function Request<T>(transformer: (req: Request) => T): TypedPropertyDecor
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
 
         fieldMeta.setRequestTransformer(transformer)
-        fieldMeta.pushAppliedDecorator({ name: Request.name, category: 'request' })
+        fieldMeta.pushAppliedDecorator({ name: Request.name, category: 'request', args: [transformer] })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
         classMeta.setRequestFieldList(propertyKey)
     }
@@ -61,7 +61,7 @@ export function Virtual<T>(transformer: (obj: any) => T): TypedPropertyDecorator
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
 
         fieldMeta.setVirtualTransformer(transformer)
-        fieldMeta.pushAppliedDecorator({ name: Virtual.name, category: 'virtual' })
+        fieldMeta.pushAppliedDecorator({ name: Virtual.name, category: 'virtual', args: [transformer] })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
         classMeta.setVirtualFieldList(propertyKey)
     }
