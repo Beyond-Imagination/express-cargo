@@ -2,7 +2,7 @@ import { Body, List, Type } from '../../src'
 import { validateCargoSchema } from './testUtils'
 
 describe('schema validation — primitive constructor skip', () => {
-    it('@List(String)같은 프리미티브 element는 nested 검증 대상에서 제외', () => {
+    it('excludes primitive elements like @List(String) from nested validation', () => {
         class PrimitiveListDto {
             @Body()
             @List(String)
@@ -12,7 +12,7 @@ describe('schema validation — primitive constructor skip', () => {
         expect(() => validateCargoSchema(PrimitiveListDto)).not.toThrow()
     })
 
-    it('@List(Array) 처럼 Array가 elementType으로 들어가도 traversal이 그래도 종료된다', () => {
+    it('terminates traversal even when Array is the elementType, as in @List(Array)', () => {
         class ArrayElementDto {
             @Body()
             @List(Array)
@@ -22,7 +22,7 @@ describe('schema validation — primitive constructor skip', () => {
         expect(() => validateCargoSchema(ArrayElementDto)).not.toThrow()
     })
 
-    it('@Type(Object)처럼 Object가 typeFn으로 들어가도 traversal이 그래도 종료된다', () => {
+    it('terminates traversal even when Object is the typeFn, as in @Type(Object)', () => {
         class ObjectTypeDto {
             @Body()
             @Type(Object)
@@ -32,7 +32,7 @@ describe('schema validation — primitive constructor skip', () => {
         expect(() => validateCargoSchema(ObjectTypeDto)).not.toThrow()
     })
 
-    it('@List(Date)같은 Date도 nested 검증 대상에서 제외', () => {
+    it('excludes Date elements like @List(Date) from nested validation', () => {
         class DateListDto {
             @Body()
             @List(Date)

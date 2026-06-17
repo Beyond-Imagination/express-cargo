@@ -2,7 +2,7 @@ import { Body, Each, Header, List, Min, Optional, Params, Query, Request, Sessio
 import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — kind category rules', () => {
-    it('두 Source 데코레이터 공존 시 거부', () => {
+    it('rejects two coexisting source decorators', () => {
         class MultipleSourcesDto {
             @Body()
             @Query()
@@ -12,7 +12,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(MultipleSourcesDto), 'foo', 'pick a single source')
     })
 
-    it('Source + @Request 공존 시 거부', () => {
+    it('rejects a source decorator coexisting with @Request', () => {
         class SourceWithRequestDto {
             @Body()
             @Request(req => req.headers['x-foo'])
@@ -22,7 +22,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(SourceWithRequestDto), 'foo', 'cannot be combined with @Request')
     })
 
-    it('Source + @Virtual 공존 시 거부', () => {
+    it('rejects a source decorator coexisting with @Virtual', () => {
         class SourceWithVirtualDto {
             @Body()
             @Virtual(obj => obj.bar)
@@ -32,7 +32,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(SourceWithVirtualDto), 'foo', 'cannot be combined with @Virtual')
     })
 
-    it('@Request + @Virtual 공존 시 거부', () => {
+    it('rejects @Request coexisting with @Virtual', () => {
         class RequestWithVirtualDto {
             @Request(req => req.ip)
             @Virtual(obj => obj.bar)
@@ -42,7 +42,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(RequestWithVirtualDto), 'foo', '@Request cannot be combined with @Virtual')
     })
 
-    it('top-level: kind 데코레이터 없는 필드 거부', () => {
+    it('top-level: rejects a field without a kind decorator', () => {
         class MissingKindDto {
             @Optional()
             foo!: string
@@ -51,7 +51,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(MissingKindDto), 'foo', 'field must be decorated')
     })
 
-    it('nested: @Type 으로 참조된 클래스의 필드도 검증', () => {
+    it('nested: also validates fields of a class referenced via @Type', () => {
         class NestedDto {
             @Optional()
             foo!: string
@@ -65,7 +65,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(OuterDto), 'foo', 'field must be decorated')
     })
 
-    it('nested via @List: 배열 요소 클래스의 필드도 검증', () => {
+    it('nested via @List: also validates fields of the array element class', () => {
         class ItemDto {
             @Optional()
             foo!: string
@@ -79,7 +79,7 @@ describe('schema validation — kind category rules', () => {
         expectViolation(() => validateCargoSchema(ListContainerDto), 'foo', 'field must be decorated')
     })
 
-    it('정상 케이스: 단일 Source 데코레이터는 통과', () => {
+    it('happy path: a single source decorator passes', () => {
         class HappyDto {
             @Body()
             foo!: string
@@ -91,7 +91,7 @@ describe('schema validation — kind category rules', () => {
         expect(() => validateCargoSchema(HappyDto)).not.toThrow()
     })
 
-    it('정상 케이스: 모든 종류의 kind 카테고리가 섞여 있어도 충돌만 없으면 통과', () => {
+    it('happy path: a mix of every kind category passes as long as there is no conflict', () => {
         class MixedHappyDto {
             @Body()
             a!: string
@@ -118,7 +118,7 @@ describe('schema validation — kind category rules', () => {
         expect(() => validateCargoSchema(MixedHappyDto)).not.toThrow()
     })
 
-    it('정상 케이스: @Each 가 validator 만 감싸는 경우 통과', () => {
+    it('happy path: passes when @Each wraps only validators', () => {
         class EachHappyDto {
             @Body()
             @Each(Min(0))
