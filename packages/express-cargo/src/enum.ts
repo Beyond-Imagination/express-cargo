@@ -31,11 +31,11 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
         const enumValues = enumKeys.map(k => enumObj[k as keyof typeof enumObj])
         const validInputs = [...enumKeys, ...enumValues]
 
-        // 1. enum 타입 정보 저장
+        // 1. Store the enum type information
         fieldMeta.setEnumType(enumObj)
         fieldMeta.pushAppliedDecorator({ name: Enum.name, category: 'type-helper', args: [enumObj, message] })
 
-        // 2. enum validator 추가
+        // 2. Add the enum validator
         fieldMeta.addValidator(
             new ValidatorRule(
                 propertyKey,
@@ -45,21 +45,21 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
             ),
         )
 
-        // 3. enum transformer 추가
+        // 3. Add the enum transformer
         const transformer = (value: any): any => {
             if (value === null || value === undefined) return value
 
             const enumKeys = Object.keys(enumObj).filter(k => isNaN(Number(k)))
 
-            // 1. 입력값이 enum 키('ADMIN') 인 경우
+            // 1. When the input is an enum key (e.g. 'ADMIN')
             if (typeof value === 'string' && enumKeys.includes(value)) {
                 return enumObj[value as keyof typeof enumObj]
             }
 
-            // 비교를 위해 숫자형 문자열을 숫자로 변환
+            // Convert a numeric string to a number for comparison
             const comparableValue = typeof value === 'string' && !isNaN(Number(value)) ? Number(value) : value
 
-            // 2. 입력값이 enum 값(예: 0 또는 'admin')인 경우
+            // 2. When the input is an enum value (e.g. 0 or 'admin')
             for (const key of enumKeys) {
                 if (enumObj[key as keyof typeof enumObj] === comparableValue) {
                     return comparableValue
@@ -70,7 +70,7 @@ export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropert
         }
         fieldMeta.setTransformer(transformer)
 
-        // 메타데이터 저장
+        // Store the metadata
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }
 }

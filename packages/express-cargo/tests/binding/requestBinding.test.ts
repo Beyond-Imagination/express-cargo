@@ -34,7 +34,7 @@ class RequiredRequestDTO {
 }
 
 describe('request binding', () => {
-    it('request transformer로 값 바인딩', () => {
+    it('binds values via request transformer', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
@@ -53,7 +53,7 @@ describe('request binding', () => {
         expect(dto.optionalField).toBeNull()
     })
 
-    it('validator 실패 시 CargoValidationError 발생', () => {
+    it('throws CargoValidationError when a validator fails', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
@@ -69,7 +69,7 @@ describe('request binding', () => {
         expect(err.errors).toEqual(expect.arrayContaining([expect.objectContaining({ message: expect.stringContaining('score') })]))
     })
 
-    it('optional 필드가 없으면 null 처리', () => {
+    it('sets an optional field to null when it is missing', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
@@ -84,7 +84,7 @@ describe('request binding', () => {
         expect(dto.optionalField).toBeNull()
     })
 
-    it('optional request field가 없으면 validation을 건너뛴다', () => {
+    it('skips validation when an optional request field is missing', () => {
         const middleware = bindingCargo(RequestDTO)
 
         const req = makeMockReq({
@@ -100,21 +100,21 @@ describe('request binding', () => {
         expect(dto.optionalScore).toBeNull()
     })
 
-    it('Source 데코레이터와 @Request 를 함께 쓰면 B2 위반으로 거부된다', () => {
+    it('rejects combining a source decorator with @Request', () => {
         expect(() => bindingCargo(MixedBindingDTO)).toThrow(CargoSchemaError)
     })
 
-    it('bindingCargo 미들웨어 없이 getCargo를 호출하면 에러를 던진다', () => {
+    it('throws when getCargo is called without the bindingCargo middleware', () => {
         const req = makeMockReq()
         expect(() => getCargo<RequestDTO>(req)).toThrow(/bindingCargo/)
     })
 
-    it('_cargo가 null이어도 getCargo는 에러를 던진다', () => {
+    it('throws from getCargo even when _cargo is null', () => {
         const req = makeMockReq({ _cargo: null } as any)
         expect(() => getCargo<RequestDTO>(req)).toThrow(/bindingCargo/)
     })
 
-    it('required request field가 없으면 validator를 건너뛴다', () => {
+    it('skips validators when a required request field is missing', () => {
         const middleware = bindingCargo(RequiredRequestDTO)
 
         const req = makeMockReq({

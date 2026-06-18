@@ -13,7 +13,7 @@ class TestDTO {
 }
 
 describe('source decorator binding', () => {
-    it('요청 데이터가 정확히 바인딩되고 타입 캐스팅됨', () => {
+    it('binds request data accurately and casts types', () => {
         const middleware = bindingCargo(TestDTO)
 
         const req = makeMockReq({
@@ -35,11 +35,11 @@ describe('source decorator binding', () => {
         expect(dto.id).toBe(10)
         expect(dto.isAdmin).toBe(true)
         expect(dto.loginAt).toEqual(new Date('2025-09-20T17:00:00.000Z'))
-        expect(dto.nickname).toBeNull() // optional 처리
+        expect(dto.nickname).toBeNull() // optional handling
         expect(dto.score).toBe(5)
     })
 
-    it('validator 실패 시 CargoValidationError 발생', () => {
+    it('throws CargoValidationError when a validator fails', () => {
         const middleware = bindingCargo(TestDTO)
 
         const req = makeMockReq({
@@ -59,7 +59,7 @@ describe('source decorator binding', () => {
         expect(err.errors).toEqual(expect.arrayContaining([expect.objectContaining({ message: expect.stringContaining('score') })]))
     })
 
-    it('optional 필드가 없으면 null 처리', () => {
+    it('sets an optional field to null when it is missing', () => {
         const middleware = bindingCargo(TestDTO)
 
         const req = makeMockReq({
@@ -78,10 +78,10 @@ describe('source decorator binding', () => {
         expect(dto.nickname).toBeNull()
     })
 
-    it('targetClass가 Object인 경우(any 타입 등) 원본 객체 데이터를 보존함', () => {
+    it('preserves the raw object data when targetClass is Object (e.g. any type)', () => {
         class AnyDataDTO {
             @Body('data')
-            data!: any // Object로 리플렉션됨
+            data!: any // reflected as Object
         }
 
         const middleware = bindingCargo(AnyDataDTO)
@@ -94,11 +94,11 @@ describe('source decorator binding', () => {
 
         expect(next).toHaveBeenCalledWith()
         const dto = getCargo<AnyDataDTO>(req)!
-        // 빈 객체 {}가 아닌 원본 데이터와 일치해야 함
+        // should match the raw data, not an empty object {}
         expect(dto.data).toEqual(rawData)
     })
 
-    it('required source field가 없으면 validator를 건너뛴다', () => {
+    it('skips validators when a required source field is missing', () => {
         const middleware = bindingCargo(TestDTO)
 
         const req = makeMockReq({

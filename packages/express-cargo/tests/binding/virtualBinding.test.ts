@@ -23,7 +23,7 @@ class RequiredVirtualDTO {
 }
 
 describe('virtual binding', () => {
-    it('virtual transformer가 정상 동작', () => {
+    it('runs the virtual transformer correctly', () => {
         const middleware = bindingCargo(VirtualDTO)
 
         const req = makeMockReq({
@@ -41,7 +41,7 @@ describe('virtual binding', () => {
         expect(dto.nameLength).toBe(11)
     })
 
-    it('validator 실패 시 CargoValidationError 발생', () => {
+    it('throws CargoValidationError when a validator fails', () => {
         const middleware = bindingCargo(VirtualDTO)
 
         const req = makeMockReq({
@@ -57,7 +57,7 @@ describe('virtual binding', () => {
         expect(err.errors).toEqual(expect.arrayContaining([expect.objectContaining({ message: expect.stringContaining('nameLength') })]))
     })
 
-    it('optional virtual field가 빈 문자열을 반환해도 optional 검증을 건너뛴다', () => {
+    it('skips optional validation even when an optional virtual field returns an empty string', () => {
         const middleware = bindingCargo(VirtualDTO)
 
         const req = makeMockReq({
@@ -73,7 +73,7 @@ describe('virtual binding', () => {
         expect(dto.optionalNameLength).toBeNull()
     })
 
-    it('required virtual field가 없으면 validator를 건너뛴다', () => {
+    it('skips validators when a required virtual field is missing', () => {
         const middleware = bindingCargo(RequiredVirtualDTO)
 
         const req = makeMockReq({
