@@ -22,6 +22,26 @@ describe('schema validation — cross-field reference rules', () => {
         expectViolation(() => validateCargoSchema(WithoutUnknownDto), 'foo', '@Without references unknown field "ghost"')
     })
 
+    it('rejects @With referencing its own field (G3)', () => {
+        class WithSelfDto {
+            @Body()
+            @With('foo')
+            foo!: string
+        }
+
+        expectViolation(() => validateCargoSchema(WithSelfDto), 'foo', '@With cannot reference its own field "foo"')
+    })
+
+    it('rejects @Without referencing its own field (G4)', () => {
+        class WithoutSelfDto {
+            @Body()
+            @Without('foo')
+            foo!: string
+        }
+
+        expectViolation(() => validateCargoSchema(WithoutSelfDto), 'foo', '@Without cannot reference its own field "foo"')
+    })
+
     it('accepts references to existing fields', () => {
         class CrossFieldValidDto {
             @Body()

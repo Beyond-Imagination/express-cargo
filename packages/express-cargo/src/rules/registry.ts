@@ -4,6 +4,9 @@ import { BASIC_RULES } from './basic'
 import { KIND_CATEGORY_RULES } from './kindCategory'
 import { EACH_USAGE_RULES } from './eachUsage'
 import { TYPE_HELPER_PLACEMENT_RULES } from './typeHelperPlacement'
+import { TYPE_HELPER_DUPLICATION_RULES } from './typeHelperDuplication'
+import { MISSING_HANDLER_RULES } from './missingHandler'
+import { TRANSFORMER_PRIORITY_RULES } from './transformerPriority'
 import { CROSS_FIELD_RULES } from './crossField'
 
 /** All field-level rule implementations currently active. */
@@ -12,6 +15,9 @@ const FIELD_RULES: readonly FieldRuleFn[] = [
     ...KIND_CATEGORY_RULES,
     ...EACH_USAGE_RULES,
     ...TYPE_HELPER_PLACEMENT_RULES,
+    ...TYPE_HELPER_DUPLICATION_RULES,
+    ...MISSING_HANDLER_RULES,
+    ...TRANSFORMER_PRIORITY_RULES,
     ...CROSS_FIELD_RULES,
 ]
 
