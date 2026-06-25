@@ -69,7 +69,7 @@ De plus, le package `reflect-metadata` doit être installé pour lire les inform
 <details>
 <summary><b>Q : Comment éviter les erreurs si un champ spécifique est manquant ?</b></summary>
 
-**R :** Utilisez le décorateur **`@Optional()`**. Le champ sera lié avec succès même si la valeur est `null` ou `undefined`, en sautant la validation pour ce champ.
+**R :** Utilisez le décorateur **`@Optional()`**. Le champ sera lié avec succès même si la valeur est `null` ou `undefined`, en sautant la validation pour ce champ. Pour substituer une valeur de repli à la place, utilisez `@Default()`. Voir [Gestion des champs manquants](./decorators/missing-fields.md).
 </details>
 
 ### 4. Compatibilité des frameworks

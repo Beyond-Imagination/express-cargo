@@ -69,7 +69,7 @@ title: 자주 묻는 질문
 <details>
 <summary><b>Q: 특정 필드가 없을 수도 있는데, 에러를 피하려면?</b></summary>
 
-**A:** **`@Optional()`** 데코레이터를 사용하세요. 해당 값이 `null`이거나 `undefined`여도 검증을 건너뛰고 정상적으로 바인딩됩니다.
+**A:** **`@Optional()`** 데코레이터를 사용하세요. 해당 값이 `null`이거나 `undefined`여도 검증을 건너뛰고 정상적으로 바인딩됩니다. 대신 대체 값을 지정하려면 `@Default()`를 사용하세요. [필드 누락 처리](./decorators/missing-fields.md)를 참고하세요.
 </details>
 
 ### 4. 프레임워크 호환성

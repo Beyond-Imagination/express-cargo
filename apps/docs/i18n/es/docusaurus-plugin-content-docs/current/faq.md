@@ -69,7 +69,7 @@ Además, el paquete `reflect-metadata` debe estar instalado para leer informaci�
 <details>
 <summary><b>P: ¿Cómo evito errores si falta un campo específico?</b></summary>
 
-**R:** Usa el decorador **`@Optional()`**. El campo se enlazará correctamente aunque el valor sea `null` o `undefined`, omitiendo la validación para ese campo.
+**R:** Usa el decorador **`@Optional()`**. El campo se enlazará correctamente aunque el valor sea `null` o `undefined`, omitiendo la validación para ese campo. Para sustituir con un valor predeterminado en su lugar, usa `@Default()`. Consulta [Manejo de campos faltantes](./decorators/missing-fields.md).
 </details>
 
 ### 4. Compatibilidad con frameworks

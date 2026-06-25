@@ -6,10 +6,6 @@ Validation is not performed by a standalone `validate` function. Instead, it is 
 
 ## Built-in Validators
 
-### `@Optional()`
-
-Marks a field as optional, allowing it to be omitted or set to `undefined` without triggering validation errors.
-
 ### `@Min(value: number)`
 
 Validates that a number is greater than or equal to the specified minimum value.

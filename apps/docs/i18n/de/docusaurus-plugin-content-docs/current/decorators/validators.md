@@ -6,10 +6,6 @@ Die Validierung wird nicht durch eine eigenständige `validate`-Funktion durchge
 
 ## Integrierte Validatoren
 
-### `@Optional()`
-
-Markiert ein Feld als optional, sodass es weggelassen oder auf `undefined` gesetzt werden kann, ohne Validierungsfehler auszulösen.
-
 ### `@Min(value: number)`
 
 Validiert, dass eine Zahl größer oder gleich dem angegebenen Mindestwert ist.
