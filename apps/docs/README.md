@@ -37,7 +37,7 @@ You can also run equivalent commands inside `apps/docs` with `pnpm run <script>`
 
 ## i18n workflow
 
-This docs app supports multiple locales (`en`, `ko`, `de`, `fr`).
+This docs app supports multiple locales (`en`, `ko`, `de`, `fr`, `ru`, `ja`, `es`, `zh-Hans`).
 
 ```bash
 # extract translation files
