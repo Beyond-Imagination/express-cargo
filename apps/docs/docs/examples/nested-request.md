@@ -40,7 +40,7 @@ export class UserInfoRequest {
 
 ```typescript
 // order.request.ts
-import { Body, Min, Max } from 'express-cargo'
+import { Body, Min, Max, Type } from 'express-cargo'
 import { UserInfoRequest } from './user.request'
 
 export class OrderRequest {
@@ -53,6 +53,7 @@ export class OrderRequest {
     quantity!: number
 
     @Body('user')
+    @Type(() => UserInfoRequest)
     user!: UserInfoRequest
 }
 ```

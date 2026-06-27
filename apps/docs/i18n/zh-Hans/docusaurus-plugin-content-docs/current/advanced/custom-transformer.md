@@ -95,7 +95,7 @@ class ReportRequest {
 class ProductQuery {
     @Query('q')
     @Transform((value: string) => value.toLowerCase().trim())
-    @IsNotEmpty()
+    @MinLength(1)
     searchTerm!: string
 
     @Query()

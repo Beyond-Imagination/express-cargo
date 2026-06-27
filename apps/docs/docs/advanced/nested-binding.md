@@ -6,7 +6,7 @@ Express-Cargo allows you to handle nested objects in requests, automatically bin
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { Body, bindingCargo, getCargo } from 'express-cargo'
+import { Body, Type, bindingCargo, getCargo } from 'express-cargo'
 
 // 1. Define nested Object
 class Profile {
@@ -16,6 +16,7 @@ class Profile {
 
 class ExampleObject {
     @Body('profile')
+    @Type(() => Profile)
     profile!: Profile
 }
 

@@ -6,7 +6,7 @@ Express-Cargo 允许你处理请求中的嵌套对象，并在支持递归类型
 
 ```typescript
 import express, { Request, Response } from 'express'
-import { Body, bindingCargo, getCargo } from 'express-cargo'
+import { Body, Type, bindingCargo, getCargo } from 'express-cargo'
 
 // 1. 定义嵌套对象
 class Profile {
@@ -16,6 +16,7 @@ class Profile {
 
 class ExampleObject {
     @Body('profile')
+    @Type(() => Profile)
     profile!: Profile
 }
 
