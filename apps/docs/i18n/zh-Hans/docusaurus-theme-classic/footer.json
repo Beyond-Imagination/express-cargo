@@ -1,0 +1,30 @@
+{
+  "link.title.Docs": {
+    "message": "文档",
+    "description": "The title of the footer links column"
+  },
+  "link.title.More": {
+    "message": "更多",
+    "description": "Footer column title"
+  },
+  "link.item.label.Getting Started": {
+    "message": "快速开始",
+    "description": "Link to intro page"
+  },
+  "link.item.label.Core Concepts": {
+    "message": "核心概念",
+    "description": "Link to core concepts page"
+  },
+  "link.item.label.Examples": {
+    "message": "示例",
+    "description": "Link to usage examples"
+  },
+  "link.item.label.GitHub": {
+    "message": "在 GitHub 查看",
+    "description": "GitHub project link"
+  },
+  "copyright": {
+    "message": "Copyright © 2025 Beyond_Imagination Team. Built with Docusaurus.",
+    "description": "The footer copyright"
+  }
+}

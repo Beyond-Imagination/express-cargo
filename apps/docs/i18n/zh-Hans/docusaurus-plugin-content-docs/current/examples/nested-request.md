@@ -1,12 +1,12 @@
-# Handling Nested Requests
+# 处理嵌套请求
 
-This example demonstrates how **Express-Cargo** can populate nested Requests, allowing you to map complex, structured request data into a single, well-organized object.
+此示例展示 **Express-Cargo** 如何填充嵌套 Requests，让你可以将复杂且结构化的请求数据映射到一个组织良好的对象中。
 
-## 1. Define Your Requests
+## 1. 定义你的 Requests
 
-In this scenario, we'll define two classes: `UserInfoRequest` and `OrderRequest`. The `UserInfoRequest` class pulls user details from the request body and an authentication token from the headers.
+在此场景中，我们将定义两个类：`UserInfoRequest` 和 `OrderRequest`。`UserInfoRequest` 类从请求 body 中提取用户详情，并从 headers 中提取认证 token。
 
-**`UserInfoRequest`** – Maps user details from the request body and extracts the authorization token from headers.
+**`UserInfoRequest`** - 将用户详情映射自请求 body，并从 headers 中提取授权 token。
 
 ```typescript
 // user.request.ts
@@ -24,7 +24,7 @@ export class UserInfoRequest {
     @Optional()
     age?: number
 
-    // Extract the token from the Authorization header.
+    // 从 Authorization header 中提取 token。
     @Header('authorization')
     @Transform((value: string) => {
         if (value.startsWith('Bearer ')) {
@@ -36,7 +36,7 @@ export class UserInfoRequest {
 }
 ```
 
-**`OrderRequest`** – Represents an order request, including a nested `UserInfoRequest`.
+**`OrderRequest`** - 表示订单请求，其中包含一个嵌套的 `UserInfoRequest`。
 
 ```typescript
 // order.request.ts
@@ -58,11 +58,11 @@ export class OrderRequest {
 }
 ```
 
-In `UserInfoRequest`, we use the `@header` decorator on the `authorization` property to get the value from the `Authorization` header. Then, the `@transform` decorator extracts just the token value, stripping the `"Bearer "` prefix.
+在 `UserInfoRequest` 中，我们在 `authorization` 属性上使用 `@header` 装饰器，从 `Authorization` header 获取值。然后，`@transform` 装饰器只提取 token 值，并移除 `"Bearer "` 前缀。
 
-## 2. Use in an Express Route
+## 2. 在 Express 路由中使用
 
-Simply apply the `bindingCargo` middleware to your route with the top-level Request, `OrderRequest`. The middleware will handle all the binding logic for you.
+只需把 `bindingCargo` 中间件应用到路由，并传入顶层 Request：`OrderRequest`。中间件会为你处理所有绑定逻辑。
 
 ```typescript
 router.post('/orders', bindingCargo(OrderRequest), (req, res) => {
@@ -73,15 +73,15 @@ router.post('/orders', bindingCargo(OrderRequest), (req, res) => {
         console.log(`User name: ${order.user.name}`)
         console.log(`Auth token: ${order.user.authorization}`)
 
-        // You can now use the auth token for validation or other logic.
+        // 现在可以使用 auth token 执行验证或其他逻辑。
         res.json({ message: 'Order received', order })
     }
 })
 ```
 
-## 3. Example Request
+## 3. 示例请求
 
-This route will successfully process a request that has both a body and an `Authorization` header.
+该路由可以成功处理同时包含 body 和 `Authorization` header 的请求。
 
 - Request Body:
     ```json
@@ -101,11 +101,11 @@ This route will successfully process a request that has both a body and an `Auth
     Authorization: Bearer my-auth-token-12345
     ```
 
-When processed, `getCargo(req)` will return a single `OrderRequest` object that contains all the data, with the `authorization` property correctly populated from the header. This demonstrates how **Express-Cargo** elegantly unifies multiple data sources into one clean object.
+处理后，`getCargo(req)` 将返回一个包含所有数据的 `OrderRequest` 对象，并且 `authorization` 属性会正确填充为 header 中的值。这展示了 **Express-Cargo** 如何优雅地将多个数据来源统一成一个清晰对象。
 
-## 4. Example Result
+## 4. 示例结果
 
-Final bound `OrderRequest` object:
+最终绑定得到的 `OrderRequest` 对象：
 
 ```json
 {

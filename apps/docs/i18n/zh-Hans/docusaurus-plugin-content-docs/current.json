@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "下一版",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "快速开始",
+    "description": "The label for category Getting Started in sidebar docs"
+  },
+  "sidebar.docs.category.Core Concepts": {
+    "message": "核心概念",
+    "description": "The label for category Core Concepts in sidebar docs"
+  },
+  "sidebar.docs.category.Advanced Usage": {
+    "message": "高级用法",
+    "description": "The label for category Advanced Usage in sidebar docs"
+  },
+  "sidebar.docs.category.Examples": {
+    "message": "示例",
+    "description": "The label for category Examples in sidebar docs"
+  }
+}
