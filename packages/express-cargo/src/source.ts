@@ -103,12 +103,12 @@ export const Session = createSourceDecorator('session')
  * @example
  * ```ts
  * class UploadExample {
- *      @File()
+ *      @UploadedFile()
  *      avatar: Express.Multer.File;
  * }
  * ```
  */
-export const File = createSourceDecorator('file')
+export const UploadedFile = createSourceDecorator('file')
 
 /**
  * Extracts all uploaded files sharing a field name as an array.
@@ -116,9 +116,9 @@ export const File = createSourceDecorator('file')
  * @example
  * ```ts
  * class UploadExample {
- *      @Files('photos')
+ *      @UploadedFiles('photos')
  *      gallery: Express.Multer.File[];
  * }
  * ```
  */
-export const Files = createSourceDecorator('files')
+export const UploadedFiles = createSourceDecorator('files')

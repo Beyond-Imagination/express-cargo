@@ -1,4 +1,4 @@
-import { bindingCargo, Body, File, Files, Optional, getCargo, CargoValidationError, setCargoFileLocator, getCargoFileLocator, FileLocator } from '../../src'
+import { bindingCargo, Body, UploadedFile, UploadedFiles, Optional, getCargo, CargoValidationError, setCargoFileLocator, getCargoFileLocator, FileLocator } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 
 /** Builds a multer-like file object. */
@@ -17,7 +17,7 @@ describe('file source binding', () => {
     it('binds a single uploaded file from req.file (upload.single)', () => {
         class UploadDTO {
             @Body('title') title!: string
-            @File() avatar!: unknown
+            @UploadedFile() avatar!: unknown
         }
 
         const file = mockFile('avatar', 'me.png')
@@ -34,9 +34,9 @@ describe('file source binding', () => {
         expect(dto.avatar).toBe(file)
     })
 
-    it('binds every file with @Files (upload.array)', () => {
+    it('binds every file with @UploadedFiles (upload.array)', () => {
         class GalleryDTO {
-            @Files('photos') photos!: unknown[]
+            @UploadedFiles('photos') photos!: unknown[]
         }
 
         const f1 = mockFile('photos', '1.png')
@@ -53,8 +53,8 @@ describe('file source binding', () => {
 
     it('binds files from the fielded object form (upload.fields)', () => {
         class ProfileDTO {
-            @File() avatar!: unknown
-            @Files('gallery') gallery!: unknown[]
+            @UploadedFile() avatar!: unknown
+            @UploadedFiles('gallery') gallery!: unknown[]
         }
 
         const avatar = mockFile('avatar', 'a.png')
@@ -72,7 +72,7 @@ describe('file source binding', () => {
 
     it('preserves the parser-produced shape (no transformation, e.g. diskStorage path)', () => {
         class FileDTO {
-            @File() file!: unknown
+            @UploadedFile() file!: unknown
         }
 
         const diskFile = mockFile('file', 'x.png', { path: '/tmp/x.png', buffer: undefined })
@@ -89,7 +89,7 @@ describe('file source binding', () => {
 
     it('sets an optional file to null when it is missing', () => {
         class OptUploadDTO {
-            @File() @Optional() avatar?: unknown
+            @UploadedFile() @Optional() avatar?: unknown
         }
 
         const req = makeMockReq({})
@@ -105,7 +105,7 @@ describe('file source binding', () => {
 
     it('raises a required error when a mandatory file is missing', () => {
         class RequiredUploadDTO {
-            @File() avatar!: unknown
+            @UploadedFile() avatar!: unknown
         }
 
         const req = makeMockReq({})
@@ -119,10 +119,10 @@ describe('file source binding', () => {
         expect(err.errors.map((e: CargoValidationError['errors'][number]) => e.message)).toContain('avatar is required')
     })
 
-    it('binds multiple fields with distinct names (mixed @File/@Files, array form)', () => {
+    it('binds multiple fields with distinct names (mixed @UploadedFile/@UploadedFiles, array form)', () => {
         class MultiDTO {
-            @Files('a1') a1!: unknown[]
-            @File('a2') a2!: unknown
+            @UploadedFiles('a1') a1!: unknown[]
+            @UploadedFile('a2') a2!: unknown
         }
 
         const f1 = mockFile('a1', '1.png')
@@ -143,7 +143,7 @@ describe('file source binding', () => {
 
     it('supports a custom locator for non-multer parsers', () => {
         class CustomDTO {
-            @File() avatar!: unknown
+            @UploadedFile() avatar!: unknown
         }
 
         // express-fileupload shape: req.files = { avatar: <file> } (not an array)

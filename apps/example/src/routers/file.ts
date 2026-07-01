@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 import multer from 'multer'
-import { bindingCargo, getCargo, Body, File, Files } from 'express-cargo'
+import { bindingCargo, getCargo, Body, UploadedFile, UploadedFiles } from 'express-cargo'
 
 const router: Router = express.Router()
 
@@ -20,7 +20,7 @@ class UploadAvatarRequest {
     @Body('username')
     username!: string
 
-    @File()
+    @UploadedFile()
     avatar!: Express.Multer.File
 }
 
@@ -30,7 +30,7 @@ router.post('/upload/avatar', upload.single('avatar'), bindingCargo(UploadAvatar
 })
 
 class UploadGalleryRequest {
-    @Files('photos')
+    @UploadedFiles('photos')
     photos!: Express.Multer.File[]
 }
 
@@ -43,10 +43,10 @@ class UploadProfileRequest {
     @Body('bio')
     bio!: string
 
-    @File('avatar')
+    @UploadedFile('avatar')
     avatar!: Express.Multer.File
 
-    @Files('gallery')
+    @UploadedFiles('gallery')
     gallery!: Express.Multer.File[]
 }
 

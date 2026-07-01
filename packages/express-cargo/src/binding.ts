@@ -256,7 +256,7 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
 
         const currentSource = meta.getSource()
 
-        // Uploaded files share one map; `@File` takes the first entry, `@Files` takes them all.
+        // Uploaded files share one map; `@UploadedFile` takes the first entry, `@UploadedFiles` takes them all.
         if (currentSource === 'file' || currentSource === 'files') {
             bindFile(meta, property, key, sources.file?.[key], currentSource === 'files', targetObject, errors, sourceKey)
             continue
@@ -279,7 +279,7 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
     }
 }
 
-// Binds an uploaded file field. `@Files` receives the whole array; `@File` takes the first entry.
+// Binds an uploaded file field. `@UploadedFiles` receives the whole array; `@UploadedFile` takes the first entry.
 function bindFile(
     meta: CargoFieldMetadata,
     property: string | symbol,
@@ -356,7 +356,7 @@ export function bindingCargo<T extends object = any>(cargoClass: ClassConstructo
     return (req, res, next) => {
         try {
             const errors: CargoFieldError[] = []
-            // Normalize uploaded files once; @File and @Files share the same map.
+            // Normalize uploaded files once; @UploadedFile and @UploadedFiles share the same map.
             const uploadedFiles = getCargoFileLocator()(req)
             const sources = {
                 req: req,
