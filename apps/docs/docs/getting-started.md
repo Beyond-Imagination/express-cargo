@@ -80,9 +80,8 @@ pnpm add reflect-metadata
 #### 6-1. `src/app.ts`
 
 ```typescript
-import express from 'express'
-import { bindingCargo, getCargo, Body, Query, Header, Params, Min, Max, Equal, NotEqual, Prefix, Suffix } from 'express-cargo'
-import errorHandlerRouter from './errorHandler'
+import express, { Request, Response, NextFunction } from 'express'
+import { bindingCargo, getCargo, Body, Equal, CargoValidationError } from 'express-cargo'
 
 const app = express()
 
@@ -90,10 +89,6 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-app.use(errorHandlerRouter)
-
-app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
 
 class ExampleRequest {
   @Body() // Extract fields from the request body
@@ -105,6 +100,19 @@ app.post('/example', bindingCargo(ExampleRequest), (req, res) => { // bindingCar
   const cargo = getCargo<ExampleRequest>(req) // Return a validated type-safe object
   res.json(cargo)
 })
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof CargoValidationError) {
+    res.status(400).json({
+      errors: err.errors.map(error => error.message),
+    })
+    return
+  }
+
+  next(err)
+})
+
+app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
 ```
 
 ### 7. Run
