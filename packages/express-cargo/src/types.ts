@@ -9,7 +9,7 @@ import type { CargoClassMetadata } from './metadata'
  * - `header`: req.headers
  * - `session`: req.session
  */
-export type Source = 'body' | 'query' | 'params' | 'header' | 'session'
+export type Source = 'body' | 'query' | 'params' | 'header' | 'session' | 'file' | 'files'
 
 /**
  * Represents a class constructor.
@@ -201,6 +201,7 @@ export type BindSources = {
     params: any
     header: any
     session: any
+    file: any
 }
 
 export type BindContext = {

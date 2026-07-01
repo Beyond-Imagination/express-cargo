@@ -4,6 +4,7 @@ import { AnalysisResult, BindContext, BindSources, ClassConstructor } from './ty
 import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
 import { getCargoErrorHandler } from './errorHandler'
+import { getCargoFileLocator, CargoFile } from './fileHandler'
 import { validateAnalysis } from './rules'
 import { isClass, isUserDefinedClass } from './utils'
 import { analyzeCargoSchema } from './analysis'
@@ -253,10 +254,16 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
         const key = getFieldKey(meta, sourceKey, errors)
         if (!key) continue
 
-        let value
         const currentSource = meta.getSource()
-        const currentSourceData = sources[currentSource as keyof BindSources]
 
+        // Uploaded files share one map; `@File` takes the first entry, `@Files` takes them all.
+        if (currentSource === 'file' || currentSource === 'files') {
+            bindFile(meta, property, key, sources.file?.[key], currentSource === 'files', targetObject, errors, sourceKey)
+            continue
+        }
+
+        let value
+        const currentSourceData = sources[currentSource as keyof BindSources]
         if (currentSourceData) {
             value = currentSourceData[key]
         }
@@ -270,6 +277,27 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
         transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource, analysis)
         validateField(meta, property, targetObject, errors)
     }
+}
+
+// Binds an uploaded file field. `@Files` receives the whole array; `@File` takes the first entry.
+function bindFile(
+    meta: CargoFieldMetadata,
+    property: string | symbol,
+    key: string,
+    files: CargoFile[] | undefined,
+    multiple: boolean,
+    targetObject: any,
+    errors: CargoFieldError[],
+    sourceKey: string,
+): void {
+    const value = files && files.length > 0 ? (multiple ? files : files[0]) : undefined
+
+    if (handleMissing(meta, property, key, value, targetObject, errors, sourceKey)) {
+        return
+    }
+
+    targetObject[property] = value
+    validateField(meta, property, targetObject, errors)
 }
 
 function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext): void {
@@ -328,6 +356,8 @@ export function bindingCargo<T extends object = any>(cargoClass: ClassConstructo
     return (req, res, next) => {
         try {
             const errors: CargoFieldError[] = []
+            // Normalize uploaded files once; @File and @Files share the same map.
+            const uploadedFiles = getCargoFileLocator()(req)
             const sources = {
                 req: req,
                 body: req.body,
@@ -335,6 +365,7 @@ export function bindingCargo<T extends object = any>(cargoClass: ClassConstructo
                 params: req.params,
                 header: req.headers,
                 session: (req as any).session,
+                file: uploadedFiles,
             }
             const cargo = bindObject(cargoClass, result.rootMeta, sources, errors, result)
 
