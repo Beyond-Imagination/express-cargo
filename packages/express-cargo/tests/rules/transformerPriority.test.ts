@@ -1,4 +1,4 @@
-import { Body, Enum, Transform } from '../../src'
+import { Body, Enum, Transform, UploadedFile, UploadedFiles } from '../../src'
 import { expectViolation, validateCargoSchema } from './testUtils'
 
 enum Role {
@@ -36,5 +36,34 @@ describe('schema validation — transformer-priority rules', () => {
         }
 
         expect(() => validateCargoSchema(TransformOnlyDto)).not.toThrow()
+    })
+
+    it('rejects @UploadedFile combined with @Transform', () => {
+        class FileAndTransformDto {
+            @UploadedFile()
+            @Transform((v: unknown) => v)
+            avatar!: unknown
+        }
+
+        expectViolation(() => validateCargoSchema(FileAndTransformDto), 'avatar', '@Transform cannot be applied to an uploaded file field')
+    })
+
+    it('rejects @UploadedFiles combined with @Transform', () => {
+        class FilesAndTransformDto {
+            @UploadedFiles('photos')
+            @Transform((v: unknown) => v)
+            photos!: unknown[]
+        }
+
+        expectViolation(() => validateCargoSchema(FilesAndTransformDto), 'photos', '@Transform cannot be applied to an uploaded file field')
+    })
+
+    it('accepts an uploaded file field without @Transform', () => {
+        class FileOnlyDto {
+            @UploadedFile()
+            avatar!: unknown
+        }
+
+        expect(() => validateCargoSchema(FileOnlyDto)).not.toThrow()
     })
 })
