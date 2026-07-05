@@ -32,6 +32,7 @@ const sidebars: SidebarsConfig = {
                 'decorators/virtual',
                 'decorators/transforms',
                 'decorators/validators',
+                'decorators/missing-fields',
             ],
         },
         {
@@ -41,7 +42,6 @@ const sidebars: SidebarsConfig = {
                 'advanced/inherited-binding',
                 'advanced/nested-binding',
                 'advanced/custom-transformer',
-                'advanced/default',
                 'advanced/list-decorator',
                 'advanced/type-and-polymorphism',
             ],

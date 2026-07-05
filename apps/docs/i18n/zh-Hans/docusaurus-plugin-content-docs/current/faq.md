@@ -69,7 +69,7 @@ sidebar_label: 常见问题
 <details>
 <summary><b>Q: 如果某个字段缺失，如何避免错误？</b></summary>
 
-**A:** 使用 **`@Optional()`** 装饰器。即使该字段值为 `null` 或 `undefined`，也可以成功绑定，并跳过该字段的验证。
+**A:** 使用 **`@Optional()`** 装饰器。即使该字段值为 `null` 或 `undefined`，也可以成功绑定，并跳过该字段的验证。如果想改为填充一个后备值，请使用 `@Default()`。参见[处理缺失字段](./decorators/missing-fields.md)。
 </details>
 
 ### 4. 框架兼容性

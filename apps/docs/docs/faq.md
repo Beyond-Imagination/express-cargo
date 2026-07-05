@@ -69,7 +69,7 @@ Additionally, the `reflect-metadata` package must be installed to read type info
 <details>
 <summary><b>Q: How do I avoid errors if a specific field is missing?</b></summary>
 
-**A:** Use the **`@Optional()`** decorator. The field will be bound successfully even if the value is `null` or `undefined`, skipping validation for that field.
+**A:** Use the **`@Optional()`** decorator. The field will be bound successfully even if the value is `null` or `undefined`, skipping validation for that field. To substitute a fallback value instead, use `@Default()`. See [Handling Missing Fields](./decorators/missing-fields.md).
 </details>
 
 ### 4. Framework Compatibility

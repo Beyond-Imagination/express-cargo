@@ -69,7 +69,7 @@ Zusätzlich muss das `reflect-metadata`-Paket installiert sein, um Typinformatio
 <details>
 <summary><b>F: Wie vermeide ich Fehler, wenn ein bestimmtes Feld fehlt?</b></summary>
 
-**A:** Verwenden Sie den **`@Optional()`**-Decorator. Das Feld wird auch dann erfolgreich gebunden, wenn der Wert `null` oder `undefined` ist, und die Validierung für dieses Feld wird übersprungen.
+**A:** Verwenden Sie den **`@Optional()`**-Decorator. Das Feld wird auch dann erfolgreich gebunden, wenn der Wert `null` oder `undefined` ist, und die Validierung für dieses Feld wird übersprungen. Um stattdessen einen Ersatzwert einzusetzen, verwenden Sie `@Default()`. Siehe [Umgang mit fehlenden Feldern](./decorators/missing-fields.md).
 </details>
 
 ### 4. Framework-Kompatibilität
