@@ -7,6 +7,7 @@ import decoratorRouter from './routers/decorator'
 import arrayFieldRouter from './routers/typeCasting'
 import errorHandlerRouter from './routers/errorHandler'
 import integrationRouter from './routers/integration'
+import fileRouter from './routers/file'
 import './errors/cargoErrorHandler'
 
 const app = express()
@@ -22,6 +23,7 @@ app.use(transformRouter)
 app.use(classFieldInheritanceRouter)
 app.use(decoratorRouter)
 app.use(arrayFieldRouter)
+app.use(fileRouter)
 app.use(errorHandlerRouter)
 app.use(integrationRouter)
 

@@ -95,3 +95,30 @@ export const Header = createSourceDecorator('header')
  * ```
  */
 export const Session = createSourceDecorator('session')
+
+/**
+ * Extracts a single uploaded file from a `multipart/form-data` request.
+ * The file must already be parsed onto the request (multer by default) and is bound as-is.
+ * @param key - Optional form field name. Defaults to the property name.
+ * @example
+ * ```ts
+ * class UploadExample {
+ *      @UploadedFile()
+ *      avatar: Express.Multer.File;
+ * }
+ * ```
+ */
+export const UploadedFile = createSourceDecorator('file')
+
+/**
+ * Extracts all uploaded files sharing a field name as an array.
+ * @param key - Optional form field name. Defaults to the property name.
+ * @example
+ * ```ts
+ * class UploadExample {
+ *      @UploadedFiles('photos')
+ *      gallery: Express.Multer.File[];
+ * }
+ * ```
+ */
+export const UploadedFiles = createSourceDecorator('files')
