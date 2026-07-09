@@ -92,7 +92,7 @@ Full guide and API reference:
 | `@Body()`          | Binds a field from `req.body`                                     | `@Body() name: string`                           |
 | `@Query()`         | Binds a field from `req.query`                                    | `@Query() page: number`                          |
 | `@Params()`        | Binds a field from `req.params`                                   | `@Params() id: string`                           |
-| `@Uri()`           | alias of @params()                                                | `@Uri() id: string`                              |
+| `@Uri()`           | alias of `@Params()`                                              | `@Uri() id: string`                              |
 | `@Header()`        | Binds a field from `req.headers`                                  | `@Header() token: string`                        |
 | `@Session()`       | Binds a field from `req.session`                                  | `@Session() userId: string`                      |
 | `@UploadedFile()`  | Binds a single uploaded file from a `multipart/form-data` request | `@UploadedFile() avatar: Express.Multer.File`    |
