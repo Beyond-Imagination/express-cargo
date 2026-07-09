@@ -9,6 +9,8 @@
 | `@Params()`  | `req.params`  |
 | `@Session()` | `req.session` |
 
+`multipart/form-data` で送信されたファイルには専用のデコレータ `@UploadedFile()` と `@UploadedFiles()` があり、[ファイルアップロードデコレータ](./file-upload.md)で説明されています。
+
 ## デコレータの詳細
 
 ### `@Body()`

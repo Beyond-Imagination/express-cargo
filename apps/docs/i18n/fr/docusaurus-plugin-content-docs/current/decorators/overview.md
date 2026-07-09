@@ -16,6 +16,7 @@ Les décorateurs sont regroupés selon le rôle qu'ils jouent dans le pipeline d
 | Catégorie | Rôle | Exemples | Référence |
 |-----------|------|----------|-----------|
 | **Source** | Choisit d'où provient la valeur d'un champ | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [Décorateurs de source](./source-decorators.md) |
+| **File** | Lie les fichiers téléversés depuis une requête `multipart/form-data` | `@UploadedFile`, `@UploadedFiles` | [Décorateurs de téléversement de fichiers](./file-upload.md) |
 | **Virtual** | Calcule un champ à partir d'autres champs ou du `Request` brut | `@Virtual`, `@Request` | [Décorateurs de champ virtuel](./virtual.md) |
 | **Transform** | Modifie la valeur d'un seul champ avant la liaison | `@Transform` | [Décorateur de transformation](./transforms.md) |
 | **Validation** | Applique des règles à la valeur d'un champ | `@Min`, `@Max`, `@Email`, `@OneOf`, … | [Décorateurs de validation](./validators.md) |

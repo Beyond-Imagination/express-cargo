@@ -16,6 +16,7 @@ express-cargo のデコレータは、クラスフィールドにアノテーシ
 | カテゴリ | 目的 | 例 | 参照 |
 |----------|------|-----|------|
 | **Source** | フィールドの値の取得元を選択する | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [ソースデコレータ](./source-decorators.md) |
+| **File** | `multipart/form-data` リクエストのアップロードファイルをバインドする | `@UploadedFile`, `@UploadedFiles` | [ファイルアップロードデコレータ](./file-upload.md) |
 | **Virtual** | 他のフィールドや生の `Request` からフィールドを計算する | `@Virtual`, `@Request` | [仮想フィールドデコレータ](./virtual.md) |
 | **Transform** | バインド前に単一フィールドの値を変更する | `@Transform` | [変換デコレータ](./transforms.md) |
 | **Validation** | フィールドの値にルールを適用する | `@Min`, `@Max`, `@Email`, `@OneOf`, … | [バリデーションデコレータ](./validators.md) |

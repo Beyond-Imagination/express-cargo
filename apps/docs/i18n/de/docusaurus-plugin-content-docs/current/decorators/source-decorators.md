@@ -9,6 +9,8 @@
 | `@Params()`  | `req.params`  |
 | `@Session()` | `req.session` |
 
+Als `multipart/form-data` gesendete Dateien haben eigene Decorators, `@UploadedFile()` und `@UploadedFiles()`, dokumentiert unter [Datei-Upload-Decorators](./file-upload.md).
+
 ## Decorator-Details
 
 ### `@Body()`

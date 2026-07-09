@@ -16,6 +16,7 @@ Los decoradores se agrupan según el rol que cumplen en la canalización de enla
 | Categoría | Propósito | Ejemplos | Referencia |
 |-----------|-----------|----------|------------|
 | **Source** | Elige de dónde proviene el valor de un campo | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [Decoradores de origen](./source-decorators.md) |
+| **File** | Enlaza archivos subidos desde una solicitud `multipart/form-data` | `@UploadedFile`, `@UploadedFiles` | [Decoradores de subida de archivos](./file-upload.md) |
 | **Virtual** | Calcula un campo a partir de otros campos o del `Request` sin procesar | `@Virtual`, `@Request` | [Decoradores de campo virtual](./virtual.md) |
 | **Transform** | Modifica el valor de un solo campo antes del enlace | `@Transform` | [Decorador de transformación](./transforms.md) |
 | **Validation** | Aplica reglas al valor de un campo | `@Min`, `@Max`, `@Email`, `@OneOf`, … | [Decoradores de validación](./validators.md) |

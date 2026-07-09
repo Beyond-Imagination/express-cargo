@@ -21,6 +21,7 @@ express-cargo의 데코레이터는 클래스 필드에 추가하여 미들웨�
 | 카테고리 | 목적 | 예시 | 참조 |
 |----------|------|------|------|
 | **Source** | 필드 값을 어디에서 가져올지 선택 | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [소스 데코레이터](./source-decorators.md) |
+| **File** | `multipart/form-data` 요청의 업로드 파일을 바인딩 | `@UploadedFile`, `@UploadedFiles` | [파일 업로드 데코레이터](./file-upload.md) |
 | **Virtual** | 다른 필드나 원본 `Request`에서 필드를 계산 | `@Virtual`, `@Request` | [가상 필드 데코레이터](./virtual.md) |
 | **Transform** | 바인딩 전에 단일 필드 값을 변경 | `@Transform` | [변환 데코레이터](./transforms.md) |
 | **Validation** | 필드 값에 규칙을 적용 | `@Min`, `@Max`, `@Email`, `@OneOf`, … | [유효성 검사 데코레이터](./validators.md) |

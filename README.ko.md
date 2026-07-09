@@ -87,14 +87,18 @@ app.listen(3000)
 
 ### 요청 바인딩 데코레이터
 
-| 데코레이터        | 설명                      | 예시                          |
-|--------------|-------------------------|-----------------------------|
-| `@Body()`    | `req.body` 의 필드를 바인딩    | `@Body() name: string`      |
-| `@Query()`   | `req.query` 의 필드를 바인딩   | `@Query() page: number`     |
-| `@Params()`  | `req.params` 의 필드를 바인딩  | `@Params() id: string`      |
-| `@Uri()`     | `@Params()` 의 별칭        | `@Uri() id: string`         |
-| `@Header()`  | `req.headers` 의 필드를 바인딩 | `@Header() token: string`   |
-| `@Session()` | `req.session` 의 필드를 바인딩 | `@Session() userId: string` |
+| 데코레이터              | 설명                                        | 예시                                               |
+|--------------------|-------------------------------------------|--------------------------------------------------|
+| `@Body()`          | `req.body` 의 필드를 바인딩                      | `@Body() name: string`                           |
+| `@Query()`         | `req.query` 의 필드를 바인딩                     | `@Query() page: number`                          |
+| `@Params()`        | `req.params` 의 필드를 바인딩                    | `@Params() id: string`                           |
+| `@Uri()`           | `@Params()` 의 별칭                          | `@Uri() id: string`                              |
+| `@Header()`        | `req.headers` 의 필드를 바인딩                   | `@Header() token: string`                        |
+| `@Session()`       | `req.session` 의 필드를 바인딩                   | `@Session() userId: string`                      |
+| `@UploadedFile()`  | `multipart/form-data` 요청에서 단일 업로드 파일을 바인딩 | `@UploadedFile() avatar: Express.Multer.File`    |
+| `@UploadedFiles()` | 같은 필드 이름을 가진 업로드 파일 전체를 배열로 바인딩           | `@UploadedFiles() photos: Express.Multer.File[]` |
+
+> 파일 바인딩은 `bindingCargo` 앞에서 multipart 파서([multer](https://github.com/expressjs/multer) 등)가 먼저 실행되어야 합니다. 자세한 내용은 [파일 업로드 데코레이터](https://beyond-imagination.github.io/express-cargo/ko/decorators/file-upload) 문서를 참고하세요.
 ---
 
 ### 검증 데코레이터

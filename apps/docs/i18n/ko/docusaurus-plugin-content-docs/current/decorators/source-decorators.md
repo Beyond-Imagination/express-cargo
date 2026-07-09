@@ -14,6 +14,8 @@ title: 소스 데코레이터
 | `@Params()`  | `req.params`  |
 | `@Session()` | `req.session` |
 
+`multipart/form-data`로 전송된 파일에는 전용 데코레이터 `@UploadedFile()`과 `@UploadedFiles()`가 있으며, [파일 업로드 데코레이터](./file-upload.md)에서 문서화되어 있습니다.
+
 ## 데코레이터 상세
 
 ### `@Body()`

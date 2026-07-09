@@ -87,14 +87,18 @@ Full guide and API reference:
 
 ### Binding Decorators
 
-| Decorator    | Description                      | Example                     |
-|--------------|----------------------------------|-----------------------------|
-| `@Body()`    | Binds a field from `req.body`    | `@Body() name: string`      |
-| `@Query()`   | Binds a field from `req.query`   | `@Query() page: number`     |
-| `@Params()`  | Binds a field from `req.params`  | `@Params() id: string`      |
-| `@Uri()`     | alias of @params()               | `@Uri() id: string`         |
-| `@Header()`  | Binds a field from `req.headers` | `@Header() token: string`   |
-| `@Session()` | Binds a field from `req.session` | `@Session() userId: string` |
+| Decorator          | Description                                                       | Example                                          |
+|--------------------|-------------------------------------------------------------------|--------------------------------------------------|
+| `@Body()`          | Binds a field from `req.body`                                     | `@Body() name: string`                           |
+| `@Query()`         | Binds a field from `req.query`                                    | `@Query() page: number`                          |
+| `@Params()`        | Binds a field from `req.params`                                   | `@Params() id: string`                           |
+| `@Uri()`           | alias of @params()                                                | `@Uri() id: string`                              |
+| `@Header()`        | Binds a field from `req.headers`                                  | `@Header() token: string`                        |
+| `@Session()`       | Binds a field from `req.session`                                  | `@Session() userId: string`                      |
+| `@UploadedFile()`  | Binds a single uploaded file from a `multipart/form-data` request | `@UploadedFile() avatar: Express.Multer.File`    |
+| `@UploadedFiles()` | Binds all uploaded files sharing a field name as an array         | `@UploadedFiles() photos: Express.Multer.File[]` |
+
+> File binding needs a multipart parser (e.g. [multer](https://github.com/expressjs/multer)) to run before `bindingCargo`. See [File Upload Decorators](https://beyond-imagination.github.io/express-cargo/decorators/file-upload) for details.
 
 ### Validation Decorators
 

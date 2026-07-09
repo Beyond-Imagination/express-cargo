@@ -9,6 +9,8 @@
 | `@Params()`  | `req.params`  |
 | `@Session()` | `req.session` |
 
+Los archivos enviados como `multipart/form-data` tienen sus propios decoradores, `@UploadedFile()` y `@UploadedFiles()`, documentados en [Decoradores de subida de archivos](./file-upload.md).
+
 ## Detalles de los decoradores
 
 ### `@Body()`

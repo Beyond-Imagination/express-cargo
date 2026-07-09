@@ -13,12 +13,13 @@ When you pass a class to `bindingCargo`, the middleware reads these decorators t
 
 Decorators are grouped by the role they play in the binding pipeline.
 
-| Category          | Purpose                                                     | Examples                                                     | Reference                                         |
-|-------------------|-------------------------------------------------------------|--------------------------------------------------------------|---------------------------------------------------|
-| **Source**        | Choose where a field's value comes from                     | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [Source Decorators](./source-decorators.md)       |
-| **Virtual**       | Compute a field from other fields or from the raw `Request` | `@Virtual`, `@Request`                                       | [Virtual Field Decorators](./virtual.md)          |
-| **Transform**     | Modify a single field's value before binding                | `@Transform`                                                 | [Transformation Decorator](./transforms.md)       |
-| **Validation**    | Enforce rules on a field's value                            | `@Min`, `@Max`, `@Email`, `@OneOf`, …                        | [Validation Decorators](./validators.md)          |
+| Category          | Purpose                                                     | Examples                                                     | Reference                                      |
+|-------------------|-------------------------------------------------------------|--------------------------------------------------------------|------------------------------------------------|
+| **Source**        | Choose where a field's value comes from                     | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [Source Decorators](./source-decorators.md)    |
+| **File**          | Bind uploaded files from a `multipart/form-data` request    | `@UploadedFile`, `@UploadedFiles`                            | [File Upload Decorators](./file-upload.md)     |
+| **Virtual**       | Compute a field from other fields or from the raw `Request` | `@Virtual`, `@Request`                                       | [Virtual Field Decorators](./virtual.md)       |
+| **Transform**     | Modify a single field's value before binding                | `@Transform`                                                 | [Transformation Decorator](./transforms.md)    |
+| **Validation**    | Enforce rules on a field's value                            | `@Min`, `@Max`, `@Email`, `@OneOf`, …                        | [Validation Decorators](./validators.md)       |
 | **Missing-value** | Decide what happens when a field is absent                  | `@Default`, `@Optional`                                      | [Handling Missing Fields](./missing-fields.md) |
 
 Additional helpers are covered under **Advanced Usage**, such as [`@List`](../advanced/list-decorator.md) for typed arrays, and [`@Type`](../advanced/type-and-polymorphism.md) for nested and polymorphic types.
