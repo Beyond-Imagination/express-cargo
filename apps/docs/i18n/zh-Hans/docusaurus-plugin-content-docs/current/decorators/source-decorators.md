@@ -9,6 +9,8 @@
 | `@Params()`  | `req.params`  |
 | `@Session()` | `req.session` |
 
+以 `multipart/form-data` 发送的文件有专属装饰器 `@UploadedFile()` 和 `@UploadedFiles()`，详见[文件上传装饰器](./file-upload.md)。
+
 ## 装饰器详情
 
 ### `@Body()`

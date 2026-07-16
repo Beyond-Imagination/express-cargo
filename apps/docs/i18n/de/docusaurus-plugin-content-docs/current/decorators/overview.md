@@ -16,6 +16,7 @@ Decorators werden nach der Rolle gruppiert, die sie in der Binding-Pipeline spie
 | Kategorie | Zweck | Beispiele | Referenz |
 |-----------|-------|-----------|----------|
 | **Source** | Bestimmt, woher der Wert eines Feldes stammt | `@Body`, `@Query`, `@Header`, `@Uri` / `@Params`, `@Session` | [Source-Decorators](./source-decorators.md) |
+| **File** | Bindet hochgeladene Dateien aus einer `multipart/form-data`-Anfrage | `@UploadedFile`, `@UploadedFiles` | [Datei-Upload-Decorators](./file-upload.md) |
 | **Virtual** | Berechnet ein Feld aus anderen Feldern oder aus dem rohen `Request` | `@Virtual`, `@Request` | [Virtuelle Feld-Decorators](./virtual.md) |
 | **Transform** | Ändert den Wert eines einzelnen Feldes vor dem Binden | `@Transform` | [Transformations-Decorator](./transforms.md) |
 | **Validation** | Erzwingt Regeln für den Wert eines Feldes | `@Min`, `@Max`, `@Email`, `@OneOf`, … | [Validierungs-Decorators](./validators.md) |

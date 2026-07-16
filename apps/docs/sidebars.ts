@@ -29,6 +29,7 @@ const sidebars: SidebarsConfig = {
             items: [
                 'decorators/overview',
                 'decorators/source-decorators',
+                'decorators/file-upload',
                 'decorators/virtual',
                 'decorators/transforms',
                 'decorators/validators',
