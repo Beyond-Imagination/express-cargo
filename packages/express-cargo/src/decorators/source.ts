@@ -1,5 +1,5 @@
-import { Source } from './types'
-import { CargoClassMetadata } from './metadata'
+import { Source } from '../types'
+import { CargoClassMetadata } from '../metadata'
 
 /**
  * Factory function to create property decorators for request data sourcing.

@@ -1,4 +1,4 @@
-import { Each } from '../validator'
+import { Each } from '../decorators'
 import { isKnownNonArray } from './utils'
 import { FieldRuleFn } from './types'
 

@@ -1,4 +1,4 @@
-import { Enum } from '../enum'
+import { Enum } from '../decorators'
 import { FieldRuleFn } from './types'
 
 const enumWithTransform: FieldRuleFn = s => {
