@@ -1,4 +1,4 @@
-import { With, Without } from '../validator'
+import { With, Without } from '../decorators'
 import { FieldRuleFn, FieldState } from './types'
 
 function unknownReference(state: FieldState, decoratorName: string): string | null {

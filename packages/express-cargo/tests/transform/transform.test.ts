@@ -1,4 +1,4 @@
-import { Transform } from '../../src/transform'
+import { Transform } from '../../src/decorators/transform'
 import { CargoClassMetadata } from '../../src/metadata'
 
 describe('transform decorator', () => {

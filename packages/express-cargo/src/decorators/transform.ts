@@ -1,6 +1,6 @@
 import type { Request } from 'express'
-import { CargoClassMetadata } from './metadata'
-import { TypedPropertyDecorator } from './types'
+import { CargoClassMetadata } from '../metadata'
+import { TypedPropertyDecorator } from '../types'
 
 /**
  * Transforms the property value using a custom function.
