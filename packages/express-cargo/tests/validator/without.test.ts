@@ -74,12 +74,12 @@ describe('Without decorator', () => {
         expect(result).toBeNull()
     })
 
-    it('Case 5: Should pass when instance is undefined', () => {
+    it('Case 5: Should pass when instance is undefined (related field is absent)', () => {
         const meta = classMeta.getFieldMetadata(TARGET_FIELD)
         const WithoutRule = meta.getValidators()?.find(v => v.type === 'without')
         const instance = undefined
         const result = WithoutRule?.validate('ValueA', instance)
 
-        expect(result).toBeInstanceOf(CargoFieldError)
+        expect(result).toBeNull()
     })
 })
