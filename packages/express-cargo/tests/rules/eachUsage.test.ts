@@ -1,4 +1,4 @@
-import { Body, Default, Each, Min, Optional } from '../../src'
+import { Body, Default, Each, Enum, List, Min, Optional, Transform, Type } from '../../src'
 import { expectViolation, validateCargoSchema } from './testUtils'
 
 describe('schema validation — @Each usage rules', () => {
@@ -30,6 +30,51 @@ describe('schema validation — @Each usage rules', () => {
         }
 
         expectViolation(() => validateCargoSchema(EachWrapsDefaultDto), 'foo', '@Each cannot wrap missing-handler decorator')
+    })
+
+    it('rejects @Transform inside @Each', () => {
+        class EachWrapsTransformDto {
+            @Body()
+            @Each(Transform((v: number) => v + 1))
+            foo!: number[]
+        }
+
+        expectViolation(() => validateCargoSchema(EachWrapsTransformDto), 'foo', '@Each cannot wrap transform decorator')
+    })
+
+    it('rejects @List inside @Each', () => {
+        class EachWrapsListDto {
+            @Body()
+            @Each(List('number'))
+            foo!: number[]
+        }
+
+        expectViolation(() => validateCargoSchema(EachWrapsListDto), 'foo', '@Each cannot wrap type-helper decorator')
+    })
+
+    it('rejects @Type inside @Each', () => {
+        class Inner {}
+        class EachWrapsTypeDto {
+            @Body()
+            @Each(Type(() => Inner))
+            foo!: Inner[]
+        }
+
+        expectViolation(() => validateCargoSchema(EachWrapsTypeDto), 'foo', '@Each cannot wrap type-helper decorator')
+    })
+
+    it('rejects @Enum inside @Each', () => {
+        enum Role {
+            ADMIN = 'admin',
+            USER = 'user',
+        }
+        class EachWrapsEnumDto {
+            @Body()
+            @Each(Enum(Role))
+            foo!: Role[]
+        }
+
+        expectViolation(() => validateCargoSchema(EachWrapsEnumDto), 'foo', '@Each cannot wrap type-helper decorator')
     })
 
     it('rejects @Each on a non-array field (H1)', () => {
