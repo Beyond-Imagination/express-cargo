@@ -35,10 +35,8 @@ export function Without(fieldName: string, message?: cargoErrorMessage): Propert
             new ValidatorRule(
                 propertyKey,
                 'without',
-                (value: unknown, instance?: Record<string | symbol, any>) => {
-                    if (!instance) return false
-                    return !(!!value && !!instance?.[fieldName])
-                },
+                (value: unknown, instance?: Record<string | symbol, any>) =>
+                    !(!!value && !!instance?.[fieldName]),
                 message || `${String(propertyKey)} cannot exist with ${fieldName}`,
             ),
             { name: Without.name, category: 'validator', args: [fieldName] },
