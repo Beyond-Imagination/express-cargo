@@ -1,65 +1,11 @@
-import type { Request, RequestHandler } from 'express'
-
-import { AnalysisResult, BindContext, BindSources, ClassConstructor } from './types'
-import { CargoFieldError, CargoValidationError, CargoTransformFieldError, Source, TypeResolver, TypeThunk, TypeOptions } from './types'
-import { CargoClassMetadata, CargoFieldMetadata } from './metadata'
-import { getCargoErrorHandler } from './errorHandler'
-import { getCargoFileLocator, CargoFile } from './fileHandler'
-import { validateAnalysis } from './rules'
-import { isClass, isUserDefinedClass } from './utils'
-import { analyzeCargoSchema } from './analysis'
-
-function getErrorKey(sourceKey: string, currentKey: string): string {
-    return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
-}
-
-function getFieldKey(meta: CargoFieldMetadata, sourceKey: string, errors: CargoFieldError[]): string | undefined {
-    const metaKey = meta.getKey()
-    const key = typeof metaKey === 'string' ? metaKey : metaKey.description
-
-    if (!key) {
-        errors.push(new CargoFieldError(getErrorKey(sourceKey, String(metaKey)), 'empty string or symbol is not allowed'))
-        return undefined
-    }
-
-    return key
-}
-
-function validateField(meta: CargoFieldMetadata, property: string | symbol, targetObject: any, errors: CargoFieldError[]): void {
-    for (const rule of meta.getValidators()) {
-        const error = rule.validate(targetObject[property], targetObject)
-        if (error) {
-            errors.push(error)
-        }
-    }
-}
-
-function handleMissing(
-    meta: CargoFieldMetadata,
-    property: string | symbol,
-    key: string,
-    value: any,
-    targetObject: any,
-    errors: CargoFieldError[],
-    sourceKey: string,
-): boolean {
-    if (value !== undefined && value !== null) {
-        return false
-    }
-
-    if (meta.getDefault() !== undefined) {
-        targetObject[property] = meta.getDefault()
-        return true
-    }
-
-    if (meta.getOptional()) {
-        targetObject[property] = null
-        return true
-    }
-
-    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
-    return true
-}
+import { AnalysisResult, BindContext, BindSources, Source, TypeResolver, TypeThunk, TypeOptions } from '../types'
+import { CargoFieldError, CargoTransformFieldError } from '../types'
+import { CargoClassMetadata, CargoFieldMetadata } from '../metadata'
+import { CargoFile } from '../fileHandler'
+import { validateAnalysis } from '../rules'
+import { isClass, isUserDefinedClass } from '../utils'
+import { analyzeCargoSchema } from '../analysis'
+import { getErrorKey, getFieldKey, validateField, handleMissing } from './fieldHelpers'
 
 function transformSource(
     meta: CargoFieldMetadata,
@@ -188,7 +134,7 @@ function typeCasting(
     return value
 }
 
-function bindObject(
+export function bindObject(
     objectClass: any,
     metaClass: CargoClassMetadata,
     sources: BindSources,
@@ -332,72 +278,4 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
             )
         }
     }
-}
-
-/**
- * Middleware that binds request data to a class instance and validates it.
- *
- * @param cargoClass - The class constructor to bind the request data to.
- * @returns An Express RequestHandler.
- *
- * @example
- * ```typescript
- * app.post('/users', bindingCargo(CreateUser), (req, res) => {
- *   const userDto = getCargo<CreateUser>(req);
- *   // ...
- * });
- * ```
- */
-export function bindingCargo<T extends object = any>(cargoClass: ClassConstructor<T>): RequestHandler {
-    // Fail fast on schema mistakes at route-registration time instead of on the first request.
-    const result = analyzeCargoSchema(cargoClass)
-    validateAnalysis(result)
-
-    return (req, res, next) => {
-        try {
-            const errors: CargoFieldError[] = []
-            // Normalize uploaded files once; @UploadedFile and @UploadedFiles share the same map.
-            const uploadedFiles = getCargoFileLocator()(req)
-            const sources = {
-                req: req,
-                body: req.body,
-                query: req.query,
-                params: req.params,
-                header: req.headers,
-                session: (req as any).session,
-                file: uploadedFiles,
-            }
-            const cargo = bindObject(cargoClass, result.rootMeta, sources, errors, result)
-
-            if (errors.length > 0) {
-                throw new CargoValidationError(errors)
-            }
-
-            req._cargo = cargo
-            next()
-        } catch (err) {
-            if (err instanceof CargoValidationError) {
-                const handler = getCargoErrorHandler()
-                if (handler) {
-                    return handler(err, req, res, next)
-                }
-            }
-            next(err)
-        }
-    }
-}
-
-/**
- * Retrieves the bound cargo object from the request.
- *
- * @param req - The Express Request object.
- * @returns The bound class instance.
- * @throws If the binding middleware has not run for this request.
- */
-export function getCargo<T extends object>(req: Request): T {
-    const cargo = req._cargo
-    if (cargo == null) {
-        throw new Error('Cargo not found on the request. Register the bindingCargo() middleware on this route before calling getCargo().')
-    }
-    return cargo as T
 }
