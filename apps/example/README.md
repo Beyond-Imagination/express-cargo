@@ -181,6 +181,40 @@ curl -X POST 'http://localhost:3000/request' \
 
 ---
 
+### Passport.js
+
+Run Passport authentication before `bindingCargo()` and bind the authenticated `req.user` with `@Request<object>`.
+
+```typescript
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
+}
+
+router.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
+})
+```
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+The example strategy returns the following bound cargo object:
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+---
+
 ### @Virtual
 
 ```typescript

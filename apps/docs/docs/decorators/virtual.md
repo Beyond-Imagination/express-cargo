@@ -16,13 +16,16 @@ The `@Request` decorator maps a value from the Express `Request` object into a c
 
 - **`transformer`**: A function that receives the Request object and returns the value to bind.
 
+`@Request` assigns the returned value as-is, without built-in type casting. A common use case is binding an authenticated user that another middleware, such as Passport.js, has placed on `req.user`.
+
 ## Usage Example
 
 ```typescript
 import express from 'express'
+import passport from 'passport'
+import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. Define Object with virtual and request-derived fields
 class OrderExample {
     @Body('price')
     price!: number
@@ -35,42 +38,55 @@ class OrderExample {
     total!: number
 }
 
-class HeaderExample {
-    // Field derived directly from the request object
-    @Request(req => req.headers['x-custom-header'] as string)
-    customHeader!: string
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
 }
 
-// 2. Setup Express app and route
+const EXAMPLE_TOKEN = 'express-cargo-token'
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        if (token !== EXAMPLE_TOKEN) {
+            return done(null, false)
+        }
+
+        return done(null, { id: 'test-user-id', role: 'admin' })
+    }),
+)
+
 const app = express()
 app.use(express.json())
+app.use(passport.initialize())
 
 app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Order data processed with virtual fields!',
-        data: orderData
+        data: orderData,
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
-    const headerData = getCargo<HeaderExample>(req)
-    res.json({
-        message: 'Header data mapped using @request!',
-        data: headerData
-    })
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
 })
-
-/*
-To test these endpoints, send POST requests with the relevant body or headers:
-
-Example /orders body:
-{
-    "price": 50,
-    "quantity": 2
-}
-
-Example /headers headers:
-x-custom-header: my-header-value
-*/
 ```
+
+Passport authentication must run before `bindingCargo()`. When authentication succeeds, Passport sets `req.user`, and `@Request<object>` binds that object to `PassportExample.user`. Missing or invalid credentials are rejected by Passport before cargo binding runs.
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+Using `object` keeps the example independent of an application's user model. If application code needs properties such as `user.id`, replace `object` with a concrete user type and pass that type to `@Request<T>`.

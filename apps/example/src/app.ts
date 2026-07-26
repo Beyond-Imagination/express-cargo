@@ -8,6 +8,7 @@ import arrayFieldRouter from './routers/typeCasting'
 import errorHandlerRouter from './routers/errorHandler'
 import integrationRouter from './routers/integration'
 import fileRouter from './routers/file'
+import passportRouter from './routers/passport'
 import './errors/cargoErrorHandler'
 
 const app = express()
@@ -26,5 +27,8 @@ app.use(arrayFieldRouter)
 app.use(fileRouter)
 app.use(errorHandlerRouter)
 app.use(integrationRouter)
+app.use(passportRouter)
 
-app.listen(port, () => {console.log(`Example app listening on port ${port}`)})
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})
