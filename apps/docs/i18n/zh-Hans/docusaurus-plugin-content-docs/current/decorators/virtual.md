@@ -16,13 +16,16 @@
 
 - **`transformer`**：接收 Request 对象并返回要绑定值的函数。
 
+`@Request` 会按原样赋值，不执行内置类型转换。一个常见用法是绑定 Passport.js 等认证中间件设置在 `req.user` 上的用户对象。
+
 ## 使用示例
 
 ```typescript
 import express from 'express'
+import passport from 'passport'
+import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. 定义包含虚拟字段和请求派生字段的对象
 class OrderExample {
     @Body('price')
     price!: number
@@ -35,42 +38,55 @@ class OrderExample {
     total!: number
 }
 
-class HeaderExample {
-    // 直接从请求对象派生的字段
-    @Request(req => req.headers['x-custom-header'] as string)
-    customHeader!: string
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
 }
 
-// 2. 设置 Express 应用和路由
+const EXAMPLE_TOKEN = 'express-cargo-token'
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        if (token !== EXAMPLE_TOKEN) {
+            return done(null, false)
+        }
+
+        return done(null, { id: 'test-user-id', role: 'admin' })
+    }),
+)
+
 const app = express()
 app.use(express.json())
+app.use(passport.initialize())
 
 app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Order data processed with virtual fields!',
-        data: orderData
+        data: orderData,
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
-    const headerData = getCargo<HeaderExample>(req)
-    res.json({
-        message: 'Header data mapped using @request!',
-        data: headerData
-    })
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
 })
-
-/*
-要测试这些端点，请使用相关 body 或 headers 发送 POST 请求：
-
-/orders body 示例：
-{
-    "price": 50,
-    "quantity": 2
-}
-
-/headers headers 示例：
-x-custom-header: my-header-value
-*/
 ```
+
+Passport 认证必须在 `bindingCargo()` 之前运行。认证成功后，Passport 会设置 `req.user`，随后 `@Request<object>` 将该对象绑定到 `PassportExample.user`。如果凭据缺失或无效，Passport 会在 cargo 绑定前拒绝请求。
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+使用 `object` 可使示例不依赖特定的用户模型。如果应用代码需要访问 `user.id` 等属性，请将 `object` 替换为具体的用户类型，并将该类型传给 `@Request<T>`。
