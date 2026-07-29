@@ -16,13 +16,16 @@ Le decorator `@Request` mappe une valeur depuis l'objet Express `Request` dans u
 
 - **`transformer`** : Une fonction qui reçoit l'objet Request et retourne la valeur à lier.
 
+`@Request` affecte la valeur retournée telle quelle, sans conversion de type intégrée. Un cas d'utilisation courant consiste à lier l'utilisateur qu'un middleware d'authentification, tel que Passport.js, a placé dans `req.user`.
+
 ## Exemple d'utilisation
 
 ```typescript
 import express from 'express'
+import passport from 'passport'
+import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. Définir l'objet avec des champs virtuels et dérivés de requête
 class OrderExample {
     @Body('price')
     price!: number
@@ -35,42 +38,55 @@ class OrderExample {
     total!: number
 }
 
-class HeaderExample {
-    // Champ dérivé directement de l'objet requête
-    @Request(req => req.headers['x-custom-header'] as string)
-    customHeader!: string
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
 }
 
-// 2. Configuration de l'application Express et de la route
+const EXAMPLE_TOKEN = 'express-cargo-token'
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        if (token !== EXAMPLE_TOKEN) {
+            return done(null, false)
+        }
+
+        return done(null, { id: 'test-user-id', role: 'admin' })
+    }),
+)
+
 const app = express()
 app.use(express.json())
+app.use(passport.initialize())
 
 app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Données de commande traitées avec des champs virtuels !',
-        data: orderData
+        data: orderData,
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
-    const headerData = getCargo<HeaderExample>(req)
-    res.json({
-        message: 'Données d\'en-tête mappées en utilisant @request !',
-        data: headerData
-    })
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
 })
-
-/*
-Pour tester ces points de terminaison, envoyez des requêtes POST avec le corps ou les en-têtes pertinents :
-
-Exemple de corps /orders :
-{
-    "price": 50,
-    "quantity": 2
-}
-
-Exemple d'en-têtes /headers :
-x-custom-header: ma-valeur-d-en-tete
-*/
 ```
+
+L'authentification Passport doit s'exécuter avant `bindingCargo()`. Lorsque l'authentification réussit, Passport définit `req.user` et `@Request<object>` lie cet objet à `PassportExample.user`. Passport rejette les identifiants absents ou non valides avant l'exécution du binding cargo.
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+L'utilisation de `object` rend l'exemple indépendant du modèle utilisateur de l'application. Si le code doit accéder à des propriétés telles que `user.id`, remplacez `object` par un type utilisateur concret et transmettez ce type à `@Request<T>`.

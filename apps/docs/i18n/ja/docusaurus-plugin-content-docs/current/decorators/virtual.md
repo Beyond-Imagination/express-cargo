@@ -16,13 +16,16 @@
 
 - **`transformer`**: Request オブジェクトを受け取り、バインドする値を返す関数。
 
+`@Request` は、組み込みの型キャストを行わず、返された値をそのまま代入します。代表的な使用例は、Passport.js などの認証ミドルウェアが `req.user` に設定したユーザーをバインドすることです。
+
 ## 使用例
 
 ```typescript
 import express from 'express'
+import passport from 'passport'
+import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. 仮想フィールドとリクエスト派生フィールドを持つオブジェクトを定義
 class OrderExample {
     @Body('price')
     price!: number
@@ -35,42 +38,55 @@ class OrderExample {
     total!: number
 }
 
-class HeaderExample {
-    // リクエストオブジェクトから直接派生したフィールド
-    @Request(req => req.headers['x-custom-header'] as string)
-    customHeader!: string
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
 }
 
-// 2. Express アプリとルートをセットアップ
+const EXAMPLE_TOKEN = 'express-cargo-token'
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        if (token !== EXAMPLE_TOKEN) {
+            return done(null, false)
+        }
+
+        return done(null, { id: 'test-user-id', role: 'admin' })
+    }),
+)
+
 const app = express()
 app.use(express.json())
+app.use(passport.initialize())
 
 app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Order data processed with virtual fields!',
-        data: orderData
+        data: orderData,
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
-    const headerData = getCargo<HeaderExample>(req)
-    res.json({
-        message: 'Header data mapped using @request!',
-        data: headerData
-    })
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
 })
-
-/*
-これらのエンドポイントをテストするには、関連するボディまたはヘッダーを含む POST リクエストを送信します：
-
-/orders のボディ例:
-{
-    "price": 50,
-    "quantity": 2
-}
-
-/headers のヘッダー例:
-x-custom-header: my-header-value
-*/
 ```
+
+Passport 認証は `bindingCargo()` より先に実行する必要があります。認証に成功すると Passport が `req.user` を設定し、`@Request<object>` がそのオブジェクトを `PassportExample.user` にバインドします。認証情報がない場合や無効な場合は、cargo のバインド前に Passport がリクエストを拒否します。
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+`object` を使用すると、例を特定のユーザーモデルに依存させずに済みます。アプリケーションコードで `user.id` などのプロパティにアクセスする必要がある場合は、`object` を具体的なユーザー型に置き換え、その型を `@Request<T>` に渡してください。

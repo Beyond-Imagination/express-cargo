@@ -148,11 +148,11 @@ Full guide and API reference:
 
 ### Transform Decorators
 
-| Decorator                 | Description                               | Example                                                                 |
-|---------------------------|-------------------------------------------|-------------------------------------------------------------------------|
-| `@Transform(transformer)` | Transform the parsed value                | `@Transform(v => v.trim()) name!: string`                               |
-| `@Request(transformer)`   | Extract value from Express Request object | `@Request(req => req.ip) clientIp!: string`                             |
-| `@Virtual(transformer)`   | Compute value from other fields           | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
+| Decorator                  | Description                               | Example                                                                 |
+|----------------------------|-------------------------------------------|-------------------------------------------------------------------------|
+| `@Transform(transformer)`  | Transform the parsed value                | `@Transform(v => v.trim()) name!: string`                               |
+| `@Request<T>(transformer)` | Extract value from Express Request object | `@Request<object>(req => req.user!) user!: object`                       |
+| `@Virtual(transformer)`    | Compute value from other fields           | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
 ### Binding Order and Priority
 
@@ -164,6 +164,27 @@ Full guide and API reference:
 2. Source decorators run next: `@Body()`, `@Query()`, `@Params()`, `@Uri()`, `@Header()`, and `@Session()`.
    The value is read from the selected request source, type-cast to the declared property type, passed through `@Transform()` when present, and then validated.
 3. The `@Virtual()` decorator runs last. Its transformer receives the request object after request and source fields have been bound.
+
+#### Passport.js Example
+
+Passport sets the authenticated user on `req.user`. Run Passport authentication before `bindingCargo()`, then bind that object with `@Request<object>`.
+
+```ts
+import passport from 'passport'
+import { Request, bindingCargo, getCargo } from 'express-cargo'
+
+class PassportRequest {
+    @Request<object>(req => req.user!)
+    user!: object
+}
+
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportRequest), (req, res) => {
+    const cargo = getCargo<PassportRequest>(req)
+    res.json(cargo)
+})
+```
+
+`@Request` assigns `req.user` as-is without built-in type casting. Use an application-specific type instead of `object` when code needs access to fields such as `user.id`.
 
 ```ts
 class OrderRequest {

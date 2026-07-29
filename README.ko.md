@@ -152,7 +152,7 @@ app.listen(3000)
 | 데코레이터                     | 설명                        | 예시                                                                      |
 |---------------------------|---------------------------|-------------------------------------------------------------------------|
 | `@Transform(transformer)` | 파싱된 값에 추가 변환 적용           | `@Transform(v => v.trim()) name!: string`                               |
-| `@Request(transformer)`   | Express Request 객체에서 값 추출 | `@Request(req => req.ip) clientIp!: string`                             |
+| `@Request<T>(transformer)` | Express Request 객체에서 값 추출 | `@Request<object>(req => req.user!) user!: object`                       |
 | `@Virtual(transformer)`   | 다른 필드들을 기반으로 값 계산         | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
 
 ### 바인딩 순서와 우선순위
@@ -165,6 +165,27 @@ app.listen(3000)
 2. Source 데코레이터가 다음에 실행됩니다: `@Body()`, `@Query()`, `@Params()`, `@Uri()`, `@Header()`, `@Session()`.
    선택된 request source에서 값을 읽고, 선언된 property 타입으로 캐스팅한 뒤, `@Transform()`이 있으면 실행하고, 그 다음 검증합니다.
 3. `@Virtual()` 데코레이터는 마지막에 실행됩니다. request field와 source field가 바인딩된 뒤의 request object를 받습니다.
+
+#### Passport.js 예시
+
+Passport는 인증된 사용자를 `req.user`에 설정합니다. Passport 인증을 `bindingCargo()`보다 먼저 실행한 다음, 해당 객체를 `@Request<object>`로 바인딩합니다.
+
+```ts
+import passport from 'passport'
+import { Request, bindingCargo, getCargo } from 'express-cargo'
+
+class PassportRequest {
+    @Request<object>(req => req.user!)
+    user!: object
+}
+
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportRequest), (req, res) => {
+    const cargo = getCargo<PassportRequest>(req)
+    res.json(cargo)
+})
+```
+
+`@Request`는 기본 타입 캐스팅 없이 `req.user`를 그대로 할당합니다. `user.id` 같은 필드에 접근해야 한다면 `object` 대신 애플리케이션 전용 사용자 타입을 사용합니다.
 
 ```ts
 class OrderRequest {

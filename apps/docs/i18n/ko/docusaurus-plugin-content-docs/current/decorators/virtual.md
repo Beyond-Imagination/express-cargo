@@ -21,13 +21,16 @@ title: 가상 필드
 
 - **`transformer`**: 요청 객체를 받아 바인딩할 값을 반환하는 함수
 
+`@Request`는 기본 타입 캐스팅 없이 반환된 값을 그대로 할당합니다. 대표적인 사용 사례는 Passport.js 같은 인증 미들웨어가 `req.user`에 설정한 사용자를 바인딩하는 것입니다.
+
 ## 사용 예시
 
 ```typescript
 import express from 'express'
+import passport from 'passport'
+import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. 가상 필드와 요청 기반 필드가 포함된 객체 정의
 class OrderExample {
     @Body('price')
     price!: number
@@ -40,42 +43,55 @@ class OrderExample {
     total!: number
 }
 
-class HeaderExample {
-    // 요청 객체에서 직접 가져오는 필드
-    @Request(req => req.headers['x-custom-header'] as string)
-    customHeader!: string
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
 }
 
-// 2. Express 앱과 라우트 설정
+const EXAMPLE_TOKEN = 'express-cargo-token'
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        if (token !== EXAMPLE_TOKEN) {
+            return done(null, false)
+        }
+
+        return done(null, { id: 'test-user-id', role: 'admin' })
+    }),
+)
+
 const app = express()
 app.use(express.json())
+app.use(passport.initialize())
 
 app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: '가상 필드로 처리된 주문 데이터!',
-        data: orderData
+        data: orderData,
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
-    const headerData = getCargo<HeaderExample>(req)
-    res.json({
-        message: '요청 기반 필드(@request)로 매핑된 헤더 데이터!',
-        data: headerData
-    })
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
 })
-
-/*
-이 엔드포인트들을 테스트하려면 POST 요청을 보내세요.
-
-예시 /orders 요청 바디:
-{
-    "price": 50,
-    "quantity": 2
-}
-
-예시 /headers 요청 헤더:
-x-custom-header: my-header-value
-*/
 ```
+
+Passport 인증은 `bindingCargo()`보다 먼저 실행해야 합니다. 인증에 성공하면 Passport가 `req.user`를 설정하고, `@Request<object>`가 해당 객체를 `PassportExample.user`에 바인딩합니다. 인증 정보가 없거나 유효하지 않으면 cargo 바인딩 전에 Passport가 요청을 거부합니다.
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+`object`를 사용하면 특정 사용자 모델에 의존하지 않습니다. 애플리케이션 코드에서 `user.id` 같은 필드에 접근해야 한다면 `object`를 구체적인 사용자 타입으로 바꾸고 해당 타입을 `@Request<T>`에 전달합니다.

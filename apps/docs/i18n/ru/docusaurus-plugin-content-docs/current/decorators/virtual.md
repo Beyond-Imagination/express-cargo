@@ -16,13 +16,16 @@
 
 - **`transformer`**: Функция, которая получает объект Request и возвращает значение для привязки.
 
+`@Request` присваивает возвращённое значение без изменений и без встроенного приведения типов. Типичный пример использования — привязка пользователя, которого middleware аутентификации, например Passport.js, сохранил в `req.user`.
+
 ## Пример использования
 
 ```typescript
 import express from 'express'
+import passport from 'passport'
+import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Body, Virtual, Request, bindingCargo, getCargo } from 'express-cargo'
 
-// 1. Определите объект с виртуальными и производными от запроса полями
 class OrderExample {
     @Body('price')
     price!: number
@@ -35,42 +38,55 @@ class OrderExample {
     total!: number
 }
 
-class HeaderExample {
-    // Поле, полученное непосредственно из объекта запроса
-    @Request(req => req.headers['x-custom-header'] as string)
-    customHeader!: string
+class PassportExample {
+    @Request<object>(req => req.user!)
+    user!: object
 }
 
-// 2. Настройте приложение Express и маршрут
+const EXAMPLE_TOKEN = 'express-cargo-token'
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        if (token !== EXAMPLE_TOKEN) {
+            return done(null, false)
+        }
+
+        return done(null, { id: 'test-user-id', role: 'admin' })
+    }),
+)
+
 const app = express()
 app.use(express.json())
+app.use(passport.initialize())
 
 app.post('/orders', bindingCargo(OrderExample), (req, res) => {
     const orderData = getCargo<OrderExample>(req)
     res.json({
         message: 'Данные заказа обработаны с виртуальными полями!',
-        data: orderData
+        data: orderData,
     })
 })
 
-app.post('/headers', bindingCargo(HeaderExample), (req, res) => {
-    const headerData = getCargo<HeaderExample>(req)
-    res.json({
-        message: 'Данные заголовка сопоставлены с помощью @request!',
-        data: headerData
-    })
+app.get('/passport', passport.authenticate('bearer', { session: false }), bindingCargo(PassportExample), (req, res) => {
+    const cargo = getCargo<PassportExample>(req)
+    res.json(cargo)
 })
-
-/*
-Чтобы протестировать эти конечные точки, отправьте POST-запросы с соответствующим телом или заголовками:
-
-Пример тела /orders:
-{
-    "price": 50,
-    "quantity": 2
-}
-
-Пример заголовков /headers:
-x-custom-header: my-header-value
-*/
 ```
+
+Аутентификация Passport должна выполняться до `bindingCargo()`. После успешной аутентификации Passport устанавливает `req.user`, а `@Request<object>` привязывает этот объект к `PassportExample.user`. Отсутствующие или недействительные учётные данные отклоняются Passport до выполнения cargo binding.
+
+```shell
+curl 'http://localhost:3000/passport' \
+    -H 'Authorization: Bearer express-cargo-token'
+```
+
+```json
+{
+    "user": {
+        "id": "test-user-id",
+        "role": "admin"
+    }
+}
+```
+
+Тип `object` делает пример независимым от пользовательской модели приложения. Если коду нужен доступ к свойствам вроде `user.id`, замените `object` конкретным типом пользователя и передайте этот тип в `@Request<T>`.
