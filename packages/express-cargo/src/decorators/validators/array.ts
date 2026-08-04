@@ -1,4 +1,5 @@
-import { ArrayComparator, cargoErrorMessage, EachValidatorRule, TypedPropertyDecorator, ValidatorRule } from '../../types'
+import { ArrayComparator, cargoErrorMessage, TypedPropertyDecorator } from '../../types'
+import { EachValidatorRule, ValidatorRule } from '../../validatorRule'
 import { CargoClassMetadata } from '../../metadata'
 import { isDeepEqual } from '../../utils'
 import { addValidator } from './addValidator'

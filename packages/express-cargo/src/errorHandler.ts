@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CargoValidationError } from './types'
+import { CargoValidationError } from './errors'
 
 export type CargoErrorHandler = (err: CargoValidationError, req: Request, res: Response, next: NextFunction) => void
 

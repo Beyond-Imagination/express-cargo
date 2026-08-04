@@ -1,4 +1,5 @@
-import { cargoErrorMessage, ValidatorRule } from '../../types'
+import { cargoErrorMessage } from '../../types'
+import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
 
 /**

@@ -1,5 +1,6 @@
 import { CargoClassMetadata } from '../metadata'
-import { ArrayElementType, cargoErrorMessage, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk, ValidatorRule } from '../types'
+import { ArrayElementType, cargoErrorMessage, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk } from '../types'
+import { ValidatorRule } from '../validatorRule'
 
 const TYPE_MAP = {
     string: String,

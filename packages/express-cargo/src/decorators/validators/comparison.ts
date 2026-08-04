@@ -1,4 +1,5 @@
-import { cargoErrorMessage, TypedPropertyDecorator, ValidatorRule } from '../../types'
+import { cargoErrorMessage, TypedPropertyDecorator } from '../../types'
+import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
 
 /**
