@@ -1,4 +1,5 @@
-import { AppliedDecorator, ValidatorRule } from '../../types'
+import { AppliedDecorator } from '../../types'
+import { ValidatorRule } from '../../validatorRule'
 import { CargoClassMetadata } from '../../metadata'
 
 /**

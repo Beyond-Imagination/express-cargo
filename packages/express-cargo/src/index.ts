@@ -1,6 +1,7 @@
 export * from './decorators'
 export * from './binding'
 export * from './types'
+export * from './errors'
 export * from './errorHandler'
 export * from './fileHandler'
 export { CargoSchemaError } from './rules/errors'

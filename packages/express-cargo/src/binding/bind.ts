@@ -1,5 +1,6 @@
-import { AnalysisResult, BindContext, BindSources, Source, TypeResolver, TypeThunk, TypeOptions } from '../types'
-import { CargoFieldError, CargoTransformFieldError } from '../types'
+import { AnalysisResult, Source, TypeResolver, TypeThunk, TypeOptions } from '../types'
+import { CargoFieldError, CargoTransformFieldError } from '../errors'
+import { BindContext, BindSources } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from '../metadata'
 import { CargoFile } from '../fileHandler'
 import { validateAnalysis } from '../rules'

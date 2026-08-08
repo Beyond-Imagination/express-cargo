@@ -1,16 +1,17 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import {
-    AppliedDecorator,
-    DecoratorScope,
-    ResolvedFieldLists,
-    Source,
-    TypeOptions,
-    TypeResolver,
-    TypeThunk,
-    validArrayElementType,
-    ValidatorRule,
-} from './types'
+import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType } from './types'
+import { ValidatorRule } from './validatorRule'
+
+/**
+ * Merged field lists for a class, precomputed once by {@link CargoClassMetadata.resolve}.
+ */
+interface ResolvedFieldLists {
+    fields: (string | symbol)[]
+    requestFields: (string | symbol)[]
+    virtualFields: (string | symbol)[]
+    allFields: (string | symbol)[]
+}
 
 /**
  * Manages metadata for a cargo class.

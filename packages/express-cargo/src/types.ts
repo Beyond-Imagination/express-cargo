@@ -1,4 +1,3 @@
-import type { Request } from 'express'
 import type { CargoClassMetadata } from './metadata'
 
 /**
@@ -82,102 +81,8 @@ export interface TypeOptions {
  */
 export type ArrayComparator = (expected: any, actual: any) => boolean
 
-type ValidatorFunction = (value: any, instance?: Record<string | symbol, any>) => boolean
 type errorMessageFunction = (property: string | symbol, value: any) => string
 export type cargoErrorMessage = string | errorMessageFunction
-
-/**
- * Represents a validation rule for a property.
- */
-export class ValidatorRule {
-    type: string
-    propertyKey: string | symbol
-    validateFunction: ValidatorFunction
-    message: cargoErrorMessage
-
-    constructor(propertyKey: string | symbol, type: string, validate: ValidatorFunction, message: cargoErrorMessage) {
-        this.propertyKey = propertyKey
-        this.type = type
-        this.validateFunction = validate
-        this.message = message
-    }
-
-    /**
-     * Validates a value against this rule.
-     * @param value - The value to validate.
-     * @param instance - The instance of the object being validated (optional).
-     * @returns A CargoFieldError if validation fails, null otherwise.
-     */
-    validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
-        if (!this.validateFunction(value, instance)) {
-            const message = typeof this.message === 'string' ? this.message : this.message(this.propertyKey, value)
-            return new CargoFieldError(this.propertyKey, message)
-        }
-
-        return null
-    }
-}
-
-/**
- * Represents a validation rule that applies to each element of an array.
- */
-export class EachValidatorRule extends ValidatorRule {
-    private innerRule: ValidatorRule
-
-    constructor(propertyKey: string | symbol, innerRule: ValidatorRule) {
-        super(propertyKey, 'each', () => true, '')
-        this.innerRule = innerRule
-    }
-
-    validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
-        if (!Array.isArray(value)) return null
-
-        for (let i = 0; i < value.length; i++) {
-            const item = value[i]
-            const error = this.innerRule.validate(item, instance)
-            if (error) {
-                return new CargoFieldError(`${String(this.propertyKey)}[${i}]`, error.message)
-            }
-        }
-        return null
-    }
-}
-
-/**
- * Represents an error for a specific field validation failure.
- */
-export class CargoFieldError extends Error {
-    name: string
-    field: string | symbol
-
-    constructor(field: string | symbol, message: string) {
-        super(message)
-        this.name = 'CargoFieldError'
-        this.field = field
-    }
-}
-
-/**
- * Represents an error when validation fails for a request object.
- * Contains a list of all field errors.
- */
-export class CargoValidationError extends Error {
-    name: string
-    errors: CargoFieldError[]
-
-    constructor(errors: CargoFieldError[]) {
-        super('Cargo validation failed')
-        this.name = 'CargoValidationError'
-        this.errors = errors
-    }
-}
-
-export class CargoTransformFieldError extends CargoFieldError {
-    constructor(field: string | symbol, message: string) {
-        super(field, message)
-        this.name = 'CargoTransformFieldError'
-    }
-}
 
 export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T }, propertyKey: K) => void
 
@@ -194,24 +99,6 @@ export interface AppliedDecorator {
     args: readonly unknown[]
 }
 
-export type BindSources = {
-    req: Request
-    body: any
-    query: any
-    params: any
-    header: any
-    session: any
-    file: any
-}
-
-export type BindContext = {
-    metaClass: CargoClassMetadata
-    targetObject: any
-    sources: BindSources
-    errors: CargoFieldError[]
-    sourceKey: string
-}
-
 /**
  * Result of the class analysis phase.
  * Contains metadata for the root class and all its nested DTOs.
@@ -220,14 +107,4 @@ export interface AnalysisResult {
     rootClass: ClassConstructor
     rootMeta: CargoClassMetadata
     metadataMap: Map<ClassConstructor, CargoClassMetadata>
-}
-
-/**
- * Merged field lists for a class, precomputed once by {@link CargoClassMetadata.resolve}.
- */
-export interface ResolvedFieldLists {
-    fields: (string | symbol)[]
-    requestFields: (string | symbol)[]
-    virtualFields: (string | symbol)[]
-    allFields: (string | symbol)[]
 }

@@ -1,4 +1,5 @@
-import { cargoErrorMessage, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion, ValidatorRule } from '../../types'
+import { cargoErrorMessage, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion } from '../../types'
+import { ValidatorRule } from '../../validatorRule'
 import { isValidPhoneNumber, CountryCode } from 'libphonenumber-js'
 import { addValidator } from './addValidator'
 

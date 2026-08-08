@@ -1,6 +1,7 @@
 import type { Request, RequestHandler } from 'express'
 
-import { ClassConstructor, CargoFieldError, CargoValidationError } from '../types'
+import { ClassConstructor } from '../types'
+import { CargoFieldError, CargoValidationError } from '../errors'
 import { getCargoErrorHandler } from '../errorHandler'
 import { getCargoFileLocator } from '../fileHandler'
 import { validateAnalysis } from '../rules'

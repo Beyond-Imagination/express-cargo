@@ -1,4 +1,4 @@
-import { CargoFieldError } from '../types'
+import { CargoFieldError } from '../errors'
 import { CargoFieldMetadata } from '../metadata'
 
 export function getErrorKey(sourceKey: string, currentKey: string): string {
