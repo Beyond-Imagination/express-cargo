@@ -32,7 +32,7 @@ class CreateUserRequest extends BaseRequest {
 子クラスで継承したフィールドを再宣言しても、親クラスの定義は置き換えられ**ません**。両方のクラスのデコレータが同じフィールドにマージされます。この方法でソースデコレータを再適用すると（たとえば、親クラスが既に `@Body()` でソースにしているフィールドに `@Body()` を付けると）、スキーマエラーが発生します。
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 したがって、各フィールドは単一のクラスで宣言してください。フィールドのバインド方法や検証方法を変更するには、サブクラスで再宣言するのではなく、最初に宣言した場所で編集してください。

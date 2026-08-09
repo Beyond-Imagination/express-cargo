@@ -1,4 +1,4 @@
-import { bindingCargo, Body, UploadedFile, UploadedFiles, Optional, getCargo, CargoValidationError, setCargoFileLocator, getCargoFileLocator, FileLocator } from '../../src'
+import { bindingCargo, Body, UploadedFile, UploadedFiles, Optional, getCargo, CargoValidationError, setCargoFileLocator, getCargoFileLocator, CargoFileLocator } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 
 /** Builds a multer-like file object. */
@@ -148,7 +148,7 @@ describe('file source binding', () => {
 
         // express-fileupload shape: req.files = { avatar: <file> } (not an array)
         const efuFile = { name: 'x.png', mimetype: 'image/png', size: 1 }
-        const efuLocator: FileLocator = req => {
+        const efuLocator: CargoFileLocator = req => {
             const out: Record<string, unknown[]> = {}
             const files = (req as unknown as { files?: Record<string, unknown> }).files
             if (files) {

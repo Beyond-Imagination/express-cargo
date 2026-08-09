@@ -1,5 +1,5 @@
 import { CargoClassMetadata } from '../metadata'
-import { ArrayElementType, cargoErrorMessage, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk } from '../types'
+import { ArrayElementType, CargoErrorMessage, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk } from '../types'
 import { ValidatorRule } from '../validatorRule'
 
 const TYPE_MAP = {
@@ -103,7 +103,7 @@ export function Type(typeFn: TypeThunk | TypeResolver, options?: TypeOptions): P
  * }
  * ```
  */
-export function Enum<T>(enumObj: any, message?: cargoErrorMessage): TypedPropertyDecorator<T> {
+export function Enum<T>(enumObj: any, message?: CargoErrorMessage): TypedPropertyDecorator<T> {
     return (target: Object, propertyKey: string | symbol): void => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)

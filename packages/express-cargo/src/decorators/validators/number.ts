@@ -1,4 +1,4 @@
-import { cargoErrorMessage, TypedPropertyDecorator } from '../../types'
+import { CargoErrorMessage, TypedPropertyDecorator } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
 
@@ -7,7 +7,7 @@ import { addValidator } from './addValidator'
  * @param minimum - The minimum allowed value.
  * @param message - Optional custom error message.
  */
-export function Min(minimum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+export function Min(minimum: number, message?: CargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(
             target,
@@ -27,7 +27,7 @@ export function Min(minimum: number, message?: cargoErrorMessage): TypedProperty
  * @param maximum - The maximum allowed value.
  * @param message - Optional custom error message.
  */
-export function Max(maximum: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+export function Max(maximum: number, message?: CargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(
             target,
@@ -48,7 +48,7 @@ export function Max(maximum: number, message?: cargoErrorMessage): TypedProperty
  * @param max - The maximum value.
  * @param message - Optional custom error message.
  */
-export function Range(min: number, max: number, message?: cargoErrorMessage): TypedPropertyDecorator<number> {
+export function Range(min: number, max: number, message?: CargoErrorMessage): TypedPropertyDecorator<number> {
     return (target, propertyKey) => {
         addValidator(
             target,

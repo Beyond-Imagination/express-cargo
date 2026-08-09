@@ -37,7 +37,7 @@ class CreateUserRequest extends BaseRequest {
 자식 클래스에서 상속된 필드를 다시 선언해도 부모 클래스의 정의가 대체되지 **않습니다**. 두 클래스의 데코레이터가 같은 필드에 병합됩니다. 이런 식으로 소스 데코레이터를 다시 적용하면(예: 부모 클래스가 이미 `@Body()`로 가져오는 필드에 `@Body()`를 추가하면) 스키마 오류가 발생합니다.
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 따라서 각 필드는 하나의 클래스에서만 선언해야 합니다. 필드의 바인딩 방식이나 검증 방식을 바꾸려면, 자식 클래스에서 재선언하지 말고 원래 선언된 곳에서 수정하세요.

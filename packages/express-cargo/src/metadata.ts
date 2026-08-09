@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import type { Request } from 'express'
-import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, validArrayElementType } from './types'
+import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, ValidArrayElementType } from './types'
 import { ValidatorRule } from './validatorRule'
 
 /**
@@ -130,7 +130,7 @@ export class CargoFieldMetadata {
     private source: Source
     private optional: boolean
     private defaultValue: any
-    private arrayElementType: validArrayElementType | undefined
+    private arrayElementType: ValidArrayElementType | undefined
     private validators: ValidatorRule[]
     private transformer: ((value: any) => any) | undefined
     private requestTransformer: ((req: Request) => any) | undefined
@@ -195,11 +195,11 @@ export class CargoFieldMetadata {
         this.defaultValue = defaultValue
     }
 
-    getArrayElementType(): validArrayElementType | undefined {
+    getArrayElementType(): ValidArrayElementType | undefined {
         return this.arrayElementType
     }
 
-    setArrayElementType(arrayElementType: validArrayElementType): void {
+    setArrayElementType(arrayElementType: ValidArrayElementType): void {
         this.arrayElementType = arrayElementType
     }
 

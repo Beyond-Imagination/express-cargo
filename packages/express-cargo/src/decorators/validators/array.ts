@@ -1,4 +1,4 @@
-import { ArrayComparator, cargoErrorMessage, TypedPropertyDecorator } from '../../types'
+import { ArrayComparator, CargoErrorMessage, TypedPropertyDecorator } from '../../types'
 import { EachValidatorRule, ValidatorRule } from '../../validatorRule'
 import { CargoClassMetadata } from '../../metadata'
 import { isDeepEqual } from '../../utils'
@@ -12,7 +12,7 @@ import { addValidator } from './addValidator'
  *                     including primitives.
  * @param message - Optional custom error message.
  */
-export function ListContains(values: any[], comparator?: ArrayComparator, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+export function ListContains(values: any[], comparator?: ArrayComparator, message?: CargoErrorMessage): TypedPropertyDecorator<any[]> {
     // Pre-split only when using default comparison (Set + deepEqual optimization)
     const expectedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
     const expectedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
@@ -72,7 +72,7 @@ export function ListContains(values: any[], comparator?: ArrayComparator, messag
  *                     including primitives.
  * @param message - Optional custom error message.
  */
-export function ListNotContains(values: any[], comparator?: ArrayComparator, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+export function ListNotContains(values: any[], comparator?: ArrayComparator, message?: CargoErrorMessage): TypedPropertyDecorator<any[]> {
     // Pre-split only when using default comparison (Set + deepEqual optimization)
     const excludedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
     const excludedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
@@ -129,7 +129,7 @@ export function ListNotContains(values: any[], comparator?: ArrayComparator, mes
  * @param max - The maximum number of elements allowed in the array.
  * @param message - Optional custom error message.
  */
-export function ListMaxSize(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+export function ListMaxSize(max: number, message?: CargoErrorMessage): TypedPropertyDecorator<any[]> {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
@@ -149,7 +149,7 @@ export function ListMaxSize(max: number, message?: cargoErrorMessage): TypedProp
  * @param min - The minimum number of elements allowed in the array.
  * @param message - Optional custom error message.
  */
-export function ListMinSize(min: number, message?: cargoErrorMessage): TypedPropertyDecorator<any[]> {
+export function ListMinSize(min: number, message?: CargoErrorMessage): TypedPropertyDecorator<any[]> {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,

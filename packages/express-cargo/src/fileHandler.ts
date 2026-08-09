@@ -7,10 +7,10 @@ export type CargoFile = any
  * Locates uploaded files on the request, keyed by form field name.
  * Only the location is parser-specific; the file objects are returned untouched.
  */
-export type FileLocator = (req: Request) => Record<string, CargoFile[]>
+export type CargoFileLocator = (req: Request) => Record<string, CargoFile[]>
 
 /** Default locator for multer's `req.file` (single) and `req.files` (array or fielded object). */
-const multerFileLocator: FileLocator = (req: Request) => {
+const multerFileLocator: CargoFileLocator = (req: Request) => {
     const map: Record<string, CargoFile[]> = {}
     const push = (name: string, file: CargoFile) => {
         ;(map[name] ??= []).push(file)
@@ -32,14 +32,14 @@ const multerFileLocator: FileLocator = (req: Request) => {
     return map
 }
 
-let globalFileLocator: FileLocator = multerFileLocator
+let globalFileLocator: CargoFileLocator = multerFileLocator
 
 /**
  * Overrides the global file locator used during binding.
  * Only needed for parsers whose request shape differs from multer's.
  * @param locator - Returns uploaded files keyed by field name.
  */
-export function setCargoFileLocator(locator: FileLocator): void {
+export function setCargoFileLocator(locator: CargoFileLocator): void {
     globalFileLocator = locator
 }
 
@@ -47,6 +47,6 @@ export function setCargoFileLocator(locator: FileLocator): void {
  * Retrieves the currently configured global file locator.
  * @returns The current file locator (defaults to multer support).
  */
-export function getCargoFileLocator(): FileLocator {
+export function getCargoFileLocator(): CargoFileLocator {
     return globalFileLocator
 }

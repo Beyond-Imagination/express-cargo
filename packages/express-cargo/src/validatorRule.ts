@@ -1,5 +1,5 @@
 import { CargoFieldError } from './errors'
-import type { cargoErrorMessage } from './types'
+import type { CargoErrorMessage } from './types'
 
 type ValidatorFunction = (value: any, instance?: Record<string | symbol, any>) => boolean
 
@@ -10,9 +10,9 @@ export class ValidatorRule {
     type: string
     propertyKey: string | symbol
     validateFunction: ValidatorFunction
-    message: cargoErrorMessage
+    message: CargoErrorMessage
 
-    constructor(propertyKey: string | symbol, type: string, validate: ValidatorFunction, message: cargoErrorMessage) {
+    constructor(propertyKey: string | symbol, type: string, validate: ValidatorFunction, message: CargoErrorMessage) {
         this.propertyKey = propertyKey
         this.type = type
         this.validateFunction = validate

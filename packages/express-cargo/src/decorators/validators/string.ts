@@ -1,4 +1,4 @@
-import { cargoErrorMessage, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion } from '../../types'
+import { CargoErrorMessage, HashAlgorithm, IsUrlOptions, TypedPropertyDecorator, UuidVersion } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { isValidPhoneNumber, CountryCode } from 'libphonenumber-js'
 import { addValidator } from './addValidator'
@@ -8,7 +8,7 @@ import { addValidator } from './addValidator'
  * @param seed - The substring to search for.
  * @param message - Optional custom error message.
  */
-export function Contains(seed: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Contains(seed: string, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey) => {
         addValidator(
             target,
@@ -28,7 +28,7 @@ export function Contains(seed: string, message?: cargoErrorMessage): TypedProper
  * @param prefixText - The prefix string.
  * @param message - Optional custom error message.
  */
-export function Prefix(prefixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Prefix(prefixText: string, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey) => {
         addValidator(
             target,
@@ -48,7 +48,7 @@ export function Prefix(prefixText: string, message?: cargoErrorMessage): TypedPr
  * @param suffixText - The suffix string.
  * @param message - Optional custom error message.
  */
-export function Suffix(suffixText: string, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Suffix(suffixText: string, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey) => {
         addValidator(
             target,
@@ -68,7 +68,7 @@ export function Suffix(suffixText: string, message?: cargoErrorMessage): TypedPr
  * @param value - The exact length required.
  * @param message - Optional custom error message.
  */
-export function Length(value: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Length(value: number, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -88,7 +88,7 @@ export function Length(value: number, message?: cargoErrorMessage): TypedPropert
  * @param max - The maximum length allowed.
  * @param message - Optional custom error message.
  */
-export function MaxLength(max: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function MaxLength(max: number, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -108,7 +108,7 @@ export function MaxLength(max: number, message?: cargoErrorMessage): TypedProper
  * @param min - The minimum length allowed.
  * @param message - Optional custom error message.
  */
-export function MinLength(min: number, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function MinLength(min: number, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -128,7 +128,7 @@ export function MinLength(min: number, message?: cargoErrorMessage): TypedProper
  * @param pattern - The regular expression to match against.
  * @param message - Optional custom error message.
  */
-export function Regexp(pattern: RegExp, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Regexp(pattern: RegExp, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -147,7 +147,7 @@ export function Regexp(pattern: RegExp, message?: cargoErrorMessage): TypedPrope
  * Checks if the string is a valid email address.
  * @param message - Optional custom error message.
  */
-export function Email(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Email(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         const DEFAULT_EMAIL_PATTERN =
             /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -170,7 +170,7 @@ const ALPHA_PATTERN = /^[a-zA-Z]+$/
  * Checks if the string contains only alphabetic characters.
  * @param message - Optional custom error message.
  */
-export function Alpha(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Alpha(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -198,7 +198,7 @@ const uuidPatterns = {
  * @param version - The UUID version to check against ('v1', 'v3', 'v4', 'v5', or 'all').
  * @param message - Optional custom error message.
  */
-export function Uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Uuid(version?: UuidVersion, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     let regex: RegExp
     let versionLabel: string
 
@@ -244,7 +244,7 @@ export function Uuid(version?: UuidVersion, message?: cargoErrorMessage): TypedP
  * Checks if the string contains only alphanumeric characters.
  * @param message - Optional custom error message.
  */
-export function Alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function Alphanumeric(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -263,7 +263,7 @@ export function Alphanumeric(message?: cargoErrorMessage): TypedPropertyDecorato
  * Checks if the string contains only uppercase characters.
  * @param message - Optional custom error message.
  */
-export function IsUppercase(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsUppercase(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -284,7 +284,7 @@ const JWT_PATTERN = /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]*$/
  * Checks if the string is a valid JSON Web Token (JWT).
  * @param message - Optional custom error message.
  */
-export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsJwt(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -305,7 +305,7 @@ export function IsJwt(message?: cargoErrorMessage): TypedPropertyDecorator<strin
  * @param region - Optional ISO 3166-1 alpha-2 region code (e.g., 'KR', 'US').
  * @param message - Optional custom error message.
  */
-export function IsPhoneNumber(region?: CountryCode, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsPhoneNumber(region?: CountryCode, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -324,7 +324,7 @@ export function IsPhoneNumber(region?: CountryCode, message?: cargoErrorMessage)
  * Checks if the string is a valid IANA timezone identifier.
  * @param message - Optional custom error message.
  */
-export function IsTimeZone(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsTimeZone(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -354,7 +354,7 @@ const HEX_COLOR_PATTERN = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/
  * Supports #RGB, #RGBA, #RRGGBB, #RRGGBBAA formats.
  * @param message - Optional custom error message.
  */
-export function IsHexColor(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsHexColor(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -375,7 +375,7 @@ const HEX_PATTERN = /^(0x)?[0-9a-fA-F]+$/i
  * Checks if the string is a valid hexadecimal number.
  * @param message - Optional custom error message.
  */
-export function IsHexadecimal(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsHexadecimal(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -406,7 +406,7 @@ const hashPatterns: Record<HashAlgorithm, RegExp> = {
  * @param algorithm - The hash algorithm to validate against.
  * @param message - Optional custom error message.
  */
-export function IsHash(algorithm: HashAlgorithm, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsHash(algorithm: HashAlgorithm, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     const pattern = hashPatterns[algorithm]
     return (target, propertyKey): void => {
         addValidator(
@@ -427,7 +427,7 @@ export function IsHash(algorithm: HashAlgorithm, message?: cargoErrorMessage): T
  * @param options - Optional configuration (e.g., allowed protocols).
  * @param message - Optional custom error message.
  */
-export function IsUrl(options?: IsUrlOptions, message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsUrl(options?: IsUrlOptions, message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     const protocols = options?.protocols ?? ['http', 'https', 'ftp']
     return (target, propertyKey): void => {
         addValidator(
@@ -456,7 +456,7 @@ export function IsUrl(options?: IsUrlOptions, message?: cargoErrorMessage): Type
  * Checks if the string contains only lowercase characters.
  * @param message - Optional custom error message.
  */
-export function IsLowercase(message?: cargoErrorMessage): TypedPropertyDecorator<string> {
+export function IsLowercase(message?: CargoErrorMessage): TypedPropertyDecorator<string> {
     return (target, propertyKey): void => {
         addValidator(
             target,

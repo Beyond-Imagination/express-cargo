@@ -22,7 +22,7 @@ export function isClass(fn: unknown): fn is new (...args: any[]) => any {
 // `Object` is included because reflect-metadata falls back to it for unresolvable
 // design:type entries; `Array` guards against a malformed `@List(Array)`.
 // Both pass the isClass heuristic but should never be descended into.
-const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
+const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
 
 /**
  * Returns true when a value is a user-defined class worth descending into (a nested DTO),
@@ -30,7 +30,7 @@ const PRIMITIVE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object,
  * treated as leaves. Shared by schema analysis (traversal) and binding (recursive binding).
  */
 export function isUserDefinedClass(value: unknown): value is ClassConstructor {
-    return isClass(value) && !PRIMITIVE_TYPES.has(value)
+    return isClass(value) && !NON_DESCENDABLE_TYPES.has(value)
 }
 
 export function isDeepEqual(obj1: any, obj2: any): boolean {

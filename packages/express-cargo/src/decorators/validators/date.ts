@@ -1,4 +1,4 @@
-import { cargoErrorMessage, TypedPropertyDecorator } from '../../types'
+import { CargoErrorMessage, TypedPropertyDecorator } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
 
@@ -7,7 +7,7 @@ import { addValidator } from './addValidator'
  * @param min - The minimum allowed date, or a function that returns it.
  * @param message - Optional custom error message.
  */
-export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): TypedPropertyDecorator<Date> {
+export function MinDate(min: Date | (() => Date), message?: CargoErrorMessage): TypedPropertyDecorator<Date> {
     return (target, propertyKey): void => {
         let minDate: Date
         addValidator(
@@ -31,7 +31,7 @@ export function MinDate(min: Date | (() => Date), message?: cargoErrorMessage): 
  * @param max - The maximum allowed date, or a function that returns it.
  * @param message - Optional custom error message.
  */
-export function MaxDate(max: Date | (() => Date), message?: cargoErrorMessage): TypedPropertyDecorator<Date> {
+export function MaxDate(max: Date | (() => Date), message?: CargoErrorMessage): TypedPropertyDecorator<Date> {
     return (target, propertyKey): void => {
         let maxDate: Date
         addValidator(
