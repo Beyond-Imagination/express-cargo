@@ -61,7 +61,7 @@ export class OrderRequest {
 }
 ```
 
-`UserInfoRequest`에서 `@header` 데코레이터를 사용해 `authorization` 속성을 `Authorization` 헤더 값으로 채웁니다. 그 다음, `@transform` 데코레이터로 `"Bearer "` 접두사를 제거하고 토큰 값만 추출합니다.
+`UserInfoRequest`에서 `@Header` 데코레이터를 사용해 `authorization` 속성을 `Authorization` 헤더 값으로 채웁니다. 그 다음, `@Transform` 데코레이터로 `"Bearer "` 접두사를 제거하고 토큰 값만 추출합니다.
 
 ## 2. Express 라우트에서 사용하기
 

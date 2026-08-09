@@ -57,7 +57,7 @@ export class OrderRequest {
 }
 ```
 
-`UserInfoRequest` では、`authorization` プロパティに `@header` デコレータを使用して `Authorization` ヘッダーから値を取得します。次に、`@transform` デコレータが `"Bearer "` プレフィックスを除去してトークン値のみを抽出します。
+`UserInfoRequest` では、`authorization` プロパティに `@Header` デコレータを使用して `Authorization` ヘッダーから値を取得します。次に、`@Transform` デコレータが `"Bearer "` プレフィックスを除去してトークン値のみを抽出します。
 
 ## 2. Express ルートでの使用
 
