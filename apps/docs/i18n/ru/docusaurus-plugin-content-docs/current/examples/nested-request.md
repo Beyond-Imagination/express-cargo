@@ -57,7 +57,7 @@ export class OrderRequest {
 }
 ```
 
-В `UserInfoRequest` мы используем декоратор `@header` для свойства `authorization`, чтобы получить значение из заголовка `Authorization`. Затем декоратор `@transform` извлекает только значение токена, удаляя префикс `"Bearer "`.
+В `UserInfoRequest` мы используем декоратор `@Header` для свойства `authorization`, чтобы получить значение из заголовка `Authorization`. Затем декоратор `@Transform` извлекает только значение токена, удаляя префикс `"Bearer "`.
 
 ## 2. Использование в маршруте Express
 

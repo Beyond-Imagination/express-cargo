@@ -40,7 +40,7 @@ Add the following settings to your tsconfig.json:
 
 ```ts
 import express from 'express'
-import { Body, bindingCargo, getCargo, min, Header, Params } from 'express-cargo'
+import { Body, bindingCargo, getCargo, Min, Header, Params } from 'express-cargo'
 
 const app = express()
 app.use(express.json())

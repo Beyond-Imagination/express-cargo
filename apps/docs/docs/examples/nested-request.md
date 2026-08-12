@@ -58,7 +58,7 @@ export class OrderRequest {
 }
 ```
 
-In `UserInfoRequest`, we use the `@header` decorator on the `authorization` property to get the value from the `Authorization` header. Then, the `@transform` decorator extracts just the token value, stripping the `"Bearer "` prefix.
+In `UserInfoRequest`, we use the `@Header` decorator on the `authorization` property to get the value from the `Authorization` header. Then, the `@Transform` decorator extracts just the token value, stripping the `"Bearer "` prefix.
 
 ## 2. Use in an Express Route
 

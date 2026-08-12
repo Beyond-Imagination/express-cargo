@@ -63,7 +63,7 @@ http://localhost:3000/search?sortBy=TITLE&count=10
 
 ## 출력 예시
 
-예시 요청 URL로 접근하면, `bindingCargo` 미들웨어가 쿼리 파라미터를 처리합니다. `@transform` 데코레이터는 `sortBy` 값을 소문자 문자열로 정규화하고, `count` 값을 2배로 변환합니다. `getCargo` 함수는 이렇게 변환된 값을 담고 있는 객체를 반환합니다.
+예시 요청 URL로 접근하면, `bindingCargo` 미들웨어가 쿼리 파라미터를 처리합니다. `@Transform` 데코레이터는 `sortBy` 값을 소문자 문자열로 정규화하고, `count` 값을 2배로 변환합니다. `getCargo` 함수는 이렇게 변환된 값을 담고 있는 객체를 반환합니다.
 
 ```json
 {

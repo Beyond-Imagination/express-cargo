@@ -34,7 +34,7 @@ router.post('/request', bindingCargo(RequestExample), (req, res) => {
     const cargo = getCargo<RequestExample>(req)
 
     res.json({
-        message: 'Header data mapped using @request',
+        message: 'Header data mapped using @Request',
         data: cargo,
     })
 })
@@ -53,7 +53,7 @@ class VirtualExample {
 router.post('/virtual', bindingCargo(VirtualExample), (req, res) => {
     const cargo = getCargo<VirtualExample>(req)
     res.json({
-        message: 'Order data processed with @virtual',
+        message: 'Order data processed with @Virtual',
         data: cargo,
     })
 })

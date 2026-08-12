@@ -58,7 +58,7 @@ export class OrderRequest {
 }
 ```
 
-在 `UserInfoRequest` 中，我们在 `authorization` 属性上使用 `@header` 装饰器，从 `Authorization` header 获取值。然后，`@transform` 装饰器只提取 token 值，并移除 `"Bearer "` 前缀。
+在 `UserInfoRequest` 中，我们在 `authorization` 属性上使用 `@Header` 装饰器，从 `Authorization` header 获取值。然后，`@Transform` 装饰器只提取 token 值，并移除 `"Bearer "` 前缀。
 
 ## 2. 在 Express 路由中使用
 
