@@ -34,7 +34,7 @@ class CreateUserRequest extends BaseRequest {
 在子类中重新声明一个继承的字段并**不会**替换父类的定义——两个类的装饰器会被合并到同一个字段上。以这种方式重复应用来源装饰器（例如在父类已用 `@Body()` 作为来源的字段上再次使用 `@Body()`）会产生 schema 错误：
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 因此每个字段都应当只在一个类中声明。要更改某个字段的绑定或验证方式，请在它最初声明的位置修改，而不是在子类中重新声明。

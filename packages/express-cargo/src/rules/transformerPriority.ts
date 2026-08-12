@@ -8,7 +8,7 @@ const enumWithTransform: FieldRuleFn = s => {
 }
 
 const fileWithTransform: FieldRuleFn = s => {
-    const isFile = s.sources.some(d => d.name === 'file' || d.name === 'files')
+    const isFile = s.hasSource && (s.source === 'file' || s.source === 'files')
     const hasTransform = s.appliedSelf.some(d => d.category === 'transform')
     return isFile && hasTransform ? `@Transform cannot be applied to an uploaded file field; files are bound as-is from the parser` : null
 }

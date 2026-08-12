@@ -1,4 +1,4 @@
-import { cargoErrorMessage } from '../../types'
+import { CargoErrorMessage } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
 
@@ -7,7 +7,7 @@ import { addValidator } from './addValidator'
  * @param fieldName - The name of the required field.
  * @param message - Optional custom error message.
  */
-export function With(fieldName: string, message?: cargoErrorMessage): PropertyDecorator {
+export function With(fieldName: string, message?: CargoErrorMessage): PropertyDecorator {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -28,7 +28,7 @@ export function With(fieldName: string, message?: cargoErrorMessage): PropertyDe
  * @param fieldName - The name of the field that must be absent.
  * @param message - Optional custom error message.
  */
-export function Without(fieldName: string, message?: cargoErrorMessage): PropertyDecorator {
+export function Without(fieldName: string, message?: CargoErrorMessage): PropertyDecorator {
     return (target, propertyKey): void => {
         addValidator(
             target,

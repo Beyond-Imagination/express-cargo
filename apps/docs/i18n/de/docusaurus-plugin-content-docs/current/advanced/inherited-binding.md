@@ -32,7 +32,7 @@ Wenn Sie `CreateUserRequest` an `bindingCargo` übergeben, werden sowohl das gee
 Das erneute Deklarieren eines geerbten Feldes in einer Unterklasse ersetzt die Definition der übergeordneten Klasse **nicht** — die Decorators beider Klassen werden auf demselben Feld zusammengeführt. Wird ein Source-Decorator auf diese Weise erneut angewendet (zum Beispiel `@Body()` auf einem Feld, das die übergeordnete Klasse bereits mit `@Body()` bezieht), entsteht ein Schema-Fehler:
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 Jedes Feld sollte also in einer einzigen Klasse deklariert werden. Um zu ändern, wie ein Feld gebunden oder validiert wird, bearbeiten Sie es dort, wo es ursprünglich deklariert ist, anstatt es in einer Unterklasse erneut zu deklarieren.

@@ -1,4 +1,4 @@
-import { cargoErrorMessage, TypedPropertyDecorator } from '../../types'
+import { CargoErrorMessage, TypedPropertyDecorator } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
 
@@ -7,7 +7,7 @@ import { addValidator } from './addValidator'
  * @param value - The value to compare.
  * @param message - Optional custom error message.
  */
-export function Equal(value: any, message?: cargoErrorMessage): PropertyDecorator {
+export function Equal(value: any, message?: CargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
@@ -22,7 +22,7 @@ export function Equal(value: any, message?: cargoErrorMessage): PropertyDecorato
  * @param value - The value to compare.
  * @param message - Optional custom error message.
  */
-export function NotEqual(value: any, message?: cargoErrorMessage): PropertyDecorator {
+export function NotEqual(value: any, message?: CargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
@@ -36,7 +36,7 @@ export function NotEqual(value: any, message?: cargoErrorMessage): PropertyDecor
  * Checks if the value is false.
  * @param message - Optional custom error message.
  */
-export function IsFalse(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
+export function IsFalse(message?: CargoErrorMessage): TypedPropertyDecorator<boolean> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -50,7 +50,7 @@ export function IsFalse(message?: cargoErrorMessage): TypedPropertyDecorator<boo
  * Checks if the value is true.
  * @param message - Optional custom error message.
  */
-export function IsTrue(message?: cargoErrorMessage): TypedPropertyDecorator<boolean> {
+export function IsTrue(message?: CargoErrorMessage): TypedPropertyDecorator<boolean> {
     return (target, propertyKey): void => {
         addValidator(
             target,
@@ -65,7 +65,7 @@ export function IsTrue(message?: cargoErrorMessage): TypedPropertyDecorator<bool
  * @param options - Array of allowed values.
  * @param message - Optional custom error message.
  */
-export function OneOf<T extends readonly any[]>(options: T, message?: cargoErrorMessage): PropertyDecorator {
+export function OneOf<T extends readonly any[]>(options: T, message?: CargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,
@@ -85,7 +85,7 @@ export function OneOf<T extends readonly any[]>(options: T, message?: cargoError
  * @param validateFn - A function that returns true if valid, false otherwise.
  * @param message - Optional custom error message.
  */
-export function Validate(validateFn: (value: unknown) => boolean, message?: cargoErrorMessage): PropertyDecorator {
+export function Validate(validateFn: (value: unknown) => boolean, message?: CargoErrorMessage): PropertyDecorator {
     return (target: Object, propertyKey: string | symbol): void => {
         addValidator(
             target,

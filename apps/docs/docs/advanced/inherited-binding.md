@@ -32,7 +32,7 @@ When you pass `CreateUserRequest` to `bindingCargo`, both the inherited `id` and
 Re-declaring an inherited field in a child class does **not** replace the parent's definition — the decorators from both classes are merged onto the same field. Re-applying a source decorator this way (for example `@Body()` on a field the parent already sources with `@Body()`) produces a schema error:
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 So each field should be declared in a single class. To change how a field is bound or validated, edit it where it is originally declared rather than redeclaring it in a subclass.

@@ -15,8 +15,8 @@ export type Source = 'body' | 'query' | 'params' | 'header' | 'session' | 'file'
  */
 export type ClassConstructor<T = any> = new (...args: any[]) => T
 
-export type validArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
-export type ArrayElementType = validArrayElementType | 'string' | 'number' | 'boolean' | 'date'
+export type ValidArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
+export type ArrayElementType = ValidArrayElementType | 'string' | 'number' | 'boolean' | 'date'
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 export type HashAlgorithm = 'md5' | 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'crc32' | 'crc32b'
 
@@ -81,8 +81,8 @@ export interface TypeOptions {
  */
 export type ArrayComparator = (expected: any, actual: any) => boolean
 
-type errorMessageFunction = (property: string | symbol, value: any) => string
-export type cargoErrorMessage = string | errorMessageFunction
+type ErrorMessageFunction = (property: string | symbol, value: any) => string
+export type CargoErrorMessage = string | ErrorMessageFunction
 
 export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T }, propertyKey: K) => void
 

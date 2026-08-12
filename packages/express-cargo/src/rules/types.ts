@@ -1,5 +1,5 @@
 import type { CargoClassMetadata } from '../metadata'
-import type { AppliedDecorator, ClassConstructor } from '../types'
+import type { AppliedDecorator, ClassConstructor, Source } from '../types'
 
 /** Inputs supplied to every rule checker. */
 export interface RuleContext {
@@ -14,6 +14,8 @@ export interface FieldState {
     appliedSelf: readonly AppliedDecorator[]
     appliedEach: readonly AppliedDecorator[]
     sources: readonly AppliedDecorator[]
+    /** Internal source key the field binds from, independent of the decorator's authored name. */
+    source: Source
     hasSource: boolean
     hasRequest: boolean
     hasVirtual: boolean

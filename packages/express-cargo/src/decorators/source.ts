@@ -3,17 +3,18 @@ import { CargoClassMetadata } from '../metadata'
 
 /**
  * Factory function to create property decorators for request data sourcing.
+ * @param name - The decorator name as authored, reported in schema violation messages.
  * @param source - The internal source key used at binding time.
  * @internal
  */
-function createSourceDecorator(source: Source) {
+function createSourceDecorator(name: string, source: Source) {
     return (key?: string): PropertyDecorator => {
         return (target: any, propertyKey: string | symbol) => {
             const classMeta = new CargoClassMetadata(target)
             const fieldMeta = classMeta.getFieldMetadata(propertyKey)
             fieldMeta.setKey(key ?? propertyKey)
             fieldMeta.setSource(source)
-            fieldMeta.pushAppliedDecorator({ name: source, category: 'source', args: [key] })
+            fieldMeta.pushAppliedDecorator({ name, category: 'source', args: [key] })
             classMeta.setFieldMetadata(propertyKey, fieldMeta)
             classMeta.setFieldList(propertyKey)
         }
@@ -34,7 +35,7 @@ function createSourceDecorator(source: Source) {
  * }
  * ```
  */
-export const Body = createSourceDecorator('body')
+export const Body = createSourceDecorator('Body', 'body')
 
 /**
  * Extracts a value from the URL query parameters.
@@ -50,7 +51,7 @@ export const Body = createSourceDecorator('body')
  * }
  * ```
  */
-export const Query = createSourceDecorator('query')
+export const Query = createSourceDecorator('Query', 'query')
 
 /**
  * Extracts a value from the URL path parameters.
@@ -63,7 +64,7 @@ export const Query = createSourceDecorator('query')
  * }
  * ```
  */
-export const Params = createSourceDecorator('params')
+export const Params = createSourceDecorator('Params', 'params')
 
 /**
  * Alias for `@Params`. Extracts a value from the URL path parameters.
@@ -81,7 +82,7 @@ export const Uri = Params
  * }
  * ```
  */
-export const Header = createSourceDecorator('header')
+export const Header = createSourceDecorator('Header', 'header')
 
 /**
  * Extracts a value from the session object.
@@ -94,7 +95,7 @@ export const Header = createSourceDecorator('header')
  * }
  * ```
  */
-export const Session = createSourceDecorator('session')
+export const Session = createSourceDecorator('Session', 'session')
 
 /**
  * Extracts a single uploaded file from a `multipart/form-data` request.
@@ -108,7 +109,7 @@ export const Session = createSourceDecorator('session')
  * }
  * ```
  */
-export const UploadedFile = createSourceDecorator('file')
+export const UploadedFile = createSourceDecorator('UploadedFile', 'file')
 
 /**
  * Extracts all uploaded files sharing a field name as an array.
@@ -121,4 +122,4 @@ export const UploadedFile = createSourceDecorator('file')
  * }
  * ```
  */
-export const UploadedFiles = createSourceDecorator('files')
+export const UploadedFiles = createSourceDecorator('UploadedFiles', 'files')

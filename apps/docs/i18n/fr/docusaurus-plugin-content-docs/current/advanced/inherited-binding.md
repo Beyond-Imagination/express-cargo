@@ -32,7 +32,7 @@ Lorsque vous passez `CreateUserRequest` à `bindingCargo`, le `id` hérité et l
 Redéclarer un champ hérité dans une classe enfant ne remplace **pas** la définition de la classe parente — les décorateurs des deux classes sont fusionnés sur le même champ. Réappliquer un décorateur de source de cette manière (par exemple `@Body()` sur un champ que la classe parente source déjà avec `@Body()`) produit une erreur de schéma :
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 Chaque champ doit donc être déclaré dans une seule classe. Pour modifier la façon dont un champ est lié ou validé, modifiez-le là où il est initialement déclaré plutôt que de le redéclarer dans une sous-classe.

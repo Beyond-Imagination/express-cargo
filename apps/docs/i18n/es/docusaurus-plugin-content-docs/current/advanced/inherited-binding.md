@@ -32,7 +32,7 @@ Cuando pasas `CreateUserRequest` a `bindingCargo`, tanto el `id` heredado como e
 Volver a declarar un campo heredado en una clase hija **no** reemplaza la definición de la clase padre: los decoradores de ambas clases se combinan en el mismo campo. Volver a aplicar un decorador de origen de esta forma (por ejemplo, `@Body()` en un campo que la clase padre ya obtiene con `@Body()`) produce un error de esquema:
 
 ```
-Update.id: @body + @body cannot be combined; pick a single source
+Update.id: @Body + @Body cannot be combined; pick a single source
 ```
 
 Por lo tanto, cada campo debe declararse en una sola clase. Para cambiar cómo se enlaza o valida un campo, edítalo donde se declaró originalmente en lugar de volver a declararlo en una subclase.

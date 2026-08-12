@@ -17,6 +17,7 @@ function buildFieldState(propertyKey: string | symbol, fieldMeta: CargoFieldMeta
         appliedSelf,
         appliedEach,
         sources,
+        source: fieldMeta.getSource(),
         hasSource: sources.length > 0,
         hasRequest: appliedSelf.some(d => d.category === 'request'),
         hasVirtual: appliedSelf.some(d => d.category === 'virtual'),
