@@ -2,7 +2,7 @@ import { CargoClassMetadata } from '../metadata'
 
 /**
  * Marks a property as optional.
- * If the property is missing in the request, it will be ignored during validation.
+ * When the property is missing from the request it is set to `null` and its validators are skipped.
  */
 export function Optional(): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {

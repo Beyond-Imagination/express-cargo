@@ -1,12 +1,7 @@
 import type { CargoFieldMetadata } from '../metadata'
 import type { FieldRuleFn, FieldState, RuleChecker, RuleViolation } from './types'
 
-/**
- * Contract for a single rule checker.
- *
- * Inspects one class (`ctx.cargoClass`) and returns every violation it finds.
- * Nested-DTO traversal is handled by `validateCargoSchema`, so checkers don't recurse.
- */
+/** Pre-computes the per-field view a {@link FieldRuleFn} receives. */
 function buildFieldState(propertyKey: string | symbol, fieldMeta: CargoFieldMetadata, siblingFields: ReadonlySet<string | symbol>): FieldState {
     const appliedSelf = fieldMeta.getAppliedDecorators('self')
     const appliedEach = fieldMeta.getAppliedDecorators('each')

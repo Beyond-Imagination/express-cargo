@@ -26,7 +26,7 @@ export function List(elementType: ArrayElementType): TypedPropertyDecorator<Arra
 
 /**
  * Decorator to define the target class type for a property.
- * * Supports three strategies:
+ * Supports three strategies:
  * 1. **Thunk**: `() => Class` (Static types & circular refs)
  * 2. **Resolver**: `(data) => Class` (Dynamic polymorphism)
  * 3. **Discriminator**: Structural mapping via `options.discriminator`.
