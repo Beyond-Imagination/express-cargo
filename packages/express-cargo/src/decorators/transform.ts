@@ -45,9 +45,8 @@ export function Request<T>(transformer: (req: Request) => T): TypedPropertyDecor
 /**
  * Defines a virtual property that is calculated based on other properties of the instance.
  * @remarks
- * **Important:** This property must be declared **after** all the properties it depends on.
- * Since decorators are evaluated in the order they are defined, accessing a property
- * declared below the virtual property will result in `undefined`.
+ * Every source field is bound before any virtual field runs, so a virtual property may read them regardless of declaration order.
+ * Virtual fields are computed in declaration order, however, so one that reads **another virtual field** must be declared after it.
  * @param transformer - A function that receives the current object instance.
  * @example
  * ```ts

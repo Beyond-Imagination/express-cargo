@@ -13,7 +13,7 @@ import { addValidator } from './addValidator'
  * @param message - Optional custom error message.
  */
 export function ListContains(values: any[], comparator?: ArrayComparator, message?: CargoErrorMessage): TypedPropertyDecorator<any[]> {
-    // Pre-split only when using default comparison (Set + deepEqual optimization)
+    // Pre-split only when using default comparison (Set + isDeepEqual optimization)
     const expectedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
     const expectedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
 
@@ -73,7 +73,7 @@ export function ListContains(values: any[], comparator?: ArrayComparator, messag
  * @param message - Optional custom error message.
  */
 export function ListNotContains(values: any[], comparator?: ArrayComparator, message?: CargoErrorMessage): TypedPropertyDecorator<any[]> {
-    // Pre-split only when using default comparison (Set + deepEqual optimization)
+    // Pre-split only when using default comparison (Set + isDeepEqual optimization)
     const excludedPrimitives = !comparator ? values.filter(v => v === null || typeof v !== 'object') : []
     const excludedObjects = !comparator ? values.filter(v => v !== null && typeof v === 'object') : []
 

@@ -1,7 +1,7 @@
 import type { ClassConstructor } from '../types'
 import type { RuleViolation } from './types'
 
-/** Thrown by `validateCargoSchema()` when one or more rule violations are detected. */
+/** Thrown by `bindingCargo()` at route registration when the cargo class breaks one or more schema rules. */
 export class CargoSchemaError extends Error {
     name: string
     violations: RuleViolation[]

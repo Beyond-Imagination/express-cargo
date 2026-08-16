@@ -33,4 +33,9 @@ export interface RuleViolation {
     message: string
 }
 
+/**
+ * Contract for a single rule checker: inspects one class (`ctx.cargoClass`) and returns
+ * every violation it finds. Nested-DTO traversal is handled by `validateAnalysis`, so
+ * checkers don't recurse.
+ */
 export type RuleChecker = (ctx: RuleContext) => RuleViolation[]

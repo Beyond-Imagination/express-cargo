@@ -7,6 +7,8 @@ import type { CargoClassMetadata } from './metadata'
  * - `params`: req.params
  * - `header`: req.headers
  * - `session`: req.session
+ * - `file`: one uploaded file, via the configured file locator
+ * - `files`: every uploaded file sharing the field name
  */
 export type Source = 'body' | 'query' | 'params' | 'header' | 'session' | 'file' | 'files'
 

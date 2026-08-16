@@ -18,13 +18,13 @@ function collectNestedClasses(classMeta: CargoClassMetadata): ClassConstructor[]
             if (isUserDefinedClass(typeFn)) {
                 nested.push(typeFn)
             } else if (typeFn.length === 0) {
-                // @Type(() => Foo) — Thunk form. Resolver form (`(data) => Foo`) can't be
-                // evaluated statically and will throw on the no-arg call; we catch and skip.
+                // @Type(() => Foo) — Thunk form. A Resolver declares a parameter, so the arity
+                // check already excludes it; a zero-arg function may still read runtime data.
                 try {
                     const result = (typeFn as TypeThunk)()
                     if (isUserDefinedClass(result)) nested.push(result)
                 } catch {
-                    // Resolver-shaped functions need runtime data; ignore.
+                    // Needs runtime data; resolved during binding instead.
                 }
             }
 
