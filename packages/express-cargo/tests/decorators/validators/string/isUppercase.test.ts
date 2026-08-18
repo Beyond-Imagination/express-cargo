@@ -1,7 +1,7 @@
 import { CargoFieldError, IsUppercase } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isUppercase decorator', () => {
+describe('@IsUppercase decorator', () => {
     class Sample {
         @IsUppercase()
         uppercaseValue!: string

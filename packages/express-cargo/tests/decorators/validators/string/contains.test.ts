@@ -1,7 +1,7 @@
 import { CargoFieldError, Contains } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('contains decorator', () => {
+describe('@Contains decorator', () => {
     class Sample {
         @Contains('hello')
         id1!: string

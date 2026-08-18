@@ -2,7 +2,7 @@ import { CargoClassMetadata } from '../../src/metadata'
 import 'reflect-metadata'
 import { Body } from '../../src'
 
-describe('getFieldList', () => {
+describe('CargoClassMetadata.getFieldList', () => {
     class Parent {
         @Body()
         parentField!: string

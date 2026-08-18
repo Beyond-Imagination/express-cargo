@@ -1,7 +1,7 @@
 import { CargoFieldError, IsUrl } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isUrl decorator', () => {
+describe('@IsUrl decorator', () => {
     class Sample {
         @IsUrl()
         url!: string

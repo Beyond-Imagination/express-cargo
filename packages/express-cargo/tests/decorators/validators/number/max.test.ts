@@ -1,7 +1,7 @@
 import { CargoFieldError, Max } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('max decorator', () => {
+describe('@Max decorator', () => {
     class Sample {
         @Max(20)
         number1!: number

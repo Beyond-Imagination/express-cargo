@@ -1,7 +1,7 @@
 import { ListContains, Body, CargoFieldError } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('ListContains Validator', () => {
+describe('@ListContains decorator', () => {
     class TestClass {
         @Body()
         @ListContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())

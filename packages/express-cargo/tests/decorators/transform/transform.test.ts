@@ -1,7 +1,7 @@
 import { Transform } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
 
-describe('transform decorator', () => {
+describe('@Transform decorator', () => {
     class Sample {
         @Transform((value: string) => value.toUpperCase())
         text!: string

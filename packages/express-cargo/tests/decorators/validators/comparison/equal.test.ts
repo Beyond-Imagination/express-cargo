@@ -1,7 +1,7 @@
 import { CargoFieldError, Equal } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('equal decorator', () => {
+describe('@Equal decorator', () => {
     class Sample {
         @Equal('admin')
         role!: string

@@ -1,7 +1,7 @@
 import { CargoFieldError, MinDate } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('minDate decorator', () => {
+describe('@MinDate decorator', () => {
     const minDate = new Date('2000-01-01')
 
     class Sample {

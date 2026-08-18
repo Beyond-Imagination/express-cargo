@@ -1,7 +1,7 @@
 import { ListMinSize, Body, CargoFieldError } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('ListMinSize Validator', () => {
+describe('@ListMinSize decorator', () => {
     class TestClass {
         @Body()
         @ListMinSize(3)

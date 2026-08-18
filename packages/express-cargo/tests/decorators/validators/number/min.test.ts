@@ -1,7 +1,7 @@
 import { CargoFieldError, Min, Body } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('min decorator', () => {
+describe('@Min decorator', () => {
     class Sample {
         @Min(10)
         @Body()

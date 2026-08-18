@@ -1,7 +1,7 @@
 import { CargoFieldError, MinLength } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('minLength decorator', () => {
+describe('@MinLength decorator', () => {
     class Sample {
         @MinLength(5)
         stringText!: string

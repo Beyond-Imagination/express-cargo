@@ -1,7 +1,7 @@
 import { Alphanumeric, CargoFieldError } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('alphanumeric decorator', () => {
+describe('@Alphanumeric decorator', () => {
     class Sample {
         @Alphanumeric()
         alphanumericValue!: string

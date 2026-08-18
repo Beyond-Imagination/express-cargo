@@ -1,7 +1,7 @@
 import { Body, CargoFieldError, Uuid } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('uuid decorator', () => {
+describe('@Uuid decorator', () => {
     class Sample {
         @Body()
         @Uuid()

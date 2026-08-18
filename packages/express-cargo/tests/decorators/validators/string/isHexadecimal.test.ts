@@ -1,7 +1,7 @@
 import { CargoFieldError, IsHexadecimal } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isHexadecimal decorator', () => {
+describe('@IsHexadecimal decorator', () => {
     class Sample {
         @IsHexadecimal()
         value!: string

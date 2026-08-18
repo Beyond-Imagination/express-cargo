@@ -1,7 +1,7 @@
 import { IsFalse, CargoFieldError } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isFalse decorator', () => {
+describe('@IsFalse decorator', () => {
     class Sample {
         @IsFalse()
         booleanValue!: boolean

@@ -1,7 +1,7 @@
 import { Optional } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
 
-describe('optional decorator', () => {
+describe('@Optional decorator', () => {
     class Sample {
         @Optional()
         field1?: string

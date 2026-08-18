@@ -1,7 +1,7 @@
 import { CargoFieldError, Validate } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('validate decorator', () => {
+describe('@Validate decorator', () => {
     class Sample {
         @Validate(number => number === 1, 'number should be 1')
         number1!: number

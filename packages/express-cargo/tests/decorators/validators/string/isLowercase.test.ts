@@ -1,7 +1,7 @@
 import { CargoFieldError, IsLowercase } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isLowercase decorator', () => {
+describe('@IsLowercase decorator', () => {
     class Sample {
         @IsLowercase()
         lowercaseValue!: string

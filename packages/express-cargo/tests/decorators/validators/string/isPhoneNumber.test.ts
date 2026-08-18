@@ -1,7 +1,7 @@
 import { CargoFieldError, IsPhoneNumber } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isPhoneNumber decorator', () => {
+describe('@IsPhoneNumber decorator', () => {
     class Sample {
         @IsPhoneNumber()
         phone!: string

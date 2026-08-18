@@ -22,7 +22,7 @@ class RootDTO {
     data!: DynamicA | DynamicB
 }
 
-describe('Dynamic Polymorphism Binding', () => {
+describe('dynamic polymorphism binding', () => {
     it('should correctly bind dynamically resolved classes and their nested fields', () => {
         const middleware = bindingCargo(RootDTO)
         const req = makeMockReq({

@@ -1,7 +1,7 @@
 import { Request } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
 
-describe('request decorator', () => {
+describe('@Request decorator', () => {
     class Sample {
         firstName!: string
         lastName!: string

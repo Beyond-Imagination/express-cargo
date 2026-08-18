@@ -1,7 +1,7 @@
 import { CargoFieldError, IsHexColor } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isHexColor decorator', () => {
+describe('@IsHexColor decorator', () => {
     class Sample {
         @IsHexColor()
         color!: string

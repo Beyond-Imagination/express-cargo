@@ -1,7 +1,7 @@
 import { CargoFieldError, Each, Min } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('Each decorator', () => {
+describe('@Each decorator', () => {
     class Sample {
         @Each(Min(10))
         numbers!: number[]

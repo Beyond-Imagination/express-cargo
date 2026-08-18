@@ -1,7 +1,7 @@
 import { CargoFieldError, Prefix } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('prefix decorator', () => {
+describe('@Prefix decorator', () => {
     class Sample {
         @Prefix('id')
         id1!: string

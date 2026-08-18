@@ -1,7 +1,7 @@
 import { CargoFieldError, MaxDate } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('maxDate decorator', () => {
+describe('@MaxDate decorator', () => {
     const maxDate = new Date('2099-12-31')
 
     class Sample {

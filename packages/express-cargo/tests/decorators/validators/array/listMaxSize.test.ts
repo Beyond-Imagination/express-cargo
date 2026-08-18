@@ -1,7 +1,7 @@
 import { ListMaxSize, Body, CargoFieldError } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('ListMaxSize Validator', () => {
+describe('@ListMaxSize decorator', () => {
     class TestClass {
         @Body()
         @ListMaxSize(3)

@@ -1,7 +1,7 @@
 import { CargoFieldError, IsJwt } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isJwt decorator', () => {
+describe('@IsJwt decorator', () => {
     class Sample {
         @IsJwt()
         token!: string

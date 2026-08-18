@@ -1,7 +1,7 @@
 import { CargoFieldError, With } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('with decorator', () => {
+describe('@With decorator', () => {
     const TARGET_FIELD = 'fieldA'
     const RELATED_FIELD = 'fieldB'
     class Sample {

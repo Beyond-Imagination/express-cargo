@@ -3,7 +3,7 @@ import { CargoClassMetadata } from '../../../src/metadata'
 
 class CustomClass {}
 
-describe('list decorator', () => {
+describe('@List decorator', () => {
     class Sample {
         @List(String)
         stringArray!: string[]

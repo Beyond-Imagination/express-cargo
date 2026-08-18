@@ -1,7 +1,7 @@
 import { CargoFieldError, NotEqual } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('NotEqual decorator', () => {
+describe('@NotEqual decorator', () => {
     class Sample {
         @NotEqual('admin')
         role!: string

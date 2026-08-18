@@ -1,7 +1,7 @@
 import { CargoFieldError, Range } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('range decorator', () => {
+describe('@Range decorator', () => {
     class Sample {
         @Range(5, 15)
         number1!: number

@@ -1,7 +1,7 @@
 import { CargoFieldError, IsHash } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isHash decorator', () => {
+describe('@IsHash decorator', () => {
     class Sample {
         @IsHash('md5')
         md5Hash!: string

@@ -1,7 +1,7 @@
 import { CargoFieldError, OneOf } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('oneOf decorator', () => {
+describe('@OneOf decorator', () => {
     class Sample {
         @OneOf([10, 20, 30] as const)
         element1!: number

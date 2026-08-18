@@ -1,7 +1,7 @@
 import { CargoFieldError, Alpha } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isAlpha decorator', () => {
+describe('@Alpha decorator', () => {
     class Sample {
         @Alpha()
         alphaValue!: string

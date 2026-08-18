@@ -1,7 +1,7 @@
 import { CargoFieldError, IsTimeZone } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('isTimeZone decorator', () => {
+describe('@IsTimeZone decorator', () => {
     class Sample {
         @IsTimeZone()
         timezone!: string

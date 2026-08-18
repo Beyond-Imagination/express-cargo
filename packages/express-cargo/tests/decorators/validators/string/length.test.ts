@@ -1,7 +1,7 @@
 import { CargoFieldError, Length } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('length decorator', () => {
+describe('@Length decorator', () => {
     class Sample {
         @Length(5)
         stringText!: string

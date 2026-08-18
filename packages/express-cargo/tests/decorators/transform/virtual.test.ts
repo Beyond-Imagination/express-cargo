@@ -1,7 +1,7 @@
 import { Virtual } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
 
-describe('virtual decorator', () => {
+describe('@Virtual decorator', () => {
     class Sample {
         firstName!: string
         lastName!: string

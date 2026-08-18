@@ -1,7 +1,7 @@
 import { CargoFieldError, MaxLength } from '../../../../src'
 import { CargoClassMetadata } from '../../../../src/metadata'
 
-describe('maxLength decorator', () => {
+describe('@MaxLength decorator', () => {
     class Sample {
         @MaxLength(5)
         stringText!: string

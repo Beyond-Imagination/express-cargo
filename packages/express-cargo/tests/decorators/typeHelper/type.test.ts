@@ -11,7 +11,7 @@ class Parent {
     type!: string
 }
 
-describe('Type decorator', () => {
+describe('@Type decorator', () => {
     class Sample {
         // Simple Thunk for single object
         @Type(() => ChildA)

@@ -1,7 +1,7 @@
 import { Default } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
 
-describe('default decorator', () => {
+describe('@Default decorator', () => {
     class Sample {
         @Default('default')
         field1?: string

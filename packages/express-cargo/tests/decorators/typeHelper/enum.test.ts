@@ -11,7 +11,7 @@ enum NumericRole {
     USER,
 }
 
-describe('enum', () => {
+describe('@Enum decorator', () => {
     class Sample {
         @Enum(Role)
         role!: Role
