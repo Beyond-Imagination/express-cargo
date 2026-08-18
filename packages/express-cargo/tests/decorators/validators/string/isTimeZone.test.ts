@@ -41,7 +41,10 @@ describe('isTimeZone decorator', () => {
     })
 
     it('should not have isTimeZone validator on undecorated field', () => {
-        const noRule = classMeta.getFieldMetadata('noValidatorValue').getValidators()?.find(v => v.type === 'isTimeZone')
+        const noRule = classMeta
+            .getFieldMetadata('noValidatorValue')
+            .getValidators()
+            ?.find(v => v.type === 'isTimeZone')
         expect(noRule).toBeUndefined()
     })
 

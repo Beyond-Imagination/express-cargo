@@ -54,7 +54,10 @@ describe('maxDate decorator', () => {
         }
 
         const dynamicMeta = new CargoClassMetadata(DynamicMax.prototype)
-        const rule = dynamicMeta.getFieldMetadata('date').getValidators()?.find(v => v.type === 'maxDate')
+        const rule = dynamicMeta
+            .getFieldMetadata('date')
+            .getValidators()
+            ?.find(v => v.type === 'maxDate')
 
         expect(rule!.validate(new Date('2049-12-31'))).toBeNull()
         expect(rule!.validate(new Date('2050-01-02'))).toBeInstanceOf(CargoFieldError)
@@ -67,7 +70,10 @@ describe('maxDate decorator', () => {
         }
 
         const customMeta = new CargoClassMetadata(CustomMessage.prototype)
-        const rule = customMeta.getFieldMetadata('date').getValidators()?.find(v => v.type === 'maxDate')
+        const rule = customMeta
+            .getFieldMetadata('date')
+            .getValidators()
+            ?.find(v => v.type === 'maxDate')
 
         const error = rule!.validate(new Date('2100-01-01'))
         expect(error).toBeInstanceOf(CargoFieldError)

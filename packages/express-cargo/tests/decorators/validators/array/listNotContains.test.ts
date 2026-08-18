@@ -4,17 +4,11 @@ import { CargoClassMetadata } from '../../../../src/metadata'
 describe('ListNotContains Validator', () => {
     class TestClass {
         @Body()
-        @ListNotContains(
-            ['hello', 'world'],
-            (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase()
-        )
+        @ListNotContains(['hello', 'world'], (expected, actual) => typeof actual === 'string' && actual.toLowerCase() === expected.toLowerCase())
         strings!: string[]
 
         @Body()
-        @ListNotContains(
-            [1, 2],
-            (expected, actual) => Math.abs(actual - expected) <= 1
-        )
+        @ListNotContains([1, 2], (expected, actual) => Math.abs(actual - expected) <= 1)
         numbers!: number[]
 
         @Body()

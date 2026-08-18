@@ -54,7 +54,10 @@ describe('isHexColor decorator', () => {
         }
 
         const customMeta = new CargoClassMetadata(CustomMessage.prototype)
-        const rule = customMeta.getFieldMetadata('color').getValidators()?.find(v => v.type === 'isHexColor')
+        const rule = customMeta
+            .getFieldMetadata('color')
+            .getValidators()
+            ?.find(v => v.type === 'isHexColor')
 
         const error = rule?.validate('invalid')
         expect(error).toBeInstanceOf(CargoFieldError)

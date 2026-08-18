@@ -57,7 +57,10 @@ describe('isUrl decorator', () => {
         }
 
         const ftpMeta = new CargoClassMetadata(FtpSample.prototype)
-        const rule = ftpMeta.getFieldMetadata('url').getValidators()?.find(v => v.type === 'isUrl')
+        const rule = ftpMeta
+            .getFieldMetadata('url')
+            .getValidators()
+            ?.find(v => v.type === 'isUrl')
 
         expect(rule?.validate('ftp://example.com')).toBeNull()
         expect(rule?.validate('http://example.com')).toBeInstanceOf(CargoFieldError)
@@ -70,7 +73,10 @@ describe('isUrl decorator', () => {
         }
 
         const customMeta = new CargoClassMetadata(CustomMessage.prototype)
-        const rule = customMeta.getFieldMetadata('value').getValidators()?.find(v => v.type === 'isUrl')
+        const rule = customMeta
+            .getFieldMetadata('value')
+            .getValidators()
+            ?.find(v => v.type === 'isUrl')
 
         const error = rule?.validate('not-a-url')
         expect(error).toBeInstanceOf(CargoFieldError)

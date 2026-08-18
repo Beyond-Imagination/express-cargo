@@ -87,7 +87,10 @@ describe('isPhoneNumber decorator', () => {
     })
 
     it('should not have isPhoneNumber validator on undecorated field', () => {
-        const noRule = classMeta.getFieldMetadata('noValidatorValue').getValidators()?.find(v => v.type === 'isPhoneNumber')
+        const noRule = classMeta
+            .getFieldMetadata('noValidatorValue')
+            .getValidators()
+            ?.find(v => v.type === 'isPhoneNumber')
         expect(noRule).toBeUndefined()
     })
 

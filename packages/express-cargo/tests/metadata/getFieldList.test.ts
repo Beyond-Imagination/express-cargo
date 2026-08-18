@@ -21,7 +21,7 @@ describe('getFieldList', () => {
         expect(fields.length).toBe(2)
     })
 
-    class EmptyClass { }
+    class EmptyClass {}
 
     const emptyClassMeta = new CargoClassMetadata(EmptyClass.prototype)
     it('should return empty array if no metadata', () => {

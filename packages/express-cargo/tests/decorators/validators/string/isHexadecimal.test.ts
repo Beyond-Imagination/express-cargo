@@ -54,7 +54,10 @@ describe('isHexadecimal decorator', () => {
         }
 
         const customMeta = new CargoClassMetadata(CustomMessage.prototype)
-        const rule = customMeta.getFieldMetadata('value').getValidators()?.find(v => v.type === 'isHexadecimal')
+        const rule = customMeta
+            .getFieldMetadata('value')
+            .getValidators()
+            ?.find(v => v.type === 'isHexadecimal')
 
         const error = rule?.validate('xyz')
         expect(error).toBeInstanceOf(CargoFieldError)

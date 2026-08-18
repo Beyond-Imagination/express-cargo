@@ -3,7 +3,7 @@ import { CargoClassMetadata } from '../../../../src/metadata'
 
 describe('validate decorator', () => {
     class Sample {
-        @Validate(number => number === 1, "number should be 1")
+        @Validate(number => number === 1, 'number should be 1')
         number1!: number
 
         number2!: number

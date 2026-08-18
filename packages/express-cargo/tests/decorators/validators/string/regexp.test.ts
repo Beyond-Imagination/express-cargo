@@ -3,7 +3,7 @@ import { CargoClassMetadata } from '../../../../src/metadata'
 
 describe('regexp decorator', () => {
     class Sample {
-        @Regexp(/ab+c/, "Does not match regexp")
+        @Regexp(/ab+c/, 'Does not match regexp')
         string1!: string
 
         string2!: string

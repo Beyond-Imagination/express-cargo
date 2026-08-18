@@ -54,7 +54,10 @@ describe('minDate decorator', () => {
         }
 
         const dynamicMeta = new CargoClassMetadata(DynamicMin.prototype)
-        const rule = dynamicMeta.getFieldMetadata('date').getValidators()?.find(v => v.type === 'minDate')
+        const rule = dynamicMeta
+            .getFieldMetadata('date')
+            .getValidators()
+            ?.find(v => v.type === 'minDate')
 
         expect(rule!.validate(new Date('2021-01-01'))).toBeNull()
         expect(rule!.validate(new Date('2019-12-31'))).toBeInstanceOf(CargoFieldError)
@@ -67,7 +70,10 @@ describe('minDate decorator', () => {
         }
 
         const customMeta = new CargoClassMetadata(CustomMessage.prototype)
-        const rule = customMeta.getFieldMetadata('date').getValidators()?.find(v => v.type === 'minDate')
+        const rule = customMeta
+            .getFieldMetadata('date')
+            .getValidators()
+            ?.find(v => v.type === 'minDate')
 
         const error = rule!.validate(new Date('1999-01-01'))
         expect(error).toBeInstanceOf(CargoFieldError)
