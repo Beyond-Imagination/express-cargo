@@ -1,7 +1,5 @@
-import { bindingCargo, getCargo } from '../../src'
-import { Body, Request, Optional, Min } from '../../src'
+import { bindingCargo, getCargo, Body, Request, Optional, Min, CargoSchemaError, CargoValidationError } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
-import { CargoSchemaError, CargoValidationError } from '../../src'
 
 class RequestDTO {
     @Request(req => req.headers['x-user-id'])

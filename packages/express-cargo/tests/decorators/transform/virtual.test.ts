@@ -1,4 +1,4 @@
-import { Virtual } from '../../../src/decorators/transform'
+import { Virtual } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
 
 describe('virtual decorator', () => {

@@ -1,6 +1,5 @@
-import { CargoFieldError } from '../../../src'
+import { CargoFieldError, Enum } from '../../../src'
 import { CargoClassMetadata } from '../../../src/metadata'
-import { Enum } from '../../../src/decorators/typeHelper'
 
 enum Role {
     ADMIN = 'admin',
