@@ -158,7 +158,7 @@ export function Email(message?: CargoErrorMessage): TypedPropertyDecorator<strin
                 propertyKey,
                 'email',
                 (value: unknown) => typeof value === 'string' && DEFAULT_EMAIL_PATTERN.test(value),
-                message || `${String(propertyKey)} should be email format`,
+                message || `${String(propertyKey)} should be a valid email`,
             ),
         )
     }
