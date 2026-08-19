@@ -1,7 +1,5 @@
-import { bindingCargo, getCargo } from '../../src'
-import { Body, Virtual, Optional, Min } from '../../src'
+import { bindingCargo, getCargo, Body, Virtual, Optional, Min, CargoValidationError } from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
-import { CargoValidationError } from '../../src'
 
 class VirtualDTO {
     @Body('firstName') firstName!: string

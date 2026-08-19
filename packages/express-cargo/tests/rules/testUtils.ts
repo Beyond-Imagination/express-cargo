@@ -1,7 +1,6 @@
-import { CargoSchemaError } from '../../src'
+import { CargoSchemaError, ClassConstructor } from '../../src'
 import { analyzeCargoSchema } from '../../src/analysis'
 import { validateAnalysis } from '../../src/rules/validate'
-import { ClassConstructor } from '../../src/types'
 import type { RuleViolation } from '../../src/rules/types'
 
 /**
