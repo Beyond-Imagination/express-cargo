@@ -9,9 +9,9 @@ title: 유효성 검사 데코레이터
 
 유효성 검사는 독립적인 `validate` 함수에 의해 수행되지 않습니다. 대신, `bindingCargo` 미들웨어에 통합되어 있어 요청 처리 과정에서 자동으로 유효성 검사를 수행합니다.
 
----
+`@Enum`도 필드 값을 검사하지만, 아래의 검증 데코레이터가 아니라 타입 헬퍼 카테고리에 속합니다. [타입 헬퍼 데코레이터](./type-helpers.md) 문서에서 다루며, 이 차이는 `@Each`를 쓸 때 드러납니다.
 
-## 기본 제공 유효성 검사기 (Built-in Validators)
+## 숫자 검증자
 
 ### `@Min(value: number)`
 
@@ -19,15 +19,11 @@ title: 유효성 검사 데코레이터
 
 * **`value`**: 허용되는 최소값
 
----
-
 ### `@Max(value: number)`
 
 숫자가 지정된 최대값 이하인지 검증합니다.
 
 * **`value`**: 허용되는 최대값
-
----
 
 ### `@Range(min: number, max: number)`
 
@@ -37,7 +33,7 @@ title: 유효성 검사 데코레이터
 
 * **`max`**: 허용되는 최대값
 
----
+## 문자열 검증자
 
 ### `@Contains(seed: string)`
 
@@ -46,15 +42,11 @@ title: 유효성 검사 데코레이터
 * **`seed`**: 문자열에 반드시 포함되어야 하는 부분 문자열
 * **`message`** (선택): 검증 실패 시 표시할 오류 메시지. 생략하면 기본 메시지가 사용됩니다.
 
----
-
 ### `@Prefix(value: string)`
 
 문자열이 지정된 접두사로 시작하는지 검증합니다.
 
 * **`value`**: 요구되는 시작 문자열
-
----
 
 ### `@Suffix(value: string)`
 
@@ -62,43 +54,11 @@ title: 유효성 검사 데코레이터
 
 * **`value`**: 요구되는 종료 문자열
 
----
-
-### `@Equal(value: any)`
-
-입력 값이 주어진 값과 정확히 일치하는지(`===`) 검증합니다.
-
-* **`value`**: 비교 대상 값
-
----
-
-### `@NotEqual(value: any)`
-
-입력 값이 주어진 값과 정확히 일치하지 않는지(`!==`) 검증합니다.
-
-* **`value`**: 비교 대상 값
-
----
-
-### `@IsTrue()`
-
-주어진 값이 `true` 인지 검증합니다.
-
----
-
-### `@IsFalse()`
-
-주어진 값이 `false` 인지 검증합니다.
-
----
-
 ### `@Length(value: number)`
 
 문자열의 길이가 지정된 값과 정확히 일치하는지 검증합니다.
 
 - **`value`**: 문자열 길이
-
----
 
 ### `@MaxLength(value: number)`
 
@@ -106,59 +66,11 @@ title: 유효성 검사 데코레이터
 
 - **`value`**: 허용되는 최대 문자 길이
 
----
-
 ### `@MinLength(value: number)`
 
 문자열의 길이가 지정된 최소값 이상인지 검증합니다.
 
 - **`value`**: 허용되는 최소 문자 길이
-
----
-
-### `@OneOf(values: any[])`
-
-입력 값이 지정된 값 중 하나인지 검증합니다.
-
-- **`values`**: 허용되는 값들의 배열
-
----
-
-### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-배열이 지정된 모든 값을 포함하는지 검증합니다. 원시값, 객체, Date 및 혼합 타입을 지원합니다.
-
-- **`values`**: 배열에 반드시 포함되어야 하는 값들입니다.
-- **`comparator`** (선택): 커스텀 비교 함수 `(expected, actual) => boolean`. 제공된 경우 원시값을 포함한 모든 비교가 이 함수에 위임됩니다.
-- **`message`** (선택): 검증 실패 시 표시할 오류 메시지입니다. 생략하면 기본 메시지가 사용됩니다.
-
-> **주의**: 객체 비교는 기본적으로 깊은 동등성(deep equality)을 사용합니다. `values`에 많은 객체나 깊이 중첩된 구조가 포함된 경우 성능이 저하될 수 있습니다. 보다 효율적이거나 유연한 비교를 위해 `comparator` 사용을 고려하세요.
-
-### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-배열이 지정된 값을 포함하지 않는지 검증합니다. 원시값, 객체, Date 및 혼합 타입을 지원합니다.
-
-- **`values`**: 배열에 포함되어서는 안 되는 값들입니다.
-- **`comparator`** (선택): 커스텀 비교 함수 `(expected, actual) => boolean`. 제공된 경우 원시값을 포함한 모든 비교가 이 함수에 위임됩니다.
-- **`message`** (선택): 검증 실패 시 표시할 오류 메시지입니다. 생략하면 기본 메시지가 사용됩니다.
-
-> **주의**: 객체 비교는 기본적으로 깊은 동등성(deep equality)을 사용합니다. `values`에 많은 객체나 깊이 중첩된 구조가 포함된 경우 성능이 저하될 수 있습니다. 보다 효율적이거나 유연한 비교를 위해 `comparator` 사용을 고려하세요.
-
-### `@Enum(enumObj: object, message?: string)`
-
-입력 값이 지정된 열거형 객체의 값 중 하나와 일치하는지 검증합니다. 또한 입력 값을 해당하는 열거형 값으로 자동으로 변환합니다.
-
-- **`enumObj`**: 검증할 열거형 객체
-- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
-
-### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
-
-사용자 정의 검증 함수를 사용해 값을 검증합니다.
-이 데코레이터를 사용하면 기본 제공 데코레이터를 넘어서는 유연한 검증 로직을 구현할 수 있습니다.
-
-- **`validateFn`**: 필드 값을 받아서 유효하면 true, 그렇지 않으면 false를 반환하는 함수
-- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
-
 
 ### `@Regexp(pattern: RegExp, message?: string)`
 
@@ -168,13 +80,9 @@ title: 유효성 검사 데코레이터
 - **`pattern`**: 필드 값을 검사할 RegExp 객체. 값이 패턴과 일치하면 유효하다고 판단합니다.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
----
-
 ### `@Email()`
 
 값이 유효한 이메일 주소인지 검증합니다.
-
----
 
 ### `@Alpha(message?: string)`
 
@@ -182,16 +90,12 @@ title: 유효성 검사 데코레이터
 
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
----
-
 ### `@Uuid(version?: 'v1' | 'v3' | 'v4' | 'v5', message?: string)`
 
 데코레이터가 적용된 필드가 유효한 UUID 문자열인지 검증하며, 선택적으로 특정 버전(v1, v3, v4 또는 v5)으로 제한할 수 있습니다.
 
 - **`version`** (선택 사항): 유효성을 검사할 특정 UUID 버전입니다. 생략하면 v1, v3, v4, v5 버전 모두에 대해 검증합니다.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
-
----
 
 ### `@Alphanumeric(message?: string)`
 
@@ -259,6 +163,44 @@ title: 유효성 검사 데코레이터
 - **`algorithm`**: 검증할 해시 알고리즘.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
+## 비교 검증자
+
+### `@Equal(value: any)`
+
+입력 값이 주어진 값과 정확히 일치하는지(`===`) 검증합니다.
+
+* **`value`**: 비교 대상 값
+
+### `@NotEqual(value: any)`
+
+입력 값이 주어진 값과 정확히 일치하지 않는지(`!==`) 검증합니다.
+
+* **`value`**: 비교 대상 값
+
+### `@IsTrue()`
+
+주어진 값이 `true` 인지 검증합니다.
+
+### `@IsFalse()`
+
+주어진 값이 `false` 인지 검증합니다.
+
+### `@OneOf(values: any[])`
+
+입력 값이 지정된 값 중 하나인지 검증합니다.
+
+- **`values`**: 허용되는 값들의 배열
+
+### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
+
+사용자 정의 검증 함수를 사용해 값을 검증합니다.
+이 데코레이터를 사용하면 기본 제공 데코레이터를 넘어서는 유연한 검증 로직을 구현할 수 있습니다.
+
+- **`validateFn`**: 필드 값을 받아서 유효하면 true, 그렇지 않으면 false를 반환하는 함수
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
+## 날짜 검증자
+
 ### `@MinDate(min: Date | (() => Date), message?: string)`
 
 데코레이터가 적용된 필드가 주어진 최소 날짜와 같거나 이후인 `Date`인지 검증합니다. 고정 `Date` 또는 동적 비교를 위한 함수를 받습니다.
@@ -273,29 +215,27 @@ title: 유효성 검사 데코레이터
 - **`max`**: 허용되는 최대 날짜, 또는 이를 반환하는 함수.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
----
+## 배열 검증자
 
-### `@With(fieldName: string, message?: string)`
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-데코레이터가 적용된 속성이 값을 가질 경우, 지정된 대상 속성 또한 반드시 값을 가지고 있어야 함을 검증하여 두 속성 간에 필수적인 의존 관계를 설정합니다.
+배열이 지정된 모든 값을 포함하는지 검증합니다. 원시값, 객체, Date 및 혼합 타입을 지원합니다.
 
-- **`fieldName`**: 데코레이터가 적용된 필드에 값이 있을 경우, 값이 존재해야 하는 대상 속성의 이름입니다.
-- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+- **`values`**: 배열에 반드시 포함되어야 하는 값들입니다.
+- **`comparator`** (선택): 커스텀 비교 함수 `(expected, actual) => boolean`. 제공된 경우 원시값을 포함한 모든 비교가 이 함수에 위임됩니다.
+- **`message`** (선택): 검증 실패 시 표시할 오류 메시지입니다. 생략하면 기본 메시지가 사용됩니다.
 
---- 
+> **주의**: 객체 비교는 기본적으로 깊은 동등성(deep equality)을 사용합니다. `values`에 많은 객체나 깊이 중첩된 구조가 포함된 경우 성능이 저하될 수 있습니다. 보다 효율적이거나 유연한 비교를 위해 `comparator` 사용을 고려하세요.
 
-### `@Without(fieldName: string, message?: string)`
+### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-데코레이터가 적용된 속성이 값을 가질 경우, 지정된 대상 속성은 반드시 값이 없어야 함을 검증하여 두 속성 간에 상호 배타적 관계를 설정합니다.
+배열이 지정된 값을 포함하지 않는지 검증합니다. 원시값, 객체, Date 및 혼합 타입을 지원합니다.
 
-- **`fieldName`**: 데코레이터가 적용된 필드에 값이 있을 경우, 값이 존재해서는 안 되는 대상 속성의 이름입니다.
-- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+- **`values`**: 배열에 포함되어서는 안 되는 값들입니다.
+- **`comparator`** (선택): 커스텀 비교 함수 `(expected, actual) => boolean`. 제공된 경우 원시값을 포함한 모든 비교가 이 함수에 위임됩니다.
+- **`message`** (선택): 검증 실패 시 표시할 오류 메시지입니다. 생략하면 기본 메시지가 사용됩니다.
 
-### `@Each(...args: (Validator | Function)[])`
-
-배열의 모든 개별 요소에 대해 지정된 검증 규칙을 적용합니다. 기존의 검증 데코레이터들을 조합하거나, 사용자 정의 함수를 직접 전달할 수 있습니다.
-
-- `args`: `@Min(5)`와 같은 검증 데코레이터 또는 `(value: any) => boolean` 형식의 커스텀 검증 함수를 가변 인자로 전달합니다.
+> **주의**: 객체 비교는 기본적으로 깊은 동등성(deep equality)을 사용합니다. `values`에 많은 객체나 깊이 중첩된 구조가 포함된 경우 성능이 저하될 수 있습니다. 보다 효율적이거나 유연한 비교를 위해 `comparator` 사용을 고려하세요.
 
 ### `@ListMaxSize(max: number, message?: string)`
 
@@ -309,6 +249,30 @@ title: 유효성 검사 데코레이터
 배열의 요소 수가 지정된 최소 개수보다 부족하지 않는지 검증합니다.
 
 - **`min`**: 배열에 허용되는 최소 요소 수입니다.
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
+### `@Each(...args: (Validator | Function)[])`
+
+배열의 모든 개별 요소에 대해 지정된 검증 규칙을 적용합니다. 기존의 검증 데코레이터들을 조합하거나, 사용자 정의 함수를 직접 전달할 수 있습니다.
+
+- `args`: `@Min(5)`와 같은 검증 데코레이터 또는 `(value: any) => boolean` 형식의 커스텀 검증 함수를 가변 인자로 전달합니다.
+
+`@Each`는 검증 데코레이터만 감쌀 수 있습니다. 소스·타입 헬퍼·값 누락 처리·변환 데코레이터를 넘기면 라우트 등록 시점에 거부됩니다. 예를 들어 `@Each(Enum(UserRole))`은 `@Each cannot wrap type-helper decorator(s): @Enum`으로 실패합니다.
+
+## 필드 간 검증자
+
+### `@With(fieldName: string, message?: string)`
+
+데코레이터가 적용된 속성이 값을 가질 경우, 지정된 대상 속성 또한 반드시 값을 가지고 있어야 함을 검증하여 두 속성 간에 필수적인 의존 관계를 설정합니다.
+
+- **`fieldName`**: 데코레이터가 적용된 필드에 값이 있을 경우, 값이 존재해야 하는 대상 속성의 이름입니다.
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+
+### `@Without(fieldName: string, message?: string)`
+
+데코레이터가 적용된 속성이 값을 가질 경우, 지정된 대상 속성은 반드시 값이 없어야 함을 검증하여 두 속성 간에 상호 배타적 관계를 설정합니다.
+
+- **`fieldName`**: 데코레이터가 적용된 필드에 값이 있을 경우, 값이 존재해서는 안 되는 대상 속성의 이름입니다.
 - **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
 
 ## 사용 예시
@@ -378,28 +342,4 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 */
 ```
 
----
-
-## 에러 처리 (Error Handling)
-
-유효성 검사가 실패하면, `bindingCargo` 미들웨어는 `CargoValidationError` 예외를 발생시킵니다. 이 예외를 처리하기 위해 Express 에러 핸들링 미들웨어를 등록해야 합니다.
-
-`CargoValidationError` 객체는 `errors` 속성을 가지며, 이 안에는 여러 개의 `CargoFieldError` 인스턴스가 배열로 포함되어 있습니다. 각각의 `CargoFieldError` 객체는 구체적인 오류 메시지를 담고 있는 `message` 속성을 포함합니다 (예: `"quantity: quantity must be <= 100"`).
-
-코드 예시에서 보았듯이, 일반적으로는 `err.errors` 배열을 `map()`을 통해 단순한 메시지 배열로 변환해 응답을 구성합니다.
-
----
-
-**에러 응답 예시:**
-
-위의 유효하지 않은 요청을 보낼 경우, 아래와 같은 JSON 응답이 반환됩니다:
-
-```json
-{
-    "message": "Validation Failed",
-    "errors": [
-        "type: assetType must end with .png",
-        "quantity: quantity must be <= 100"
-    ]
-}
-```
+검증 실패는 예제의 4번 단계처럼 `CargoValidationError`로 던져집니다. 에러 타입, 권장 방식인 `setCargoErrorHandler`, 응답 예시는 [검증 오류 처리](../examples/validation-errors.md) 문서를 참고하세요.

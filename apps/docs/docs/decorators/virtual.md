@@ -18,6 +18,15 @@ The `@Request` decorator maps a value from the Express `Request` object into a c
 
 `@Request` assigns the returned value as-is, without built-in type casting. A common use case is binding an authenticated user that another middleware, such as Passport.js, has placed on `req.user`.
 
+## Choosing Between Them
+
+`@Virtual` and `@Request` belong to two separate categories, and a field takes exactly one of them. Applying both raises `@Request cannot be combined with @Virtual` when the route is registered, and pairing either one with a source decorator such as `@Body` is rejected the same way — the three answer the same question of where a field's value comes from.
+
+- Reach for `@Request` when the value lives on the raw `Request` object, before any of the object's own fields are bound.
+- Reach for `@Virtual` when the value is derived from other fields of the object being built.
+
+`@Virtual` runs after every source field is bound, so it can read those fields no matter which order they are declared in. Only a `@Virtual` field that depends on another `@Virtual` field is order-sensitive.
+
 ## Usage Example
 
 ```typescript

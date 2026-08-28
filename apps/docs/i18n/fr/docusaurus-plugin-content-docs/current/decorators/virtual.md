@@ -18,6 +18,15 @@ Le decorator `@Request` mappe une valeur depuis l'objet Express `Request` dans u
 
 `@Request` affecte la valeur retournée telle quelle, sans conversion de type intégrée. Un cas d'utilisation courant consiste à lier l'utilisateur qu'un middleware d'authentification, tel que Passport.js, a placé dans `req.user`.
 
+## Choisir entre les deux
+
+`@Virtual` et `@Request` appartiennent à deux catégories distinctes, et un champ n'en prend qu'un seul. Les appliquer tous les deux déclenche `@Request cannot be combined with @Virtual` lors de l'enregistrement de la route, et associer l'un ou l'autre à un décorateur de source comme `@Body` est rejeté de la même façon : les trois répondent à la même question, d'où vient la valeur d'un champ.
+
+- Utilisez `@Request` lorsque la valeur se trouve sur l'objet `Request` brut, avant que les champs propres de l'objet ne soient liés.
+- Utilisez `@Virtual` lorsque la valeur est dérivée des autres champs de l'objet en cours de construction.
+
+`@Virtual` s'exécute une fois tous les champs de source liés : il peut donc les lire quel que soit leur ordre de déclaration. Seul un champ `@Virtual` qui dépend d'un autre champ `@Virtual` est sensible à l'ordre.
+
 ## Exemple d'utilisation
 
 ```typescript

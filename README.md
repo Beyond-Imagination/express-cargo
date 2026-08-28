@@ -104,7 +104,6 @@ Full guide and API reference:
 
 | Decorator                                                                     | Description                                                                                                                                                      | Example                                                                                                                  |
 |-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `@Optional()`                                                                 | Skip validation when value is null or undefined.                                                                                                                 | `@Optional() value?: number`                                                                                             |
 | `@Min(minimum: number)`                                                       | Number must be greater than or equal to `minimum`.                                                                                                               | `@Min(18) age!: number`                                                                                                  |
 | `@Max(maximum: number)`                                                       | Number must be less than or equal to `maximum`.                                                                                                                  | `@Max(100) score!: number`                                                                                               |
 | `@Range(min: number, max: number)`                                            | Number must be between `min` and `max` (inclusive).                                                                                                              | `@Range(1, 5) rating!: number`                                                                                           |
@@ -123,7 +122,7 @@ Full guide and API reference:
 | `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean)` | The array must NOT contain any of the specified values. When `comparator` is provided, all comparisons are delegated to it.                                      | `@ListNotContains([1, 2]) nums!: number[]`<br>`@ListNotContains(['a'], (e, a) => a.toLowerCase() === e) strs!: string[]` |
 | `@ListMaxSize(max: number, message?)`                                         | The array must contain no more than `max` elements.                                                                                                              | `@ListMaxSize(5) tags!: string[]`                                                                                        |
 | `@ListMinSize(min: number, message?)`                                         | The array must contain at least `min` elements.                                                                                                                  | `@ListMinSize(5) tags!: string[]`                                                                                        |
-| `@Enum(enumObj: object, message?)`                                            | Value must be a member of `enumObj`.                                                                                                                             | `@Enum(UserRole) role!: UserRole`                                                                                        |
+| `@Each(...args: (Validator \| Function)[])`                                   | Applies validation rules to every individual element within an array. Wraps validation decorators only.                                                          | `@Each(Length(10)) tags!: string[]`                                                                                      |
 | `@Validate(validateFn, message?)`                                             | Custom validation function.                                                                                                                                      | `@Validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string`                               |
 | `@Regexp(pattern: RegExp, message?)`                                          | String must match the given regular expression.                                                                                                                  | `@Regexp(/^[0-9]+$/, 'digits only') phone!: string`                                                                      |
 | `@Email()`                                                                    | String must be email format.                                                                                                                                     | `@Email() email!: string`                                                                                                |
@@ -211,14 +210,24 @@ When a value is `undefined` or `null`, express-cargo handles it in this order:
 
 After a missing value is handled by one of these paths, the remaining transform and validation steps for that field are skipped.
 
-### Utility Decorators
+### Type Helper Decorators
 
-| Decorator                          | Description                                                                                                           | Example                             |
-|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------------------------|
-| `@Type(typeFn, options?)`          | Specifies the class used to transform raw data. Supports dynamic class resolution and resolves circular dependencies. | `@Type(() => User) user!: User`     |
-| `@Default(value)`                  | Set default value when field is missing                                                                               | `@Default(0) count!: number`        |
-| `@List(elementType)`               | Specify array element type                                                                                            | `@List(String) tags!: string[]`     |
-| `@Each((validator \| function)[])` | Applies validation rules to every individual element within an array.                                                 | `@Each(Length(10)) tags!: string[]` |
+| Decorator                          | Description                                                                                                           | Example                           |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------|-----------------------------------|
+| `@Type(typeFn, options?)`          | Specifies the class used to transform raw data. Supports dynamic class resolution and resolves circular dependencies. | `@Type(() => User) user!: User`   |
+| `@List(elementType)`               | Specify array element type                                                                                            | `@List(String) tags!: string[]`   |
+| `@Enum(enumObj: object, message?)` | Maps the value onto a member of `enumObj`, and rejects a value that is not a member.                                  | `@Enum(UserRole) role!: UserRole` |
+
+> A field takes at most one type helper. `@Enum` installs its own transformer, so it cannot be combined with `@Transform`, and `@Each` cannot wrap it. See [Type Helper Decorators](https://beyond-imagination.github.io/express-cargo/decorators/type-helpers) for details.
+
+### Missing-Value Decorators
+
+| Decorator         | Description                                      | Example                      |
+|-------------------|--------------------------------------------------|------------------------------|
+| `@Optional()`     | Skip validation when value is null or undefined. | `@Optional() value?: number` |
+| `@Default(value)` | Set default value when field is missing          | `@Default(0) count!: number` |
+
+> A field takes a single missing-value strategy; `@Optional` and `@Default` cannot be combined.
 
 ### Error Handling
 

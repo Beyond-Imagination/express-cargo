@@ -4,7 +4,9 @@ Express-Cargo usa decoradores para validar datos entrantes de solicitudes que se
 
 La validación no se realiza mediante una función `validate` independiente. En cambio, está integrada en el middleware `bindingCargo`, que valida automáticamente los datos durante el ciclo de vida de la solicitud.
 
-## Validadores integrados
+`@Enum` también comprueba el valor de su campo, pero pertenece a la categoría de ayudantes de tipo y no a los validadores de abajo. Está documentado en [Decoradores de ayuda de tipo](./type-helpers.md), y la diferencia importa cuando recurres a `@Each`.
+
+## Validadores numéricos
 
 ### `@Min(value: number)`
 
@@ -25,6 +27,8 @@ Valida que un número esté dentro del rango especificado, incluyendo los valore
 - **`min`**: El valor mínimo permitido.
 - **`max`**: El valor máximo permitido.
 
+## Validadores de cadenas
+
 ### `@Contains(seed: string)`
 
 Valida que la cadena contenga la subcadena especificada.
@@ -44,26 +48,6 @@ Valida que una cadena termine con el sufijo especificado.
 
 - **`value`**: El texto final requerido.
 
-### `@Equal(value: any)`
-
-Valida que un valor sea estrictamente igual (`===`) al valor especificado.
-
-- **`value`**: El valor contra el cual comparar.
-
-### `@NotEqual(value: any)`
-
-Valida que un valor no sea estrictamente igual (`!==`) al valor especificado.
-
-- **`value`**: El valor contra el cual comparar.
-
-### `@IsTrue()`
-
-Valida que la propiedad decorada sea `true`.
-
-### `@IsFalse()`
-
-Valida que la propiedad decorada sea `false`.
-
 ### `@Length(value: number)`
 
 Valida que la longitud de la cadena decorada sea exactamente el valor especificado.
@@ -81,48 +65,6 @@ Valida que la longitud de la cadena decorada no supere el máximo especificado.
 Valida que la longitud de la cadena decorada sea al menos el mínimo especificado.
 
 - **`value`**: La longitud mínima permitida en caracteres.
-
-### `@OneOf(values: any[])`
-
-Valida que el valor de entrada sea uno de los valores especificados.
-
-- **`values`**: El array de valores permitidos.
-
-### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-Valida que el array contenga todos los valores especificados. Soporta valores primitivos, objetos, `Date` y tipos mixtos.
-
-- **`values`**: Los valores que deben estar presentes en el array.
-- **`comparator`** (opcional): Una función de comparación personalizada `(expected, actual) => boolean`. Cuando se proporciona, todas las comparaciones se delegan a esta función, incluidas las de primitivos.
-- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
-
-> **Advertencia**: La comparación de objetos usa igualdad profunda de forma predeterminada. El rendimiento puede degradarse cuando `values` contiene muchos objetos o estructuras profundamente anidadas. Considera usar un `comparator` para una comparación más eficiente o flexible.
-
-### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-Valida que el array NO contenga ninguno de los valores especificados. Soporta valores primitivos, objetos, `Date` y tipos mixtos.
-
-- **`values`**: Los valores que NO deben estar presentes en el array.
-- **`comparator`** (opcional): Una función de comparación personalizada `(expected, actual) => boolean`. Cuando se proporciona, todas las comparaciones se delegan a esta función, incluidas las de primitivos.
-- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
-
-> **Advertencia**: La comparación de objetos usa igualdad profunda de forma predeterminada. El rendimiento puede degradarse cuando `values` contiene muchos objetos o estructuras profundamente anidadas. Considera usar un `comparator` para una comparación más eficiente o flexible.
-
-### `@Enum(enumObj: object, message?: string)`
-
-Valida que el valor de entrada coincida con uno de los valores del objeto enum especificado.
-También transforma automáticamente el valor de entrada (por ejemplo, una clave de cadena) al valor correspondiente del enum.
-
-- **`enumObj`**: El objeto enum contra el cual validar.
-- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
-
-### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
-
-Valida un valor usando una función de validación personalizada.
-Este decorador proporciona flexibilidad para implementar lógica de validación más allá de los validadores integrados.
-
-- **`validateFn`**: Una función que recibe el valor del campo y devuelve `true` si es válido o `false` en caso contrario.
-- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
 
 ### `@Regexp(pattern: RegExp, message?: string)`
 
@@ -215,6 +157,44 @@ Valida que el campo decorado sea una cadena hash válida para el algoritmo indic
 - **`algorithm`**: El algoritmo hash contra el cual validar.
 - **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
 
+## Validadores de comparación
+
+### `@Equal(value: any)`
+
+Valida que un valor sea estrictamente igual (`===`) al valor especificado.
+
+- **`value`**: El valor contra el cual comparar.
+
+### `@NotEqual(value: any)`
+
+Valida que un valor no sea estrictamente igual (`!==`) al valor especificado.
+
+- **`value`**: El valor contra el cual comparar.
+
+### `@IsTrue()`
+
+Valida que la propiedad decorada sea `true`.
+
+### `@IsFalse()`
+
+Valida que la propiedad decorada sea `false`.
+
+### `@OneOf(values: any[])`
+
+Valida que el valor de entrada sea uno de los valores especificados.
+
+- **`values`**: El array de valores permitidos.
+
+### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
+
+Valida un valor usando una función de validación personalizada.
+Este decorador proporciona flexibilidad para implementar lógica de validación más allá de los validadores integrados.
+
+- **`validateFn`**: Una función que recibe el valor del campo y devuelve `true` si es válido o `false` en caso contrario.
+- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
+
+## Validadores de fechas
+
 ### `@MinDate(min: Date | (() => Date), message?: string)`
 
 Valida que el campo decorado sea un `Date` igual o posterior a la fecha mínima indicada. Acepta un `Date` fijo o una función que devuelve un `Date` para comparación dinámica.
@@ -229,25 +209,27 @@ Valida que el campo decorado sea un `Date` igual o anterior a la fecha máxima i
 - **`max`**: La fecha máxima permitida, o una función que la devuelve.
 - **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
 
-### `@With(fieldName: string, message?: string)`
+## Validadores de arrays
 
-Valida que, si el campo decorado tiene un valor, el campo de destino especificado (`fieldName`) también deba tener un valor, estableciendo una dependencia obligatoria entre ambos campos.
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-- **`fieldName`**: El nombre del campo de destino que también debe tener un valor si el campo decorado tiene un valor.
+Valida que el array contenga todos los valores especificados. Soporta valores primitivos, objetos, `Date` y tipos mixtos.
+
+- **`values`**: Los valores que deben estar presentes en el array.
+- **`comparator`** (opcional): Una función de comparación personalizada `(expected, actual) => boolean`. Cuando se proporciona, todas las comparaciones se delegan a esta función, incluidas las de primitivos.
 - **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
 
-### `@Without(fieldName: string, message?: string)`
+> **Advertencia**: La comparación de objetos usa igualdad profunda de forma predeterminada. El rendimiento puede degradarse cuando `values` contiene muchos objetos o estructuras profundamente anidadas. Considera usar un `comparator` para una comparación más eficiente o flexible.
 
-Valida que, si la propiedad decorada tiene un valor, la propiedad de destino especificada NO deba tener un valor, estableciendo una relación mutuamente excluyente entre ambas propiedades.
+### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-- **`fieldName`**: El nombre de la propiedad de destino que debe estar vacía si el campo decorado tiene un valor.
+Valida que el array NO contenga ninguno de los valores especificados. Soporta valores primitivos, objetos, `Date` y tipos mixtos.
+
+- **`values`**: Los valores que NO deben estar presentes en el array.
+- **`comparator`** (opcional): Una función de comparación personalizada `(expected, actual) => boolean`. Cuando se proporciona, todas las comparaciones se delegan a esta función, incluidas las de primitivos.
 - **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
 
-### `@Each(...args: (Validator | Function)[])`
-
-Valida cada elemento individual dentro de un array. Puede aceptar otros decoradores de validación o funciones de validación personalizadas.
-
-- `args`: Un decorador de validación (por ejemplo, `@Min(5)`) o una función personalizada `(value: any) => boolean`.
+> **Advertencia**: La comparación de objetos usa igualdad profunda de forma predeterminada. El rendimiento puede degradarse cuando `values` contiene muchos objetos o estructuras profundamente anidadas. Considera usar un `comparator` para una comparación más eficiente o flexible.
 
 ### `@ListMaxSize(max: number, message?: string)`
 
@@ -261,6 +243,30 @@ Valida que el array no contenga más del número especificado de elementos.
 Valida que el array contenga al menos el número especificado de elementos.
 
 - **`min`**: El número mínimo de elementos permitidos en el array.
+- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
+
+### `@Each(...args: (Validator | Function)[])`
+
+Valida cada elemento individual dentro de un array. Puede aceptar otros decoradores de validación o funciones de validación personalizadas.
+
+- `args`: Un decorador de validación (por ejemplo, `@Min(5)`) o una función personalizada `(value: any) => boolean`.
+
+`@Each` solo envuelve decoradores de validación. Pasar un decorador de origen, de ayuda de tipo, de valor faltante o de transformación se rechaza al registrar la ruta: `@Each(Enum(UserRole))`, por ejemplo, falla con `@Each cannot wrap type-helper decorator(s): @Enum`.
+
+## Validadores entre campos
+
+### `@With(fieldName: string, message?: string)`
+
+Valida que, si el campo decorado tiene un valor, el campo de destino especificado (`fieldName`) también deba tener un valor, estableciendo una dependencia obligatoria entre ambos campos.
+
+- **`fieldName`**: El nombre del campo de destino que también debe tener un valor si el campo decorado tiene un valor.
+- **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
+
+### `@Without(fieldName: string, message?: string)`
+
+Valida que, si la propiedad decorada tiene un valor, la propiedad de destino especificada NO deba tener un valor, estableciendo una relación mutuamente excluyente entre ambas propiedades.
+
+- **`fieldName`**: El nombre de la propiedad de destino que debe estar vacía si el campo decorado tiene un valor.
 - **`message`** (opcional): El mensaje de error que se mostrará cuando falle la validación. Si se omite, se usará un mensaje predeterminado.
 
 ## Ejemplo de uso
@@ -330,24 +336,4 @@ Ejemplo de cuerpo de solicitud INVÁLIDO:
 */
 ```
 
-## Manejo de errores
-
-Cuando la validación falla, el middleware `bindingCargo` lanza un `CargoValidationError`. Debes registrar un middleware de manejo de errores de Express para capturar este error y dar formato a la respuesta.
-
-El objeto `CargoValidationError` tiene una propiedad `errors`, que contiene un array de instancias `CargoFieldError`. Cada objeto `CargoFieldError` contiene una propiedad `message` con una cadena formateada que detalla el error específico (por ejemplo, `"quantity: quantity must be <= 100"`).
-
-Como se muestra en el ejemplo de código, una forma común de manejarlo es recorrer el array `err.errors` para crear una lista simple de estos mensajes de error.
-
-**Ejemplo de respuesta de error:**
-
-Cuando se envía el cuerpo de solicitud inválido del ejemplo anterior, el middleware de errores producirá la siguiente respuesta JSON, que contiene un array de mensajes de error formateados.
-
-```json
-{
-    "message": "La validación falló",
-    "errors": [
-        "type: assetType must end with .png",
-        "quantity: quantity must be <= 100"
-    ]
-}
-```
+Los fallos de validación se lanzan como `CargoValidationError`, tal como muestra el paso 4 del ejemplo. Consulta [Manejo de errores](../examples/validation-errors.md) para ver los tipos de error, la vía recomendada con `setCargoErrorHandler` y ejemplos de respuesta.

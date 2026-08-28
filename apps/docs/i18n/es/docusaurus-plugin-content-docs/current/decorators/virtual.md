@@ -18,6 +18,15 @@ El decorador `@Request` asigna un valor desde el objeto `Request` de Express a u
 
 `@Request` asigna el valor devuelto tal cual, sin aplicar la conversión de tipos integrada. Un caso de uso habitual es enlazar el usuario que un middleware de autenticación, como Passport.js, ha establecido en `req.user`.
 
+## Cómo elegir entre ambos
+
+`@Virtual` y `@Request` pertenecen a dos categorías distintas, y un campo admite exactamente uno de ellos. Aplicar ambos provoca `@Request cannot be combined with @Virtual` al registrar la ruta, y combinar cualquiera de ellos con un decorador de origen como `@Body` se rechaza igual: los tres responden a la misma pregunta de dónde viene el valor de un campo.
+
+- Usa `@Request` cuando el valor está en el objeto `Request` sin procesar, antes de que se enlace ninguno de los campos propios del objeto.
+- Usa `@Virtual` cuando el valor se deriva de otros campos del objeto que se está construyendo.
+
+`@Virtual` se ejecuta después de enlazar todos los campos de origen, así que puede leerlos sin importar en qué orden estén declarados. Solo un campo `@Virtual` que depende de otro campo `@Virtual` es sensible al orden.
+
 ## Ejemplo de uso
 
 ```typescript

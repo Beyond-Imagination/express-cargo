@@ -18,6 +18,15 @@ Der `@Request`-Decorator bildet einen Wert aus dem Express `Request`-Objekt in e
 
 `@Request` weist den zurückgegebenen Wert unverändert und ohne integrierte Typumwandlung zu. Ein typischer Anwendungsfall ist das Binden eines Benutzers, den eine Authentifizierungs-Middleware wie Passport.js auf `req.user` gesetzt hat.
 
+## Die Wahl zwischen beiden
+
+`@Virtual` und `@Request` gehören zu zwei verschiedenen Kategorien, und ein Feld nimmt genau eine davon. Beide zusammen führen bei der Registrierung der Route zu `@Request cannot be combined with @Virtual`, und die Kombination des einen oder anderen mit einem Source-Decorator wie `@Body` wird genauso abgelehnt – alle drei beantworten dieselbe Frage, woher der Wert eines Feldes stammt.
+
+- Greifen Sie zu `@Request`, wenn der Wert am rohen `Request`-Objekt liegt, bevor die eigenen Felder des Objekts gebunden werden.
+- Greifen Sie zu `@Virtual`, wenn der Wert aus anderen Feldern des aufgebauten Objekts abgeleitet wird.
+
+`@Virtual` läuft, nachdem alle Source-Felder gebunden wurden, und kann diese Felder daher unabhängig von ihrer Deklarationsreihenfolge lesen. Nur ein `@Virtual`-Feld, das von einem anderen `@Virtual`-Feld abhängt, ist reihenfolgeabhängig.
+
 ## Anwendungsbeispiel
 
 ```typescript

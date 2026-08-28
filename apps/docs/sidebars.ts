@@ -32,6 +32,7 @@ const sidebars: SidebarsConfig = {
                 'decorators/file-upload',
                 'decorators/virtual',
                 'decorators/transforms',
+                'decorators/type-helpers',
                 'decorators/validators',
                 'decorators/missing-fields',
             ],
