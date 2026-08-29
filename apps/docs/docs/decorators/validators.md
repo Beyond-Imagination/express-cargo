@@ -4,7 +4,9 @@ Express-Cargo uses decorators to validate incoming request data that is bound to
 
 Validation is not performed by a standalone `validate` function. Instead, it is integrated into the `bindingCargo` middleware, which automatically validates data during the request lifecycle.
 
-## Built-in Validators
+`@Enum` also checks its field's value, but it belongs to the type-helper category rather than to the validators below. It is documented in [Type Helper Decorators](./type-helpers.md), and the difference matters when you reach for `@Each`.
+
+## Number Validators
 
 ### `@Min(value: number)`
 
@@ -25,6 +27,8 @@ Validates that a number is within the specified range, inclusive of the minimum 
 - **`min`**: The minimum allowed value.
 - **`max`**: The maximum allowed value.
 
+## String Validators
+
 ### `@Contains(seed: string)`
 
 Validates that the string contains the specified substring.
@@ -44,26 +48,6 @@ Validates that a string ends with the specified suffix.
 
 - **`value`**: The required ending text.
 
-### `@Equal(value: any)`
-
-Validates that a value is strictly equal (`===`) to the specified value.
-
-- **`value`**: The value to compare against.
-
-### `@NotEqual(value: any)`
-
-Validates that a value is strictly not equal (`!==`) to the specified value.
-
-- **`value`**: The value to compare against.
-
-### `@IsTrue()`
-
-Validates that the decorated property is true.
-
-### `@IsFalse()`
-
-Validates that the decorated property is false.
-
 ### `@Length(value: number)`
 
 Validates that the decorated string’s length is exactly the specified value.
@@ -81,48 +65,6 @@ Validates that the decorated string’s length does not exceed the specified max
 Validates that the decorated string’s length is at least the specified minimum.
 
 - **`value`**: The minimum allowed length in characters.
-
-### `@OneOf(values: any[])`
-
-Validates that the input value is one of the specified values.
-
-- **`values`**: The array of allowed values.
-
-### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-Validates that the array contains all the specified values. Supports primitive values, objects, Date, and mixed types.
-
-- **`values`**: The values that must be present in the array.
-- **`comparator`** (optional): A custom comparison function `(expected, actual) => boolean`. When provided, all comparisons are delegated to this function, including primitives.
-- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
-
-> **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
-
-### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-Validates that the array does NOT contain any of the specified values. Supports primitive values, objects, Date, and mixed types.
-
-- **`values`**: The values that must NOT be present in the array.
-- **`comparator`** (optional): A custom comparison function `(expected, actual) => boolean`. When provided, all comparisons are delegated to this function, including primitives.
-- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
-
-> **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
-
-### `@Enum(enumObj: object, message?: string)`
-
-Validates that the input value matches one of the values in the specified enum object.
-It also automatically transforms the input value (e.g., string key) to the corresponding enum value.
-
-- **`enumObj`**: The enum object to validate against.
-- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
-
-### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
-
-Validates a value using a custom validation function.
-This decorator provides flexibility to implement validation logic beyond the built-in ones.
-
-- **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
-- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
 ### `@Regexp(pattern: RegExp, message?: string)`
 
@@ -215,6 +157,44 @@ Validates that the decorated field is a valid hash string for the given algorith
 - **`algorithm`**: The hash algorithm to validate against.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
+## Comparison Validators
+
+### `@Equal(value: any)`
+
+Validates that a value is strictly equal (`===`) to the specified value.
+
+- **`value`**: The value to compare against.
+
+### `@NotEqual(value: any)`
+
+Validates that a value is strictly not equal (`!==`) to the specified value.
+
+- **`value`**: The value to compare against.
+
+### `@IsTrue()`
+
+Validates that the decorated property is true.
+
+### `@IsFalse()`
+
+Validates that the decorated property is false.
+
+### `@OneOf(values: any[])`
+
+Validates that the input value is one of the specified values.
+
+- **`values`**: The array of allowed values.
+
+### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
+
+Validates a value using a custom validation function.
+This decorator provides flexibility to implement validation logic beyond the built-in ones.
+
+- **`validateFn`**: A function that receives the field value and returns true if valid, false otherwise.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+## Date Validators
+
 ### `@MinDate(min: Date | (() => Date), message?: string)`
 
 Validates that the decorated field is a `Date` that is on or after the given minimum date. Accepts a fixed `Date` or a function that returns a `Date` for dynamic comparison.
@@ -229,25 +209,27 @@ Validates that the decorated field is a `Date` that is on or before the given ma
 - **`max`**: The maximum allowed date, or a function that returns it.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-### `@With(fieldName: string, message?: string)`
+## Array Validators
 
-Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-- **`fieldName`**: The name of the target field that must also have a value if the decorated field has a value.
+Validates that the array contains all the specified values. Supports primitive values, objects, Date, and mixed types.
+
+- **`values`**: The values that must be present in the array.
+- **`comparator`** (optional): A custom comparison function `(expected, actual) => boolean`. When provided, all comparisons are delegated to this function, including primitives.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-### `@Without(fieldName: string, message?: string)`
+> **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
 
-Validates that if the decorated property has a value, the specified target property must NOT have a value, establishing a mutually exclusive relationship between the two properties.
+### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-- **`fieldName`**: The name of the target property that must be empty if the decorated field has a value.
+Validates that the array does NOT contain any of the specified values. Supports primitive values, objects, Date, and mixed types.
+
+- **`values`**: The values that must NOT be present in the array.
+- **`comparator`** (optional): A custom comparison function `(expected, actual) => boolean`. When provided, all comparisons are delegated to this function, including primitives.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
-### `@Each(...args: (Validator | Function)[])`
-
-Validates every individual element within an array. It can accept other validation decorators or custom validation functions.
-
-- `args`: A validation decorator (e.g., @Min(5)) or a custom function (value: any) => boolean.
+> **Warning**: Object comparison uses deep equality by default. Performance may degrade when `values` contains many objects or deeply nested structures. Consider using a `comparator` for more efficient or flexible comparison.
 
 ### `@ListMaxSize(max: number, message?: string)`
 
@@ -261,6 +243,30 @@ Validates that the array contains no more than the specified number of elements.
 Validates that the array contains at least the specified number of elements.
 
 - **`min`**: The minimum number of elements allowed in the array.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+### `@Each(...args: (Validator | Function)[])`
+
+Validates every individual element within an array. It can accept other validation decorators or custom validation functions.
+
+- `args`: A validation decorator (e.g., @Min(5)) or a custom function (value: any) => boolean.
+
+`@Each` wraps validation decorators only. Passing a source, type-helper, missing-value, or transform decorator is rejected when the route is registered — `@Each(Enum(UserRole))`, for instance, fails with `@Each cannot wrap type-helper decorator(s): @Enum`.
+
+## Cross-field Validators
+
+### `@With(fieldName: string, message?: string)`
+
+Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency between the two fields.
+
+- **`fieldName`**: The name of the target field that must also have a value if the decorated field has a value.
+- **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
+
+### `@Without(fieldName: string, message?: string)`
+
+Validates that if the decorated property has a value, the specified target property must NOT have a value, establishing a mutually exclusive relationship between the two properties.
+
+- **`fieldName`**: The name of the target property that must be empty if the decorated field has a value.
 - **`message`** (optional): The error message to display when validation fails. If omitted, a default message will be used.
 
 ## Usage Example
@@ -330,24 +336,4 @@ Example of an INVALID request body:
 */
 ```
 
-## Error Handling
-
-When validation fails, the `bindingCargo` middleware throws a `CargoValidationError`. You should register an Express error handling middleware to catch this error and format the response.
-
-The `CargoValidationError` object has an `errors` property, which holds an array of `CargoFieldError` instances. Each `CargoFieldError` object contains a `message` property with a formatted string detailing the specific error (e.g., `"quantity: quantity must be <= 100"`).
-
-As shown in the code example, a common way to handle this is to map over the `err.errors` array to create a simple list of these error messages.
-
-**Example Error Response:**
-
-When the invalid request body from the example above is sent, the error handler will produce the following JSON response, which contains an array of formatted error messages.
-
-```json
-{
-    "message": "Validation Failed",
-    "errors": [
-        "type: assetType must end with .png",
-        "quantity: quantity must be <= 100"
-    ]
-}
-```
+Validation failures are raised as a `CargoValidationError`, as step 4 of the example shows. See [Error Handling](../examples/validation-errors.md) for the error types, the recommended `setCargoErrorHandler` route, and example responses.

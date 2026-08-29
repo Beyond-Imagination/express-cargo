@@ -4,7 +4,9 @@ Express-Cargo utilise des décorateurs pour valider les données de requête ent
 
 La validation n'est pas effectuée par une fonction `validate` autonome. Au lieu de cela, elle est intégrée dans le middleware `bindingCargo`, qui valide automatiquement les données pendant le cycle de vie de la requête.
 
-## Validateurs intégrés
+`@Enum` vérifie lui aussi la valeur de son champ, mais il appartient à la catégorie des aides au typage et non aux validateurs ci-dessous. Il est documenté dans [Décorateurs d'aide au typage](./type-helpers.md), et la différence compte dès que vous utilisez `@Each`.
+
+## Validateurs numériques
 
 ### `@Min(value: number)`
 
@@ -25,6 +27,8 @@ Valide qu'un nombre est dans la plage spécifiée, inclusivement des valeurs min
 - **`min`** : La valeur minimale autorisée.
 - **`max`** : La valeur maximale autorisée.
 
+## Validateurs de chaînes
+
 ### `@Contains(seed: string)`
 
 Valide qu'une chaîne contient la sous-chaîne spécifiée.
@@ -44,26 +48,6 @@ Valide qu'une chaîne se termine par le suffixe spécifié.
 
 - **`value`** : Le texte de fin requis.
 
-### `@Equal(value: any)`
-
-Valide qu'une valeur est strictement égale (`===`) à la valeur spécifiée.
-
-- **`value`** : La valeur à comparer.
-
-### `@NotEqual(value: any)`
-
-Valide qu'une valeur n'est strictement pas égale (`!==`) à la valeur spécifiée.
-
-- **`value`** : La valeur à comparer.
-
-### `@IsTrue()`
-
-Valide que la propriété décorée est vraie.
-
-### `@IsFalse()`
-
-Valide que la propriété décorée est fausse.
-
 ### `@Length(value: number)`
 
 Valide que la longueur de la chaîne décorée est exactement la valeur spécifiée.
@@ -81,48 +65,6 @@ Valide que la longueur de la chaîne décorée ne dépasse pas le maximum spéci
 Valide que la longueur de la chaîne décorée est au moins le minimum spécifié.
 
 - **`value`** : La longueur minimale autorisée en caractères.
-
-### `@OneOf(values: any[])`
-
-Valide que la valeur d'entrée est l'une des valeurs spécifiées.
-
-- **`values`** : Le tableau des valeurs autorisées.
-
-### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-Valide que le tableau contient toutes les valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
-
-- **`values`**: Les valeurs qui doivent être présentes dans le tableau.
-- **`comparator`** (optionnel): Une fonction de comparaison personnalisée `(expected, actual) => boolean`. Lorsqu'elle est fournie, toutes les comparaisons lui sont déléguées, y compris les primitives.
-- **`message`** (optionnel): Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
-
-> **Avertissement**: La comparaison d'objets utilise l'égalité profonde par défaut. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées. Envisagez d'utiliser un `comparator` pour une comparaison plus efficace ou flexible.
-
-### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
-
-Valide que le tableau ne contient AUCUNE des valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
-
-- **`values`**: Les valeurs qui ne doivent PAS être présentes dans le tableau.
-- **`comparator`** (optionnel): Une fonction de comparaison personnalisée `(expected, actual) => boolean`. Lorsqu'elle est fournie, toutes les comparaisons lui sont déléguées, y compris les primitives.
-- **`message`** (optionnel): Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
-
-> **Avertissement**: La comparaison d'objets utilise l'égalité profonde par défaut. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées. Envisagez d'utiliser un `comparator` pour une comparaison plus efficace ou flexible.
-
-### `@Enum(enumObj: object, message?: string)`
-
-Valide que la valeur d'entrée correspond à l'une des valeurs de l'objet enum spécifié.
-Il transforme également automatiquement la valeur d'entrée (par exemple, la clé de chaîne) en la valeur enum correspondante.
-
-- **`enumObj`**: L'objet enum à valider.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
-
-### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
-
-Valide une valeur en utilisant une fonction de validation personnalisée.
-Ce décorateur offre la flexibilité d'implémenter une logique de validation au-delà des validateurs intégrés.
-
-- **`validateFn`** : Une fonction qui reçoit la valeur du champ et retourne true si valide, false sinon.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
 ### `@Regexp(pattern: RegExp, message?: string)`
 
@@ -215,6 +157,44 @@ Valide que le champ décoré est une chaîne de hachage valide pour l'algorithme
 - **`algorithm`** : L'algorithme de hachage contre lequel valider.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
+## Validateurs de comparaison
+
+### `@Equal(value: any)`
+
+Valide qu'une valeur est strictement égale (`===`) à la valeur spécifiée.
+
+- **`value`** : La valeur à comparer.
+
+### `@NotEqual(value: any)`
+
+Valide qu'une valeur n'est strictement pas égale (`!==`) à la valeur spécifiée.
+
+- **`value`** : La valeur à comparer.
+
+### `@IsTrue()`
+
+Valide que la propriété décorée est vraie.
+
+### `@IsFalse()`
+
+Valide que la propriété décorée est fausse.
+
+### `@OneOf(values: any[])`
+
+Valide que la valeur d'entrée est l'une des valeurs spécifiées.
+
+- **`values`** : Le tableau des valeurs autorisées.
+
+### `@Validate(validateFn: (value: unknown) => boolean, message?: string)`
+
+Valide une valeur en utilisant une fonction de validation personnalisée.
+Ce décorateur offre la flexibilité d'implémenter une logique de validation au-delà des validateurs intégrés.
+
+- **`validateFn`** : Une fonction qui reçoit la valeur du champ et retourne true si valide, false sinon.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
+## Validateurs de dates
+
 ### `@MinDate(min: Date | (() => Date), message?: string)`
 
 Valide que le champ décoré est un `Date` égal ou postérieur à la date minimale donnée. Accepte un `Date` fixe ou une fonction qui retourne un `Date` pour une comparaison dynamique.
@@ -229,25 +209,27 @@ Valide que le champ décoré est un `Date` égal ou antérieur à la date maxima
 - **`max`** : La date maximale autorisée, ou une fonction qui la retourne.
 - **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
-### `@With(fieldName: string, message?: string)`
+## Validateurs de tableaux
 
-Valide que si le champ décoré a une valeur, le champ cible spécifié (fieldName) doit également avoir une valeur, établissant une dépendance obligatoire entre les deux champs.
+### `@ListContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-- **`fieldName`** : Le nom du champ cible qui doit également avoir une valeur si le champ décoré a une valeur.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+Valide que le tableau contient toutes les valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
 
-### `@Without(fieldName: string, message?: string)`
+- **`values`**: Les valeurs qui doivent être présentes dans le tableau.
+- **`comparator`** (optionnel): Une fonction de comparaison personnalisée `(expected, actual) => boolean`. Lorsqu'elle est fournie, toutes les comparaisons lui sont déléguées, y compris les primitives.
+- **`message`** (optionnel): Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
 
-Valide que si la propriété décorée a une valeur, la propriété cible spécifiée ne doit PAS avoir de valeur, établissant une relation mutuellement exclusive entre les deux propriétés.
+> **Avertissement**: La comparaison d'objets utilise l'égalité profonde par défaut. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées. Envisagez d'utiliser un `comparator` pour une comparaison plus efficace ou flexible.
 
-- **`fieldName`** : Le nom de la propriété cible qui doit être vide si le champ décoré a une valeur.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+### `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean, message?: string)`
 
-### `@Each(...args: (Validator | Function)[])`
+Valide que le tableau ne contient AUCUNE des valeurs spécifiées. Prend en charge les valeurs primitives, les objets, les Date et les types mixtes.
 
-Valide chaque élément individuel dans un tableau. Il peut accepter d'autres décorateurs de validation ou des fonctions de validation personnalisées.
+- **`values`**: Les valeurs qui ne doivent PAS être présentes dans le tableau.
+- **`comparator`** (optionnel): Une fonction de comparaison personnalisée `(expected, actual) => boolean`. Lorsqu'elle est fournie, toutes les comparaisons lui sont déléguées, y compris les primitives.
+- **`message`** (optionnel): Le message d'erreur à afficher en cas d'échec de la validation. S'il est omis, un message par défaut sera utilisé.
 
-- `args` : Un décorateur de validation (par exemple, @Min(5)) ou une fonction personnalisée (value: any) => boolean.
+> **Avertissement**: La comparaison d'objets utilise l'égalité profonde par défaut. Les performances peuvent se dégrader lorsque `values` contient de nombreux objets ou des structures profondément imbriquées. Envisagez d'utiliser un `comparator` pour une comparaison plus efficace ou flexible.
 
 ### `@ListMaxSize(max: number, message?: string)`
 
@@ -262,6 +244,30 @@ Vérifie que le tableau contient au moins le nombre d'éléments spécifié.
 
 - **`min`**: Le nombre minimum d'éléments autorisés dans le tableau.
 - **`message`** (facultatif): Le message d'erreur à afficher en cas d'échec de la validation. Si omis, un message par défaut sera utilisé.
+
+### `@Each(...args: (Validator | Function)[])`
+
+Valide chaque élément individuel dans un tableau. Il peut accepter d'autres décorateurs de validation ou des fonctions de validation personnalisées.
+
+- `args` : Un décorateur de validation (par exemple, @Min(5)) ou une fonction personnalisée (value: any) => boolean.
+
+`@Each` n'encapsule que des décorateurs de validation. Passer un décorateur de source, d'aide au typage, de valeur manquante ou de transformation est rejeté lors de l'enregistrement de la route : `@Each(Enum(UserRole))`, par exemple, échoue avec `@Each cannot wrap type-helper decorator(s): @Enum`.
+
+## Validateurs inter-champs
+
+### `@With(fieldName: string, message?: string)`
+
+Valide que si le champ décoré a une valeur, le champ cible spécifié (fieldName) doit également avoir une valeur, établissant une dépendance obligatoire entre les deux champs.
+
+- **`fieldName`** : Le nom du champ cible qui doit également avoir une valeur si le champ décoré a une valeur.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+
+### `@Without(fieldName: string, message?: string)`
+
+Valide que si la propriété décorée a une valeur, la propriété cible spécifiée ne doit PAS avoir de valeur, établissant une relation mutuellement exclusive entre les deux propriétés.
+
+- **`fieldName`** : Le nom de la propriété cible qui doit être vide si le champ décoré a une valeur.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
 
 ## Exemple d'utilisation
 
@@ -330,24 +336,4 @@ Exemple de corps de requête INVALIDE :
 */
 ```
 
-## Gestion des erreurs
-
-Lorsque la validation échoue, le middleware `bindingCargo` lève une `CargoValidationError`. Vous devez enregistrer un middleware de gestion des erreurs Express pour capturer cette erreur et formater la réponse.
-
-L'objet `CargoValidationError` a une propriété `errors`, qui contient un tableau d'instances `CargoFieldError`. Chaque objet `CargoFieldError` contient une propriété `message` avec une chaîne formatée détaillant l'erreur spécifique (par exemple, `"quantity: quantity must be <= 100"`).
-
-Comme montré dans l'exemple de code, une manière courante de gérer cela est de mapper le tableau `err.errors` pour créer une simple liste de ces messages d'erreur.
-
-**Exemple de réponse d'erreur :**
-
-Lorsque le corps de requête invalide de l'exemple ci-dessus est envoyé, le gestionnaire d'erreurs produira la réponse JSON suivante, qui contient un tableau de messages d'erreur formatés.
-
-```json
-{
-    "message": "Échec de la validation",
-    "errors": [
-        "type: assetType must end with .png",
-        "quantity: quantity must be <= 100"
-    ]
-}
-```
+Les échecs de validation sont levés sous la forme d'un `CargoValidationError`, comme le montre l'étape 4 de l'exemple. Voir [Gestion des erreurs](../examples/validation-errors.md) pour les types d'erreur, la voie recommandée via `setCargoErrorHandler` et des exemples de réponses.

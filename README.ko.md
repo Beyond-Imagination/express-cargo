@@ -105,7 +105,6 @@ app.listen(3000)
 
 | 데코레이터                                                                         | 설명                                                                                                          | 예시                                                                                         |
 |-------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| `@Optional()`                                                                 | 값이 없는 경우 밸리데이션을 하지 않음                                                                                       | `@Optional() value?: number`                                                               |
 | `@Min(minimum: number)`                                                       | 숫자가 `minimum` 이상이어야 함                                                                                       | `@Min(18) age!: number`                                                                    |
 | `@Max(maximum: number)`                                                       | 숫자가 `maximum` 이하이어야 함                                                                                       | `@Max(100) score!: number`                                                                 |
 | `@Range(min: number, max: number)`                                            | 숫자가 `min` 이상 `max` 이하 범위에 포함되어야 함                                                                           | `@Range(1, 5) rating!: number`                                                             |
@@ -124,7 +123,7 @@ app.listen(3000)
 | `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean)` | 배열이 지정된 값을 포함하지 않아야 함. `comparator` 제공 시 모든 비교를 위임                                                          | `@ListNotContains([1, 2]) nums!: number[]`                                                 |
 | `@ListMaxSize(max: number, message?)`                                         | 배열의 요소 수가 `max` 이하이어야 함                                                                                     | `@ListMaxSize(5) tags!: string[]`                                                          |
 | `@ListMinSize(min: number, message?)`                                         | 배열의 요소 수가 `min` 이상이어야 함                                                                                     | `@ListMinSize(5) tags!: string[]`                                                          |
-| `@Enum(enumObj: object, message?)`                                            | 값이 `enumObj`의 멤버여야 함                                                                                        | `@Enum(UserRole) role!: UserRole`                                                          |
+| `@Each(...args: (Validator \| Function)[])`                                   | 배열 내의 모든 요소에 검증 규칙을 개별 적용. 검증 데코레이터만 감쌀 수 있음                                                                | `@Each(Length(10)) tags!: string[]`                                                        |
 | `@Validate(validateFn, message?)`                                             | 커스텀 검증 함수를 사용                                                                                               | `@Validate(v => typeof v === 'string' && v.includes('@'), 'invalid email') email!: string` |
 | `@Regexp(pattern: RegExp, message?)`                                          | 문자열이 주어진 정규식을 만족해야 함                                                                                        | `@Regexp(/^[0-9]+$/, 'digits only') phone!: string`                                        |
 | `@Email()`                                                                    | 값이 이메일 형식이어야 함                                                                                              | `@Email() email!: string`                                                                  |
@@ -149,8 +148,8 @@ app.listen(3000)
 
 ### Transform 데코레이터
 
-| 데코레이터                     | 설명                        | 예시                                                                      |
-|---------------------------|---------------------------|-------------------------------------------------------------------------|
+| 데코레이터                      | 설명                        | 예시                                                                      |
+|----------------------------|---------------------------|-------------------------------------------------------------------------|
 | `@Transform(transformer)` | 파싱된 값에 추가 변환 적용           | `@Transform(v => v.trim()) name!: string`                               |
 | `@Request<T>(transformer)` | Express Request 객체에서 값 추출 | `@Request<object>(req => req.user!) user!: object`                       |
 | `@Virtual(transformer)`   | 다른 필드들을 기반으로 값 계산         | `@Virtual(obj => obj.firstName + ' ' + obj.lastName) fullName!: string` |
@@ -212,14 +211,24 @@ class OrderRequest {
 
 위 값 없음 처리 경로에 들어가면 해당 필드의 남은 transform과 validation 단계는 건너뜁니다.
 
-### 유틸리티 데코레이터
+### 타입 헬퍼 데코레이터
 
-| 데코레이터                              | 설명                                                | 예시                                  |
-|------------------------------------|---------------------------------------------------|-------------------------------------|
-| `@Type(typeFn, options?)`          | 입력 데이터를 어떤 클래스 인스턴스로 변환할지 정의합니다. (다형성 및 순환 참조 지원) | `@Type(() => User) user!: User`     |
-| `@DefaultValue(value)`             | 필드가 없을 때 기본값 설정                                   | `@DefaultValue(0) count!: number`   |
-| `@List(elementType)`               | 배열 요소 타입 지정                                       | `@List(String) tags!: string[]`     |
-| `@Each((validator \| function)[])` | 배열 내의 모든 요소에 대해 지정된 검증 규칙을 개별적으로 적용               | `@Each(Length(10)) tags!: string[]` |
+| 데코레이터                              | 설명                                                | 예시                                |
+|------------------------------------|---------------------------------------------------|-----------------------------------|
+| `@Type(typeFn, options?)`          | 입력 데이터를 어떤 클래스 인스턴스로 변환할지 정의합니다. (다형성 및 순환 참조 지원) | `@Type(() => User) user!: User`   |
+| `@List(elementType)`               | 배열 요소 타입 지정                                       | `@List(String) tags!: string[]`   |
+| `@Enum(enumObj: object, message?)` | 값을 `enumObj`의 멤버로 매핑하고, 멤버가 아닌 값은 거부              | `@Enum(UserRole) role!: UserRole` |
+
+> 한 필드에는 타입 헬퍼를 하나만 적용할 수 있습니다. `@Enum`은 자체 트랜스포머를 설치하므로 `@Transform`과 함께 쓸 수 없고, `@Each`로 감쌀 수도 없습니다. 자세한 내용은 [타입 헬퍼 데코레이터](https://beyond-imagination.github.io/express-cargo/ko/decorators/type-helpers) 문서를 참고하세요.
+
+### 값 누락 처리 데코레이터
+
+| 데코레이터             | 설명                    | 예시                           |
+|-------------------|-----------------------|------------------------------|
+| `@Optional()`     | 값이 없는 경우 밸리데이션을 하지 않음 | `@Optional() value?: number` |
+| `@Default(value)` | 필드가 없을 때 기본값 설정       | `@Default(0) count!: number` |
+
+> 한 필드에는 값 누락 처리 전략을 하나만 적용할 수 있습니다. `@Optional`과 `@Default`는 함께 쓸 수 없습니다.
 
 ### 에러 처리
 
