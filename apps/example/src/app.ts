@@ -1,14 +1,5 @@
 import express from 'express'
-import sourceRouter from './routers/source'
-import validatorRouter from './routers/validator'
-import transformRouter from './routers/transform'
-import classFieldInheritanceRouter from './routers/classFieldInheritance'
-import decoratorRouter from './routers/decorator'
-import arrayFieldRouter from './routers/typeCasting'
-import errorHandlerRouter from './routers/errorHandler'
-import integrationRouter from './routers/integration'
-import fileRouter from './routers/file'
-import passportRouter from './routers/passport'
+import routers from './routers'
 import './errors/cargoErrorHandler'
 
 const app = express()
@@ -18,16 +9,7 @@ const port = process.env.PORT || 3000
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(sourceRouter)
-app.use(validatorRouter)
-app.use(transformRouter)
-app.use(classFieldInheritanceRouter)
-app.use(decoratorRouter)
-app.use(arrayFieldRouter)
-app.use(fileRouter)
-app.use(errorHandlerRouter)
-app.use(integrationRouter)
-app.use(passportRouter)
+app.use(routers)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
