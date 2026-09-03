@@ -60,9 +60,7 @@ class ErrorHandlerExample {
     email!: string
 }
 
-router.use(saveAndBypassErrorHandler)
-
-router.post('/error-handler', bindingCargo(ErrorHandlerExample), (req, res) => {
+router.post('/error-handler', saveAndBypassErrorHandler, bindingCargo(ErrorHandlerExample), (req, res) => {
     const cargo = getCargo<ErrorHandlerExample>(req)
     res.json(cargo)
 })
