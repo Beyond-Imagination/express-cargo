@@ -11,6 +11,7 @@ interface ResolvedFieldLists {
     requestFields: (string | symbol)[]
     virtualFields: (string | symbol)[]
     allFields: (string | symbol)[]
+    fieldMetadata: Map<string | symbol, CargoFieldMetadata>
 }
 
 /**
@@ -31,11 +32,13 @@ export class CargoClassMetadata {
      * Because the schema is frozen by analysis time, no cache invalidation is needed.
      */
     resolve(): this {
+        const allFields = this.getFieldListByKey(this.getAllFieldsKey())
         this.resolved = {
             fields: this.getFieldListByKey(this.getFieldKey()),
             requestFields: this.getFieldListByKey(this.getRequestFieldKey()),
             virtualFields: this.getFieldListByKey(this.getVirtualFieldKey()),
-            allFields: this.getFieldListByKey(this.getAllFieldsKey()),
+            allFields,
+            fieldMetadata: new Map(allFields.map(propertyKey => [propertyKey, this.getFieldMetadata(propertyKey)] as const)),
         }
         return this
     }
@@ -61,6 +64,9 @@ export class CargoClassMetadata {
     }
 
     getFieldMetadata(propertyKey: string | symbol): CargoFieldMetadata {
+        const resolved = this.resolved?.fieldMetadata.get(propertyKey)
+        if (resolved) return resolved
+
         const metadataKey = this.getMetadataKey(propertyKey)
         return Reflect.getMetadata(metadataKey, this.target) || new CargoFieldMetadata(this.target, propertyKey)
     }
