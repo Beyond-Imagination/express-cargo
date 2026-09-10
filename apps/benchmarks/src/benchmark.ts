@@ -6,9 +6,9 @@ import { Agent, fetch, setGlobalDispatcher } from 'undici'
 import { app } from './app'
 
 const routes = [
-    { name: 'express-cargo', prefix: '/express-cargo' },
-    { name: 'zod', prefix: '/zod' },
-    { name: 'class-validator+transformer', prefix: '/class-validator' },
+    { name: 'express-cargo', prefix: '/express-cargo', sourceClass: 'express-cargo' },
+    { name: 'zod', prefix: '/zod', sourceClass: 'zod' },
+    { name: 'class-validator+transformer', prefix: '/class-validator', sourceClass: 'class-validator' },
 ] as const
 
 const SUCCESS_PATH = '/orders/42?active=true'
@@ -83,7 +83,7 @@ async function post(
     body: object | string,
     requestId: string,
     contentType: string = 'application/json',
-): Promise<{ status: number; body: unknown; milliseconds: number }> {
+): Promise<{ status: number; body: unknown; latencyMilliseconds: number }> {
     const requestBody = typeof body === 'string' ? body : JSON.stringify(body)
     const started = performance.now()
     const response = await fetch(`${baseUrl}${path}`, {
@@ -99,7 +99,7 @@ async function post(
     return {
         status: response.status,
         body: responseBody,
-        milliseconds: performance.now() - started,
+        latencyMilliseconds: performance.now() - started,
     }
 }
 
@@ -125,22 +125,22 @@ function percentile(sorted: number[], ratio: number): number {
     return sorted[Math.ceil(sorted.length * ratio) - 1]
 }
 
-function summarize(scenario: string, name: string, samples: number[], elapsedMilliseconds: number, maxConcurrency: number) {
-    const sorted = [...samples].sort((a, b) => a - b)
-    const average = samples.reduce((sum, value) => sum + value, 0) / samples.length
+function summarize(scenario: string, implementation: string, implementationLatencies: number[], elapsedMilliseconds: number, maxConcurrency: number) {
+    const sorted = [...implementationLatencies].sort((a, b) => a - b)
+    const average = implementationLatencies.reduce((sum, value) => sum + value, 0) / implementationLatencies.length
     const rounded = (value: number) => Number(value.toFixed(3))
 
     return {
         scenario,
-        implementation: name,
-        calls: samples.length,
+        implementation,
+        calls: implementationLatencies.length,
         'max concurrency': maxConcurrency,
         'average ms': rounded(average),
         'minimum ms': rounded(sorted[0]),
         'p50 ms': rounded(percentile(sorted, 0.5)),
         'p95 ms': rounded(percentile(sorted, 0.95)),
         'maximum ms': rounded(sorted[sorted.length - 1]),
-        'requests/sec': rounded(samples.length / (elapsedMilliseconds / 1000)),
+        'requests/sec': rounded(implementationLatencies.length / (elapsedMilliseconds / 1000)),
     }
 }
 
@@ -151,21 +151,27 @@ function renderHtml(resultSummary: string, summaries: ReturnType<typeof summariz
         .map(benchmarkCase => {
             const rows = new Map(summaries.filter(row => row.scenario === benchmarkCase.name).map(row => [row.implementation, row]))
             return `<section><h2>${benchmarkCase.name}</h2><table><thead><tr><th scope="col">metric</th>${routes
-                .map(route => `<th scope="col">${route.name}</th>`)
+                .map(route => `<th scope="col" class="source source-${route.sourceClass}">${route.name}</th>`)
                 .join('')}</tr></thead><tbody>${RESULT_METRICS.map(metric => {
-                const values = routes.map(route => rows.get(route.name)![metric])
+                const measurements = routes.map(route => ({ route, value: rows.get(route.name)![metric] }))
+                const values = measurements.map(measurement => measurement.value)
                 const best =
                     metric === 'requests/sec'
                         ? Math.max(...values)
                         : metric === 'calls' || metric === 'max concurrency'
                           ? undefined
                           : Math.min(...values)
-                return `<tr><th scope="row">${metric}</th>${values.map(value => `<td${value === best ? ' class="best" title="best"' : ''}>${value}</td>`).join('')}</tr>`
+                return `<tr><th scope="row">${metric}</th>${measurements
+                    .map(
+                        ({ route, value }) =>
+                            `<td class="source source-${route.sourceClass}${value === best ? ' best' : ''}" title="${route.name} · ${metric}">${value}</td>`,
+                    )
+                    .join('')}</tr>`
             }).join('')}</tbody></table></section>`
         })
         .join('')
 
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Benchmark results</title><style>body{font-family:system-ui,sans-serif;margin:2rem}table{border-collapse:collapse;margin-bottom:2rem}th,td{border:1px solid #ccc;padding:.5rem;text-align:right}th:first-child{text-align:left}.best{background:#d1fae5;color:#065f46;font-weight:700}</style></head><body><main><h1>Benchmark results</h1><p>${resultSummary}</p>${tables}</main></body></html>\n`
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Benchmark results</title><style>body{font-family:system-ui,sans-serif;margin:2rem}table{border-collapse:collapse;margin-bottom:2rem}th,td{border:1px solid #ccc;padding:.5rem;text-align:right}th:first-child{text-align:left}.source-express-cargo{--source-color:#2563eb;--source-bg:#eff6ff}.source-zod{--source-color:#7c3aed;--source-bg:#f5f3ff}.source-class-validator{--source-color:#ea580c;--source-bg:#fff7ed}th.source,td.source{background:var(--source-bg)}th.source{color:var(--source-color)}td.source{border-left:3px solid var(--source-color)}.best{background:#d1fae5;color:#065f46;font-weight:700}</style></head><body><main><h1>Benchmark results</h1><p>${resultSummary}</p>${tables}</main></body></html>\n`
 }
 
 async function main(): Promise<void> {
@@ -359,6 +365,14 @@ async function main(): Promise<void> {
                 active--
             })
             strictEqual(peak, 2)
+            const html = renderHtml(
+                'check',
+                benchmarkCases.flatMap(benchmarkCase =>
+                    routes.map((route, index) => summarize(benchmarkCase.name, route.name, [index + 1], index + 1, 1)),
+                ),
+            )
+            for (const route of routes) strictEqual(html.includes(`title="${route.name} · average ms"`), true)
+            strictEqual(html.includes('class="source source-express-cargo best" title="express-cargo · requests/sec"'), true)
             console.log(`Validated ${parityCases.length} shared request/response cases.`)
             return
         }
@@ -367,18 +381,24 @@ async function main(): Promise<void> {
         const combinations = benchmarkCases.flatMap(benchmarkCase => routes.map(route => ({ benchmarkCase, route })))
         const summaries = []
         for (const { benchmarkCase, route } of combinations) {
+            const implementation = route.name
             await runConcurrent(warmupCalls, maxConcurrency, async () => {
                 await post(baseUrl, `${route.prefix}${benchmarkCase.path}`, benchmarkCase.body, benchmarkCase.requestId)
             })
 
-            const samples: number[] = []
+            const implementationLatencies: number[] = []
             const started = performance.now()
             await runConcurrent(calls, maxConcurrency, async () => {
-                const result = await post(baseUrl, `${route.prefix}${benchmarkCase.path}`, benchmarkCase.body, benchmarkCase.requestId)
-                strictEqual(result.status, benchmarkCase.status)
-                samples.push(result.milliseconds)
+                const implementationResponse = await post(
+                    baseUrl,
+                    `${route.prefix}${benchmarkCase.path}`,
+                    benchmarkCase.body,
+                    benchmarkCase.requestId,
+                )
+                strictEqual(implementationResponse.status, benchmarkCase.status)
+                implementationLatencies.push(implementationResponse.latencyMilliseconds)
             })
-            summaries.push(summarize(benchmarkCase.name, route.name, samples, performance.now() - started, maxConcurrency))
+            summaries.push(summarize(benchmarkCase.name, implementation, implementationLatencies, performance.now() - started, maxConcurrency))
         }
 
         const resultSummary = `Validated ${parityCases.length} shared request/response cases. Measured ${benchmarkCases.length} scenarios with ${calls} calls per API at maximum concurrency ${maxConcurrency} after ${warmupCalls} warm-up calls.`
