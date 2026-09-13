@@ -1,14 +1,15 @@
 /**
  * Represents an error for a specific field validation failure.
  */
-export class CargoFieldError extends Error {
+export class CargoFieldError {
     name: string
     field: string | symbol
+    message: string
 
     constructor(field: string | symbol, message: string) {
-        super(message)
         this.name = 'CargoFieldError'
         this.field = field
+        this.message = message
     }
 }
 

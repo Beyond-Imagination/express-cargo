@@ -1,5 +1,5 @@
 {
-    "name": "express-cargo",
+    "name": "express-cargo-workspace",
     "version": "0.6.1",
     "description": "express middleware for class-based request parsing",
     "scripts": {

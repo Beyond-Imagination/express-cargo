@@ -21,6 +21,18 @@ describe('CargoClassMetadata.resolve caching', () => {
         expect(meta.getFieldList()).toEqual(['a'])
     })
 
+    it('caches field metadata during resolve', () => {
+        class Sample {
+            @Body('input')
+            value!: string
+        }
+
+        const meta = new CargoClassMetadata(Sample.prototype).resolve()
+        Reflect.deleteMetadata(meta.getMetadataKey('value'), Sample.prototype)
+
+        expect(meta.getFieldMetadata('value').getKey()).toBe('input')
+    })
+
     it('walks the prototype chain when not resolved', () => {
         class Sample {
             @Body()

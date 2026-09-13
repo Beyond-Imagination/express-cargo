@@ -62,7 +62,7 @@ describe('transform field error binding', () => {
         expect(error.errors[0].message).toBe('Error while computing request transform field: plain string')
     })
 
-    it('extends CargoFieldError so a generic error handler still sees it', () => {
+    it('extends CargoFieldError without allocating an Error stack', () => {
         class ThrowingRequestDTO {
             @Request(() => {
                 throw new Error('boom')
@@ -71,9 +71,11 @@ describe('transform field error binding', () => {
         }
 
         const error = bindAndCatch(ThrowingRequestDTO)
+        const fieldError = error.errors[0]
 
-        expect(error.errors[0]).toBeInstanceOf(CargoFieldError)
-        expect(error.errors[0]).toBeInstanceOf(Error)
+        expect(fieldError).toBeInstanceOf(CargoFieldError)
+        expect(fieldError).not.toBeInstanceOf(Error)
+        expect(fieldError).not.toHaveProperty('stack')
     })
 
     it('keeps binding the remaining fields after a transformer throws', () => {
