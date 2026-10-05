@@ -1,6 +1,6 @@
 {
     "name": "benchmarks",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "private": true,
     "scripts": {
         "build": "tsc --noEmit && rm -rf dist && swc src -d dist --source-maps --copy-files",
