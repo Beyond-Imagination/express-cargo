@@ -1,5 +1,7 @@
 import { ClassConstructor } from './types'
 
+const IS_CLASS_CACHE = new WeakMap<object, boolean>()
+
 /**
  * Determines if a given function is a class constructor.
  * This is a heuristic check to support various transpilation environments (ES6+, Babel, etc.).
@@ -7,6 +9,16 @@ import { ClassConstructor } from './types'
 export function isClass(fn: unknown): fn is new (...args: any[]) => any {
     if (typeof fn !== 'function') return false
 
+    // Cached because the check stringifies the whole class source on every call.
+    let verdict = IS_CLASS_CACHE.get(fn)
+    if (verdict === undefined) {
+        verdict = computeIsClass(fn as (...args: unknown[]) => unknown)
+        IS_CLASS_CACHE.set(fn, verdict)
+    }
+    return verdict
+}
+
+function computeIsClass(fn: (...args: unknown[]) => unknown): boolean {
     // Standard ES6 class declaration starts with 'class '
     if (fn.toString().startsWith('class ')) return true
 
