@@ -65,7 +65,7 @@ class CargoItem implements ItemInput {
     price!: number
 }
 
-class CargoRequest implements RequestInput {
+export class CargoRequest implements RequestInput {
     @Params()
     @Min(1)
     @Validate(isFiniteNumber)

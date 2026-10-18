@@ -4,42 +4,7 @@ import { writeFileSync } from 'node:fs'
 import { AddressInfo } from 'node:net'
 import { Agent, fetch, setGlobalDispatcher } from 'undici'
 import { app } from './app'
-
-const routes = [
-    { name: 'express-cargo', prefix: '/express-cargo', sourceClass: 'express-cargo' },
-    { name: 'zod', prefix: '/zod', sourceClass: 'zod' },
-    { name: 'class-validator+transformer', prefix: '/class-validator', sourceClass: 'class-validator' },
-] as const
-
-const SUCCESS_PATH = '/orders/42?active=true'
-
-const validBody = {
-    name: ' Alice ',
-    email: 'alice@example.com',
-    age: '35',
-    role: 'user',
-    items: [
-        { sku: 'SKU-001', quantity: '2', price: '12.5' },
-        { sku: 'SKU-002', quantity: '1', price: '3' },
-    ],
-}
-
-const invalidBody = {
-    name: ' x ',
-    email: 'bad',
-    age: '17',
-    role: 'root',
-    items: [{ sku: 'x', quantity: '0', price: '0' }],
-}
-
-const nestedBody = {
-    ...validBody,
-    items: Array.from({ length: 25 }, (_, index) => ({
-        sku: `SKU-${String(index).padStart(3, '0')}`,
-        quantity: '2',
-        price: '12.5',
-    })),
-}
+import { benchmarkCases, nestedBody, optionValue, orderRoutes, routes, SUCCESS_PATH, validBody } from './scenarios'
 
 const expectedResponse = {
     id: 42,
@@ -58,12 +23,6 @@ const nestedExpectedResponse = {
     itemCount: nestedBody.items.length,
     total: nestedBody.items.reduce((sum, item) => sum + Number(item.quantity) * Number(item.price), 0),
 }
-
-const benchmarkCases = [
-    { name: 'valid', path: SUCCESS_PATH, body: validBody, requestId: 'request-123', status: 200 },
-    { name: 'validation failure', path: '/orders/0?active=false', body: invalidBody, requestId: 'x', status: 400 },
-    { name: 'nested 25 valid', path: SUCCESS_PATH, body: nestedBody, requestId: 'request-123', status: 200 },
-] as const
 
 type ParityCase = {
     name: string
@@ -177,7 +136,10 @@ function renderHtml(resultSummary: string, summaries: ReturnType<typeof summariz
 async function main(): Promise<void> {
     const arguments_ = process.argv.slice(2).filter(argument => argument !== '--')
     const checkOnly = arguments_.includes('--check')
-    const positionalArguments = arguments_.filter(argument => argument !== '--check')
+    // --order=<sourceClass,...> changes the measurement order; --json=<file> also saves the summaries as JSON.
+    const measuredRoutes = orderRoutes(optionValue(arguments_, 'order'))
+    const jsonFileName = optionValue(arguments_, 'json')
+    const positionalArguments = arguments_.filter(argument => !argument.startsWith('--'))
     const [callsArgument, maxConcurrencyArgument] = positionalArguments
     const calls = Number(callsArgument ?? 1000)
     const maxConcurrency = Number(maxConcurrencyArgument ?? 1000)
@@ -373,12 +335,16 @@ async function main(): Promise<void> {
             )
             for (const route of routes) strictEqual(html.includes(`title="${route.name} · average ms"`), true)
             strictEqual(html.includes('class="source source-express-cargo best" title="express-cargo · requests/sec"'), true)
+            deepStrictEqual(
+                orderRoutes('zod,class-validator,express-cargo').map(route => route.name),
+                ['zod', 'class-validator+transformer', 'express-cargo'],
+            )
             console.log(`Validated ${parityCases.length} shared request/response cases.`)
             return
         }
 
         const warmupCalls = Math.min(calls, Math.max(100, maxConcurrency))
-        const combinations = benchmarkCases.flatMap(benchmarkCase => routes.map(route => ({ benchmarkCase, route })))
+        const combinations = benchmarkCases.flatMap(benchmarkCase => measuredRoutes.map(route => ({ benchmarkCase, route })))
         const summaries = []
         for (const { benchmarkCase, route } of combinations) {
             const implementation = route.name
@@ -401,11 +367,20 @@ async function main(): Promise<void> {
             summaries.push(summarize(benchmarkCase.name, implementation, implementationLatencies, performance.now() - started, maxConcurrency))
         }
 
-        const resultSummary = `Validated ${parityCases.length} shared request/response cases. Measured ${benchmarkCases.length} scenarios with ${calls} calls per API at maximum concurrency ${maxConcurrency} after ${warmupCalls} warm-up calls.`
+        const routeOrder = measuredRoutes.map(route => route.name)
+        const resultSummary = `Validated ${parityCases.length} shared request/response cases. Measured ${benchmarkCases.length} scenarios with ${calls} calls per API at maximum concurrency ${maxConcurrency} after ${warmupCalls} warm-up calls, in route order ${routeOrder.join(' → ')}.`
         console.log(resultSummary)
         console.table(summaries)
 
-        const resultFileName = `benchmark-results-${new Date().toISOString().replace(/[:.]/g, '-')}.html`
+        if (jsonFileName !== undefined) {
+            writeFileSync(jsonFileName, `${JSON.stringify({ calls, maxConcurrency, warmupCalls, routeOrder, summaries }, null, 2)}\n`)
+            console.log(`Saved ${jsonFileName}`)
+        }
+
+        const resultFileName =
+            jsonFileName !== undefined
+                ? jsonFileName.replace(/\.json$/, '.html')
+                : `benchmark-results-${new Date().toISOString().replace(/[:.]/g, '-')}.html`
         writeFileSync(resultFileName, renderHtml(resultSummary, summaries))
         console.log(`Saved ${resultFileName}`)
     } finally {
