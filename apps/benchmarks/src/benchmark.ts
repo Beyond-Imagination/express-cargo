@@ -379,7 +379,7 @@ async function main(): Promise<void> {
 
         const resultFileName =
             jsonFileName !== undefined
-                ? jsonFileName.replace(/\.json$/, '.html')
+                ? `${jsonFileName.replace(/\.json$/i, '')}.html`
                 : `benchmark-results-${new Date().toISOString().replace(/[:.]/g, '-')}.html`
         writeFileSync(resultFileName, renderHtml(resultSummary, summaries))
         console.log(`Saved ${resultFileName}`)
