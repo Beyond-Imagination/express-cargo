@@ -7,7 +7,10 @@
         "lint": "eslint --ext .ts src/",
         "test": "pnpm --filter express-cargo build && pnpm build && node dist/src/benchmark.js --check",
         "start": "pnpm --filter express-cargo build && pnpm build && node dist/src/server.js",
-        "benchmark": "pnpm --filter express-cargo build && pnpm build && node dist/src/benchmark.js"
+        "benchmark": "pnpm --filter express-cargo build && pnpm build && node dist/src/benchmark.js",
+        "benchmark:inprocess": "pnpm --filter express-cargo build && pnpm build && node dist/src/inprocess.js",
+        "benchmark:order": "pnpm --filter express-cargo build && pnpm build && node dist/src/order-sweep.js",
+        "benchmark:compare": "pnpm --filter express-cargo build && pnpm build && node dist/src/compare.js"
     },
     "dependencies": {
         "class-transformer": "^0.5.1",
