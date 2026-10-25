@@ -168,7 +168,7 @@ function bindRequest({ metaClass, targetObject, sources, errors, sourceKey }: Bi
         const requestTransformer = meta.getRequestTransformer()
 
         if (!requestTransformer) {
-            errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
+            errors.push(new CargoTransformFieldError(getErrorKey(sourceKey, key), `${key} does not have transformer`))
             continue
         }
 
@@ -181,11 +181,11 @@ function bindRequest({ metaClass, targetObject, sources, errors, sourceKey }: Bi
             }
 
             targetObject[property] = value
-            validateField(meta, property, targetObject, errors)
+            validateField(meta, property, key, sourceKey, targetObject, errors)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
-                    property,
+                    getErrorKey(sourceKey, key),
                     `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
                 ),
             )
@@ -222,7 +222,7 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
         }
 
         transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource, analysis)
-        validateField(meta, property, targetObject, errors)
+        validateField(meta, property, key, sourceKey, targetObject, errors)
     }
 }
 
@@ -244,7 +244,7 @@ function bindFile(
     }
 
     targetObject[property] = value
-    validateField(meta, property, targetObject, errors)
+    validateField(meta, property, key, sourceKey, targetObject, errors)
 }
 
 function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext): void {
@@ -256,7 +256,7 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
         const virtualTransformer = meta.getVirtualTransformer()
 
         if (!virtualTransformer) {
-            errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
+            errors.push(new CargoTransformFieldError(getErrorKey(sourceKey, key), `${key} does not have transformer`))
             continue
         }
 
@@ -269,11 +269,11 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
             }
 
             targetObject[property] = value
-            validateField(meta, property, targetObject, errors)
+            validateField(meta, property, key, sourceKey, targetObject, errors)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
-                    property,
+                    getErrorKey(sourceKey, key),
                     `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
                 ),
             )

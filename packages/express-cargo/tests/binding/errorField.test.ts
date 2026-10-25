@@ -1,0 +1,76 @@
+import { bindingCargo, Body, CargoValidationError, Each, Header, List, ListMinSize, Min, MinLength, Optional, Query, Type, Virtual } from '../../src'
+import { makeMockReq, makeMockRes, makeNext } from './testUtils'
+
+class Item {
+    @Body() @MinLength(3) sku!: string
+    @Body() @Min(1) quantity!: number
+}
+
+class Customer {
+    @Body() @MinLength(2) name!: string
+    @Virtual((customer: Customer) => {
+        if (customer.name === 'boom') throw new Error('cannot compute')
+        return customer.name
+    })
+    label!: string
+}
+
+class OrderDTO {
+    @Header('x-request-id') @MinLength(8) requestId!: string
+    @Body() @Type(() => Customer) customer!: Customer
+    @Body() @List(Item) @ListMinSize(2) items!: Item[]
+    @Body() @Min(1) count!: number
+    @Query() @Optional() @List('number') @Each(Min(1)) nums!: number[]
+}
+
+const validBody = () => ({
+    customer: { name: 'Alice' },
+    items: [
+        { sku: 'abc', quantity: 1 },
+        { sku: 'def', quantity: 2 },
+    ],
+    count: 1,
+})
+const validHeaders = { 'x-request-id': 'req-12345' }
+
+function bindErrors(options: Parameters<typeof makeMockReq>[0]): { field: string; message: string }[] {
+    const req = makeMockReq({ headers: validHeaders, ...options })
+    const next = makeNext()
+    bindingCargo(OrderDTO)(req, makeMockRes(), next)
+
+    const err = next.mock.calls[0][0]
+    expect(err).toBeInstanceOf(CargoValidationError)
+    return (err as CargoValidationError).errors.map(e => ({ field: String(e.field), message: e.message }))
+}
+
+describe('error field naming', () => {
+    it('prefixes validator errors inside nested objects and list elements with their path', () => {
+        const body = validBody()
+        body.customer.name = 'A'
+        body.items[1] = { sku: 'x', quantity: 0 }
+
+        const fields = bindErrors({ body }).map(e => e.field)
+
+        expect(fields).toEqual(['customer.name', 'items[1].sku', 'items[1].quantity'])
+    })
+
+    it('uses the same path for missing-value and validator errors', () => {
+        const body = validBody()
+        delete (body.items[0] as Partial<Item>).sku
+        body.items[1].sku = 'x'
+
+        expect(bindErrors({ body }).map(e => e.field)).toEqual(['items[0].sku', 'items[1].sku'])
+    })
+
+    it('reports an aliased header under its source key whether it is missing or invalid', () => {
+        expect(bindErrors({ body: validBody(), headers: {} }).map(e => e.field)).toEqual(['x-request-id'])
+        expect(bindErrors({ body: validBody(), headers: { 'x-request-id': 'short' } }).map(e => e.field)).toEqual(['x-request-id'])
+    })
+
+    it('prefixes virtual field errors inside nested objects with their path', () => {
+        const body = validBody()
+        body.customer.name = 'boom'
+
+        expect(bindErrors({ body })).toEqual([{ field: 'customer.label', message: 'Error while computing virtual field: cannot compute' }])
+    })
+})

@@ -17,10 +17,22 @@ export function getFieldKey(meta: CargoFieldMetadata, sourceKey: string, errors:
     return key
 }
 
-export function validateField(meta: CargoFieldMetadata, property: string | symbol, targetObject: any, errors: CargoFieldError[]): void {
+/**
+ * Runs the field's validators. Failures are reported under the same path (parent path + source key)
+ * that missing-value and type-cast errors use; the parent path is only joined once a rule fails.
+ */
+export function validateField(
+    meta: CargoFieldMetadata,
+    property: string | symbol,
+    key: string,
+    sourceKey: string,
+    targetObject: any,
+    errors: CargoFieldError[],
+): void {
     for (const rule of meta.getValidators()) {
-        const error = rule.validate(targetObject[property], targetObject)
+        const error = rule.validate(targetObject[property], targetObject, key)
         if (error) {
+            if (sourceKey) error.field = getErrorKey(sourceKey, String(error.field))
             errors.push(error)
         }
     }
