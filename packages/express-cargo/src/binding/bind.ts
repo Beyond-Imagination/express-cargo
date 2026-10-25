@@ -6,7 +6,7 @@ import { CargoFile } from '../fileHandler'
 import { validateAnalysis } from '../rules'
 import { isClass, isUserDefinedClass } from '../utils'
 import { analyzeCargoSchema } from '../analysis'
-import { getErrorKey, getFieldKey, validateField, handleMissing } from './fieldHelpers'
+import { castError, getErrorKey, getFieldKey, hasCastError, validateCastField, validateField, handleMissing } from './fieldHelpers'
 
 function transformSource(
     meta: CargoFieldMetadata,
@@ -20,6 +20,7 @@ function transformSource(
     currentSource: Source,
     analysis: AnalysisResult,
 ): void {
+    const castStart = errors.length
     if (meta.getEnumType() !== undefined) {
         targetObject[property] = value
     } else {
@@ -27,7 +28,8 @@ function transformSource(
     }
 
     const transformer = meta.getTransformer()
-    if (transformer) {
+    // Skip the transformer when casting failed: it would receive `undefined` in place of the value, and the request fails anyway.
+    if (transformer && (errors.length === castStart || !hasCastError(errors, castStart))) {
         targetObject[property] = transformer(targetObject[property])
     }
 }
@@ -80,14 +82,14 @@ function typeCasting(
 ): any {
     // A declared nested DTO (field or list element) must receive an object, not an array.
     if (Array.isArray(value) && baseType !== Array && declaresNestedType(baseType, meta)) {
-        errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an object`))
+        errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an object`))
         return undefined
     }
 
     // Handle Array types: Recursively process each element
     if (baseType === Array || Array.isArray(value)) {
         if (!Array.isArray(value)) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an array`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an array`))
             return undefined
         }
 
@@ -117,7 +119,7 @@ function typeCasting(
     } else if (targetClass === Number) {
         const parsedNumber = Number(value)
         if (isNaN(parsedNumber) || (typeof value === 'string' && value.trim() === '')) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
             return undefined
         }
         return parsedNumber
@@ -126,7 +128,7 @@ function typeCasting(
     } else if (targetClass === Date) {
         const parsedDate = new Date(value)
         if (isNaN(parsedDate.getTime())) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
             return undefined
         }
         return parsedDate
@@ -136,7 +138,7 @@ function typeCasting(
     if (isUserDefinedClass(targetClass)) {
         if (typeof value !== 'object' || value === null) {
             if (!declaresNestedType(baseType, meta)) return value
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an object`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an object`))
             return undefined
         }
 
@@ -242,8 +244,13 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
             continue
         }
 
+        const castStart = errors.length
         transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource, analysis)
-        validateField(meta, property, key, sourceKey, targetObject, errors)
+        if (errors.length === castStart) {
+            validateField(meta, property, key, sourceKey, targetObject, errors)
+        } else {
+            validateCastField(meta, property, key, sourceKey, targetObject, errors, castStart)
+        }
     }
 }
 

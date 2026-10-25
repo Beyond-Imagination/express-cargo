@@ -1,6 +1,7 @@
 import {
     bindingCargo,
     Body,
+    CargoFieldError,
     CargoValidationError,
     Each,
     getCargo,
@@ -88,6 +89,47 @@ describe('error field naming', () => {
         body.customer.name = 'boom'
 
         expect(bindErrors({ body })).toEqual([{ field: 'customer.label', message: 'Error while computing virtual field: cannot compute' }])
+    })
+})
+
+describe('cast failures', () => {
+    it('reports a failed number cast once instead of repeating it for each validator', () => {
+        expect(bindErrors({ body: { ...validBody(), count: 'abc' } })).toEqual([{ field: 'count', message: 'count must be a valid number' }])
+    })
+
+    it('reports a failed element cast once instead of repeating it for @Each', () => {
+        expect(bindErrors({ body: validBody(), query: { nums: ['1', 'x'] } })).toEqual([
+            { field: 'nums[1]', message: 'nums[1] must be a valid number' },
+        ])
+    })
+
+    it('keeps list-level validator errors when an element fails', () => {
+        const fields = bindErrors({ body: { ...validBody(), items: [{ sku: 'x', quantity: 1 }] } }).map(e => e.field)
+
+        expect(fields).toEqual(expect.arrayContaining(['items[0].sku', 'items']))
+    })
+
+    it('reports cast errors as plain CargoFieldError instances', () => {
+        const req = makeMockReq({ headers: validHeaders, body: { ...validBody(), count: 'abc' } })
+        const next = makeNext()
+        bindingCargo(OrderDTO)(req, makeMockRes(), next)
+
+        expect((next.mock.calls[0][0] as CargoValidationError).errors).toStrictEqual([new CargoFieldError('count', 'count must be a valid number')])
+    })
+
+    it('skips the transformer when casting fails instead of passing it undefined', () => {
+        class TransformedDTO {
+            @Body() @Transform((value: number) => Number(value.toFixed(1))) ratio!: number
+            @Body() @Type(() => Item) @Transform((item: Item) => ({ ...item, sku: item.sku.toUpperCase() })) item!: Item
+        }
+
+        const req = makeMockReq({ body: { ratio: 'abc', item: 'str' } })
+        const next = makeNext()
+        bindingCargo(TransformedDTO)(req, makeMockRes(), next)
+
+        const err = next.mock.calls[0][0]
+        expect(err).toBeInstanceOf(CargoValidationError)
+        expect((err as CargoValidationError).errors.map(e => e.field)).toEqual(['ratio', 'item'])
     })
 })
 
