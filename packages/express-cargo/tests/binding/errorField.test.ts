@@ -1,4 +1,20 @@
-import { bindingCargo, Body, CargoValidationError, Each, Header, List, ListMinSize, Min, MinLength, Optional, Query, Type, Virtual } from '../../src'
+import {
+    bindingCargo,
+    Body,
+    CargoValidationError,
+    Each,
+    getCargo,
+    Header,
+    List,
+    ListMinSize,
+    Min,
+    MinLength,
+    Optional,
+    Query,
+    Transform,
+    Type,
+    Virtual,
+} from '../../src'
 import { makeMockReq, makeMockRes, makeNext } from './testUtils'
 
 class Item {
@@ -72,5 +88,59 @@ describe('error field naming', () => {
         body.customer.name = 'boom'
 
         expect(bindErrors({ body })).toEqual([{ field: 'customer.label', message: 'Error while computing virtual field: cannot compute' }])
+    })
+})
+
+describe('nested object values', () => {
+    it.each([
+        ['a string', 'str'],
+        ['a number', 1],
+        ['an array', []],
+    ])('rejects %s for a @Type field', (_label, customer) => {
+        expect(bindErrors({ body: { ...validBody(), customer } })).toEqual([{ field: 'customer', message: 'customer must be an object' }])
+    })
+
+    it('rejects list elements that are not objects', () => {
+        const body = { ...validBody(), items: [1, null, [], { sku: 'abc', quantity: 1 }] }
+
+        expect(bindErrors({ body }).map(e => e.field)).toEqual(['items[0]', 'items[1]', 'items[2]'])
+    })
+
+    it('rejects an array for a polymorphic @Type field whose design type is a union', () => {
+        class Photo {
+            @Body() url!: string
+        }
+        class Video {
+            @Body() length!: number
+        }
+        class PostDTO {
+            @Body() @Type((data: any) => (data?.length !== undefined ? Video : Photo)) content!: Photo | Video
+        }
+
+        const req = makeMockReq({ body: { content: [] } })
+        const next = makeNext()
+        bindingCargo(PostDTO)(req, makeMockRes(), next)
+
+        const err = next.mock.calls[0][0] as CargoValidationError
+        expect(err.errors.map(e => ({ field: e.field, message: e.message }))).toEqual([{ field: 'content', message: 'content must be an object' }])
+    })
+
+    it('passes primitives and arrays through to @Transform when the class only comes from the property type', () => {
+        class Money {
+            constructor(readonly amount: unknown) {}
+        }
+        class PriceDTO {
+            @Body() @Transform((value: any) => new Money(value)) price!: Money
+            @Body() @Transform((value: any) => new Money(value)) prices!: Money
+        }
+
+        const req = makeMockReq({ body: { price: 100, prices: [1, 2] } })
+        const next = makeNext()
+        bindingCargo(PriceDTO)(req, makeMockRes(), next)
+
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<PriceDTO>(req)
+        expect(dto.price).toEqual(new Money(100))
+        expect(dto.prices).toEqual(new Money([1, 2]))
     })
 })

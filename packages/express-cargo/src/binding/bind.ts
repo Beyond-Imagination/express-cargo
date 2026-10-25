@@ -56,6 +56,15 @@ function resolveTargetClass(typeFn: TypeThunk | TypeResolver, data: any, options
 }
 
 /**
+ * True when the field explicitly declares a nested DTO: through `@Type`, or as the class element type of `@List`.
+ * A class that only comes from `design:type` is not enough, since `@Transform` may build it from a primitive.
+ */
+function declaresNestedType(baseType: any, meta: CargoFieldMetadata | undefined): boolean {
+    if (meta?.getTypeFn()) return true
+    return isUserDefinedClass(baseType) && baseType === meta?.getArrayElementType()
+}
+
+/**
  * Main transformation pipeline that converts plain objects/values into class instances or primitives.
  */
 function typeCasting(
@@ -69,6 +78,12 @@ function typeCasting(
     currentSource: Source,
     analysis: AnalysisResult,
 ): any {
+    // A declared nested DTO (field or list element) must receive an object, not an array.
+    if (Array.isArray(value) && baseType !== Array && declaresNestedType(baseType, meta)) {
+        errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an object`))
+        return undefined
+    }
+
     // Handle Array types: Recursively process each element
     if (baseType === Array || Array.isArray(value)) {
         if (!Array.isArray(value)) {
@@ -118,7 +133,13 @@ function typeCasting(
     }
 
     // Recursive binding: Transform nested plain objects into class instances
-    if (isUserDefinedClass(targetClass) && typeof value === 'object' && value !== null) {
+    if (isUserDefinedClass(targetClass)) {
+        if (typeof value !== 'object' || value === null) {
+            if (!declaresNestedType(baseType, meta)) return value
+            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an object`))
+            return undefined
+        }
+
         const nextSources = { ...sources, [currentSource]: value }
         const nestedMetaFromMap = analysis.metadataMap.get(targetClass)
         let targetAnalysis = analysis
