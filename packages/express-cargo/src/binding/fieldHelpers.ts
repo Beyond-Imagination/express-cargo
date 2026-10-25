@@ -63,7 +63,7 @@ export function validateField(
 
 /**
  * Runs the field's validators once casting has added errors (from `castStart` on), unless casting already
- * reported the field's own path: a value that failed to cast is `undefined`, so its validator errors only repeat it.
+ * reported the field's own path: validator errors on a value that failed to cast only repeat the cast error.
  */
 export function validateCastField(
     meta: CargoFieldMetadata,

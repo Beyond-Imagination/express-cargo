@@ -148,6 +148,22 @@ describe('nested object values', () => {
         expect(bindErrors({ body }).map(e => e.field)).toEqual(['items[0]', 'items[1]', 'items[2]'])
     })
 
+    it('passes the raw value of a rejected list element to @Each instead of undefined', () => {
+        class TaggedDTO {
+            @Body() @List(Item) @Each((item: Item) => item.toString().length > 0) items!: Item[]
+        }
+
+        const req = makeMockReq({ body: { items: [1] } })
+        const next = makeNext()
+        bindingCargo(TaggedDTO)(req, makeMockRes(), next)
+
+        const err = next.mock.calls[0][0]
+        expect(err).toBeInstanceOf(CargoValidationError)
+        expect((err as CargoValidationError).errors.map(e => ({ field: e.field, message: e.message }))).toEqual([
+            { field: 'items[0]', message: 'items[0] must be an object' },
+        ])
+    })
+
     it('rejects an array for a polymorphic @Type field whose design type is a union', () => {
         class Photo {
             @Body() url!: string

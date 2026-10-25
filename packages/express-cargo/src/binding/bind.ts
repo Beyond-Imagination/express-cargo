@@ -28,7 +28,7 @@ function transformSource(
     }
 
     const transformer = meta.getTransformer()
-    // Skip the transformer when casting failed: it would receive `undefined` in place of the value, and the request fails anyway.
+    // Skip the transformer when casting failed: it would not receive a cast value, and the request fails anyway.
     if (transformer && (errors.length === castStart || !hasCastError(errors, castStart))) {
         targetObject[property] = transformer(targetObject[property])
     }
@@ -81,9 +81,10 @@ function typeCasting(
     analysis: AnalysisResult,
 ): any {
     // A declared nested DTO (field or list element) must receive an object, not an array.
+    // The raw value is kept so validators see the same input as before this check existed.
     if (Array.isArray(value) && baseType !== Array && declaresNestedType(baseType, meta)) {
         errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an object`))
-        return undefined
+        return value
     }
 
     // Handle Array types: Recursively process each element
@@ -139,7 +140,7 @@ function typeCasting(
         if (typeof value !== 'object' || value === null) {
             if (!declaresNestedType(baseType, meta)) return value
             errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an object`))
-            return undefined
+            return value
         }
 
         const nextSources = { ...sources, [currentSource]: value }
