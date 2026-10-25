@@ -23,12 +23,13 @@ export class ValidatorRule {
      * Validates a value against this rule.
      * @param value - The value to validate.
      * @param instance - The instance of the object being validated (optional).
+     * @param field - The field path reported on failure. Defaults to the property key.
      * @returns A CargoFieldError if validation fails, null otherwise.
      */
-    validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
+    validate(value: any, instance?: Record<string | symbol, any>, field: string | symbol = this.propertyKey): CargoFieldError | null {
         if (!this.validateFunction(value, instance)) {
             const message = typeof this.message === 'string' ? this.message : this.message(this.propertyKey, value)
-            return new CargoFieldError(this.propertyKey, message)
+            return new CargoFieldError(field, message)
         }
 
         return null
@@ -46,14 +47,14 @@ export class EachValidatorRule extends ValidatorRule {
         this.innerRule = innerRule
     }
 
-    validate(value: any, instance?: Record<string | symbol, any>): CargoFieldError | null {
+    validate(value: any, instance?: Record<string | symbol, any>, field: string | symbol = this.propertyKey): CargoFieldError | null {
         if (!Array.isArray(value)) return null
 
         for (let i = 0; i < value.length; i++) {
             const item = value[i]
-            const error = this.innerRule.validate(item, instance)
+            const error = this.innerRule.validate(item, instance, `${String(field)}[${i}]`)
             if (error) {
-                return new CargoFieldError(`${String(this.propertyKey)}[${i}]`, error.message)
+                return error
             }
         }
         return null

@@ -175,8 +175,9 @@ export function Each(...args: (PropertyDecorator | TypedPropertyDecorator<any> |
 
         args.forEach(arg => {
             // Create a temporary class to determine if 'arg' is a decorator
+            // Reuse the real property key so the inner rule's default message names the field.
             const tempClass = class {}
-            const tempKey = 'temp'
+            const tempKey = propertyKey
             let rulesAdded: ValidatorRule[] = []
 
             try {

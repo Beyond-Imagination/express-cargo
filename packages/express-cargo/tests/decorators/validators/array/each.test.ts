@@ -26,7 +26,8 @@ describe('@Each decorator', () => {
 
         // Check if field name includes index
         expect(error?.field).toBe('numbers[1]')
-        expect(error?.message).toContain('must be >= 10')
+        // The default message names the decorated field, not the internal temporary key.
+        expect(error?.message).toBe('numbers must be >= 10')
     })
 
     it('should validate each element with custom function', () => {
