@@ -6,7 +6,7 @@ import { CargoFile } from '../fileHandler'
 import { validateAnalysis } from '../rules'
 import { isClass, isUserDefinedClass } from '../utils'
 import { analyzeCargoSchema } from '../analysis'
-import { getErrorKey, getFieldKey, validateField, handleMissing } from './fieldHelpers'
+import { castError, getErrorKey, getFieldKey, hasCastError, validateCastField, validateField, handleMissing } from './fieldHelpers'
 
 function transformSource(
     meta: CargoFieldMetadata,
@@ -20,6 +20,7 @@ function transformSource(
     currentSource: Source,
     analysis: AnalysisResult,
 ): void {
+    const castStart = errors.length
     if (meta.getEnumType() !== undefined) {
         targetObject[property] = value
     } else {
@@ -27,7 +28,8 @@ function transformSource(
     }
 
     const transformer = meta.getTransformer()
-    if (transformer) {
+    // Skip the transformer when casting failed: it would not receive a cast value, and the request fails anyway.
+    if (transformer && (errors.length === castStart || !hasCastError(errors, castStart))) {
         targetObject[property] = transformer(targetObject[property])
     }
 }
@@ -56,6 +58,15 @@ function resolveTargetClass(typeFn: TypeThunk | TypeResolver, data: any, options
 }
 
 /**
+ * True when the field explicitly declares a nested DTO: through `@Type`, or as the class element type of `@List`.
+ * A class that only comes from `design:type` is not enough, since `@Transform` may build it from a primitive.
+ */
+function declaresNestedType(baseType: any, meta: CargoFieldMetadata | undefined): boolean {
+    if (meta?.getTypeFn()) return true
+    return isUserDefinedClass(baseType) && baseType === meta?.getArrayElementType()
+}
+
+/**
  * Main transformation pipeline that converts plain objects/values into class instances or primitives.
  */
 function typeCasting(
@@ -69,10 +80,17 @@ function typeCasting(
     currentSource: Source,
     analysis: AnalysisResult,
 ): any {
+    // A declared nested DTO (field or list element) must receive an object, not an array.
+    // The raw value is kept so validators see the same input as before this check existed.
+    if (Array.isArray(value) && baseType !== Array && declaresNestedType(baseType, meta)) {
+        errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an object`))
+        return value
+    }
+
     // Handle Array types: Recursively process each element
     if (baseType === Array || Array.isArray(value)) {
         if (!Array.isArray(value)) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be an array`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an array`))
             return undefined
         }
 
@@ -102,7 +120,7 @@ function typeCasting(
     } else if (targetClass === Number) {
         const parsedNumber = Number(value)
         if (isNaN(parsedNumber) || (typeof value === 'string' && value.trim() === '')) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be a valid number`))
             return undefined
         }
         return parsedNumber
@@ -111,14 +129,20 @@ function typeCasting(
     } else if (targetClass === Date) {
         const parsedDate = new Date(value)
         if (isNaN(parsedDate.getTime())) {
-            errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be a valid date`))
             return undefined
         }
         return parsedDate
     }
 
     // Recursive binding: Transform nested plain objects into class instances
-    if (isUserDefinedClass(targetClass) && typeof value === 'object' && value !== null) {
+    if (isUserDefinedClass(targetClass)) {
+        if (typeof value !== 'object' || value === null) {
+            if (!declaresNestedType(baseType, meta)) return value
+            errors.push(castError(getErrorKey(sourceKey, key), `${key} must be an object`))
+            return value
+        }
+
         const nextSources = { ...sources, [currentSource]: value }
         const nestedMetaFromMap = analysis.metadataMap.get(targetClass)
         let targetAnalysis = analysis
@@ -168,7 +192,7 @@ function bindRequest({ metaClass, targetObject, sources, errors, sourceKey }: Bi
         const requestTransformer = meta.getRequestTransformer()
 
         if (!requestTransformer) {
-            errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
+            errors.push(new CargoTransformFieldError(getErrorKey(sourceKey, key), `${key} does not have transformer`))
             continue
         }
 
@@ -181,11 +205,11 @@ function bindRequest({ metaClass, targetObject, sources, errors, sourceKey }: Bi
             }
 
             targetObject[property] = value
-            validateField(meta, property, targetObject, errors)
+            validateField(meta, property, key, sourceKey, targetObject, errors)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
-                    property,
+                    getErrorKey(sourceKey, key),
                     `Error while computing request transform field: ${error instanceof Error ? error.message : String(error)}`,
                 ),
             )
@@ -221,8 +245,13 @@ function bindSource({ metaClass, targetObject, sources, errors, sourceKey }: Bin
             continue
         }
 
+        const castStart = errors.length
         transformSource(meta, property, key, value, targetObject, errors, sources, sourceKey, currentSource, analysis)
-        validateField(meta, property, targetObject, errors)
+        if (errors.length === castStart) {
+            validateField(meta, property, key, sourceKey, targetObject, errors)
+        } else {
+            validateCastField(meta, property, key, sourceKey, targetObject, errors, castStart)
+        }
     }
 }
 
@@ -244,7 +273,7 @@ function bindFile(
     }
 
     targetObject[property] = value
-    validateField(meta, property, targetObject, errors)
+    validateField(meta, property, key, sourceKey, targetObject, errors)
 }
 
 function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext): void {
@@ -256,7 +285,7 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
         const virtualTransformer = meta.getVirtualTransformer()
 
         if (!virtualTransformer) {
-            errors.push(new CargoTransformFieldError(property, `${key} does not have transformer`))
+            errors.push(new CargoTransformFieldError(getErrorKey(sourceKey, key), `${key} does not have transformer`))
             continue
         }
 
@@ -269,11 +298,11 @@ function bindVirtual({ metaClass, targetObject, errors, sourceKey }: BindContext
             }
 
             targetObject[property] = value
-            validateField(meta, property, targetObject, errors)
+            validateField(meta, property, key, sourceKey, targetObject, errors)
         } catch (error) {
             errors.push(
                 new CargoTransformFieldError(
-                    property,
+                    getErrorKey(sourceKey, key),
                     `Error while computing virtual field: ${error instanceof Error ? error.message : String(error)}`,
                 ),
             )

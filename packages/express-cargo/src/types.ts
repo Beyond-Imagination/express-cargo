@@ -86,7 +86,7 @@ export type ArrayComparator = (expected: any, actual: any) => boolean
 type ErrorMessageFunction = (property: string | symbol, value: any) => string
 export type CargoErrorMessage = string | ErrorMessageFunction
 
-export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T }, propertyKey: K) => void
+export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T | null }, propertyKey: K) => void
 
 /** Top-level category that classifies what a decorator does. */
 export type DecoratorCategory = 'source' | 'request' | 'virtual' | 'transform' | 'missing-handler' | 'type-helper' | 'validator'
