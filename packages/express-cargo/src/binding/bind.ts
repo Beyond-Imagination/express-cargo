@@ -146,6 +146,11 @@ function typeCasting(
         return value
     }
 
+    if (baseType === Boolean && Array.isArray(value)) {
+        errors.push(castError(key, `${key} must be a boolean`))
+        return undefined
+    }
+
     // Handle Array types: Recursively process each element
     if (baseType === Array || Array.isArray(value)) {
         if (!Array.isArray(value)) {
@@ -179,6 +184,11 @@ function typeCasting(
 
     // Handle Primitive types
     if (targetClass === String) {
+        // String() would turn any object into "[object Object]", which then passes length checks.
+        if (typeof value === 'object') {
+            errors.push(castError(key, `${key} must be a string`))
+            return undefined
+        }
         return String(value)
     } else if (targetClass === Number) {
         const parsedNumber = Number(value)
@@ -189,6 +199,10 @@ function typeCasting(
         }
         return parsedNumber
     } else if (targetClass === Boolean) {
+        if (typeof value === 'object') {
+            errors.push(castError(key, `${key} must be a boolean`))
+            return undefined
+        }
         return value === true || value === 'true'
     } else if (targetClass === Date) {
         const parsedDate = new Date(value)

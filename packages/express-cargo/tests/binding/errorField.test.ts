@@ -249,3 +249,50 @@ describe('nested object values', () => {
         expect(dto.prices).toEqual(new Money([1, 2]))
     })
 })
+
+describe('primitive casting of non-primitive values', () => {
+    class Tag {
+        @Body() @MinLength(3) label!: string
+    }
+
+    class PrimitiveDTO {
+        @Body() @MinLength(3) name!: string
+        @Query() active!: boolean
+        @Body() @Optional() @List(Tag) tags?: Tag[]
+    }
+
+    const bindPrimitive = (body: unknown, query: unknown) => {
+        const req = makeMockReq({ body, query })
+        const next = makeNext()
+        bindingCargo(PrimitiveDTO)(req, makeMockRes(), next)
+        return { req, next }
+    }
+    const errorsOf = (next: ReturnType<typeof makeNext>) =>
+        (next.mock.calls[0][0] as CargoValidationError).errors.map(e => ({ field: String(e.field), message: e.message }))
+
+    it('rejects an object for a string field instead of stringifying it', () => {
+        const { next } = bindPrimitive({ name: { a: 1 } }, { active: 'true' })
+        expect(errorsOf(next)).toEqual([{ field: 'name', message: 'name must be a string' }])
+    })
+
+    it('rejects an object for a string field inside a list element under its full path', () => {
+        const { next } = bindPrimitive({ name: 'abc', tags: [{ label: 'ok1' }, { label: {} }] }, { active: 'true' })
+        expect(errorsOf(next)).toEqual([{ field: 'tags[1].label', message: 'label must be a string' }])
+    })
+
+    it.each([
+        ['an array', ['true', 'false']],
+        ['an object', { a: '1' }],
+    ])('rejects %s for a boolean field', (_name, active) => {
+        const { next } = bindPrimitive({ name: 'abc' }, { active })
+        expect(errorsOf(next)).toEqual([{ field: 'active', message: 'active must be a boolean' }])
+    })
+
+    it('still casts primitive values', () => {
+        const { req, next } = bindPrimitive({ name: 12345 }, { active: 'true' })
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<PrimitiveDTO>(req)
+        expect(dto.name).toBe('12345')
+        expect(dto.active).toBe(true)
+    })
+})
