@@ -6,42 +6,6 @@ export const routes = [
 
 export type BenchmarkRoute = (typeof routes)[number]
 
-export const SUCCESS_PATH = '/orders/42?active=true'
-
-export const validBody = {
-    name: ' Alice ',
-    email: 'alice@example.com',
-    age: '35',
-    role: 'user',
-    items: [
-        { sku: 'SKU-001', quantity: '2', price: '12.5' },
-        { sku: 'SKU-002', quantity: '1', price: '3' },
-    ],
-}
-
-const invalidBody = {
-    name: ' x ',
-    email: 'bad',
-    age: '17',
-    role: 'root',
-    items: [{ sku: 'x', quantity: '0', price: '0' }],
-}
-
-export const nestedBody = {
-    ...validBody,
-    items: Array.from({ length: 25 }, (_, index) => ({
-        sku: `SKU-${String(index).padStart(3, '0')}`,
-        quantity: '2',
-        price: '12.5',
-    })),
-}
-
-export const benchmarkCases = [
-    { name: 'valid', path: SUCCESS_PATH, body: validBody, requestId: 'request-123', status: 200 },
-    { name: 'validation failure', path: '/orders/0?active=false', body: invalidBody, requestId: 'x', status: 400 },
-    { name: 'nested 25 valid', path: SUCCESS_PATH, body: nestedBody, requestId: 'request-123', status: 200 },
-] as const
-
 /**
  * Returns the routes in the order given by a comma-separated list of `sourceClass` values,
  * e.g. `zod,express-cargo,class-validator`. Every route must appear exactly once.

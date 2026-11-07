@@ -92,6 +92,53 @@ describe('error field naming', () => {
     })
 })
 
+describe('deeply nested lists', () => {
+    class Leaf {
+        @Body() @MinLength(2) code!: string
+    }
+
+    class Branch {
+        @Body() @List(Leaf) leaves!: Leaf[]
+        @Body() @Optional() @Type(() => Leaf) main?: Leaf
+    }
+
+    class TreeDTO {
+        @Body() @List(Branch) branches!: Branch[]
+    }
+
+    const bind = (body: unknown) => {
+        const req = makeMockReq({ body })
+        const next = makeNext()
+        bindingCargo(TreeDTO)(req, makeMockRes(), next)
+        return { req, next }
+    }
+
+    it('reports each error under its full path, in binding order', () => {
+        const { next } = bind({
+            branches: [{ leaves: [{ code: 'ok' }, { code: 'a' }], main: { code: 'b' } }, { leaves: [1, {}] }, 'x'],
+        })
+
+        const error = next.mock.calls[0][0] as CargoValidationError
+        expect(error.errors.map(fieldError => fieldError.field)).toEqual([
+            'branches[0].leaves[1].code',
+            'branches[0].main.code',
+            'branches[1].leaves[0]',
+            'branches[1].leaves[1].code',
+            'branches[2]',
+        ])
+    })
+
+    it('binds every list element from its own value into its own instance', () => {
+        const { req, next } = bind({ branches: [{ leaves: [{ code: 'aa' }, { code: 'bb' }] }, { leaves: [{ code: 'cc' }] }] })
+
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<TreeDTO>(req)
+        expect(dto.branches.map(branch => branch.leaves.map(leaf => leaf.code))).toEqual([['aa', 'bb'], ['cc']])
+        expect(dto.branches[0].leaves[0]).toBeInstanceOf(Leaf)
+        expect(dto.branches[0].leaves[0]).not.toBe(dto.branches[0].leaves[1])
+    })
+})
+
 describe('cast failures', () => {
     it('reports a failed number cast once instead of repeating it for each validator', () => {
         expect(bindErrors({ body: { ...validBody(), count: 'abc' } })).toEqual([{ field: 'count', message: 'count must be a valid number' }])
@@ -200,5 +247,52 @@ describe('nested object values', () => {
         const dto = getCargo<PriceDTO>(req)
         expect(dto.price).toEqual(new Money(100))
         expect(dto.prices).toEqual(new Money([1, 2]))
+    })
+})
+
+describe('primitive casting of non-primitive values', () => {
+    class Tag {
+        @Body() @MinLength(3) label!: string
+    }
+
+    class PrimitiveDTO {
+        @Body() @MinLength(3) name!: string
+        @Query() active!: boolean
+        @Body() @Optional() @List(Tag) tags?: Tag[]
+    }
+
+    const bindPrimitive = (body: unknown, query: unknown) => {
+        const req = makeMockReq({ body, query })
+        const next = makeNext()
+        bindingCargo(PrimitiveDTO)(req, makeMockRes(), next)
+        return { req, next }
+    }
+    const errorsOf = (next: ReturnType<typeof makeNext>) =>
+        (next.mock.calls[0][0] as CargoValidationError).errors.map(e => ({ field: String(e.field), message: e.message }))
+
+    it('rejects an object for a string field instead of stringifying it', () => {
+        const { next } = bindPrimitive({ name: { a: 1 } }, { active: 'true' })
+        expect(errorsOf(next)).toEqual([{ field: 'name', message: 'name must be a string' }])
+    })
+
+    it('rejects an object for a string field inside a list element under its full path', () => {
+        const { next } = bindPrimitive({ name: 'abc', tags: [{ label: 'ok1' }, { label: {} }] }, { active: 'true' })
+        expect(errorsOf(next)).toEqual([{ field: 'tags[1].label', message: 'label must be a string' }])
+    })
+
+    it.each([
+        ['an array', ['true', 'false']],
+        ['an object', { a: '1' }],
+    ])('rejects %s for a boolean field', (_name, active) => {
+        const { next } = bindPrimitive({ name: 'abc' }, { active })
+        expect(errorsOf(next)).toEqual([{ field: 'active', message: 'active must be a boolean' }])
+    })
+
+    it('still casts primitive values', () => {
+        const { req, next } = bindPrimitive({ name: 12345 }, { active: 'true' })
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<PrimitiveDTO>(req)
+        expect(dto.name).toBe('12345')
+        expect(dto.active).toBe(true)
     })
 })

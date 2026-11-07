@@ -1,9 +1,58 @@
 import 'reflect-metadata'
 import { CargoClassMetadata } from '../../src/metadata'
-import { Body } from '../../src'
+import { bindingCargo, Body, getCargo, List, Request, Virtual } from '../../src'
+import { makeMockReq, makeMockRes, makeNext } from '../binding/testUtils'
 import { analyzeCargoSchema } from '../../src/analysis'
 
 describe('CargoClassMetadata.resolve caching', () => {
+    it('binds resolved fields without per-field metadata lookups', () => {
+        const symbolField = Symbol('symbolField')
+        class Parent {
+            @Body('user_name')
+            name!: string
+        }
+        class Item {
+            @Body('quantity')
+            count!: number
+        }
+        class Sample extends Parent {
+            @Body('input')
+            [symbolField]!: string
+
+            @Request(req => req.headers['request-id'] as string)
+            requestId!: string
+
+            @Body()
+            @List(Item)
+            items!: Item[]
+
+            @Virtual((obj: Sample) => `${obj.requestId}:${obj.name}:${obj[symbolField]}:${obj.items[0].count}`)
+            summary!: string
+        }
+
+        const middleware = bindingCargo(Sample)
+        const analysis = analyzeCargoSchema(Sample)
+        const lookups = [...analysis.metadataMap.values()].map(meta => jest.spyOn(meta, 'getFieldMetadata'))
+        try {
+            const req = makeMockReq({
+                body: { user_name: 'Alice', input: 'value', items: [{ quantity: '2' }] },
+                headers: { 'request-id': 'request-123' },
+            })
+            const next = makeNext()
+            middleware(req, makeMockRes(), next)
+
+            expect(next).toHaveBeenCalledWith()
+            const cargo = getCargo<Sample>(req)
+            expect(cargo.name).toBe('Alice')
+            expect(cargo[symbolField]).toBe('value')
+            expect(cargo.items[0]).toBeInstanceOf(Item)
+            expect(cargo.summary).toBe('request-123:Alice:value:2')
+            for (const lookup of lookups) expect(lookup).not.toHaveBeenCalled()
+        } finally {
+            for (const lookup of lookups) lookup.mockRestore()
+        }
+    })
+
     it('caches field lists so post-resolve mutations are not reflected', () => {
         class Sample {
             @Body()

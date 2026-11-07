@@ -2,14 +2,14 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, posix, sep } from 'node:path'
 import { Options, transformSync } from '@swc/core'
-import { change, HttpRun, InProcessRun, median, range } from './results'
-import { optionValue } from './scenarios'
+import { change, HttpRun, InlineRun, median, range } from '../testcase/common/results'
+import { optionValue } from '../testcase/common/options'
 
 // Benchmarks express-cargo at two git refs against the same benchmark app.
 // Each run is a fresh Node process; the build that runs first alternates every round.
 
 const EXPRESS_CARGO = 'packages/express-cargo'
-const USAGE = 'Usage: compare.js <base ref> <target ref> [rounds=6] [calls=20000] [max concurrency=1000] [--inprocess-rounds=3]'
+const USAGE = 'Usage: version/compare.js <base ref> <target ref> [rounds=6] [calls=20000] [max concurrency=1000] [--inline-rounds=3]'
 
 function git(cwd: string, ...args: string[]): string {
     return execFileSync('git', args, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
@@ -56,14 +56,14 @@ function main(): void {
     const rounds = integerArgument(roundsArgument, 6, 'Rounds')
     const calls = integerArgument(callsArgument, 20000, 'Calls')
     const maxConcurrency = integerArgument(maxConcurrencyArgument, 1000, 'Maximum concurrency')
-    const inProcessRounds = integerArgument(optionValue(arguments_, 'inprocess-rounds'), 3, 'In-process rounds')
+    const inlineRounds = integerArgument(optionValue(arguments_, 'inline-rounds'), 3, 'Inline rounds')
 
     const repositoryRoot = git(process.cwd(), 'rev-parse', '--show-toplevel').trim()
     const sides = [
-        { label: 'base', ref: baseRef, http: [] as HttpRun[], inProcess: [] as InProcessRun[] },
-        { label: 'target', ref: targetRef, http: [] as HttpRun[], inProcess: [] as InProcessRun[] },
+        { label: 'base', ref: baseRef, http: [] as HttpRun[], inline: [] as InlineRun[] },
+        { label: 'target', ref: targetRef, http: [] as HttpRun[], inline: [] as InlineRun[] },
     ].map(side => ({ ...side, commit: git(repositoryRoot, 'rev-parse', '--short', `${side.ref}^{commit}`).trim() }))
-    const outputDirectory = `benchmark-results-compare-${new Date().toISOString().replace(/[:.]/g, '-')}`
+    const outputDirectory = `benchmark-results-version-${new Date().toISOString().replace(/[:.]/g, '-')}`
     mkdirSync(outputDirectory)
 
     const runRounds = (count: number, kind: string, run: (side: (typeof sides)[number], file: string) => void) => {
@@ -78,12 +78,12 @@ function main(): void {
 
     try {
         runRounds(rounds, 'http', (side, file) => {
-            runScript('benchmark.js', [String(calls), String(maxConcurrency), `--json=${file}`])
+            runScript('../http/benchmark.js', [String(calls), String(maxConcurrency), '1', `--json=${file}`])
             side.http.push(JSON.parse(readFileSync(file, 'utf8')))
         })
-        runRounds(inProcessRounds, 'inprocess', (side, file) => {
-            runScript('inprocess.js', [`--json=${file}`])
-            side.inProcess.push(JSON.parse(readFileSync(file, 'utf8')))
+        runRounds(inlineRounds, 'inline', (side, file) => {
+            runScript('../inline/benchmark.js', [`--json=${file}`])
+            side.inline.push(JSON.parse(readFileSync(file, 'utf8')))
         })
     } finally {
         buildExpressCargo(repositoryRoot, undefined)
@@ -108,17 +108,17 @@ function main(): void {
             side.http.map(run => run.summaries.find(row => row.scenario === scenario && row.implementation === implementation)!['requests/sec']),
         ),
     }))
-    const inProcessRows = (base.inProcess[0]?.results ?? []).map(({ scenario }) => ({
+    const inlineRows = (base.inline[0]?.results ?? []).map(({ scenario }) => ({
         scenario,
-        ...compareRows('ops/s', side => side.inProcess.map(run => run.results.find(row => row.scenario === scenario)!['ops/sec'])),
+        ...compareRows('ops/s', side => side.inline.map(run => run.results.find(row => row.scenario === scenario)!['ops/sec'])),
     }))
 
     console.log(
-        `\nbase = ${base.ref} (${base.commit}), target = ${target.ref} (${target.commit}). Medians over ${rounds} HTTP and ${inProcessRounds} in-process rounds.`,
+        `\nbase = ${base.ref} (${base.commit}), target = ${target.ref} (${target.commit}). Medians over ${rounds} HTTP and ${inlineRounds} inline rounds.`,
     )
     if (httpRows.length > 0) console.table(httpRows)
-    if (inProcessRows.length > 0) console.table(inProcessRows)
-    const summary = { base: { ref: base.ref, commit: base.commit }, target: { ref: target.ref, commit: target.commit }, httpRows, inProcessRows }
+    if (inlineRows.length > 0) console.table(inlineRows)
+    const summary = { base: { ref: base.ref, commit: base.commit }, target: { ref: target.ref, commit: target.commit }, httpRows, inlineRows }
     writeFileSync(join(outputDirectory, 'summary.json'), `${JSON.stringify(summary, null, 2)}\n`)
     console.log(`Saved ${outputDirectory}`)
 }

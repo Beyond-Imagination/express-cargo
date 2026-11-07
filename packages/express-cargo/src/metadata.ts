@@ -3,6 +3,8 @@ import type { Request } from 'express'
 import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, ValidArrayElementType } from './types'
 import { ValidatorRule } from './validatorRule'
 
+type FieldEntry = { property: string | symbol; meta: CargoFieldMetadata }
+
 /**
  * Merged field lists for a class, precomputed once by {@link CargoClassMetadata.resolve}.
  */
@@ -12,6 +14,9 @@ interface ResolvedFieldLists {
     virtualFields: (string | symbol)[]
     allFields: (string | symbol)[]
     fieldMetadata: Map<string | symbol, CargoFieldMetadata>
+    fieldEntries: FieldEntry[]
+    requestFieldEntries: FieldEntry[]
+    virtualFieldEntries: FieldEntry[]
 }
 
 /**
@@ -33,12 +38,21 @@ export class CargoClassMetadata {
      */
     resolve(): this {
         const allFields = this.getFieldListByKey(this.getAllFieldsKey())
+        const fields = this.getFieldListByKey(this.getFieldKey())
+        const requestFields = this.getFieldListByKey(this.getRequestFieldKey())
+        const virtualFields = this.getFieldListByKey(this.getVirtualFieldKey())
+        const fieldMetadata = new Map(allFields.map(propertyKey => [propertyKey, this.getFieldMetadata(propertyKey)] as const))
+        const entries = (properties: (string | symbol)[]): FieldEntry[] =>
+            properties.map(property => ({ property, meta: fieldMetadata.get(property) ?? this.getFieldMetadata(property) }))
         this.resolved = {
-            fields: this.getFieldListByKey(this.getFieldKey()),
-            requestFields: this.getFieldListByKey(this.getRequestFieldKey()),
-            virtualFields: this.getFieldListByKey(this.getVirtualFieldKey()),
+            fields,
+            requestFields,
+            virtualFields,
             allFields,
-            fieldMetadata: new Map(allFields.map(propertyKey => [propertyKey, this.getFieldMetadata(propertyKey)] as const)),
+            fieldMetadata,
+            fieldEntries: entries(fields),
+            requestFieldEntries: entries(requestFields),
+            virtualFieldEntries: entries(virtualFields),
         }
         return this
     }
@@ -100,6 +114,10 @@ export class CargoClassMetadata {
         return this.resolved?.fields ?? this.getFieldListByKey(this.getFieldKey())
     }
 
+    getFieldEntries(): FieldEntry[] {
+        return this.resolved?.fieldEntries ?? this.getFieldList().map(property => ({ property, meta: this.getFieldMetadata(property) }))
+    }
+
     setFieldList(propertyKey: string | symbol): void {
         this.setFieldListByKey(this.getFieldKey(), propertyKey)
     }
@@ -108,12 +126,20 @@ export class CargoClassMetadata {
         return this.resolved?.requestFields ?? this.getFieldListByKey(this.getRequestFieldKey())
     }
 
+    getRequestFieldEntries(): FieldEntry[] {
+        return this.resolved?.requestFieldEntries ?? this.getRequestFieldList().map(property => ({ property, meta: this.getFieldMetadata(property) }))
+    }
+
     setRequestFieldList(propertyKey: string | symbol): void {
         this.setFieldListByKey(this.getRequestFieldKey(), propertyKey)
     }
 
     getVirtualFieldList(): (string | symbol)[] {
         return this.resolved?.virtualFields ?? this.getFieldListByKey(this.getVirtualFieldKey())
+    }
+
+    getVirtualFieldEntries(): FieldEntry[] {
+        return this.resolved?.virtualFieldEntries ?? this.getVirtualFieldList().map(property => ({ property, meta: this.getFieldMetadata(property) }))
     }
 
     setVirtualFieldList(propertyKey: string | symbol): void {

@@ -4,8 +4,8 @@ export type HttpRun = {
     summaries: { scenario: string; implementation: string; 'requests/sec': number }[]
 }
 
-/** The `--json` output of inprocess.js. */
-export type InProcessRun = {
+/** The `--json` output of inline/benchmark.js. */
+export type InlineRun = {
     results: { scenario: string; 'ops/sec': number }[]
 }
 
