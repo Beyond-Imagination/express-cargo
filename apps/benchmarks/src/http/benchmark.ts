@@ -519,5 +519,6 @@ async function main(): Promise<void> {
 
 main().catch(error => {
     console.error(error)
-    process.exitCode = 1
+    // Importing ./app starts the server, and an error outside main's cleanup would leave it keeping the process alive.
+    process.exit(1)
 })
