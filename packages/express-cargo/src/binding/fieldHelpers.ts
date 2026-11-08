@@ -24,16 +24,22 @@ export function hasCastError(errors: CargoFieldError[], start: number): boolean 
     return false
 }
 
-export function getErrorKey(sourceKey: string, currentKey: string): string {
-    return sourceKey ? `${sourceKey}.${currentKey}` : currentKey
+/**
+ * Prefixes the errors added from `start` onwards with a nested value's path.
+ * Nested objects bind with paths relative to themselves, so a valid request never builds a path string.
+ */
+export function prefixErrors(errors: CargoFieldError[], start: number, path: string): void {
+    for (let i = start; i < errors.length; i++) {
+        errors[i].field = `${path}.${String(errors[i].field)}`
+    }
 }
 
-export function getFieldKey(meta: CargoFieldMetadata, sourceKey: string, errors: CargoFieldError[]): string | undefined {
+export function getFieldKey(meta: CargoFieldMetadata, errors: CargoFieldError[]): string | undefined {
     const metaKey = meta.getKey()
     const key = typeof metaKey === 'string' ? metaKey : metaKey.description
 
     if (!key) {
-        errors.push(new CargoFieldError(getErrorKey(sourceKey, String(metaKey)), 'empty string or symbol is not allowed'))
+        errors.push(new CargoFieldError(String(metaKey), 'empty string or symbol is not allowed'))
         return undefined
     }
 
@@ -41,23 +47,13 @@ export function getFieldKey(meta: CargoFieldMetadata, sourceKey: string, errors:
 }
 
 /**
- * Runs the field's validators. Failures are reported under the same path (parent path + source key)
- * that missing-value and type-cast errors use; the parent path is only joined once a rule fails.
+ * Runs the field's validators. Failures are reported under the source key,
+ * the same path missing-value and type-cast errors use.
  */
-export function validateField(
-    meta: CargoFieldMetadata,
-    property: string | symbol,
-    key: string,
-    sourceKey: string,
-    targetObject: any,
-    errors: CargoFieldError[],
-): void {
+export function validateField(meta: CargoFieldMetadata, property: string | symbol, key: string, targetObject: any, errors: CargoFieldError[]): void {
     for (const rule of meta.getValidators()) {
         const error = rule.validate(targetObject[property], targetObject, key)
-        if (error) {
-            if (sourceKey) error.field = getErrorKey(sourceKey, String(error.field))
-            errors.push(error)
-        }
+        if (error) errors.push(error)
     }
 }
 
@@ -69,7 +65,6 @@ export function validateCastField(
     meta: CargoFieldMetadata,
     property: string | symbol,
     key: string,
-    sourceKey: string,
     targetObject: any,
     errors: CargoFieldError[],
     castStart: number,
@@ -78,12 +73,12 @@ export function validateCastField(
     for (let i = castStart; i < errors.length; i++) {
         if (isCastError(errors[i])) (castPaths ??= []).push(errors[i].field)
     }
-    if (!castPaths) return validateField(meta, property, key, sourceKey, targetObject, errors)
-    if (castPaths.includes(getErrorKey(sourceKey, key))) return
+    if (!castPaths) return validateField(meta, property, key, targetObject, errors)
+    if (castPaths.includes(key)) return
 
     // The field's own value cast; drop validator errors (e.g. from @Each) on elements that failed to cast.
     const validatorStart = errors.length
-    validateField(meta, property, key, sourceKey, targetObject, errors)
+    validateField(meta, property, key, targetObject, errors)
     let kept = validatorStart
     for (let i = validatorStart; i < errors.length; i++) {
         if (!castPaths.includes(errors[i].field)) errors[kept++] = errors[i]
@@ -98,7 +93,6 @@ export function handleMissing(
     value: any,
     targetObject: any,
     errors: CargoFieldError[],
-    sourceKey: string,
 ): boolean {
     if (value !== undefined && value !== null) {
         return false
@@ -114,6 +108,6 @@ export function handleMissing(
         return true
     }
 
-    errors.push(new CargoFieldError(getErrorKey(sourceKey, key), `${key} is required`))
+    errors.push(new CargoFieldError(key, `${key} is required`))
     return true
 }

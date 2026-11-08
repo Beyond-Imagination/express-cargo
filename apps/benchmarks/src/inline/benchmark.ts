@@ -2,9 +2,12 @@ import { strictEqual } from 'node:assert'
 import { writeFileSync } from 'node:fs'
 import { Request, Response } from 'express'
 import { bindingCargo } from 'express-cargo'
-import { CargoRequest } from './app'
-import { median } from './results'
-import { benchmarkCases, optionValue } from './scenarios'
+// The routes module registers the cargo error handler that answers validation failures.
+import '../testcase/libraries/express-cargo/routes'
+import { CargoRequest } from '../testcase/libraries/express-cargo/types'
+import { median } from '../testcase/common/results'
+import { optionValue } from '../testcase/common/options'
+import { benchmarkCases } from '../testcase/scenarios'
 
 // Calls the express-cargo middleware directly, without HTTP, to measure binding alone.
 // Each sample is `callsPerSample` calls after a warm-up of the same size; the reported value is the median sample.
@@ -73,7 +76,7 @@ function main(): void {
         }
     })
 
-    console.log(`Measured express-cargo binding in-process: ${samples} samples of ${callsPerSample} calls after ${callsPerSample} warm-up calls.`)
+    console.log(`Measured express-cargo binding inline: ${samples} samples of ${callsPerSample} calls after ${callsPerSample} warm-up calls.`)
     console.table(results)
 
     if (jsonFileName !== undefined) {

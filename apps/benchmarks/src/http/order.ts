@@ -1,8 +1,9 @@
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { HttpRun, median, range } from './results'
-import { benchmarkCases, routes } from './scenarios'
+import { HttpRun, median, range } from '../testcase/common/results'
+import { routes } from '../testcase/common/options'
+import { benchmarkCases } from '../testcase/scenarios'
 
 // Runs the HTTP benchmark once per route order (every permutation), to show how much the
 // measurement position moves each implementation's throughput. Even rounds run the orders in reverse.
@@ -33,6 +34,7 @@ function main(): void {
                     join(__dirname, 'benchmark.js'),
                     callsArgument ?? '20000',
                     maxConcurrencyArgument ?? '1000',
+                    '1',
                     `--order=${orderOption}`,
                     `--json=${file}`,
                 ],
