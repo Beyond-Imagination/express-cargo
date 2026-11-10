@@ -30,3 +30,48 @@ jobs:
 
             -   name: Test
                 run: pnpm test
+
+    # Temporal support depends on the runtime: Node.js 26 ships Temporal, Node.js 24 has it only behind a flag
+    # (still treated as unsupported), and Node.js 20 and 22 have none. Node.js 20 runs the full suite above.
+    node-versions:
+        name: express-cargo on Node.js ${{ matrix.label }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    -   node: 22
+                        label: '22'
+                    -   node: 24
+                        label: '24'
+                    -   node: 24
+                        label: '24 --harmony-temporal'
+                        node-flags: '--harmony-temporal'
+                    -   node: 26
+                        label: '26'
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   uses: pnpm/action-setup@v4
+                name: Install pnpm
+                with:
+                    run_install: false
+
+            -   name: Install Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: ${{ matrix.node }}
+                    cache: 'pnpm'
+
+            -   name: Install dependencies
+                run: pnpm install
+
+            -   name: Build express-cargo
+                run: pnpm --filter express-cargo build
+
+            # V8 flags such as --harmony-temporal are not allowed in NODE_OPTIONS, so jest is started with node directly.
+            -   name: Test express-cargo
+                working-directory: packages/express-cargo
+                run: node ${{ matrix.node-flags }} node_modules/jest/bin/jest.js
