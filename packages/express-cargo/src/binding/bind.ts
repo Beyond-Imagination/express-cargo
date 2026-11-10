@@ -126,6 +126,14 @@ function bindElements(
     })
 }
 
+/** Cast error messages for an array given to a primitive field, matching each type's own cast error. */
+const PRIMITIVE_ARRAY_MESSAGES = new Map<unknown, string>([
+    [String, 'must be a string'],
+    [Number, 'must be a valid number'],
+    [Boolean, 'must be a boolean'],
+    [Date, 'must be a valid date'],
+])
+
 /**
  * Main transformation pipeline that converts plain objects/values into class instances or primitives.
  */
@@ -146,9 +154,14 @@ function typeCasting(
         return value
     }
 
-    if (baseType === Boolean && Array.isArray(value)) {
-        errors.push(castError(key, `${key} must be a boolean`))
-        return undefined
+    // A primitive field must not take an array, such as a repeated query key (`?name=a&name=b`).
+    // Without this check the array branch below would pass it through unchanged.
+    if (Array.isArray(value)) {
+        const arrayMessage = PRIMITIVE_ARRAY_MESSAGES.get(baseType)
+        if (arrayMessage) {
+            errors.push(castError(key, `${key} ${arrayMessage}`))
+            return undefined
+        }
     }
 
     // Handle Array types: Recursively process each element
