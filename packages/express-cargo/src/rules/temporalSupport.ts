@@ -1,5 +1,5 @@
 import { List, Type } from '../decorators'
-import { isTemporalSupported, TEMPORAL_MIN_NODE_MAJOR, temporalTypeName } from '../dateLike'
+import { isTemporalSupported, temporalAliasName, TEMPORAL_MIN_NODE_MAJOR, temporalTypeName } from '../dateLike'
 import { isClass } from '../utils'
 import { TypeOptions } from '../types'
 import { FieldRuleFn, FieldState } from './types'
@@ -31,7 +31,7 @@ function declaredTypes(s: FieldState): unknown[] {
 const temporalNeedsSupportedRuntime: FieldRuleFn = s => {
     if (isTemporalSupported()) return null
     for (const type of declaredTypes(s)) {
-        const name = temporalTypeName(type)
+        const name = typeof type === 'string' ? temporalAliasName(type) : temporalTypeName(type)
         if (name !== undefined) {
             return `Temporal.${name} fields require Node.js ${TEMPORAL_MIN_NODE_MAJOR} or later with built-in Temporal`
         }

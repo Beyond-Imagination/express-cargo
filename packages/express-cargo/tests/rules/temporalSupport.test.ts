@@ -1,5 +1,6 @@
 import { Body, List, Type } from '../../src'
 import { isTemporalSupported } from '../../src/dateLike'
+import { CargoClassMetadata } from '../../src/metadata'
 import { fakeTemporalType } from '../dateLike/fakeTemporal'
 import { expectViolation, validateCargoSchema } from './testUtils'
 
@@ -38,6 +39,16 @@ const MESSAGE = 'Temporal.PlainDate fields require Node.js 26 or later with buil
         expectViolation(() => validateCargoSchema(ListDto), 'dues', MESSAGE)
     })
 
+    it('rejects a Temporal type name given to @List', () => {
+        class ListNameDto {
+            @Body()
+            @List('plainDate')
+            dues!: string[]
+        }
+
+        expectViolation(() => validateCargoSchema(ListNameDto), 'dues', MESSAGE)
+    })
+
     const realTemporal = (globalThis as { Temporal?: { PlainDate: new () => object } }).Temporal
     ;(realTemporal ? it : it.skip)('rejects the Temporal of a runtime it does not support, such as Node.js 24 with a flag', () => {
         class FlaggedDto {
@@ -47,6 +58,16 @@ const MESSAGE = 'Temporal.PlainDate fields require Node.js 26 or later with buil
         }
 
         expectViolation(() => validateCargoSchema(FlaggedDto), 'due', MESSAGE)
+    })
+
+    it('leaves a Temporal list element unset', () => {
+        class ListNameDto {
+            @Body()
+            @List('plainDate')
+            dues!: string[]
+        }
+
+        expect(new CargoClassMetadata(ListNameDto.prototype).getFieldMetadata('dues').getArrayElementType()).toBeUndefined()
     })
 
     it('accepts fields without Temporal types', () => {

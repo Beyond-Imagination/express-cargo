@@ -1,6 +1,7 @@
 import { CargoClassMetadata } from '../metadata'
-import { ArrayElementType, CargoErrorMessage, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk } from '../types'
+import { ArrayElementType, CargoErrorMessage, ValidArrayElementType, TypedPropertyDecorator, TypeOptions, TypeResolver, TypeThunk } from '../types'
 import { ValidatorRule } from '../validatorRule'
+import { isTemporalSupported, temporalAliasName } from '../dateLike'
 
 const TYPE_MAP = {
     string: String,
@@ -10,6 +11,17 @@ const TYPE_MAP = {
 } as const
 
 /**
+ * Resolves a `@List` type name to its constructor. A Temporal name resolves to undefined where Temporal is
+ * unsupported; the schema rule for Temporal then reports the field.
+ */
+function resolveListTypeName(name: string): ValidArrayElementType | undefined {
+    if (Object.prototype.hasOwnProperty.call(TYPE_MAP, name)) return TYPE_MAP[name as keyof typeof TYPE_MAP]
+    const temporalName = temporalAliasName(name)
+    if (temporalName === undefined || !isTemporalSupported()) return undefined
+    return (globalThis as unknown as { Temporal: Record<string, ValidArrayElementType> }).Temporal[temporalName]
+}
+
+/**
  * Specifies the type of elements in an array property.
  * @param elementType - The constructor or type name of the array elements.
  */
@@ -17,8 +29,8 @@ export function List(elementType: ArrayElementType): TypedPropertyDecorator<Arra
     return (target: any, propertyKey: string | symbol) => {
         const classMeta = new CargoClassMetadata(target)
         const fieldMeta = classMeta.getFieldMetadata(propertyKey)
-        const actualType = typeof elementType === 'string' ? TYPE_MAP[elementType] : elementType
-        fieldMeta.setArrayElementType(actualType)
+        const actualType = typeof elementType === 'string' ? resolveListTypeName(elementType) : elementType
+        if (actualType) fieldMeta.setArrayElementType(actualType)
         fieldMeta.pushAppliedDecorator({ name: List.name, category: 'type-helper', args: [elementType] })
         classMeta.setFieldMetadata(propertyKey, fieldMeta)
     }

@@ -1,18 +1,33 @@
 import { dateAdapter } from './dateAdapter'
+import { createTemporalAdapter } from './temporalAdapter'
+import { isTemporalSupported } from './temporalSupport'
 import { DateLikeAdapter } from './types'
 
-const adapters: DateLikeAdapter[] = [dateAdapter]
-const adapterByType = new Map<unknown, DateLikeAdapter>(adapters.flatMap(adapter => adapter.types.map(type => [type, adapter] as const)))
+let adapters: DateLikeAdapter[] | undefined
+let adapterByType: Map<unknown, DateLikeAdapter> | undefined
+
+/** Builds the adapter list on first use rather than at import. */
+function registry(): Map<unknown, DateLikeAdapter> {
+    if (!adapterByType) {
+        adapters = [dateAdapter]
+        if (isTemporalSupported()) {
+            adapters.push(createTemporalAdapter((globalThis as unknown as { Temporal: Record<string, unknown> }).Temporal))
+        }
+        adapterByType = new Map(adapters.flatMap(adapter => adapter.types.map(type => [type, adapter] as const)))
+    }
+    return adapterByType
+}
 
 /** The adapter that binds the given constructor, or undefined when it is not a date-like type. */
 export function adapterForType(type: unknown): DateLikeAdapter | undefined {
-    return adapterByType.get(type)
+    return (adapterByType ?? registry()).get(type)
 }
 
 /** The adapter that owns the given value, or undefined when it is not a date-like value. */
 export function adapterForValue(value: unknown): DateLikeAdapter | undefined {
     if (typeof value !== 'object' || value === null) return undefined
-    for (const adapter of adapters) {
+    if (!adapters) registry()
+    for (const adapter of adapters!) {
         if (adapter.ownsValue(value)) return adapter
     }
     return undefined

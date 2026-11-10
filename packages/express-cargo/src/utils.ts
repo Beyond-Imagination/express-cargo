@@ -1,5 +1,5 @@
 import { ClassConstructor } from './types'
-import { adapterForType, adapterForValue, temporalTypeName } from './dateLike'
+import { adapterForType, adapterForValue, dateAdapter, temporalTypeName } from './dateLike'
 
 const IS_CLASS_CACHE = new WeakMap<object, boolean>()
 
@@ -58,6 +58,10 @@ export function isUserDefinedClass(value: unknown): value is ClassConstructor {
     return verdict
 }
 
+function isPlainOrArray(value: object): boolean {
+    return Array.isArray(value) || value.constructor === Object
+}
+
 export function isDeepEqual(obj1: any, obj2: any): boolean {
     if (obj1 === obj2) return true
 
@@ -71,10 +75,17 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
         }
 
         // Date-like values have no enumerable fields to compare, so their adapter decides.
-        const adapter = adapterForValue(a)
-        if (adapter && adapter.ownsValue(b)) {
-            if (!adapter.equals(a, b)) return false
-            continue
+        // A Temporal value never equals a value of another kind, such as `{}`, which has no fields either.
+        // Plain objects and arrays, the common case, skip the adapter lookup.
+        if (!isPlainOrArray(a) || !isPlainOrArray(b)) {
+            const adapterA = adapterForValue(a)
+            const adapterB = adapterForValue(b)
+            if (adapterA && adapterA === adapterB) {
+                if (!adapterA.equals(a, b)) return false
+                continue
+            }
+            // Only Date keeps falling back to the key comparison below, as it always has.
+            if ((adapterA && adapterA !== dateAdapter) || (adapterB && adapterB !== dateAdapter)) return false
         }
 
         // Check if both are arrays or neither (for accuracy and performance)

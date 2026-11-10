@@ -224,7 +224,7 @@ function typeCasting(
     // Date-like types: checked after the primitives so the common casts pay nothing for it.
     const dateLikeAdapter = adapterForType(targetClass)
     if (dateLikeAdapter) {
-        const cast = dateLikeAdapter.cast(targetClass, value)
+        const cast = dateLikeAdapter.cast(targetClass, value, currentSource)
         if (cast === INVALID_CAST) {
             errors.push(castError(key, `${key} ${dateLikeAdapter.invalidMessage(targetClass)}`))
             return undefined

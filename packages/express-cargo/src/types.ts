@@ -18,7 +18,17 @@ export type Source = 'body' | 'query' | 'params' | 'header' | 'session' | 'file'
 export type ClassConstructor<T = any> = new (...args: any[]) => T
 
 export type ValidArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
-export type ArrayElementType = ValidArrayElementType | 'string' | 'number' | 'boolean' | 'date'
+/** `@List` type names for Temporal element types. They bind only on runtimes that support Temporal. */
+export type TemporalListAlias =
+    | 'instant'
+    | 'zonedDateTime'
+    | 'plainDateTime'
+    | 'plainDate'
+    | 'plainTime'
+    | 'plainYearMonth'
+    | 'plainMonthDay'
+    | 'duration'
+export type ArrayElementType = ValidArrayElementType | 'string' | 'number' | 'boolean' | 'date' | TemporalListAlias
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 export type HashAlgorithm = 'md5' | 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'crc32' | 'crc32b'
 

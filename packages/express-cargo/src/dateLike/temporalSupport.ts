@@ -34,13 +34,27 @@ export function isTemporalSupported(): boolean {
     return supported
 }
 
+const TEMPORAL_TYPE_NAME_CACHE = new WeakMap<object, string | null>()
+
 /**
  * The Temporal type name of a constructor, such as `"PlainDate"`, or undefined when it is not a Temporal type.
  * It reads the prototype's `Symbol.toStringTag` instead of the `Temporal` global,
  * so it also recognizes Temporal types where express-cargo does not support them, such as a polyfill.
  */
 export function temporalTypeName(type: unknown): string | undefined {
-    if (typeof type !== 'function' || typeof type.prototype !== 'object' || type.prototype === null) return undefined
+    if (typeof type !== 'function') return undefined
+
+    // Cached because deep equality and Temporal casts ask this for every value they see.
+    let name = TEMPORAL_TYPE_NAME_CACHE.get(type)
+    if (name === undefined) {
+        name = readTemporalTypeName(type) ?? null
+        TEMPORAL_TYPE_NAME_CACHE.set(type, name)
+    }
+    return name ?? undefined
+}
+
+function readTemporalTypeName(type: { prototype?: unknown }): string | undefined {
+    if (typeof type.prototype !== 'object' || type.prototype === null) return undefined
     const tag = Object.prototype.toString.call(type.prototype)
     return tag.startsWith('[object Temporal.') ? tag.slice('[object Temporal.'.length, -1) : undefined
 }
