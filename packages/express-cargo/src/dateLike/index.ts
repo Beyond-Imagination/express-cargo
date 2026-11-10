@@ -1,3 +1,5 @@
 export { adapterForType, adapterForValue, compareDateLike } from './registry'
+export { detectTemporal, isTemporalSupported, temporalTypeName, TEMPORAL_MIN_NODE_MAJOR } from './temporalSupport'
+export type { TemporalEnvironment } from './temporalSupport'
 export { INVALID_CAST } from './types'
 export type { DateLikeAdapter } from './types'

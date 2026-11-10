@@ -1,5 +1,5 @@
 import { ClassConstructor } from './types'
-import { adapterForType, adapterForValue } from './dateLike'
+import { adapterForType, adapterForValue, temporalTypeName } from './dateLike'
 
 const IS_CLASS_CACHE = new WeakMap<object, boolean>()
 
@@ -51,7 +51,8 @@ export function isUserDefinedClass(value: unknown): value is ClassConstructor {
 
     let verdict = IS_USER_DEFINED_CLASS_CACHE.get(value)
     if (verdict === undefined) {
-        verdict = isClass(value) && !NON_DESCENDABLE_TYPES.has(value) && !adapterForType(value)
+        // Temporal types are leaves even where they are unsupported; a schema rule reports those instead.
+        verdict = isClass(value) && !NON_DESCENDABLE_TYPES.has(value) && !adapterForType(value) && temporalTypeName(value) === undefined
         IS_USER_DEFINED_CLASS_CACHE.set(value, verdict)
     }
     return verdict

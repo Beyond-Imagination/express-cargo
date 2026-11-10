@@ -8,6 +8,7 @@ import { TYPE_HELPER_DUPLICATION_RULES } from './typeHelperDuplication'
 import { MISSING_HANDLER_RULES } from './missingHandler'
 import { TRANSFORMER_PRIORITY_RULES } from './transformerPriority'
 import { CROSS_FIELD_RULES } from './crossField'
+import { TEMPORAL_SUPPORT_RULES } from './temporalSupport'
 
 /** All field-level rule implementations currently active. */
 const FIELD_RULES: readonly FieldRuleFn[] = [
@@ -19,6 +20,7 @@ const FIELD_RULES: readonly FieldRuleFn[] = [
     ...MISSING_HANDLER_RULES,
     ...TRANSFORMER_PRIORITY_RULES,
     ...CROSS_FIELD_RULES,
+    ...TEMPORAL_SUPPORT_RULES,
 ]
 
 /** Single RuleChecker that runs every active field rule. */
