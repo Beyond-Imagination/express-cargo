@@ -6,6 +6,7 @@ import { CargoFile } from '../fileHandler'
 import { validateAnalysis } from '../rules'
 import { isClass, isUserDefinedClass } from '../utils'
 import { analyzeCargoSchema } from '../analysis'
+import { adapterForType, INVALID_CAST } from '../dateLike'
 import { castError, getFieldKey, hasCastError, prefixErrors, validateCastField, validateField, handleMissing } from './fieldHelpers'
 
 function transformSource(
@@ -131,7 +132,6 @@ const PRIMITIVE_ARRAY_MESSAGES = new Map<unknown, string>([
     [String, 'must be a string'],
     [Number, 'must be a valid number'],
     [Boolean, 'must be a boolean'],
-    [Date, 'must be a valid date'],
 ])
 
 /**
@@ -157,7 +157,9 @@ function typeCasting(
     // A primitive field must not take an array, such as a repeated query key (`?name=a&name=b`).
     // Without this check the array branch below would pass it through unchanged.
     if (Array.isArray(value)) {
-        const arrayMessage = PRIMITIVE_ARRAY_MESSAGES.get(baseType)
+        // `Array` fields are the common case here, so they skip the adapter lookup.
+        const arrayMessage =
+            PRIMITIVE_ARRAY_MESSAGES.get(baseType) ?? (baseType === Array ? undefined : adapterForType(baseType)?.invalidMessage(baseType))
         if (arrayMessage) {
             errors.push(castError(key, `${key} ${arrayMessage}`))
             return undefined
@@ -217,13 +219,17 @@ function typeCasting(
             return undefined
         }
         return value === true || value === 'true'
-    } else if (targetClass === Date) {
-        const parsedDate = new Date(value)
-        if (isNaN(parsedDate.getTime())) {
-            errors.push(castError(key, `${key} must be a valid date`))
+    }
+
+    // Date-like types: checked after the primitives so the common casts pay nothing for it.
+    const dateLikeAdapter = adapterForType(targetClass)
+    if (dateLikeAdapter) {
+        const cast = dateLikeAdapter.cast(targetClass, value)
+        if (cast === INVALID_CAST) {
+            errors.push(castError(key, `${key} ${dateLikeAdapter.invalidMessage(targetClass)}`))
             return undefined
         }
-        return parsedDate
+        return cast
     }
 
     // Recursive binding: Transform nested plain objects into class instances

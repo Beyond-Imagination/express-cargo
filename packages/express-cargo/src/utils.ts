@@ -1,4 +1,5 @@
 import { ClassConstructor } from './types'
+import { adapterForType, adapterForValue } from './dateLike'
 
 const IS_CLASS_CACHE = new WeakMap<object, boolean>()
 
@@ -34,7 +35,11 @@ function computeIsClass(fn: (...args: unknown[]) => unknown): boolean {
 // `Object` is included because reflect-metadata falls back to it for unresolvable
 // design:type entries; `Array` guards against a malformed `@List(Array)`.
 // Both pass the isClass heuristic but should never be descended into.
-const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
+// Date-like types (`Date`) are leaves too; their adapters decide that.
+const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Object, Array])
+
+// Cached because binding asks this for every nested object and list element class on each request.
+const IS_USER_DEFINED_CLASS_CACHE = new WeakMap<object, boolean>()
 
 /**
  * Returns true when a value is a user-defined class worth descending into (a nested DTO),
@@ -42,7 +47,14 @@ const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Date, O
  * treated as leaves. Shared by schema analysis (traversal) and binding (recursive binding).
  */
 export function isUserDefinedClass(value: unknown): value is ClassConstructor {
-    return isClass(value) && !NON_DESCENDABLE_TYPES.has(value)
+    if (typeof value !== 'function') return false
+
+    let verdict = IS_USER_DEFINED_CLASS_CACHE.get(value)
+    if (verdict === undefined) {
+        verdict = isClass(value) && !NON_DESCENDABLE_TYPES.has(value) && !adapterForType(value)
+        IS_USER_DEFINED_CLASS_CACHE.set(value, verdict)
+    }
+    return verdict
 }
 
 export function isDeepEqual(obj1: any, obj2: any): boolean {
@@ -57,9 +69,10 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
             return false
         }
 
-        // Handle Date objects specifically
-        if (a instanceof Date && b instanceof Date) {
-            if (a.getTime() !== b.getTime()) return false
+        // Date-like values have no enumerable fields to compare, so their adapter decides.
+        const adapter = adapterForValue(a)
+        if (adapter && adapter.ownsValue(b)) {
+            if (!adapter.equals(a, b)) return false
             continue
         }
 

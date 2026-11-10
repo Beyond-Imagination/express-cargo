@@ -1,6 +1,7 @@
 import { CargoErrorMessage, TypedPropertyDecorator } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
+import { compareDateLike } from '../../dateLike'
 
 /**
  * Checks if the Date value is greater than or equal to the given minimum date.
@@ -18,7 +19,8 @@ export function MinDate(min: Date | (() => Date), message?: CargoErrorMessage): 
                 'minDate',
                 (value: unknown) => {
                     minDate = typeof min === 'function' ? min() : min
-                    return value instanceof Date && !isNaN(value.getTime()) && value >= minDate
+                    const order = compareDateLike(value, minDate)
+                    return order !== undefined && order >= 0
                 },
                 message || (() => `${String(propertyKey)} must be after ${minDate}`),
             ),
@@ -42,7 +44,8 @@ export function MaxDate(max: Date | (() => Date), message?: CargoErrorMessage): 
                 'maxDate',
                 (value: unknown) => {
                     maxDate = typeof max === 'function' ? max() : max
-                    return value instanceof Date && !isNaN(value.getTime()) && value <= maxDate
+                    const order = compareDateLike(value, maxDate)
+                    return order !== undefined && order <= 0
                 },
                 message || (() => `${String(propertyKey)} must be before ${maxDate}`),
             ),
