@@ -1,5 +1,6 @@
 import { adapterForType, adapterForValue, compareDateLike, INVALID_CAST } from '../../src/dateLike'
 import { isDeepEqual, isUserDefinedClass } from '../../src/utils'
+import { fakeTemporalType } from './fakeTemporal'
 
 describe('Date adapter', () => {
     const adapter = adapterForType(Date)!
@@ -27,6 +28,16 @@ describe('Date adapter', () => {
         expect(compareDateLike(feb, jan)).toBe(1)
         expect(compareDateLike(jan, new Date('2026-01-01'))).toBe(0)
         expect(compareDateLike(feb, jan.getTime())).toBe(1)
+    })
+
+    it('cannot order a date against a Temporal bound, whose valueOf() would throw', () => {
+        const temporalBound = new (fakeTemporalType('PlainDate'))()
+        Object.defineProperty(temporalBound, 'valueOf', {
+            value: () => {
+                throw new TypeError('use compare() or equals()')
+            },
+        })
+        expect(compareDateLike(new Date('2026-01-01'), temporalBound)).toBeUndefined()
     })
 
     it('cannot order invalid dates or non-dates', () => {

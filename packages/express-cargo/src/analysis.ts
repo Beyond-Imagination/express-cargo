@@ -1,6 +1,6 @@
 import { CargoClassMetadata } from './metadata'
-import { AnalysisResult, ClassConstructor, TypeThunk } from './types'
-import { isUserDefinedClass } from './utils'
+import { AnalysisResult, ClassConstructor } from './types'
+import { isUserDefinedClass, staticTypeTarget } from './utils'
 
 /**
  * Walks the `@Type` / `@List` references on a class's fields and yields every nested class that should also be validated.
@@ -13,20 +13,9 @@ function collectNestedClasses(classMeta: CargoClassMetadata): ClassConstructor[]
 
         const typeFn = fieldMeta.getTypeFn()
         if (typeFn) {
-            // @Type(User) — class passed directly. Calling it as a Thunk would throw
-            // (ES6 class can't be invoked without `new`), so handle it before the Thunk path.
-            if (isUserDefinedClass(typeFn)) {
-                nested.push(typeFn)
-            } else if (typeFn.length === 0) {
-                // @Type(() => Foo) — Thunk form. A Resolver declares a parameter, so the arity
-                // check already excludes it; a zero-arg function may still read runtime data.
-                try {
-                    const result = (typeFn as TypeThunk)()
-                    if (isUserDefinedClass(result)) nested.push(result)
-                } catch {
-                    // Needs runtime data; resolved during binding instead.
-                }
-            }
+            // @Type(User) or @Type(() => User); a resolver that reads the request is resolved during binding instead.
+            const target = staticTypeTarget(typeFn)
+            if (isUserDefinedClass(target)) nested.push(target)
 
             // Discriminator subTypes are static — but still guard against malformed entries.
             const options = fieldMeta.getTypeOptions()

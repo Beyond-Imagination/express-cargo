@@ -21,6 +21,12 @@ export interface FieldState {
     hasVirtual: boolean
     sourceKey: string | symbol
     siblingFields: ReadonlySet<string | symbol>
+    /** The `@Type` argument (class, thunk or resolver), if any. */
+    typeFn: unknown
+    /** The `@List` element type after resolving type names such as `'date'`, if any. */
+    elementType: unknown
+    /** The `@Default` value, if any. */
+    defaultValue: unknown
 }
 
 /** A single field-level rule. Returns a violation message, or `null` if the field passes. */

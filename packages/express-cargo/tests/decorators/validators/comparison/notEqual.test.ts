@@ -43,3 +43,20 @@ describe('@NotEqual decorator', () => {
         expect(notEqualRule).toBeUndefined()
     })
 })
+
+describe('@NotEqual with dates', () => {
+    class DateDto {
+        @NotEqual(new Date('2026-01-01'))
+        at!: Date
+    }
+    const rule = new CargoClassMetadata(DateDto.prototype)
+        .getFieldMetadata('at')
+        .getValidators()!
+        .find(v => v.type === 'notEqual')!
+
+    it('compares a parsed date by its time instead of by reference', () => {
+        expect(rule.validate(new Date('2026-01-01'))).toBeInstanceOf(CargoFieldError)
+        expect(rule.validate(new Date('2026-01-02'))).toBeNull()
+        expect(rule.validate({})).toBeNull()
+    })
+})

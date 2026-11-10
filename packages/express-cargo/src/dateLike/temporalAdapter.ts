@@ -1,4 +1,4 @@
-import { temporalTypeName } from './temporalSupport'
+import { temporalTypeName, temporalValueName } from './temporalSupport'
 import { DateLikeAdapter, INVALID_CAST } from './types'
 
 /** The Temporal types express-cargo binds, by their name under the `Temporal` namespace. */
@@ -42,12 +42,6 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 function isIsoCalendar(value: object): boolean {
     const calendarId = (value as { calendarId?: string }).calendarId
     return calendarId === undefined || calendarId === 'iso8601'
-}
-
-/** The Temporal type name of a value, such as `"PlainDate"`, or undefined when it is not a Temporal instance. */
-function temporalValueName(value: unknown): string | undefined {
-    if (typeof value !== 'object' || value === null) return undefined
-    return temporalTypeName(value.constructor)
 }
 
 /**

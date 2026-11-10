@@ -33,6 +33,12 @@ export function adapterForValue(value: unknown): DateLikeAdapter | undefined {
     return undefined
 }
 
+/** True when two date-like values of the same kind hold the same value, such as two PlainDates for the same day. */
+export function equalsDateLike(a: unknown, b: unknown): boolean {
+    const adapter = adapterForValue(a)
+    return adapter !== undefined && adapter === adapterForValue(b) && adapter.equals(a, b)
+}
+
 /**
  * Orders a date-like value against a bound, through the adapter that owns the value.
  * Returns undefined when the value is not date-like or the adapter cannot order the pair.

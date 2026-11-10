@@ -1,10 +1,11 @@
+import { temporalValueName } from './temporalSupport'
 import { DateLikeAdapter, INVALID_CAST } from './types'
 
 function isValidDate(value: unknown): value is Date {
     return value instanceof Date && !isNaN(value.getTime())
 }
 
-/** The built-in `Date`. Behaves exactly as express-cargo always has. */
+/** The built-in `Date`, cast and compared as express-cargo always has. */
 export const dateAdapter: DateLikeAdapter = {
     types: [Date],
 
@@ -13,7 +14,13 @@ export const dateAdapter: DateLikeAdapter = {
     },
 
     cast(_type, value) {
-        const parsedDate = new Date(value as string | number | Date)
+        // new Date() throws for values that cannot become a number, such as a Temporal value, a Symbol or a BigInt.
+        let parsedDate: Date
+        try {
+            parsedDate = new Date(value as string | number | Date)
+        } catch {
+            return INVALID_CAST
+        }
         return isNaN(parsedDate.getTime()) ? INVALID_CAST : parsedDate
     },
 
@@ -21,11 +28,16 @@ export const dateAdapter: DateLikeAdapter = {
         return 'must be a valid date'
     },
 
-    // Number(b) matches the `value >= min` coercion MinDate and MaxDate always used,
-    // so a timestamp passed from plain JavaScript keeps working.
+    // Number(b) keeps the `value >= min` coercion MinDate and MaxDate always used, so a timestamp bound still works.
+    // A Temporal bound is skipped first, since its valueOf() throws.
     compare(a, b) {
-        if (!isValidDate(a)) return undefined
-        const diff = a.getTime() - Number(b)
+        if (!isValidDate(a) || temporalValueName(b) !== undefined) return undefined
+        let diff: number
+        try {
+            diff = a.getTime() - Number(b)
+        } catch {
+            return undefined // A Symbol or an object without a prototype cannot become a number.
+        }
         return isNaN(diff) ? undefined : Math.sign(diff)
     },
 

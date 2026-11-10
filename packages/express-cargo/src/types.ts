@@ -96,6 +96,15 @@ export type ArrayComparator = (expected: any, actual: any) => boolean
 type ErrorMessageFunction = (property: string | symbol, value: any) => string
 export type CargoErrorMessage = string | ErrorMessageFunction
 
+/**
+ * Any Temporal value, matched by its `Symbol.toStringTag` so it does not need TypeScript's Temporal lib.
+ * `Temporal.PlainDate` and the other Temporal types satisfy it.
+ */
+export type TemporalLike = { readonly [Symbol.toStringTag]: `Temporal.${string}` }
+
+/** A `Temporal.Duration`, matched by its `Symbol.toStringTag`. */
+export type TemporalDurationLike = { readonly [Symbol.toStringTag]: 'Temporal.Duration' }
+
 export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T | null }, propertyKey: K) => void
 
 /** Top-level category that classifies what a decorator does. */

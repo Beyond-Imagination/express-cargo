@@ -20,4 +20,6 @@ export type {
     UuidVersion,
     HashAlgorithm,
     IsUrlOptions,
+    TemporalLike,
+    TemporalDurationLike,
 } from './types'

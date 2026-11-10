@@ -1,5 +1,5 @@
 import { ClassConstructor } from './types'
-import { adapterForType, adapterForValue, temporalTypeName } from './dateLike'
+import { adapterForType, adapterForValue, equalsDateLike, temporalTypeName } from './dateLike'
 
 const IS_CLASS_CACHE = new WeakMap<object, boolean>()
 
@@ -30,6 +30,21 @@ function computeIsClass(fn: (...args: unknown[]) => unknown): boolean {
     const hasPrototype = fn.prototype && fn.prototype.constructor === fn
     const isPascalCase = fn.name && /^[A-Z]/.test(fn.name)
     return Boolean(isPascalCase && hasPrototype)
+}
+
+/**
+ * The class a `@Type` argument names when it is known without request data: the class itself, or what a
+ * zero-argument thunk returns. Undefined for a resolver that reads the request, or a thunk that throws.
+ */
+export function staticTypeTarget(typeFn: unknown): ClassConstructor | undefined {
+    if (isClass(typeFn)) return typeFn
+    if (typeof typeFn !== 'function' || typeFn.length !== 0) return undefined
+    try {
+        const resolved = typeFn()
+        return typeof resolved === 'function' ? resolved : undefined
+    } catch {
+        return undefined
+    }
 }
 
 // `Object` is included because reflect-metadata falls back to it for unresolvable
@@ -74,14 +89,11 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
             return false
         }
 
-        // Date-like values have no enumerable fields to compare, so their adapter decides.
-        // A date-like value never equals a value of another kind, such as `{}`, which has no fields either.
-        // Plain objects and arrays, the common case, skip the adapter lookup.
+        // Date-like values have no fields to compare, so they are equal only to the same kind and value, never to `{}`.
+        // Plain objects and arrays, the common case, skip this lookup.
         if (!isPlainOrArray(a) || !isPlainOrArray(b)) {
-            const adapterA = adapterForValue(a)
-            const adapterB = adapterForValue(b)
-            if (adapterA || adapterB) {
-                if (adapterA !== adapterB || !adapterA!.equals(a, b)) return false
+            if (adapterForValue(a) || adapterForValue(b)) {
+                if (!equalsDateLike(a, b)) return false
                 continue
             }
         }

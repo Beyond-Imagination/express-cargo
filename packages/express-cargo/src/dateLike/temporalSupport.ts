@@ -34,6 +34,11 @@ export function isTemporalSupported(): boolean {
     return supported
 }
 
+/** The Temporal type name of a value, such as `"PlainDate"`, or undefined when it is not a Temporal instance. */
+export function temporalValueName(value: unknown): string | undefined {
+    return typeof value === 'object' && value !== null ? temporalTypeName(value.constructor) : undefined
+}
+
 const TEMPORAL_TYPE_NAME_CACHE = new WeakMap<object, string | null>()
 
 /**

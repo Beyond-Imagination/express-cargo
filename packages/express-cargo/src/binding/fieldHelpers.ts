@@ -1,5 +1,7 @@
 import { CargoFieldError } from '../errors'
 import { CargoFieldMetadata } from '../metadata'
+import { castDateDefault } from '../dateLike'
+import { staticTypeTarget } from '../utils'
 
 // Marks errors raised because a value could not be cast to the field's type. The property is a non-enumerable
 // symbol, so the error stays a plain CargoFieldError for users; a WeakSet lookup measured slower on this path.
@@ -51,10 +53,22 @@ export function getFieldKey(meta: CargoFieldMetadata, errors: CargoFieldError[])
  * the same path missing-value and type-cast errors use.
  */
 export function validateField(meta: CargoFieldMetadata, property: string | symbol, key: string, targetObject: any, errors: CargoFieldError[]): void {
+    const start = errors.length
     for (const rule of meta.getValidators()) {
         const error = rule.validate(targetObject[property], targetObject, key)
-        if (error) errors.push(error)
+        if (error && !hasSameError(errors, start, error)) errors.push(error)
     }
+}
+
+/**
+ * True when this field's validators already reported the same message for the same path, such as a
+ * MinDuration and a MaxDuration both rejecting a value in months. Repeating it adds nothing for the client.
+ */
+function hasSameError(errors: CargoFieldError[], start: number, error: CargoFieldError): boolean {
+    for (let i = start; i < errors.length; i++) {
+        if (errors[i].field === error.field && errors[i].message === error.message) return true
+    }
+    return false
 }
 
 /**
@@ -86,6 +100,18 @@ export function validateCastField(
     errors.length = kept
 }
 
+// The type a field's default is cast to, cached because resolving it runs the @Type thunk.
+const DEFAULT_TYPE = new WeakMap<CargoFieldMetadata, unknown>()
+
+/** The field's default, cast like a request value when the field is date-like (see castDateDefault). */
+function defaultValue(meta: CargoFieldMetadata): unknown {
+    if (!DEFAULT_TYPE.has(meta)) DEFAULT_TYPE.set(meta, staticTypeTarget(meta.getTypeFn()) ?? meta.type)
+    const type = DEFAULT_TYPE.get(meta)
+    const result = castDateDefault(type, meta.getArrayElementType(), meta.getDefault())
+    if ('error' in result) throw new Error(result.error)
+    return result.value
+}
+
 export function handleMissing(
     meta: CargoFieldMetadata,
     property: string | symbol,
@@ -99,7 +125,7 @@ export function handleMissing(
     }
 
     if (meta.getDefault() !== undefined) {
-        targetObject[property] = meta.getDefault()
+        targetObject[property] = defaultValue(meta)
         return true
     }
 
