@@ -48,4 +48,11 @@ describe('Date adapter', () => {
         expect(isDeepEqual({ at: [new Date(0)] }, { at: [new Date(0)] })).toBe(true)
         expect(isDeepEqual({ at: [new Date(0)] }, { at: [new Date(1)] })).toBe(false)
     })
+
+    it('never equals a date to a value of another kind, which may also have no fields', () => {
+        expect(isDeepEqual(new Date(0), {})).toBe(false)
+        expect(isDeepEqual({}, new Date(0))).toBe(false)
+        expect(isDeepEqual(new Date(0), [])).toBe(false)
+        expect(isDeepEqual([new Date(0)], [{}])).toBe(false)
+    })
 })
