@@ -89,8 +89,7 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
             return false
         }
 
-        // Date-like values have no fields to compare, so they are equal only to the same kind and value, never to `{}`.
-        // Plain objects and arrays, the common case, skip this lookup.
+        // Date-like values equal only the same kind and value, never `{}`. Plain objects and arrays skip the lookup.
         if (!isPlainOrArray(a) || !isPlainOrArray(b)) {
             if (adapterForValue(a) || adapterForValue(b)) {
                 if (!equalsDateLike(a, b)) return false

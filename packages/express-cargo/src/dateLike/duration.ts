@@ -30,11 +30,7 @@ export function toDuration(value: unknown): object | undefined {
     }
 }
 
-/**
- * Why a MinDuration/MaxDuration bound cannot be used, or null when it can. A bound in years, months or weeks has no
- * fixed length, so it is rejected; durations without them compare without a start date. The schema rule reports this
- * at startup and the validator throws it as a fallback.
- */
+/** Why a MinDuration/MaxDuration bound cannot be used, or null. Years, months and weeks have no fixed length. */
 export function durationBoundError(name: string, bound: unknown): string | null {
     const duration = toDuration(bound)
     if (duration === undefined) return `@${name} bound ${String(bound)} is not a valid ISO 8601 duration, such as PT5M`

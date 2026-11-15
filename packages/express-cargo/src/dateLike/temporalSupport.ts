@@ -16,11 +16,7 @@ function currentEnvironment(): TemporalEnvironment {
     }
 }
 
-/**
- * True when the runtime is Node.js 26 or later and ships `Temporal`.
- * Both are required: a polyfill on an older Node.js, or the `--harmony-temporal` flag on Node.js 24,
- * provides a `Temporal` global but is not a supported runtime.
- */
+/** True on Node.js 26 or later with `Temporal`; a polyfill or Node.js 24's `--harmony-temporal` does not count. */
 export function detectTemporal(env: TemporalEnvironment = currentEnvironment()): boolean {
     const major = Number(env.nodeVersion?.split('.')[0])
     return major >= TEMPORAL_MIN_NODE_MAJOR && typeof env.globalObject.Temporal === 'object' && env.globalObject.Temporal !== null
@@ -42,9 +38,8 @@ export function temporalValueName(value: unknown): string | undefined {
 const TEMPORAL_TYPE_NAME_CACHE = new WeakMap<object, string | null>()
 
 /**
- * The Temporal type name of a constructor, such as `"PlainDate"`, or undefined when it is not a Temporal type.
- * It reads the prototype's `Symbol.toStringTag` instead of the `Temporal` global,
- * so it also recognizes Temporal types where express-cargo does not support them, such as a polyfill.
+ * The Temporal type name of a constructor, such as `"PlainDate"`. Read from `Symbol.toStringTag`, so it also
+ * recognizes unsupported Temporal types such as a polyfill.
  */
 export function temporalTypeName(type: unknown): string | undefined {
     if (typeof type !== 'function') return undefined

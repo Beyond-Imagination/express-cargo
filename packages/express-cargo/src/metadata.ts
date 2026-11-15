@@ -276,9 +276,8 @@ export class CargoFieldMetadata {
     }
 
     /**
-     * The class the field binds to: its `@Type` target when that is known without request data (a class, or what a
-     * zero-argument thunk returns), otherwise the declared type. A resolved target is cached, since resolving runs the
-     * thunk; a thunk that cannot resolve yet, such as one reading a module still loading, is tried again next time.
+     * The class the field binds to: its static `@Type` target, otherwise the declared type.
+     * A resolved target is cached; a thunk that cannot resolve yet is tried again next time.
      */
     getBoundType(): unknown {
         if (this.boundType !== undefined) return this.boundType

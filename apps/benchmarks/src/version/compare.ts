@@ -60,8 +60,8 @@ function main(): void {
 
     const repositoryRoot = git(process.cwd(), 'rev-parse', '--show-toplevel').trim()
     const sides = [
-        { label: 'base', ref: baseRef, http: [] as HttpRun[], inline: [] as InlineRun[] },
-        { label: 'target', ref: targetRef, http: [] as HttpRun[], inline: [] as InlineRun[] },
+        { label: 'base', ref: baseRef, http: [] as HttpRun[], inline: [] as InlineRun[], dates: [] as InlineRun[] },
+        { label: 'target', ref: targetRef, http: [] as HttpRun[], inline: [] as InlineRun[], dates: [] as InlineRun[] },
     ].map(side => ({ ...side, commit: git(repositoryRoot, 'rev-parse', '--short', `${side.ref}^{commit}`).trim() }))
     const outputDirectory = `benchmark-results-version-${new Date().toISOString().replace(/[:.]/g, '-')}`
     mkdirSync(outputDirectory)
@@ -85,21 +85,36 @@ function main(): void {
             runScript('../inline/benchmark.js', [`--json=${file}`])
             side.inline.push(JSON.parse(readFileSync(file, 'utf8')))
         })
+        runRounds(inlineRounds, 'dates', (side, file) => {
+            runScript('../inline/dates.js', [`--json=${file}`])
+            side.dates.push(JSON.parse(readFileSync(file, 'utf8')))
+        })
     } finally {
         buildExpressCargo(repositoryRoot, undefined)
     }
 
     const [base, target] = sides
+    // A scenario only one ref runs, such as a Temporal case the base cannot bind, shows '-' on the other side.
     const compareRows = (key: string, valuesOf: (side: (typeof sides)[number]) => number[]) => {
         const before = valuesOf(base)
         const after = valuesOf(target)
+        const both = before.length > 0 && after.length > 0
         return {
-            [`base ${key}`]: Math.round(median(before)),
-            [`target ${key}`]: Math.round(median(after)),
-            change: change(median(before), median(after)),
-            'base range': range(before),
-            'target range': range(after),
+            [`base ${key}`]: before.length > 0 ? Math.round(median(before)) : '-',
+            [`target ${key}`]: after.length > 0 ? Math.round(median(after)) : '-',
+            change: both ? change(median(before), median(after)) : '-',
+            'base range': before.length > 0 ? range(before) : '-',
+            'target range': after.length > 0 ? range(after) : '-',
         }
+    }
+    const inlineRowsOf = (runsOf: (side: (typeof sides)[number]) => InlineRun[]) => {
+        const scenarios = [...new Set(sides.flatMap(side => (runsOf(side)[0]?.results ?? []).map(row => row.scenario)))]
+        return scenarios.map(scenario => ({
+            scenario,
+            ...compareRows('ops/s', side =>
+                runsOf(side).flatMap(run => run.results.filter(row => row.scenario === scenario).map(row => row['ops/sec'])),
+            ),
+        }))
     }
     const httpRows = (base.http[0]?.summaries ?? []).map(({ scenario, implementation }) => ({
         scenario,
@@ -108,17 +123,22 @@ function main(): void {
             side.http.map(run => run.summaries.find(row => row.scenario === scenario && row.implementation === implementation)!['requests/sec']),
         ),
     }))
-    const inlineRows = (base.inline[0]?.results ?? []).map(({ scenario }) => ({
-        scenario,
-        ...compareRows('ops/s', side => side.inline.map(run => run.results.find(row => row.scenario === scenario)!['ops/sec'])),
-    }))
+    const inlineRows = inlineRowsOf(side => side.inline)
+    const dateRows = inlineRowsOf(side => side.dates)
 
     console.log(
-        `\nbase = ${base.ref} (${base.commit}), target = ${target.ref} (${target.commit}). Medians over ${rounds} HTTP and ${inlineRounds} inline rounds.`,
+        `\nbase = ${base.ref} (${base.commit}), target = ${target.ref} (${target.commit}). Medians over ${rounds} HTTP and ${inlineRounds} inline and date rounds.`,
     )
     if (httpRows.length > 0) console.table(httpRows)
     if (inlineRows.length > 0) console.table(inlineRows)
-    const summary = { base: { ref: base.ref, commit: base.commit }, target: { ref: target.ref, commit: target.commit }, httpRows, inlineRows }
+    if (dateRows.length > 0) console.table(dateRows)
+    const summary = {
+        base: { ref: base.ref, commit: base.commit },
+        target: { ref: target.ref, commit: target.commit },
+        httpRows,
+        inlineRows,
+        dateRows,
+    }
     writeFileSync(join(outputDirectory, 'summary.json'), `${JSON.stringify(summary, null, 2)}\n`)
     console.log(`Saved ${outputDirectory}`)
 }

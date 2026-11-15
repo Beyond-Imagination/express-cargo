@@ -13,11 +13,8 @@ import {
 } from '../../dateLike'
 
 /**
- * Orders a value against a MinDate/MaxDate bound. A value that is not a date fails validation, and so does a bound
- * that is not a date at all, such as a function returning undefined when no limit is set, as it always did.
- * A date bound that cannot be compared with the value, such as an Invalid Date or a PlainDateTime bound on a
- * PlainDate field, would fail every request, so it throws a setup error instead. The schema rule reports fixed
- * bounds like these at startup; this catches bounds returned by a function.
+ * Orders a value against a MinDate/MaxDate bound. A non-date value or bound fails validation; a date bound that can
+ * never be compared with the value (Invalid Date, another Temporal type) throws a setup error.
  */
 function checkDateBound(name: string, value: unknown, bound: unknown, passes: (order: number) => boolean): boolean {
     const order = compareDateLike(value, bound)

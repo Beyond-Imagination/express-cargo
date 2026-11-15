@@ -53,10 +53,8 @@ const needsSupportedRuntime: FieldRuleFn = s => {
         if (kind?.startsWith('Temporal.')) return `${kind} fields require ${requirement}`
     }
     // `@Type(() => Temporal.PlainDate)` throws here, so it has no static target.
-    // Limit: only a thunk whose source names `Temporal` is reported. An alias such as
-    // `const T = globalThis.Temporal; @Type(() => T.PlainDate)` throws the same TypeError as a lazy model reference
-    // that is not loaded yet (`@Type(() => models.Duration)` in a circular import), so it cannot be told apart and
-    // passes startup, then fails each request.
+    // Limit: an alias such as `@Type(() => T.PlainDate)` is missed, since it throws like a model not loaded yet;
+    // it passes startup and fails each request.
     if (typeof s.typeFn === 'function' && s.typeFn.length === 0 && /\bTemporal\b/.test(Function.prototype.toString.call(s.typeFn))) {
         return `@Type refers to Temporal, which requires ${requirement}`
     }
@@ -79,9 +77,8 @@ function valueComesFromCode(s: FieldState): boolean {
 }
 
 /**
- * Reports a Temporal validator on a field or list element the binder cannot type, such as `Temporal.PlainDate | null`
- * without @Type, or @Each without @List: the value stays a string, so the validator would fail every request.
- * Date validators are left alone: `Date | null` with @MinDate has always been allowed.
+ * Reports a Temporal validator on a value the binder cannot type (`T | null` without @Type, @Each without @List),
+ * which would fail every request. Date validators are left alone, as before.
  */
 const untypedTemporalField: FieldRuleFn = s => {
     // Without Temporal, needsSupportedRuntime reports these fields already.
@@ -99,11 +96,7 @@ const untypedTemporalField: FieldRuleFn = s => {
 
 // ---- Validators that do not fit the field ---------------------------------------------------------------------
 
-/**
- * True for a MinDate/MaxDate bound a Date field can order against. Binding compares with `Number(bound)`, so any
- * value that becomes a finite time passes, as before: a Date, a timestamp, a BigInt, a Date from another realm, or
- * a date object with valueOf() such as a dayjs or moment value. A date string stays a setup error.
- */
+/** True for a Date-field bound that `Number()` turns into a time, as binding compares; a date string is not one. */
 function isDateBound(value: unknown): boolean {
     if (typeof value === 'string') return false
     try {
@@ -114,9 +107,8 @@ function isDateBound(value: unknown): boolean {
 }
 
 /**
- * Reports a fixed value that can never match the field. On a Temporal field that is any other kind, such as
- * `@Equal('2026-11')` on a PlainYearMonth. On a Date field it is a MinDate/MaxDate bound that is not a valid Date or
- * timestamp; Equal and OneOf values on Date fields are left as they were.
+ * Reports a fixed value that can never match the field: another kind on a Temporal field, or a MinDate/MaxDate bound
+ * that is no time on a Date field.
  */
 function valueDoesNotFit(validator: AppliedDecorator, type: unknown): string | null {
     const fieldKind = dateKindOfType(type)

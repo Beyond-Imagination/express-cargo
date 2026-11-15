@@ -6,10 +6,8 @@ import { INVALID_CAST } from './types'
 export type DefaultCast = { value: unknown } | { error: string }
 
 /**
- * Casts a `@Default` like a request value when the field (or, for a list, its element) is date-like, so
- * `@Default('P7D')` on a Duration gives a Duration whether or not the client sent the field. Lists get a new array,
- * so a handler that changes it does not change the next request's default. Other defaults are returned as they are.
- * The schema rule reports errors at startup; binding throws them as a fallback.
+ * Casts a `@Default` like a request value when the field or list element is date-like, e.g. `'P7D'` to a Duration.
+ * Lists get a new array per request. Other defaults are returned as they are.
  */
 export function castDateDefault(type: unknown, elementType: unknown, value: unknown): DefaultCast {
     if (!Array.isArray(value)) return castOne(type, value)

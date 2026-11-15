@@ -151,10 +151,8 @@ function typeCasting(
     analysis: AnalysisResult,
 ): any {
     if (Array.isArray(value) && baseType !== Array) {
-        // A primitive or date field must not take an array, such as a repeated query key (`?name=a&name=b`); without
-        // this the array branch below would pass it through. A @Type target counts for `Date | null`-style fields.
-        // A field with @Transform still gets the array, as it always has, so the transform can pick or join values;
-        // Boolean fields rejected arrays before this check existed and still do.
+        // Primitive and date fields reject arrays such as `?name=a&name=b`. A field with @Transform still gets the
+        // array so the transform can pick or join values; Boolean fields always rejected arrays.
         const castType = baseType === Object ? (meta?.getBoundType() ?? baseType) : baseType
         if (castType === Boolean || !meta?.getTransformer()) {
             const arrayMessage = PRIMITIVE_ARRAY_MESSAGES.get(castType) ?? adapterForType(castType)?.invalidMessage(castType)
@@ -164,8 +162,7 @@ function typeCasting(
             }
         }
 
-        // A declared nested DTO (field or list element) must receive an object, not an array.
-        // The raw value is kept so validators see the same input as before this check existed.
+        // A nested DTO must receive an object; the raw value is kept so validators see it as before.
         if (declaresNestedType(baseType, meta)) {
             errors.push(castError(key, `${key} must be an object`))
             return value

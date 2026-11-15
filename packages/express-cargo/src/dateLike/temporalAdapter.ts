@@ -34,24 +34,15 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
     return proto === Object.prototype || proto === null
 }
 
-/**
- * True when a value uses the ISO 8601 calendar, or has no calendar (Instant, PlainTime, Duration).
- * A client could otherwise pick another calendar (`[u-ca=hebrew]`, `{ calendar: 'hebrew' }`) and change
- * what the year, month and day mean.
- */
+/** True for the ISO 8601 calendar or no calendar, so a client cannot switch to e.g. `[u-ca=hebrew]`. */
 function isIsoCalendar(value: object): boolean {
     const calendarId = (value as { calendarId?: string }).calendarId
     return calendarId === undefined || calendarId === 'iso8601'
 }
 
 /**
- * Binds the built-in Temporal types. Only created on a runtime where {@link isTemporalSupported} is true.
- *
- * - A string is parsed with `Temporal.X.from()` from any source, so Plain types accept and drop a UTC offset
- *   as Temporal does, while a `Z` suffix or a missing time zone is rejected.
- * - A plain object is parsed only from the request body, with `overflow: 'reject'` so `{ month: 2, day: 30 }` fails.
- * - An instance of the same type is kept as it is. Numbers, arrays and other Temporal types are rejected.
- * - Only the ISO 8601 calendar binds; a value in any other calendar is rejected.
+ * Binds the built-in Temporal types on supported runtimes. Strings go through `Temporal.X.from()`; plain objects are
+ * read only from the body, with `overflow: 'reject'`; only the ISO 8601 calendar binds.
  */
 export function createTemporalAdapter(temporal: Record<string, unknown>): DateLikeAdapter {
     const typeByName = new Map<string, TemporalType>()

@@ -1,10 +1,7 @@
 import { temporalAliasName } from './temporalAdapter'
 import { temporalTypeName, temporalValueName } from './temporalSupport'
 
-/**
- * The date kind of a value, `'Date'` or `'Temporal.PlainDate'` and so on, or undefined when it is not a date.
- * Schema rules and validators compare kinds to tell whether a bound or option fits a field.
- */
+/** The date kind of a value, such as `'Date'` or `'Temporal.PlainDate'`, or undefined when it is not a date. */
 export function dateKindOf(value: unknown): string | undefined {
     if (value instanceof Date) return 'Date'
     const name = temporalValueName(value)

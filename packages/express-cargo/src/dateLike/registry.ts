@@ -39,10 +39,7 @@ export function equalsDateLike(a: unknown, b: unknown): boolean {
     return adapter !== undefined && adapter === adapterForValue(b) && adapter.equals(a, b)
 }
 
-/**
- * Orders a date-like value against a bound, through the adapter that owns the value.
- * Returns undefined when the value is not date-like or the adapter cannot order the pair.
- */
+/** Orders a date-like value against a bound, or undefined when they cannot be ordered. */
 export function compareDateLike(value: unknown, bound: unknown): number | undefined {
     const adapter = adapterForValue(value)
     return adapter ? adapter.compare(value, bound) : undefined
