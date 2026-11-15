@@ -1,18 +1,28 @@
 import { CargoErrorMessage, TemporalDurationLike, TemporalLike, TypedPropertyDecorator } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
-import { compareDateLike, compareDurations, describeKind, durationBoundError, hasCalendarUnits, isDurationValue, toDuration } from '../../dateLike'
+import {
+    compareDateLike,
+    compareDurations,
+    dateKindOf,
+    describeKind,
+    durationBoundError,
+    hasCalendarUnits,
+    isDurationValue,
+    toDuration,
+} from '../../dateLike'
 
 /**
- * Orders a value against a MinDate/MaxDate bound. A value that is not a date fails validation.
- * A date with a bound it cannot be compared with, such as an Invalid Date or a PlainDateTime bound on a PlainDate
- * field, would fail every request, so it throws a setup error instead. The schema rule reports fixed bounds like
- * these at startup; this catches bounds returned by a function.
+ * Orders a value against a MinDate/MaxDate bound. A value that is not a date fails validation, and so does a bound
+ * that is not a date at all, such as a function returning undefined when no limit is set, as it always did.
+ * A date bound that cannot be compared with the value, such as an Invalid Date or a PlainDateTime bound on a
+ * PlainDate field, would fail every request, so it throws a setup error instead. The schema rule reports fixed
+ * bounds like these at startup; this catches bounds returned by a function.
  */
 function checkDateBound(name: string, value: unknown, bound: unknown, passes: (order: number) => boolean): boolean {
     const order = compareDateLike(value, bound)
     if (order !== undefined) return passes(order)
-    if (compareDateLike(value, value) !== undefined) {
+    if (dateKindOf(bound) !== undefined && compareDateLike(value, value) !== undefined) {
         const kind = describeKind(bound)
         const shown = kind === String(bound) ? kind : `${String(bound)} (${kind})`
         throw new Error(`@${name} bound ${shown} cannot be compared with a ${describeKind(value)} value`)
@@ -104,7 +114,6 @@ function durationRule(propertyKey: string | symbol, name: 'MinDuration' | 'MaxDu
         },
         (key, value) => {
             // A value in years, months or weeks is about units, not the bound, so it always gets this message.
-            // Min and Max then report the same text, which validateField reports once.
             if (isDurationValue(value) && hasCalendarUnits(value)) {
                 return `${String(key)} must be given in days or smaller units, such as P7D, not in years, months or weeks`
             }

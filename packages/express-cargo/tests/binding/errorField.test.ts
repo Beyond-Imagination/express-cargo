@@ -308,7 +308,9 @@ describe('primitive casting of arrays', () => {
         @Query() @Optional() since?: Date
         @Body() @Optional() @Type(() => Profile) profile?: Profile
         @Body() @Optional() @List(String) tags?: string[]
-        @Query() @Optional() @Transform((value: string) => value.toUpperCase()) code?: string
+        @Query() @Optional() @Transform((value: string | string[]) => (Array.isArray(value) ? value[0] : value).toUpperCase()) code?: string
+        @Query() @Optional() @Type(() => Date) nullableSince?: Date | null
+        @Query() @Optional() @Transform((value: unknown) => value) flag?: boolean
     }
 
     const bindArrays = (query: unknown, body: unknown = {}) => {
@@ -339,9 +341,20 @@ describe('primitive casting of arrays', () => {
         expect(errorsOf(next)).toEqual([{ field: 'tags[1]', message: 'tags[1] must be a string' }])
     })
 
-    it('skips the transformer of a primitive field that received an array', () => {
-        const { next } = bindArrays({ code: ['a', 'b'] })
-        expect(errorsOf(next)).toEqual([{ field: 'code', message: 'code must be a string' }])
+    it('passes an array to the transformer of a primitive field, so it can pick or join values as before', () => {
+        const { req, next } = bindArrays({ code: ['a', 'b'] })
+        expect(next).toHaveBeenCalledWith()
+        expect(getCargo<ArrayInputDTO>(req)!.code).toBe('A')
+    })
+
+    it('still rejects an array for a boolean field with a transformer, as it always did', () => {
+        const { next } = bindArrays({ flag: ['true', 'false'] })
+        expect(errorsOf(next)).toEqual([{ field: 'flag', message: 'flag must be a boolean' }])
+    })
+
+    it('rejects an array for a nullable field typed with @Type, with the type cast error', () => {
+        const { next } = bindArrays({ nullableSince: ['2026-01-01', '2026-02-01'] })
+        expect(errorsOf(next)).toEqual([{ field: 'nullableSince', message: 'nullableSince must be a valid date' }])
     })
 
     it('still binds single values and primitive lists', () => {

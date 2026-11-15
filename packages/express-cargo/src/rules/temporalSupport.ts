@@ -8,7 +8,6 @@ import {
     isTemporalSupported,
     TEMPORAL_MIN_NODE_MAJOR,
 } from '../dateLike'
-import { staticTypeTarget } from '../utils'
 import { AppliedDecorator } from '../types'
 import { FieldRuleFn, FieldState } from './types'
 
@@ -19,14 +18,9 @@ const DATE_BOUNDS: readonly string[] = [MinDate.name, MaxDate.name]
 const DURATION_BOUNDS: readonly string[] = [MinDuration.name, MaxDuration.name]
 const VALUE_CHECKS: readonly string[] = [Equal.name, NotEqual.name, OneOf.name]
 
-/** The class the field binds to: a `@Type` target known without request data, otherwise the declared type. */
-function boundType(s: FieldState): unknown {
-    return staticTypeTarget(s.typeFn) ?? s.fieldType
-}
-
 /** Each validator with one of the names, paired with the type it checks: the field, or the list element for @Each. */
 function validatorsOn(s: FieldState, names: readonly string[]): [AppliedDecorator, unknown][] {
-    const self = s.appliedSelf.filter(d => names.includes(d.name)).map(d => [d, boundType(s)] as [AppliedDecorator, unknown])
+    const self = s.appliedSelf.filter(d => names.includes(d.name)).map(d => [d, s.boundType] as [AppliedDecorator, unknown])
     const each = s.appliedEach.filter(d => names.includes(d.name)).map(d => [d, s.elementType] as [AppliedDecorator, unknown])
     return [...self, ...each]
 }
@@ -54,7 +48,7 @@ const needsSupportedRuntime: FieldRuleFn = s => {
     const requirement = `Node.js ${TEMPORAL_MIN_NODE_MAJOR} or later with built-in Temporal`
     // `@List('plainDate')` keeps its type name only in the applied tag, since there is no Temporal to resolve it to.
     const listName = s.appliedSelf.find(d => d.name === List.name)?.args?.[0]
-    for (const type of [s.fieldType, s.elementType, listName, staticTypeTarget(s.typeFn)]) {
+    for (const type of [s.fieldType, s.elementType, listName, s.boundType]) {
         const kind = dateKindOfType(type)
         if (kind?.startsWith('Temporal.')) return `${kind} fields require ${requirement}`
     }
@@ -159,7 +153,7 @@ const durationBoundsReadable: FieldRuleFn = s => {
 /** Reports a `@Default` that cannot become the field's date type, such as `@Default('P7X')` on a Duration. */
 const defaultReadable: FieldRuleFn = s => {
     if (s.defaultValue === undefined) return null
-    const result = castDateDefault(boundType(s), s.elementType, s.defaultValue)
+    const result = castDateDefault(s.boundType, s.elementType, s.defaultValue)
     return 'error' in result ? result.error : null
 }
 

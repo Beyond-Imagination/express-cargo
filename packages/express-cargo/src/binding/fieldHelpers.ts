@@ -53,22 +53,10 @@ export function getFieldKey(meta: CargoFieldMetadata, errors: CargoFieldError[])
  * the same path missing-value and type-cast errors use.
  */
 export function validateField(meta: CargoFieldMetadata, property: string | symbol, key: string, targetObject: any, errors: CargoFieldError[]): void {
-    const start = errors.length
     for (const rule of meta.getValidators()) {
         const error = rule.validate(targetObject[property], targetObject, key)
-        if (error && !hasSameError(errors, start, error)) errors.push(error)
+        if (error) errors.push(error)
     }
-}
-
-/**
- * True when this field's validators already reported the same message for the same path, such as a
- * MinDuration and a MaxDuration both rejecting a value in months. Repeating it adds nothing for the client.
- */
-function hasSameError(errors: CargoFieldError[], start: number, error: CargoFieldError): boolean {
-    for (let i = start; i < errors.length; i++) {
-        if (errors[i].field === error.field && errors[i].message === error.message) return true
-    }
-    return false
 }
 
 /**

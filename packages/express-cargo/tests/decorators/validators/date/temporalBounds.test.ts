@@ -75,6 +75,12 @@ describeTemporal('date and duration bounds with Temporal values', () => {
             expect(() => invalidMax.validate(new Date('2026-06-01'))).toThrow('@MaxDate bound Invalid Date cannot be compared with a Date value')
         })
 
+        it('fails validation, without a setup error, when a function bound returns no date', () => {
+            const rule = ruleOf(MinDate(() => undefined as any) as PropertyDecorator, 'minDate')
+            expect(fails(rule, T().PlainDate.from('2026-06-01'))).toBe(true)
+            expect(fails(ruleOf(MaxDate(() => null as any) as PropertyDecorator, 'maxDate'), new Date('2026-06-01'))).toBe(true)
+        })
+
         it('still fails a value that is not a date, as before', () => {
             const rule = ruleOf(MinDate(T().PlainDate.from('2026-01-01')) as PropertyDecorator, 'minDate')
             expect(fails(rule, '2026-06-01')).toBe(true)
@@ -143,25 +149,23 @@ describeTemporal('date and duration bounds with Temporal values', () => {
             ])
         })
 
-        it('reports a duration in years, months or weeks once when a field has both a minimum and a maximum', () => {
+        it('reports a duration in years, months or weeks from each duration validator, like any failing validator', () => {
             class StayDto {
                 @Body() @MinDuration('P1D') @MaxDuration('P30D') stay!: Temporal.Duration
             }
+            const units = { field: 'stay', message: 'stay must be given in days or smaller units, such as P7D, not in years, months or weeks' }
 
-            expect(errorsOf(StayDto, { stay: 'P1W' })).toEqual([
-                { field: 'stay', message: 'stay must be given in days or smaller units, such as P7D, not in years, months or weeks' },
-            ])
+            expect(errorsOf(StayDto, { stay: 'P1W' })).toEqual([units, units])
             expect(errorsOf(StayDto, { stay: 'P7D' })).toEqual([])
         })
 
-        it('reports a value in years, months or weeks once per list element under @Each', () => {
+        it('reports a value in years, months or weeks per list element under @Each', () => {
             class ListDto {
                 @Body() @List('duration') @Each(MinDuration('PT1M'), MaxDuration('PT48H')) spans!: Temporal.Duration[]
             }
+            const units = { field: 'spans[1]', message: 'spans must be given in days or smaller units, such as P7D, not in years, months or weeks' }
 
-            expect(errorsOf(ListDto, { spans: ['PT1H', 'P1W'] })).toEqual([
-                { field: 'spans[1]', message: 'spans must be given in days or smaller units, such as P7D, not in years, months or weeks' },
-            ])
+            expect(errorsOf(ListDto, { spans: ['PT1H', 'P1W'] })).toEqual([units, units])
         })
 
         it('casts a string default like a request value', () => {
@@ -194,7 +198,7 @@ describeTemporal('date and duration bounds with Temporal values', () => {
             expect(dto.cancelAt).toBeNull()
         })
 
-        it('reports a value in years, months or weeks once, even with custom messages', () => {
+        it('reports a value in years, months or weeks with the units message, even with custom messages', () => {
             class CustomDto {
                 @Body() @MinDuration('PT1H', 'too short') @MaxDuration('P10D', 'too long') both!: Temporal.Duration
                 @Body() @MinDuration('PT1H') @MaxDuration('P10D', 'too long') maxOnly!: Temporal.Duration
@@ -203,6 +207,8 @@ describeTemporal('date and duration bounds with Temporal values', () => {
 
             expect(errorsOf(CustomDto, { both: 'P1W', maxOnly: 'P1W' })).toEqual([
                 { field: 'both', message: `both ${units}` },
+                { field: 'both', message: `both ${units}` },
+                { field: 'maxOnly', message: `maxOnly ${units}` },
                 { field: 'maxOnly', message: `maxOnly ${units}` },
             ])
             expect(errorsOf(CustomDto, { both: 'PT5M', maxOnly: 'P11D' })).toEqual([

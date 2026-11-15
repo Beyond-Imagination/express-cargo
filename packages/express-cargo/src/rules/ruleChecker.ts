@@ -1,3 +1,4 @@
+import { staticTypeTarget } from '../utils'
 import type { CargoFieldMetadata } from '../metadata'
 import type { FieldRuleFn, FieldState, RuleChecker, RuleViolation } from './types'
 
@@ -19,6 +20,8 @@ function buildFieldState(propertyKey: string | symbol, fieldMeta: CargoFieldMeta
         sourceKey: fieldMeta.getKey(),
         siblingFields,
         typeFn: fieldMeta.getTypeFn(),
+        // Resolved once per field, since resolving runs the @Type thunk.
+        boundType: staticTypeTarget(fieldMeta.getTypeFn()) ?? fieldMeta.type,
         elementType: fieldMeta.getArrayElementType(),
         defaultValue: fieldMeta.getDefault(),
     }
