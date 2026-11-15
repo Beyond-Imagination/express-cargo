@@ -99,9 +99,18 @@ const untypedTemporalField: FieldRuleFn = s => {
 
 // ---- Validators that do not fit the field ---------------------------------------------------------------------
 
-/** True for a MinDate/MaxDate bound a Date field can order against: a valid Date, or a timestamp as before. */
+/**
+ * True for a MinDate/MaxDate bound a Date field can order against. Binding compares with `Number(bound)`, so any
+ * value that becomes a finite time passes, as before: a Date, a timestamp, a BigInt, a Date from another realm, or
+ * a date object with valueOf() such as a dayjs or moment value. A date string stays a setup error.
+ */
 function isDateBound(value: unknown): boolean {
-    return (value instanceof Date && !isNaN(value.getTime())) || typeof value === 'number'
+    if (typeof value === 'string') return false
+    try {
+        return Number.isFinite(Number(value))
+    } catch {
+        return false // A Temporal value, a Symbol or an object without a prototype cannot become a number.
+    }
 }
 
 /**

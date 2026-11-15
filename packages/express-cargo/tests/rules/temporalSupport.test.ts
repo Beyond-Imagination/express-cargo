@@ -1,3 +1,4 @@
+import vm from 'node:vm'
 import {
     Body,
     Default,
@@ -267,6 +268,41 @@ describe('schema validation — date and duration bounds on Temporal types', () 
         }
 
         expect(() => validateCargoSchema(MatchingDto)).not.toThrow()
+    })
+
+    it('accepts any bound binding turns into a time, as before: a BigInt, a date object with valueOf, a Date from another realm', () => {
+        const otherRealmDate = vm.runInNewContext('new Date(0)')
+        const dayjsLike = { valueOf: () => 0, toString: () => '1970-01-01' }
+
+        class LegacyBoundsDto {
+            @Body()
+            @MinDate(0n as any)
+            @MaxDate(dayjsLike as any)
+            at!: Date
+
+            @Body()
+            @MinDate(otherRealmDate)
+            later!: Date
+        }
+
+        expect(otherRealmDate instanceof Date).toBe(false)
+        expect(() => validateCargoSchema(LegacyBoundsDto)).not.toThrow()
+    })
+
+    it('rejects a string bound, and an object that is no time, on a Date field', () => {
+        class StringBoundDto {
+            @Body()
+            @MinDate('2026-01-01' as any)
+            at!: Date
+        }
+        class NaNBoundDto {
+            @Body()
+            @MinDate({} as any)
+            at!: Date
+        }
+
+        expectViolation(() => validateCargoSchema(StringBoundDto), 'at', '@MinDate bound 2026-01-01 is a string, but the field is a Date')
+        expectViolation(() => validateCargoSchema(NaNBoundDto), 'at', 'is a object, but the field is a Date')
     })
     ;(isTemporalSupported() ? it : it.skip)('checks the second duration bound too', () => {
         class SecondBadDto {

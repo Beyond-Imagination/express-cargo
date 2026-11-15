@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import type { Request } from 'express'
 import { AppliedDecorator, DecoratorScope, Source, TypeOptions, TypeResolver, TypeThunk, ValidArrayElementType } from './types'
 import { ValidatorRule } from './validatorRule'
+import { staticTypeTarget } from './utils'
 
 type FieldEntry = { property: string | symbol; meta: CargoFieldMetadata }
 
@@ -170,6 +171,7 @@ export class CargoFieldMetadata {
     private enumType: object | undefined
     private typeFn: TypeThunk | TypeResolver | undefined
     private typeOptions: TypeOptions | undefined
+    private boundType: unknown
     private readonly decoratorTags: { scope: DecoratorScope; tag: AppliedDecorator }[]
 
     constructor(target: any, key: string | symbol) {
@@ -270,6 +272,19 @@ export class CargoFieldMetadata {
     setTypeInfo(fn: TypeThunk | TypeResolver, options?: TypeOptions): void {
         this.typeFn = fn
         this.typeOptions = options
+        this.boundType = undefined
+    }
+
+    /**
+     * The class the field binds to: its `@Type` target when that is known without request data (a class, or what a
+     * zero-argument thunk returns), otherwise the declared type. A resolved target is cached, since resolving runs the
+     * thunk; a thunk that cannot resolve yet, such as one reading a module still loading, is tried again next time.
+     */
+    getBoundType(): unknown {
+        if (this.boundType !== undefined) return this.boundType
+        const target = staticTypeTarget(this.typeFn)
+        if (target !== undefined) this.boundType = target
+        return target ?? this.type
     }
 
     getTypeFn(): TypeThunk | TypeResolver | undefined {

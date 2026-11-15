@@ -4,7 +4,7 @@ import { BindSources } from './types'
 import { CargoClassMetadata, CargoFieldMetadata } from '../metadata'
 import { CargoFile } from '../fileHandler'
 import { validateAnalysis } from '../rules'
-import { isClass, isUserDefinedClass, staticTypeTarget } from '../utils'
+import { isClass, isUserDefinedClass } from '../utils'
 import { analyzeCargoSchema } from '../analysis'
 import { adapterForType, INVALID_CAST } from '../dateLike'
 import { castError, getFieldKey, hasCastError, prefixErrors, validateCastField, validateField, handleMissing } from './fieldHelpers'
@@ -155,7 +155,7 @@ function typeCasting(
         // this the array branch below would pass it through. A @Type target counts for `Date | null`-style fields.
         // A field with @Transform still gets the array, as it always has, so the transform can pick or join values;
         // Boolean fields rejected arrays before this check existed and still do.
-        const castType = baseType === Object ? (staticTypeTarget(meta?.getTypeFn()) ?? baseType) : baseType
+        const castType = baseType === Object ? (meta?.getBoundType() ?? baseType) : baseType
         if (castType === Boolean || !meta?.getTransformer()) {
             const arrayMessage = PRIMITIVE_ARRAY_MESSAGES.get(castType) ?? adapterForType(castType)?.invalidMessage(castType)
             if (arrayMessage) {

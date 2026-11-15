@@ -1,7 +1,6 @@
 import { CargoFieldError } from '../errors'
 import { CargoFieldMetadata } from '../metadata'
 import { castDateDefault } from '../dateLike'
-import { staticTypeTarget } from '../utils'
 
 // Marks errors raised because a value could not be cast to the field's type. The property is a non-enumerable
 // symbol, so the error stays a plain CargoFieldError for users; a WeakSet lookup measured slower on this path.
@@ -88,14 +87,9 @@ export function validateCastField(
     errors.length = kept
 }
 
-// The type a field's default is cast to, cached because resolving it runs the @Type thunk.
-const DEFAULT_TYPE = new WeakMap<CargoFieldMetadata, unknown>()
-
 /** The field's default, cast like a request value when the field is date-like (see castDateDefault). */
 function defaultValue(meta: CargoFieldMetadata): unknown {
-    if (!DEFAULT_TYPE.has(meta)) DEFAULT_TYPE.set(meta, staticTypeTarget(meta.getTypeFn()) ?? meta.type)
-    const type = DEFAULT_TYPE.get(meta)
-    const result = castDateDefault(type, meta.getArrayElementType(), meta.getDefault())
+    const result = castDateDefault(meta.getBoundType(), meta.getArrayElementType(), meta.getDefault())
     if ('error' in result) throw new Error(result.error)
     return result.value
 }
