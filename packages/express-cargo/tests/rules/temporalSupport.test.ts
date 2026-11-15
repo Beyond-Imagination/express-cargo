@@ -137,6 +137,50 @@ const MESSAGE = 'Temporal.PlainDate fields require Node.js 26 or later with buil
 })
 
 // These rules look only at declared types, so tagged stand-ins for Temporal types work on every runtime.
+// On a supported runtime only the built-in Temporal types bind; a polyfill type would keep the raw string.
+;(isTemporalSupported() ? describe : describe.skip)('schema validation — Temporal types other than the built-in ones', () => {
+    const MESSAGE = 'Temporal.PlainDate type is not the built-in one, such as a polyfill type'
+
+    it('rejects a polyfill type as the field type, the @Type target or the list element', () => {
+        class FieldTypeDto {
+            @Body()
+            day!: PlainDate
+        }
+        class TypeTargetDto {
+            @Body()
+            @Type(() => PlainDate)
+            day!: PlainDate | null
+        }
+        class ListDto {
+            @Body()
+            @List(PlainDate)
+            days!: PlainDate[]
+        }
+
+        expectViolation(() => validateCargoSchema(FieldTypeDto), 'day', MESSAGE)
+        expectViolation(() => validateCargoSchema(TypeTargetDto), 'day', MESSAGE)
+        expectViolation(() => validateCargoSchema(ListDto), 'days', MESSAGE)
+    })
+
+    it('accepts the built-in types, and a polyfill value that code supplies', () => {
+        const Temporal = (globalThis as any).Temporal
+        class BuiltInDto {
+            @Body()
+            @Type(() => Temporal.PlainDate)
+            day!: unknown
+
+            @Body()
+            @List('plainDate')
+            days!: unknown[]
+
+            @Virtual(() => new PlainDate())
+            computed!: PlainDate
+        }
+
+        expect(() => validateCargoSchema(BuiltInDto)).not.toThrow()
+    })
+})
+
 describe('schema validation — date and duration bounds on Temporal types', () => {
     const Duration = fakeTemporalType('Duration')
     const PlainMonthDay = fakeTemporalType('PlainMonthDay')

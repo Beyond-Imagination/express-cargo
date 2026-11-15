@@ -1,5 +1,6 @@
 import { List, MaxDate, MaxDuration, MinDate, MinDuration, Equal, NotEqual, OneOf } from '../decorators'
 import {
+    adapterForType,
     castDateDefault,
     dateKindOf,
     dateKindOfType,
@@ -60,6 +61,21 @@ const needsSupportedRuntime: FieldRuleFn = s => {
     }
     const [duration] = validatorsOn(s, DURATION_BOUNDS)
     return duration ? `@${duration[0].name} requires ${requirement}` : null
+}
+
+/**
+ * Reports a Temporal type other than the built-in one, such as a polyfill's PlainDate, on a supported runtime.
+ * Only built-in types have an adapter, so such a field would keep the raw request string.
+ */
+const builtInTemporalOnly: FieldRuleFn = s => {
+    if (!isTemporalSupported() || valueComesFromCode(s)) return null
+    for (const type of [s.fieldType, s.elementType, s.boundType]) {
+        const kind = dateKindOfType(type)
+        if (typeof type === 'function' && kind?.startsWith('Temporal.') && !adapterForType(type)) {
+            return `${kind} type is not the built-in one, such as a polyfill type; express-cargo binds only built-in Temporal types`
+        }
+    }
+    return null
 }
 
 // ---- Fields the binder cannot type ----------------------------------------------------------------------------
@@ -164,6 +180,7 @@ const defaultReadable: FieldRuleFn = s => {
 
 export const TEMPORAL_SUPPORT_RULES: readonly FieldRuleFn[] = [
     needsSupportedRuntime,
+    builtInTemporalOnly,
     untypedTemporalField,
     validatorsFitField,
     durationBoundsReadable,
