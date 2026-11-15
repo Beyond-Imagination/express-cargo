@@ -53,6 +53,10 @@ const needsSupportedRuntime: FieldRuleFn = s => {
         if (kind?.startsWith('Temporal.')) return `${kind} fields require ${requirement}`
     }
     // `@Type(() => Temporal.PlainDate)` throws here, so it has no static target.
+    // Limit: only a thunk whose source names `Temporal` is reported. An alias such as
+    // `const T = globalThis.Temporal; @Type(() => T.PlainDate)` throws the same TypeError as a lazy model reference
+    // that is not loaded yet (`@Type(() => models.Duration)` in a circular import), so it cannot be told apart and
+    // passes startup, then fails each request.
     if (typeof s.typeFn === 'function' && s.typeFn.length === 0 && /\bTemporal\b/.test(Function.prototype.toString.call(s.typeFn))) {
         return `@Type refers to Temporal, which requires ${requirement}`
     }
