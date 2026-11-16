@@ -1,4 +1,5 @@
 import { ClassConstructor } from './types'
+import { adapterForType, adapterForValue, equalsDateLike, temporalTypeName } from './dateLike'
 
 const IS_CLASS_CACHE = new WeakMap<object, boolean>()
 
@@ -31,10 +32,29 @@ function computeIsClass(fn: (...args: unknown[]) => unknown): boolean {
     return Boolean(isPascalCase && hasPrototype)
 }
 
+/**
+ * The class a `@Type` argument names when it is known without request data: the class itself, or what a
+ * zero-argument thunk returns. Undefined for a resolver that reads the request, or a thunk that throws.
+ */
+export function staticTypeTarget(typeFn: unknown): ClassConstructor | undefined {
+    if (isClass(typeFn)) return typeFn
+    if (typeof typeFn !== 'function' || typeFn.length !== 0) return undefined
+    try {
+        const resolved = typeFn()
+        return typeof resolved === 'function' ? resolved : undefined
+    } catch {
+        return undefined
+    }
+}
+
 // `Object` is included because reflect-metadata falls back to it for unresolvable
 // design:type entries; `Array` guards against a malformed `@List(Array)`.
 // Both pass the isClass heuristic but should never be descended into.
-const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Date, Object, Array])
+// Date-like types (`Date`) are leaves too; their adapters decide that.
+const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Object, Array])
+
+// Cached because binding asks this for every nested object and list element class on each request.
+const IS_USER_DEFINED_CLASS_CACHE = new WeakMap<object, boolean>()
 
 /**
  * Returns true when a value is a user-defined class worth descending into (a nested DTO),
@@ -42,7 +62,19 @@ const NON_DESCENDABLE_TYPES = new Set<unknown>([String, Number, Boolean, Date, O
  * treated as leaves. Shared by schema analysis (traversal) and binding (recursive binding).
  */
 export function isUserDefinedClass(value: unknown): value is ClassConstructor {
-    return isClass(value) && !NON_DESCENDABLE_TYPES.has(value)
+    if (typeof value !== 'function') return false
+
+    let verdict = IS_USER_DEFINED_CLASS_CACHE.get(value)
+    if (verdict === undefined) {
+        // Temporal types are leaves even where they are unsupported; a schema rule reports those instead.
+        verdict = isClass(value) && !NON_DESCENDABLE_TYPES.has(value) && !adapterForType(value) && temporalTypeName(value) === undefined
+        IS_USER_DEFINED_CLASS_CACHE.set(value, verdict)
+    }
+    return verdict
+}
+
+function isPlainOrArray(value: object): boolean {
+    return Array.isArray(value) || value.constructor === Object
 }
 
 export function isDeepEqual(obj1: any, obj2: any): boolean {
@@ -57,10 +89,12 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
             return false
         }
 
-        // Handle Date objects specifically
-        if (a instanceof Date && b instanceof Date) {
-            if (a.getTime() !== b.getTime()) return false
-            continue
+        // Date-like values equal only the same kind and value, never `{}`. Plain objects and arrays skip the lookup.
+        if (!isPlainOrArray(a) || !isPlainOrArray(b)) {
+            if (adapterForValue(a) || adapterForValue(b)) {
+                if (!equalsDateLike(a, b)) return false
+                continue
+            }
         }
 
         // Check if both are arrays or neither (for accuracy and performance)

@@ -18,7 +18,17 @@ export type Source = 'body' | 'query' | 'params' | 'header' | 'session' | 'file'
 export type ClassConstructor<T = any> = new (...args: any[]) => T
 
 export type ValidArrayElementType = typeof String | typeof Number | typeof Boolean | typeof Date | ClassConstructor
-export type ArrayElementType = ValidArrayElementType | 'string' | 'number' | 'boolean' | 'date'
+/** `@List` type names for Temporal element types. They bind only on runtimes that support Temporal. */
+export type TemporalListAlias =
+    | 'instant'
+    | 'zonedDateTime'
+    | 'plainDateTime'
+    | 'plainDate'
+    | 'plainTime'
+    | 'plainYearMonth'
+    | 'plainMonthDay'
+    | 'duration'
+export type ArrayElementType = ValidArrayElementType | 'string' | 'number' | 'boolean' | 'date' | TemporalListAlias
 export type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'all'
 export type HashAlgorithm = 'md5' | 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'crc32' | 'crc32b'
 
@@ -85,6 +95,15 @@ export type ArrayComparator = (expected: any, actual: any) => boolean
 
 type ErrorMessageFunction = (property: string | symbol, value: any) => string
 export type CargoErrorMessage = string | ErrorMessageFunction
+
+/**
+ * Any Temporal value, matched by its `Symbol.toStringTag` so it does not need TypeScript's Temporal lib.
+ * `Temporal.PlainDate` and the other Temporal types satisfy it.
+ */
+export type TemporalLike = { readonly [Symbol.toStringTag]: `Temporal.${string}` }
+
+/** A `Temporal.Duration`, matched by its `Symbol.toStringTag`. */
+export type TemporalDurationLike = { readonly [Symbol.toStringTag]: 'Temporal.Duration' }
 
 export type TypedPropertyDecorator<T> = <K extends string | symbol>(target: { [P in K]?: T | null }, propertyKey: K) => void
 

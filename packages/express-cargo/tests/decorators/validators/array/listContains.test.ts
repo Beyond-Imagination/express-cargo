@@ -93,6 +93,13 @@ describe('@ListContains decorator', () => {
         expect(rule?.validate([new Date('2024-01-01'), new Date('2024-06-01'), new Date('2024-12-01')])).toBeNull()
     })
 
+    it('should not count an empty object as a required Date value', () => {
+        const meta = classMeta.getFieldMetadata('dates')
+        const rule = meta.getValidators()?.find(v => v.type === 'listContains')
+
+        expect(rule?.validate([{}, {}])).toBeInstanceOf(CargoFieldError)
+    })
+
     it('should fail validation when list is missing required Date values', () => {
         const meta = classMeta.getFieldMetadata('dates')
         const rule = meta.getValidators()?.find(v => v.type === 'listContains')

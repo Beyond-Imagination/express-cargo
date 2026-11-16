@@ -41,3 +41,20 @@ describe('@Equal decorator', () => {
         expect(equalRule).toBeUndefined()
     })
 })
+
+describe('@Equal with dates', () => {
+    class DateDto {
+        @Equal(new Date('2026-01-01'))
+        at!: Date
+    }
+    const rule = new CargoClassMetadata(DateDto.prototype)
+        .getFieldMetadata('at')
+        .getValidators()!
+        .find(v => v.type === 'equal')!
+
+    it('compares a parsed date by its time instead of by reference', () => {
+        expect(rule.validate(new Date('2026-01-01'))).toBeNull()
+        expect(rule.validate(new Date('2026-01-02'))).toBeInstanceOf(CargoFieldError)
+        expect(rule.validate({})).toBeInstanceOf(CargoFieldError)
+    })
+})

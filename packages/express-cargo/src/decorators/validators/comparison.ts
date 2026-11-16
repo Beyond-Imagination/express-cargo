@@ -1,9 +1,11 @@
 import { CargoErrorMessage, TypedPropertyDecorator } from '../../types'
 import { ValidatorRule } from '../../validatorRule'
 import { addValidator } from './addValidator'
+import { equalsDateLike } from '../../dateLike'
 
 /**
  * Checks if the value is strictly equal to the specified value.
+ * Dates and Temporal values are equal when they hold the same value, such as two `Temporal.PlainDate`s for the same day.
  * @param value - The value to compare.
  * @param message - Optional custom error message.
  */
@@ -12,13 +14,20 @@ export function Equal(value: any, message?: CargoErrorMessage): PropertyDecorato
         addValidator(
             target,
             propertyKey,
-            new ValidatorRule(propertyKey, 'equal', val => val === value, message || `${String(propertyKey)} must be equal to ${value}`),
+            new ValidatorRule(
+                propertyKey,
+                'equal',
+                val => val === value || equalsDateLike(val, value),
+                message || `${String(propertyKey)} must be equal to ${value}`,
+            ),
+            { name: Equal.name, category: 'validator', args: [value] },
         )
     }
 }
 
 /**
  * Checks if the value is not strictly equal to the specified value.
+ * Dates and Temporal values are equal when they hold the same value.
  * @param value - The value to compare.
  * @param message - Optional custom error message.
  */
@@ -27,7 +36,13 @@ export function NotEqual(value: any, message?: CargoErrorMessage): PropertyDecor
         addValidator(
             target,
             propertyKey,
-            new ValidatorRule(propertyKey, 'notEqual', val => val !== value, message || `${String(propertyKey)} must not be equal to ${value}`),
+            new ValidatorRule(
+                propertyKey,
+                'notEqual',
+                val => val !== value && !equalsDateLike(val, value),
+                message || `${String(propertyKey)} must not be equal to ${value}`,
+            ),
+            { name: NotEqual.name, category: 'validator', args: [value] },
         )
     }
 }
@@ -62,6 +77,7 @@ export function IsTrue(message?: CargoErrorMessage): TypedPropertyDecorator<bool
 
 /**
  * Checks if the value is one of the allowed values.
+ * Dates and Temporal values match an option holding the same value.
  * @param options - Array of allowed values.
  * @param message - Optional custom error message.
  */
@@ -73,9 +89,10 @@ export function OneOf<T extends readonly any[]>(options: T, message?: CargoError
             new ValidatorRule(
                 propertyKey,
                 'oneOf',
-                (value: unknown): value is T[number] => options.includes(value as T[number]),
+                (value: unknown): value is T[number] => options.includes(value as T[number]) || options.some(option => equalsDateLike(value, option)),
                 message || `${String(propertyKey)} must be one of ${options.join(', ')}`,
             ),
+            { name: OneOf.name, category: 'validator', args: [options] },
         )
     }
 }

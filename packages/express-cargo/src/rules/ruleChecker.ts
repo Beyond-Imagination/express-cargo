@@ -18,6 +18,10 @@ function buildFieldState(propertyKey: string | symbol, fieldMeta: CargoFieldMeta
         hasVirtual: appliedSelf.some(d => d.category === 'virtual'),
         sourceKey: fieldMeta.getKey(),
         siblingFields,
+        typeFn: fieldMeta.getTypeFn(),
+        boundType: fieldMeta.getBoundType(),
+        elementType: fieldMeta.getArrayElementType(),
+        defaultValue: fieldMeta.getDefault(),
     }
 }
 

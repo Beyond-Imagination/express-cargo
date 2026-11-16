@@ -9,6 +9,7 @@
         "start": "pnpm --filter express-cargo build && pnpm build && node dist/src/http/app.js",
         "benchmark:http": "pnpm --filter express-cargo build && pnpm build && node dist/src/http/benchmark.js",
         "benchmark:inline": "pnpm --filter express-cargo build && pnpm build && node dist/src/inline/benchmark.js",
+        "benchmark:dates": "pnpm --filter express-cargo build && pnpm build && node dist/src/inline/dates.js",
         "benchmark:http:order": "pnpm --filter express-cargo build && pnpm build && node dist/src/http/order.js",
         "benchmark:version": "pnpm --filter express-cargo build && pnpm build && node dist/src/version/compare.js"
     },

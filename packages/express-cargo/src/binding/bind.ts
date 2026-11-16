@@ -6,6 +6,7 @@ import { CargoFile } from '../fileHandler'
 import { validateAnalysis } from '../rules'
 import { isClass, isUserDefinedClass } from '../utils'
 import { analyzeCargoSchema } from '../analysis'
+import { adapterForType, INVALID_CAST } from '../dateLike'
 import { castError, getFieldKey, hasCastError, prefixErrors, validateCastField, validateField, handleMissing } from './fieldHelpers'
 
 function transformSource(
@@ -126,6 +127,16 @@ function bindElements(
     })
 }
 
+/** Cast error messages for primitive fields, also used when such a field receives an array. */
+const STRING_MESSAGE = 'must be a string'
+const NUMBER_MESSAGE = 'must be a valid number'
+const BOOLEAN_MESSAGE = 'must be a boolean'
+const PRIMITIVE_ARRAY_MESSAGES = new Map<unknown, string>([
+    [String, STRING_MESSAGE],
+    [Number, NUMBER_MESSAGE],
+    [Boolean, BOOLEAN_MESSAGE],
+])
+
 /**
  * Main transformation pipeline that converts plain objects/values into class instances or primitives.
  */
@@ -139,16 +150,23 @@ function typeCasting(
     currentSource: Source,
     analysis: AnalysisResult,
 ): any {
-    // A declared nested DTO (field or list element) must receive an object, not an array.
-    // The raw value is kept so validators see the same input as before this check existed.
-    if (Array.isArray(value) && baseType !== Array && declaresNestedType(baseType, meta)) {
-        errors.push(castError(key, `${key} must be an object`))
-        return value
-    }
+    if (Array.isArray(value) && baseType !== Array) {
+        // Primitive and date fields reject arrays such as `?name=a&name=b`. A field with @Transform still gets the
+        // array so the transform can pick or join values; Boolean fields always rejected arrays.
+        const castType = baseType === Object ? (meta?.getBoundType() ?? baseType) : baseType
+        if (castType === Boolean || !meta?.getTransformer()) {
+            const arrayMessage = PRIMITIVE_ARRAY_MESSAGES.get(castType) ?? adapterForType(castType)?.invalidMessage(castType)
+            if (arrayMessage) {
+                errors.push(castError(key, `${key} ${arrayMessage}`))
+                return undefined
+            }
+        }
 
-    if (baseType === Boolean && Array.isArray(value)) {
-        errors.push(castError(key, `${key} must be a boolean`))
-        return undefined
+        // A nested DTO must receive an object; the raw value is kept so validators see it as before.
+        if (declaresNestedType(baseType, meta)) {
+            errors.push(castError(key, `${key} must be an object`))
+            return value
+        }
     }
 
     // Handle Array types: Recursively process each element
@@ -186,7 +204,7 @@ function typeCasting(
     if (targetClass === String) {
         // String() would turn any object into "[object Object]", which then passes length checks.
         if (typeof value === 'object') {
-            errors.push(castError(key, `${key} must be a string`))
+            errors.push(castError(key, `${key} ${STRING_MESSAGE}`))
             return undefined
         }
         return String(value)
@@ -194,23 +212,27 @@ function typeCasting(
         const parsedNumber = Number(value)
         // Only a blank string coerces to 0, so the trim check runs only in that case.
         if (isNaN(parsedNumber) || (parsedNumber === 0 && typeof value === 'string' && value.trim() === '')) {
-            errors.push(castError(key, `${key} must be a valid number`))
+            errors.push(castError(key, `${key} ${NUMBER_MESSAGE}`))
             return undefined
         }
         return parsedNumber
     } else if (targetClass === Boolean) {
         if (typeof value === 'object') {
-            errors.push(castError(key, `${key} must be a boolean`))
+            errors.push(castError(key, `${key} ${BOOLEAN_MESSAGE}`))
             return undefined
         }
         return value === true || value === 'true'
-    } else if (targetClass === Date) {
-        const parsedDate = new Date(value)
-        if (isNaN(parsedDate.getTime())) {
-            errors.push(castError(key, `${key} must be a valid date`))
+    }
+
+    // Date-like types: checked after the primitives so the common casts pay nothing for it.
+    const dateLikeAdapter = adapterForType(targetClass)
+    if (dateLikeAdapter) {
+        const cast = dateLikeAdapter.cast(targetClass, value, currentSource)
+        if (cast === INVALID_CAST) {
+            errors.push(castError(key, `${key} ${dateLikeAdapter.invalidMessage(targetClass)}`))
             return undefined
         }
-        return parsedDate
+        return cast
     }
 
     // Recursive binding: Transform nested plain objects into class instances

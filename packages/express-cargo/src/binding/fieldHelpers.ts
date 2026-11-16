@@ -1,5 +1,6 @@
 import { CargoFieldError } from '../errors'
 import { CargoFieldMetadata } from '../metadata'
+import { castDateDefault } from '../dateLike'
 
 // Marks errors raised because a value could not be cast to the field's type. The property is a non-enumerable
 // symbol, so the error stays a plain CargoFieldError for users; a WeakSet lookup measured slower on this path.
@@ -86,6 +87,13 @@ export function validateCastField(
     errors.length = kept
 }
 
+/** The field's default, cast like a request value when the field is date-like (see castDateDefault). */
+function defaultValue(meta: CargoFieldMetadata): unknown {
+    const result = castDateDefault(meta.getBoundType(), meta.getArrayElementType(), meta.getDefault())
+    if ('error' in result) throw new Error(result.error)
+    return result.value
+}
+
 export function handleMissing(
     meta: CargoFieldMetadata,
     property: string | symbol,
@@ -99,7 +107,7 @@ export function handleMissing(
     }
 
     if (meta.getDefault() !== undefined) {
-        targetObject[property] = meta.getDefault()
+        targetObject[property] = defaultValue(meta)
         return true
     }
 

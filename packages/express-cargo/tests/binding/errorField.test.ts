@@ -296,3 +296,75 @@ describe('primitive casting of non-primitive values', () => {
         expect(dto.active).toBe(true)
     })
 })
+
+describe('primitive casting of arrays', () => {
+    class Profile {
+        @Body() birth!: Date
+    }
+
+    class ArrayInputDTO {
+        @Query() @Optional() name?: string
+        @Query() @Optional() page?: number
+        @Query() @Optional() since?: Date
+        @Body() @Optional() @Type(() => Profile) profile?: Profile
+        @Body() @Optional() @List(String) tags?: string[]
+        @Query() @Optional() @Transform((value: string | string[]) => (Array.isArray(value) ? value[0] : value).toUpperCase()) code?: string
+        @Query() @Optional() @Type(() => Date) nullableSince?: Date | null
+        @Query() @Optional() @Transform((value: unknown) => value) flag?: boolean
+    }
+
+    const bindArrays = (query: unknown, body: unknown = {}) => {
+        const req = makeMockReq({ query, body })
+        const next = makeNext()
+        bindingCargo(ArrayInputDTO)(req, makeMockRes(), next)
+        return { req, next }
+    }
+    const errorsOf = (next: ReturnType<typeof makeNext>) =>
+        (next.mock.calls[0][0] as CargoValidationError).errors.map(e => ({ field: String(e.field), message: e.message }))
+
+    it.each([
+        ['string', 'name', ['a', 'b'], 'name must be a string'],
+        ['number', 'page', ['1', '2'], 'page must be a valid number'],
+        ['date', 'since', ['2026-01-01', '2026-02-01'], 'since must be a valid date'],
+    ])('rejects an array for a %s field, such as a repeated query key', (_type, field, value, message) => {
+        const { next } = bindArrays({ [field]: value })
+        expect(errorsOf(next)).toEqual([{ field, message }])
+    })
+
+    it('rejects an array for a date field inside a nested DTO under its full path', () => {
+        const { next } = bindArrays({}, { profile: { birth: ['2026-01-01'] } })
+        expect(errorsOf(next)).toEqual([{ field: 'profile.birth', message: 'birth must be a valid date' }])
+    })
+
+    it('rejects an array element given to a primitive list element under its index', () => {
+        const { next } = bindArrays({}, { tags: ['ok', ['nested']] })
+        expect(errorsOf(next)).toEqual([{ field: 'tags[1]', message: 'tags[1] must be a string' }])
+    })
+
+    it('passes an array to the transformer of a primitive field, so it can pick or join values as before', () => {
+        const { req, next } = bindArrays({ code: ['a', 'b'] })
+        expect(next).toHaveBeenCalledWith()
+        expect(getCargo<ArrayInputDTO>(req)!.code).toBe('A')
+    })
+
+    it('still rejects an array for a boolean field with a transformer, as it always did', () => {
+        const { next } = bindArrays({ flag: ['true', 'false'] })
+        expect(errorsOf(next)).toEqual([{ field: 'flag', message: 'flag must be a boolean' }])
+    })
+
+    it('rejects an array for a nullable field typed with @Type, with the type cast error', () => {
+        const { next } = bindArrays({ nullableSince: ['2026-01-01', '2026-02-01'] })
+        expect(errorsOf(next)).toEqual([{ field: 'nullableSince', message: 'nullableSince must be a valid date' }])
+    })
+
+    it('still binds single values and primitive lists', () => {
+        const { req, next } = bindArrays({ name: 'abc', page: '2', since: '2026-01-01', code: 'xy' }, { tags: ['a', 'b'] })
+        expect(next).toHaveBeenCalledWith()
+        const dto = getCargo<ArrayInputDTO>(req)
+        expect(dto.name).toBe('abc')
+        expect(dto.page).toBe(2)
+        expect(dto.since).toEqual(new Date('2026-01-01'))
+        expect(dto.tags).toEqual(['a', 'b'])
+        expect(dto.code).toBe('XY')
+    })
+})

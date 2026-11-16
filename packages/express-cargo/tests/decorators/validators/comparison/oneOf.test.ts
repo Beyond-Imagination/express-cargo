@@ -73,3 +73,35 @@ describe('@OneOf decorator', () => {
         expect(validator?.validate(2)).toBeInstanceOf(CargoFieldError)
     })
 })
+
+describe('@OneOf with dates', () => {
+    class DateDto {
+        @OneOf([new Date('2026-01-01'), new Date('2026-06-01')])
+        at!: Date
+    }
+    const rule = new CargoClassMetadata(DateDto.prototype)
+        .getFieldMetadata('at')
+        .getValidators()!
+        .find(v => v.type === 'oneOf')!
+
+    it('compares a parsed date by its time instead of by reference', () => {
+        expect(rule.validate(new Date('2026-01-01'))).toBeNull()
+        expect(rule.validate(new Date('2026-01-02'))).toBeInstanceOf(CargoFieldError)
+        expect(rule.validate({})).toBeInstanceOf(CargoFieldError)
+    })
+})
+
+describe('@OneOf keeps SameValueZero for primitives', () => {
+    class NanDto {
+        @OneOf([NaN])
+        value!: number
+    }
+    const rule = new CargoClassMetadata(NanDto.prototype)
+        .getFieldMetadata('value')
+        .getValidators()!
+        .find(v => v.type === 'oneOf')!
+
+    it('still matches NaN as Array.prototype.includes does', () => {
+        expect(rule.validate(NaN)).toBeNull()
+    })
+})
