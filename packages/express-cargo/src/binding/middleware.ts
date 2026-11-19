@@ -28,6 +28,7 @@ export function bindingCargo<T extends object = any>(cargoClass: ClassConstructo
     validateAnalysis(result)
 
     return (req, res, next) => {
+        let error: unknown
         try {
             const errors: CargoFieldError[] = []
             // Normalize uploaded files once; @UploadedFile and @UploadedFiles share the same map.
@@ -43,21 +44,25 @@ export function bindingCargo<T extends object = any>(cargoClass: ClassConstructo
             }
             const cargo = bindObject(cargoClass, result.rootMeta, sources, errors, result)
 
-            if (errors.length > 0) {
-                throw new CargoValidationError(errors)
+            if (errors.length === 0) {
+                req._cargo = cargo
+                next()
+                return
             }
 
-            req._cargo = cargo
-            next()
+            // Handed on below instead of thrown: throwing and catching dominated the cost of rejecting a request.
+            error = new CargoValidationError(errors)
         } catch (err) {
-            if (err instanceof CargoValidationError) {
-                const handler = getCargoErrorHandler()
-                if (handler) {
-                    return handler(err, req, res, next)
-                }
-            }
-            next(err)
+            error = err
         }
+        // Outside the try, as before: an error thrown by the handler propagates instead of reaching next().
+        if (error instanceof CargoValidationError) {
+            const handler = getCargoErrorHandler()
+            if (handler) {
+                return handler(error, req, res, next)
+            }
+        }
+        next(error)
     }
 }
 
