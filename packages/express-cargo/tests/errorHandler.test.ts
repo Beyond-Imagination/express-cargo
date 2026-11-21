@@ -67,6 +67,19 @@ describe('cargo error handler', () => {
         expect(next.mock.calls[0][0]).toBeInstanceOf(CargoValidationError)
     })
 
+    it('lets an error thrown by the handler propagate instead of passing it to next', () => {
+        setCargoErrorHandler(() => {
+            throw new Error('handler blew up')
+        })
+
+        const req = makeMockReq({ body: { score: 1 } })
+        const res = makeMockRes()
+        const next = makeNext()
+
+        expect(() => bindingCargo(ScoreDTO)(req, res, next)).toThrow('handler blew up')
+        expect(next).not.toHaveBeenCalled()
+    })
+
     it('does not invoke the handler when binding succeeds', () => {
         const handler = jest.fn()
         setCargoErrorHandler(handler)
