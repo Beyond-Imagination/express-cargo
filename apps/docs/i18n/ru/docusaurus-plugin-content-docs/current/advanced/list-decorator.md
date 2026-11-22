@@ -94,3 +94,21 @@ const cargo = {
   ]
 };
 ```
+
+## Типы элементов Temporal
+
+В Node.js 26 и новее `@List` также принимает встроенные типы Temporal, либо как конструктор, либо по имени:
+
+```typescript
+class Schedule {
+    @Body()
+    @List(Temporal.PlainDate)
+    holidays!: Temporal.PlainDate[]
+
+    @Body()
+    @List('plainTime')
+    slots!: Temporal.PlainTime[]
+}
+```
+
+Доступны имена `'instant'`, `'zonedDateTime'`, `'plainDateTime'`, `'plainDate'`, `'plainTime'`, `'plainYearMonth'`, `'plainMonthDay'` и `'duration'`. Каждый элемент читается так же, как отдельное поле Temporal; см. [Temporal](./temporal.md).

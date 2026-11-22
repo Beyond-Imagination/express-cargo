@@ -161,13 +161,13 @@ Express-Cargo 使用装饰器验证绑定到类的传入请求数据。
 
 ### `@Equal(value: any)`
 
-验证值与指定值严格相等（`===`）。
+验证值与指定值严格相等（`===`）。日期和 Temporal 值按值比较，所以表示同一时刻的两个 `Date` 相等。
 
 - **`value`**：要比较的值。
 
 ### `@NotEqual(value: any)`
 
-验证值与指定值严格不相等（`!==`）。
+验证值与指定值严格不相等（`!==`）。日期和 Temporal 值按值比较。
 
 - **`value`**：要比较的值。
 
@@ -181,7 +181,7 @@ Express-Cargo 使用装饰器验证绑定到类的传入请求数据。
 
 ### `@OneOf(values: any[])`
 
-验证输入值是指定值集合中的一个。
+验证输入值是指定值集合中的一个。日期和 Temporal 值会与持有相同值的选项匹配。
 
 - **`values`**：允许值数组。
 
@@ -195,19 +195,41 @@ Express-Cargo 使用装饰器验证绑定到类的传入请求数据。
 
 ## 日期验证器
 
-### `@MinDate(min: Date | (() => Date), message?: string)`
+这些验证器接受 `Date`，在 Node.js 26 或更高版本中还接受内置的 `Temporal` 类型。Temporal 类型、输入格式和运行环境要求请参阅 [Temporal](../advanced/temporal.md)。
 
-验证被装饰字段是一个 `Date`，且不早于给定的最小日期。接受固定 `Date` 或返回 `Date` 的函数，以支持动态比较。
+### `@MinDate(min: Date | Temporal | (() => Date | Temporal), message?: string)`
 
-- **`min`**：允许的最小日期，或返回该日期的函数。
-- **`message`**（可选）：验证失败时显示的错误消息。省略时使用默认消息。
+验证被装饰字段不早于给定的最小值。接受固定值或返回该值的函数，以支持动态比较。
 
-### `@MaxDate(max: Date | (() => Date), message?: string)`
+- **`min`**：允许的最小值：`Date` 字段使用 `Date`，Temporal 字段使用该字段类型的 Temporal 值，例如 `Temporal.PlainDate` 字段使用 `Temporal.PlainDate`。
+- **`message`**（可选）：验证失败时显示的错误消息。省略时使用默认消息，例如 `startsAt must be on or after 09:00:00`。
 
-验证被装饰字段是一个 `Date`，且不晚于给定的最大日期。接受固定 `Date` 或返回 `Date` 的函数，以支持动态比较。
+如果固定边界永远无法与字段比较，例如 `Date` 字段上的日期字符串或 `Invalid Date`，或者 `PlainDate` 字段上的 `PlainDateTime`，调用 `bindingCargo()` 时会抛出 `CargoSchemaError`。
 
-- **`max`**：允许的最大日期，或返回该日期的函数。
-- **`message`**（可选）：验证失败时显示的错误消息。省略时使用默认消息。
+### `@MaxDate(max: Date | Temporal | (() => Date | Temporal), message?: string)`
+
+验证被装饰字段不晚于给定的最大值。接受固定值或返回该值的函数，以支持动态比较。
+
+- **`max`**：允许的最大值，类型要求与 `@MinDate` 相同。
+- **`message`**（可选）：验证失败时显示的错误消息。省略时使用默认消息，例如 `startsAt must be on or before 18:00:00`。
+
+### `@MinDuration(min: Temporal.Duration | string, message?: string)`
+
+验证 `Temporal.Duration` 字段不小于给定的最小值。需要 Node.js 26 或更高版本。
+
+- **`min`**：最小值，可以是 `Temporal.Duration`，也可以是 `'PT5M'` 这样的 ISO 8601 duration 字符串。不允许使用年、月、周，因为它们的长度不固定；请用 `'P30D'` 代替 `'P1M'`。
+- **`message`**（可选）：值低于最小值时显示的错误消息。省略时使用默认消息，例如 `length must be at least PT5M`。
+
+以年、月或周给出的值会以 `<field> must be given in days or smaller units, such as P7D, not in years, months or weeks` 失败。
+
+### `@MaxDuration(max: Temporal.Duration | string, message?: string)`
+
+验证 `Temporal.Duration` 字段不大于给定的最大值。需要 Node.js 26 或更高版本。
+
+- **`max`**：最大值，形式与 `@MinDuration` 相同。
+- **`message`**（可选）：值高于最大值时显示的错误消息。省略时使用默认消息，例如 `length must be at most PT2H`。
+
+Duration 可以为负，所以只有 `@MaxDuration` 的字段会接受 `-PT1H`。如需拒绝负值，请添加 `@MinDuration('PT0S')`。
 
 ## 数组验证器
 

@@ -167,13 +167,13 @@ title: 유효성 검사 데코레이터
 
 ### `@Equal(value: any)`
 
-입력 값이 주어진 값과 정확히 일치하는지(`===`) 검증합니다.
+입력 값이 주어진 값과 정확히 일치하는지(`===`) 검증합니다. 날짜와 Temporal 값은 값으로 비교하므로, 같은 시각의 `Date` 두 개는 같습니다.
 
 * **`value`**: 비교 대상 값
 
 ### `@NotEqual(value: any)`
 
-입력 값이 주어진 값과 정확히 일치하지 않는지(`!==`) 검증합니다.
+입력 값이 주어진 값과 정확히 일치하지 않는지(`!==`) 검증합니다. 날짜와 Temporal 값은 값으로 비교합니다.
 
 * **`value`**: 비교 대상 값
 
@@ -187,7 +187,7 @@ title: 유효성 검사 데코레이터
 
 ### `@OneOf(values: any[])`
 
-입력 값이 지정된 값 중 하나인지 검증합니다.
+입력 값이 지정된 값 중 하나인지 검증합니다. 날짜와 Temporal 값은 같은 값을 가진 항목과 일치합니다.
 
 - **`values`**: 허용되는 값들의 배열
 
@@ -201,19 +201,41 @@ title: 유효성 검사 데코레이터
 
 ## 날짜 검증자
 
-### `@MinDate(min: Date | (() => Date), message?: string)`
+이 검증자들은 `Date`를 받고, Node.js 26 이상에서는 기본 내장 `Temporal` 타입도 받습니다. Temporal 타입, 입력 형식, 런타임 요구 사항은 [Temporal](../advanced/temporal.md)을 참고하세요.
 
-데코레이터가 적용된 필드가 주어진 최소 날짜와 같거나 이후인 `Date`인지 검증합니다. 고정 `Date` 또는 동적 비교를 위한 함수를 받습니다.
+### `@MinDate(min: Date | Temporal | (() => Date | Temporal), message?: string)`
 
-- **`min`**: 허용되는 최소 날짜, 또는 이를 반환하는 함수.
-- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+데코레이터가 적용된 필드가 주어진 최솟값과 같거나 이후인지 검증합니다. 고정 값 또는 동적 비교를 위해 값을 반환하는 함수를 받습니다.
 
-### `@MaxDate(max: Date | (() => Date), message?: string)`
+- **`min`**: 허용되는 최솟값. `Date` 필드에는 `Date`, Temporal 필드에는 필드와 같은 타입의 값(예: `Temporal.PlainDate` 필드에는 `Temporal.PlainDate`)을 씁니다.
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 `startsAt must be on or after 09:00:00` 같은 기본 메시지가 사용됩니다.
 
-데코레이터가 적용된 필드가 주어진 최대 날짜와 같거나 이전인 `Date`인지 검증합니다. 고정 `Date` 또는 동적 비교를 위한 함수를 받습니다.
+필드와 비교할 수 없는 고정 기준값(예: `Date` 필드의 날짜 문자열이나 `Invalid Date`, `PlainDate` 필드의 `PlainDateTime`)은 `bindingCargo()`를 호출할 때 `CargoSchemaError`를 던집니다.
 
-- **`max`**: 허용되는 최대 날짜, 또는 이를 반환하는 함수.
-- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 기본 메시지가 사용됩니다.
+### `@MaxDate(max: Date | Temporal | (() => Date | Temporal), message?: string)`
+
+데코레이터가 적용된 필드가 주어진 최댓값과 같거나 이전인지 검증합니다. 고정 값 또는 동적 비교를 위해 값을 반환하는 함수를 받습니다.
+
+- **`max`**: 허용되는 최댓값. 종류는 `@MinDate`와 같습니다.
+- **`message`** (선택 사항): 검증 실패 시 표시할 메시지. 생략하면 `startsAt must be on or before 18:00:00` 같은 기본 메시지가 사용됩니다.
+
+### `@MinDuration(min: Temporal.Duration | string, message?: string)`
+
+`Temporal.Duration` 필드가 주어진 최솟값 이상인지 검증합니다. Node.js 26 이상이 필요합니다.
+
+- **`min`**: `Temporal.Duration` 또는 `'PT5M'` 같은 ISO 8601 기간 문자열로 준 최솟값. 년·월·주는 길이가 일정하지 않아 쓸 수 없습니다. `'P1M'` 대신 `'P30D'`를 쓰세요.
+- **`message`** (선택 사항): 값이 최솟값보다 작을 때 표시할 메시지. 생략하면 `length must be at least PT5M` 같은 기본 메시지가 사용됩니다.
+
+년·월·주 단위로 들어온 값은 `<필드> must be given in days or smaller units, such as P7D, not in years, months or weeks` 오류를 냅니다.
+
+### `@MaxDuration(max: Temporal.Duration | string, message?: string)`
+
+`Temporal.Duration` 필드가 주어진 최댓값 이하인지 검증합니다. Node.js 26 이상이 필요합니다.
+
+- **`max`**: 최댓값. 형식은 `@MinDuration`과 같습니다.
+- **`message`** (선택 사항): 값이 최댓값보다 클 때 표시할 메시지. 생략하면 `length must be at most PT2H` 같은 기본 메시지가 사용됩니다.
+
+Duration은 음수일 수 있어서 `@MaxDuration`만 붙인 필드는 `-PT1H`를 받습니다. 음수를 막으려면 `@MinDuration('PT0S')`를 함께 쓰세요.
 
 ## 배열 검증자
 

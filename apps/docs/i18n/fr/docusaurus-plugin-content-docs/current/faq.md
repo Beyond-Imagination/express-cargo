@@ -20,6 +20,12 @@ Trouvez des réponses aux questions courantes concernant l'utilisation de la bib
 </details>
 
 <details>
+<summary><b>Q : Puis-je utiliser `Temporal` à la place de `Date` ?</b></summary>
+
+**R :** Oui, sur **Node.js 26 ou supérieur**, où `Temporal` est intégré. Déclarez un champ comme `Temporal.PlainDate`, `Temporal.Duration` ou un autre type Temporal, et la valeur de la requête est liée à ce type. Sur Node.js 20 à 24, `Date` continue de fonctionner, tandis qu'un champ Temporal arrête l'application au démarrage avec une `CargoSchemaError`. Les polyfills ne sont pas pris en charge. Consultez [Temporal](./advanced/temporal.md).
+</details>
+
+<details>
 <summary><b>Q : La configuration TypeScript est-elle obligatoire ?</b></summary>
 
 **R :** Oui. Puisqu'elle utilise des décorateurs, les deux options suivantes doivent être définies sur `true` dans votre `tsconfig.json` :

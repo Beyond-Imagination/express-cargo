@@ -161,13 +161,13 @@ Validiert, dass das dekorierte Feld ein gültiger Hash-String für den angegeben
 
 ### `@Equal(value: any)`
 
-Validiert, dass ein Wert strikt gleich (`===`) dem angegebenen Wert ist.
+Validiert, dass ein Wert strikt gleich (`===`) dem angegebenen Wert ist. Datums- und Temporal-Werte werden nach Wert verglichen, sodass zwei `Date`-Werte für denselben Zeitpunkt gleich sind.
 
 - **`value`**: Der Wert, mit dem verglichen werden soll.
 
 ### `@NotEqual(value: any)`
 
-Validiert, dass ein Wert strikt ungleich (`!==`) dem angegebenen Wert ist.
+Validiert, dass ein Wert strikt ungleich (`!==`) dem angegebenen Wert ist. Datums- und Temporal-Werte werden nach Wert verglichen.
 
 - **`value`**: Der Wert, mit dem verglichen werden soll.
 
@@ -181,7 +181,7 @@ Validiert, dass die dekorierte Eigenschaft falsch (false) ist.
 
 ### `@OneOf(values: any[])`
 
-Validiert, dass der Eingabewert einer der angegebenen Werte ist.
+Validiert, dass der Eingabewert einer der angegebenen Werte ist. Datums- und Temporal-Werte stimmen mit einer Option überein, die denselben Wert enthält.
 
 - **`values`**: Das Array der zulässigen Werte.
 
@@ -195,19 +195,41 @@ Dieser Decorator bietet Flexibilität, um Validierungslogik über die integriert
 
 ## Datums-Validatoren
 
-### `@MinDate(min: Date | (() => Date), message?: string)`
+Diese Validatoren akzeptieren ein `Date` und ab Node.js 26 auch die integrierten `Temporal`-Typen. Die Temporal-Typen, Eingabeformate und Voraussetzungen der Laufzeitumgebung finden Sie unter [Temporal](../advanced/temporal.md).
 
-Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder nach dem angegebenen Mindestdatum liegt. Akzeptiert ein festes `Date` oder eine Funktion, die ein `Date` zurückgibt.
+### `@MinDate(min: Date | Temporal | (() => Date | Temporal), message?: string)`
 
-- **`min`**: Das minimal erlaubte Datum oder eine Funktion, die es zurückgibt.
-- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+Validiert, dass das dekorierte Feld gleich oder nach dem angegebenen Minimum liegt. Akzeptiert einen festen Wert oder eine Funktion, die einen Wert für den dynamischen Vergleich zurückgibt.
 
-### `@MaxDate(max: Date | (() => Date), message?: string)`
+- **`min`**: Der minimal erlaubte Wert: ein `Date` bei einem `Date`-Feld oder ein Temporal-Wert vom Typ des Feldes, zum Beispiel ein `Temporal.PlainDate` bei einem `Temporal.PlainDate`-Feld.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung wie `startsAt must be on or after 09:00:00` verwendet.
 
-Validiert, dass das dekorierte Feld ein `Date` ist, das gleich oder vor dem angegebenen Höchstdatum liegt. Akzeptiert ein festes `Date` oder eine Funktion, die ein `Date` zurückgibt.
+Eine feste Grenze, die nie mit dem Feld verglichen werden kann, zum Beispiel ein Datums-String oder ein `Invalid Date` bei einem `Date`-Feld oder eine `PlainDateTime` bei einem `PlainDate`-Feld, löst beim Aufruf von `bindingCargo()` einen `CargoSchemaError` aus.
 
-- **`max`**: Das maximal erlaubte Datum oder eine Funktion, die es zurückgibt.
-- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung verwendet.
+### `@MaxDate(max: Date | Temporal | (() => Date | Temporal), message?: string)`
+
+Validiert, dass das dekorierte Feld gleich oder vor dem angegebenen Maximum liegt. Akzeptiert einen festen Wert oder eine Funktion, die einen Wert für den dynamischen Vergleich zurückgibt.
+
+- **`max`**: Der maximal erlaubte Wert, von derselben Art wie bei `@MinDate`.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn die Validierung fehlschlägt. Wenn weggelassen, wird eine Standardmeldung wie `startsAt must be on or before 18:00:00` verwendet.
+
+### `@MinDuration(min: Temporal.Duration | string, message?: string)`
+
+Validiert, dass ein `Temporal.Duration`-Feld mindestens der angegebenen Untergrenze entspricht. Erfordert Node.js 26 oder höher.
+
+- **`min`**: Das Minimum als `Temporal.Duration` oder als ISO-8601-Dauer-String wie `'PT5M'`. Jahre, Monate und Wochen sind nicht erlaubt, da ihre Länge variiert; verwenden Sie `'P30D'` statt `'P1M'`.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn der Wert unter dem Minimum liegt. Wenn weggelassen, wird eine Standardmeldung wie `length must be at least PT5M` verwendet.
+
+Ein Wert in Jahren, Monaten oder Wochen schlägt mit `<field> must be given in days or smaller units, such as P7D, not in years, months or weeks` fehl.
+
+### `@MaxDuration(max: Temporal.Duration | string, message?: string)`
+
+Validiert, dass ein `Temporal.Duration`-Feld höchstens der angegebenen Obergrenze entspricht. Erfordert Node.js 26 oder höher.
+
+- **`max`**: Das Maximum in derselben Form wie bei `@MinDuration`.
+- **`message`** (optional): Die Fehlermeldung, die angezeigt wird, wenn der Wert über dem Maximum liegt. Wenn weggelassen, wird eine Standardmeldung wie `length must be at most PT2H` verwendet.
+
+Durations können negativ sein, sodass ein Feld mit nur `@MaxDuration` `-PT1H` akzeptiert. Fügen Sie `@MinDuration('PT0S')` hinzu, um negative Werte abzulehnen.
 
 ## Array-Validatoren
 

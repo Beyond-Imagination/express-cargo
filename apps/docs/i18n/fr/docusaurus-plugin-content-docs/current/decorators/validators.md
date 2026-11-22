@@ -161,13 +161,13 @@ Valide que le champ décoré est une chaîne de hachage valide pour l'algorithme
 
 ### `@Equal(value: any)`
 
-Valide qu'une valeur est strictement égale (`===`) à la valeur spécifiée.
+Valide qu'une valeur est strictement égale (`===`) à la valeur spécifiée. Les dates et les valeurs Temporal sont comparées par valeur : deux `Date` représentant le même instant sont donc égales.
 
 - **`value`** : La valeur à comparer.
 
 ### `@NotEqual(value: any)`
 
-Valide qu'une valeur n'est strictement pas égale (`!==`) à la valeur spécifiée.
+Valide qu'une valeur n'est strictement pas égale (`!==`) à la valeur spécifiée. Les dates et les valeurs Temporal sont comparées par valeur.
 
 - **`value`** : La valeur à comparer.
 
@@ -181,7 +181,7 @@ Valide que la propriété décorée est fausse.
 
 ### `@OneOf(values: any[])`
 
-Valide que la valeur d'entrée est l'une des valeurs spécifiées.
+Valide que la valeur d'entrée est l'une des valeurs spécifiées. Les dates et les valeurs Temporal correspondent à une option contenant la même valeur.
 
 - **`values`** : Le tableau des valeurs autorisées.
 
@@ -195,19 +195,41 @@ Ce décorateur offre la flexibilité d'implémenter une logique de validation au
 
 ## Validateurs de dates
 
-### `@MinDate(min: Date | (() => Date), message?: string)`
+Ces validateurs acceptent un `Date` et, sur Node.js 26 ou supérieur, les types `Temporal` intégrés. Consultez [Temporal](../advanced/temporal.md) pour les types Temporal, les formats d'entrée et les prérequis d'exécution.
 
-Valide que le champ décoré est un `Date` égal ou postérieur à la date minimale donnée. Accepte un `Date` fixe ou une fonction qui retourne un `Date` pour une comparaison dynamique.
+### `@MinDate(min: Date | Temporal | (() => Date | Temporal), message?: string)`
 
-- **`min`** : La date minimale autorisée, ou une fonction qui la retourne.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+Valide que le champ décoré est égal ou postérieur au minimum donné. Accepte une valeur fixe ou une fonction qui en retourne une pour une comparaison dynamique.
 
-### `@MaxDate(max: Date | (() => Date), message?: string)`
+- **`min`** : La valeur minimale autorisée : un `Date` pour un champ `Date`, ou une valeur Temporal du type du champ, comme un `Temporal.PlainDate` pour un champ `Temporal.PlainDate`.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut tel que `startsAt must be on or after 09:00:00` est utilisé.
 
-Valide que le champ décoré est un `Date` égal ou antérieur à la date maximale donnée. Accepte un `Date` fixe ou une fonction qui retourne un `Date` pour une comparaison dynamique.
+Une borne fixe qui ne pourra jamais être comparée au champ, comme une chaîne de date ou un `Invalid Date` sur un champ `Date`, ou un `PlainDateTime` sur un champ `PlainDate`, lève une `CargoSchemaError` lors de l'appel de `bindingCargo()`.
 
-- **`max`** : La date maximale autorisée, ou une fonction qui la retourne.
-- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut sera utilisé.
+### `@MaxDate(max: Date | Temporal | (() => Date | Temporal), message?: string)`
+
+Valide que le champ décoré est égal ou antérieur au maximum donné. Accepte une valeur fixe ou une fonction qui en retourne une pour une comparaison dynamique.
+
+- **`max`** : La valeur maximale autorisée, de la même nature que pour `@MinDate`.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la validation échoue. S'il est omis, un message par défaut tel que `startsAt must be on or before 18:00:00` est utilisé.
+
+### `@MinDuration(min: Temporal.Duration | string, message?: string)`
+
+Valide qu'un champ `Temporal.Duration` est au moins égal au minimum donné. Nécessite Node.js 26 ou supérieur.
+
+- **`min`** : Le minimum sous la forme d'un `Temporal.Duration` ou d'une chaîne de durée ISO 8601 telle que `'PT5M'`. Les années, les mois et les semaines ne sont pas autorisés, car leur longueur varie ; utilisez `'P30D'` au lieu de `'P1M'`.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la valeur est inférieure au minimum. S'il est omis, un message par défaut tel que `length must be at least PT5M` est utilisé.
+
+Une valeur exprimée en années, en mois ou en semaines échoue avec `<field> must be given in days or smaller units, such as P7D, not in years, months or weeks`.
+
+### `@MaxDuration(max: Temporal.Duration | string, message?: string)`
+
+Valide qu'un champ `Temporal.Duration` est au plus égal au maximum donné. Nécessite Node.js 26 ou supérieur.
+
+- **`max`** : Le maximum, sous la même forme que pour `@MinDuration`.
+- **`message`** (optionnel) : Le message d'erreur à afficher lorsque la valeur est supérieure au maximum. S'il est omis, un message par défaut tel que `length must be at most PT2H` est utilisé.
+
+Les durées peuvent être négatives : un champ avec seulement `@MaxDuration` accepte donc `-PT1H`. Ajoutez `@MinDuration('PT0S')` pour rejeter les valeurs négatives.
 
 ## Validateurs de tableaux
 

@@ -20,6 +20,12 @@ sidebar_label: FAQ
 </details>
 
 <details>
+<summary><b>В: Можно ли использовать `Temporal` вместо `Date`?</b></summary>
+
+**О:** Да, в **Node.js 26 и новее**, где `Temporal` встроен. Объявите поле как `Temporal.PlainDate`, `Temporal.Duration` или другой тип Temporal, и значение запроса будет привязано к этому типу. В Node.js 20–24 `Date` продолжает работать, а поле типа Temporal останавливает приложение при запуске с ошибкой `CargoSchemaError`. Полифиллы не поддерживаются. См. [Temporal](./advanced/temporal.md).
+</details>
+
+<details>
 <summary><b>В: Обязательна ли конфигурация TypeScript?</b></summary>
 
 **О:** Да. Поскольку используются декораторы, следующие две опции должны быть установлены в `true` в вашем `tsconfig.json`:

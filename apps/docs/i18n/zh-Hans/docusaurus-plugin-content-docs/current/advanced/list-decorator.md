@@ -94,3 +94,21 @@ const cargo = {
   ]
 };
 ```
+
+## Temporal 元素类型
+
+在 Node.js 26 或更高版本中，`@List` 也接受内置的 Temporal 类型，既可以传入构造函数，也可以传入名称：
+
+```typescript
+class Schedule {
+    @Body()
+    @List(Temporal.PlainDate)
+    holidays!: Temporal.PlainDate[]
+
+    @Body()
+    @List('plainTime')
+    slots!: Temporal.PlainTime[]
+}
+```
+
+可用的名称有 `'instant'`、`'zonedDateTime'`、`'plainDateTime'`、`'plainDate'`、`'plainTime'`、`'plainYearMonth'`、`'plainMonthDay'` 和 `'duration'`。每个元素的读取方式与单个 Temporal 字段相同；请参阅 [Temporal](./temporal.md)。
