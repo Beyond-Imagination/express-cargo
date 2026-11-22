@@ -161,13 +161,13 @@ Express-Cargo は、クラスにバインドされた受信リクエストデー
 
 ### `@Equal(value: any)`
 
-値が指定された値と厳密に等しい（`===`）ことを検証します。
+値が指定された値と厳密に等しい（`===`）ことを検証します。Date と Temporal の値は値で比較されるため、同じ時点を表す 2 つの `Date` は等しくなります。
 
 - **`value`**: 比較対象の値。
 
 ### `@NotEqual(value: any)`
 
-値が指定された値と厳密に等しくない（`!==`）ことを検証します。
+値が指定された値と厳密に等しくない（`!==`）ことを検証します。Date と Temporal の値は値で比較されます。
 
 - **`value`**: 比較対象の値。
 
@@ -181,7 +181,7 @@ Express-Cargo は、クラスにバインドされた受信リクエストデー
 
 ### `@OneOf(values: any[])`
 
-入力値が指定された値のいずれかであることを検証します。
+入力値が指定された値のいずれかであることを検証します。Date と Temporal の値は、同じ値を持つ選択肢に一致します。
 
 - **`values`**: 許容される値の配列。
 
@@ -195,19 +195,41 @@ Express-Cargo は、クラスにバインドされた受信リクエストデー
 
 ## 日付バリデータ
 
-### `@MinDate(min: Date | (() => Date), message?: string)`
+これらのバリデータは `Date` を受け付け、Node.js 26 以降では組み込みの `Temporal` 型も受け付けます。Temporal の型、入力形式、ランタイム要件については [Temporal](../advanced/temporal.md) をご覧ください。
 
-デコレートされたフィールドが指定された最小日付以降の `Date` であることを検証します。固定の `Date` または動的比較のために `Date` を返す関数を受け付けます。
+### `@MinDate(min: Date | Temporal | (() => Date | Temporal), message?: string)`
 
-- **`min`**: 許容される最小日付、またはそれを返す関数。
-- **`message`**（オプション）: バリデーション失敗時に表示するエラーメッセージ。省略すると、デフォルトメッセージが使用されます。
+デコレートされたフィールドが指定された最小値以降であることを検証します。固定の値、または動的比較のために値を返す関数を受け付けます。
 
-### `@MaxDate(max: Date | (() => Date), message?: string)`
+- **`min`**: 許容される最小値。`Date` フィールドには `Date`、Temporal フィールドにはそのフィールドと同じ型の Temporal 値（`Temporal.PlainDate` フィールドなら `Temporal.PlainDate`）を指定します。
+- **`message`**（オプション）: バリデーション失敗時に表示するエラーメッセージ。省略すると、`startsAt must be on or after 09:00:00` のようなデフォルトメッセージが使用されます。
 
-デコレートされたフィールドが指定された最大日付以前の `Date` であることを検証します。固定の `Date` または動的比較のために `Date` を返す関数を受け付けます。
+`Date` フィールドに対する日付文字列や `Invalid Date`、`PlainDate` フィールドに対する `PlainDateTime` など、フィールドと比較できない固定の境界値は、`bindingCargo()` の呼び出し時に `CargoSchemaError` をスローします。
 
-- **`max`**: 許容される最大日付、またはそれを返す関数。
-- **`message`**（オプション）: バリデーション失敗時に表示するエラーメッセージ。省略すると、デフォルトメッセージが使用されます。
+### `@MaxDate(max: Date | Temporal | (() => Date | Temporal), message?: string)`
+
+デコレートされたフィールドが指定された最大値以前であることを検証します。固定の値、または動的比較のために値を返す関数を受け付けます。
+
+- **`max`**: 許容される最大値。`@MinDate` と同じ種類の値を指定します。
+- **`message`**（オプション）: バリデーション失敗時に表示するエラーメッセージ。省略すると、`startsAt must be on or before 18:00:00` のようなデフォルトメッセージが使用されます。
+
+### `@MinDuration(min: Temporal.Duration | string, message?: string)`
+
+`Temporal.Duration` フィールドが指定された最小値以上であることを検証します。Node.js 26 以降が必要です。
+
+- **`min`**: 最小値を `Temporal.Duration` または `'PT5M'` のような ISO 8601 の期間文字列で指定します。年、月、週は長さが一定ではないため使用できません。`'P1M'` の代わりに `'P30D'` を使用してください。
+- **`message`**（オプション）: 値が最小値を下回ったときに表示するエラーメッセージ。省略すると、`length must be at least PT5M` のようなデフォルトメッセージが使用されます。
+
+年、月、週で指定された値は `<field> must be given in days or smaller units, such as P7D, not in years, months or weeks` というメッセージで失敗します。
+
+### `@MaxDuration(max: Temporal.Duration | string, message?: string)`
+
+`Temporal.Duration` フィールドが指定された最大値以下であることを検証します。Node.js 26 以降が必要です。
+
+- **`max`**: 最大値を `@MinDuration` と同じ形式で指定します。
+- **`message`**（オプション）: 値が最大値を上回ったときに表示するエラーメッセージ。省略すると、`length must be at most PT2H` のようなデフォルトメッセージが使用されます。
+
+Duration は負の値になることがあるため、`@MaxDuration` のみのフィールドは `-PT1H` を受け付けます。負の値を拒否するには `@MinDuration('PT0S')` を追加してください。
 
 ## 配列バリデータ
 

@@ -98,3 +98,21 @@ const cargo = {
   ]
 };
 ```
+
+## Temporal 원소 타입
+
+Node.js 26 이상에서는 `@List`에 기본 내장 Temporal 타입도 생성자나 이름으로 줄 수 있습니다.
+
+```typescript
+class Schedule {
+    @Body()
+    @List(Temporal.PlainDate)
+    holidays!: Temporal.PlainDate[]
+
+    @Body()
+    @List('plainTime')
+    slots!: Temporal.PlainTime[]
+}
+```
+
+이름은 `'instant'`, `'zonedDateTime'`, `'plainDateTime'`, `'plainDate'`, `'plainTime'`, `'plainYearMonth'`, `'plainMonthDay'`, `'duration'`입니다. 각 원소는 Temporal 필드 하나와 같은 방식으로 읽습니다. [Temporal](./temporal.md)을 참고하세요.

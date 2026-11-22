@@ -94,3 +94,21 @@ const cargo = {
   ]
 };
 ```
+
+## Temporal 要素型
+
+Node.js 26 以降では、`@List` は組み込みの Temporal 型も、コンストラクタまたは名前で指定して受け付けます。
+
+```typescript
+class Schedule {
+    @Body()
+    @List(Temporal.PlainDate)
+    holidays!: Temporal.PlainDate[]
+
+    @Body()
+    @List('plainTime')
+    slots!: Temporal.PlainTime[]
+}
+```
+
+名前は `'instant'`、`'zonedDateTime'`、`'plainDateTime'`、`'plainDate'`、`'plainTime'`、`'plainYearMonth'`、`'plainMonthDay'`、`'duration'` です。各要素は単一の Temporal フィールドと同じように読み取られます。詳しくは [Temporal](./temporal.md) をご覧ください。

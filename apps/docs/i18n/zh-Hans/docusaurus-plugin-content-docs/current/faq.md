@@ -20,6 +20,12 @@ sidebar_label: 常见问题
 </details>
 
 <details>
+<summary><b>Q: 可以用 `Temporal` 代替 `Date` 吗？</b></summary>
+
+**A:** 可以，但需要 **Node.js 26 或更高版本**，其中内置了 `Temporal`。把字段声明为 `Temporal.PlainDate`、`Temporal.Duration` 或其他 Temporal 类型，请求值就会绑定为该类型。在 Node.js 20–24 上，`Date` 仍可正常使用，而 Temporal 字段会让应用在启动时因 `CargoSchemaError` 而停止。不支持 polyfill。请参阅 [Temporal](./advanced/temporal.md)。
+</details>
+
+<details>
 <summary><b>Q: TypeScript 配置是必需的吗？</b></summary>
 
 **A:** 是的。因为它使用装饰器，你必须在 `tsconfig.json` 中将以下两个选项设置为 `true`：

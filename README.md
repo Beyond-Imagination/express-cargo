@@ -113,11 +113,11 @@ Full guide and API reference:
 | `@Length(value: number)`                                                      | String length must be exactly `value`.                                                                                                                           | `@Length(6) otp!: string`                                                                                                |
 | `@MinLength(min: number)`                                                     | String length must be greater than or equal to `min`.                                                                                                            | `@MinLength(8) password!: string`                                                                                        |
 | `@MaxLength(max: number)`                                                     | String length must be less than or equal to `max`.                                                                                                               | `@MaxLength(20) username!: string`                                                                                       |
-| `@Equal(value: any)`                                                          | Value must be strictly equal to `value`.                                                                                                                         | `@Equal('production') env!: string`                                                                                      |
-| `@NotEqual(value: any)`                                                       | Value must not be equal to `value`.                                                                                                                              | `@NotEqual('admin') role!: string`                                                                                       |
+| `@Equal(value: any)`                                                          | Value must be strictly equal to `value`. Dates and Temporal values are compared by value.                                                                        | `@Equal('production') env!: string`                                                                                      |
+| `@NotEqual(value: any)`                                                       | Value must not be equal to `value`. Dates and Temporal values are compared by value.                                                                             | `@NotEqual('admin') role!: string`                                                                                       |
 | `@IsTrue()`                                                                   | Value must be `true`.                                                                                                                                            | `@IsTrue() acceptedTerms!: boolean`                                                                                      |
 | `@IsFalse()`                                                                  | Value must be `false`.                                                                                                                                           | `@IsFalse() blocked!: boolean`                                                                                           |
-| `@OneOf(options: readonly any[])`                                             | Value must be one of `options`.                                                                                                                                  | `@OneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                                                       |
+| `@OneOf(options: readonly any[])`                                             | Value must be one of `options`. Dates and Temporal values are compared by value.                                                                                 | `@OneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                                                       |
 | `@ListContains(values: any[], comparator?: (expected, actual) => boolean)`    | The array must contain all specified values. When `comparator` is provided, all comparisons are delegated to it.                                                 | `@ListContains([1, 2]) nums!: number[]`<br>`@ListContains(['a'], (e, a) => a.toLowerCase() === e) strs!: string[]`       |
 | `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean)` | The array must NOT contain any of the specified values. When `comparator` is provided, all comparisons are delegated to it.                                      | `@ListNotContains([1, 2]) nums!: number[]`<br>`@ListNotContains(['a'], (e, a) => a.toLowerCase() === e) strs!: string[]` |
 | `@ListMaxSize(max: number, message?)`                                         | The array must contain no more than `max` elements.                                                                                                              | `@ListMaxSize(5) tags!: string[]`                                                                                        |
@@ -134,12 +134,14 @@ Full guide and API reference:
 | `@IsJwt(message?: string)`                                                    | Validates that the field is a valid JSON Web Token (JWT) in `header.payload.signature` format using Base64URL characters.                                        | `@IsJwt() accessToken!: string`                                                                                          |
 | `@IsUrl(options?: IsUrlOptions, message?: string)`                            | Validates that the field is a valid URL. `http`, `https`, and `ftp` protocols are allowed by default. Use `options.protocols` to customize allowed protocols.    | `@IsUrl() website!: string`                                                                                              |
 | `@IsPhoneNumber(region?: CountryCode, message?: string)`                      | Validates that the field is a valid phone number using libphonenumber-js. Supports all countries. With a region, local formats are accepted.                     | `@IsPhoneNumber('KR') phone!: string`                                                                                    |
-| `@IsTimeZone(message?: string)`                                               | Validates that the field is a valid IANA timezone identifier (e.g., `Asia/Seoul`, `UTC`). Uses the built-in `Intl` API.                                         | `@IsTimeZone() tz!: string`                                                                                              |
+| `@IsTimeZone(message?: string)`                                               | Validates that the field is a valid IANA timezone identifier (e.g., `Asia/Seoul`, `UTC`). Uses the built-in `Intl` API.                                          | `@IsTimeZone() tz!: string`                                                                                              |
 | `@IsHexColor(message?: string)`                                               | Validates that the field is a valid hex color code. Supports `#RGB`, `#RGBA`, `#RRGGBB`, and `#RRGGBBAA` formats (case-insensitive). The `#` prefix is required. | `@IsHexColor() color!: string`                                                                                           |
 | `@IsHexadecimal(message?: string)`                                            | Validates that the field is a hexadecimal number (characters `0-9` and `a-f`, case-insensitive). The `0x` prefix is also allowed.                                | `@IsHexadecimal() color!: string`                                                                                        |
 | `@IsHash(algorithm: HashAlgorithm, message?: string)`                         | Validates that the field is a valid hash string for the given algorithm. Supported: `md5`, `sha1`, `sha256`, `sha384`, `sha512`, `crc32`, `crc32b`.              | `@IsHash('sha256') checksum!: string`                                                                                    |
-| `@MinDate(min: Date \| (() => Date), message?: string)`                       | Validates that the field is a `Date` on or after the given minimum date. Accepts a fixed date or a function for dynamic comparison.                              | `@MinDate(new Date('2000-01-01')) createdAt!: Date`                                                                      |
-| `@MaxDate(max: Date \| (() => Date), message?: string)`                       | Validates that the field is a `Date` on or before the given maximum date. Accepts a fixed date or a function for dynamic comparison.                             | `@MaxDate(new Date('2099-12-31')) createdAt!: Date`                                                                      |
+| `@MinDate(min, message?)`                                                     | Value must be on or after `min`. `min` is a `Date`, a [Temporal](#temporal-nodejs-26) value of the field's type, or a function returning one.                    | `@MinDate(new Date('2000-01-01')) createdAt!: Date`                                                                      |
+| `@MaxDate(max, message?)`                                                     | Value must be on or before `max`. `max` is a `Date`, a [Temporal](#temporal-nodejs-26) value of the field's type, or a function returning one.                   | `@MaxDate(new Date('2099-12-31')) createdAt!: Date`                                                                      |
+| `@MinDuration(min, message?)`                                                 | A `Temporal.Duration` must be at least `min`, given as a `Duration` or an ISO 8601 string. Node.js 26+.                                                          | `@MinDuration('PT5M') length!: Temporal.Duration`                                                                        |
+| `@MaxDuration(max, message?)`                                                 | A `Temporal.Duration` must be at most `max`, given as a `Duration` or an ISO 8601 string. Node.js 26+.                                                           | `@MaxDuration('PT2H') length!: Temporal.Duration`                                                                        |
 | `@With(fieldName: string)`                                                    | Validates that if the decorated field has a value, the specified target field (fieldName) must also have a value, establishing a mandatory dependency.           | `@With('price') discountRate?: number`                                                                                   |
 | `@Without(fieldName: string)`                                                 | Validates that if the decorated field has a value, the specified target field (fieldName) must NOT have a value, establishing a mutually exclusive relationship. | `@Without('isGuest') password?: string`                                                                                  |
 
@@ -228,6 +230,31 @@ After a missing value is handled by one of these paths, the remaining transform 
 | `@Default(value)` | Set default value when field is missing          | `@Default(0) count!: number` |
 
 > A field takes a single missing-value strategy; `@Optional` and `@Default` cannot be combined.
+
+### Temporal (Node.js 26+)
+
+On Node.js 26 or later, fields can use the built-in [`Temporal`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal) types:
+`Instant`, `ZonedDateTime`, `PlainDateTime`, `PlainDate`, `PlainTime`, `PlainYearMonth`, `PlainMonthDay` and `Duration`.
+Strings are parsed with `Temporal.X.from()`, and a request body may also send an object such as `{ "year": 2026, "month": 3, "day": 1 }`.
+
+```ts
+class BookingRequest {
+    @Body()
+    @MinDate(() => Temporal.Now.plainDateISO())
+    checkIn!: Temporal.PlainDate
+
+    @Body()
+    @MinDuration('PT30M')
+    @MaxDuration('PT4H')
+    length!: Temporal.Duration
+
+    @Body()
+    @List('plainDate')
+    holidays!: Temporal.PlainDate[]
+}
+```
+
+> On Node.js 20–24, `Date` works as before; a DTO that declares a Temporal field stops the app at startup with a `CargoSchemaError`. Temporal polyfills are not supported. TypeScript ships Temporal types from 6.0 (`"lib": ["ESNext"]`). See the [Temporal guide](https://beyond-imagination.github.io/express-cargo/advanced/temporal) for input formats, validators and caveats.
 
 ### Error Handling
 

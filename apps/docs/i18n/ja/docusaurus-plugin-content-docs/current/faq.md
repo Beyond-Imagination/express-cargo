@@ -20,6 +20,12 @@ sidebar_label: よくある質問
 </details>
 
 <details>
+<summary><b>Q: `Date` の代わりに `Temporal` を使えますか？</b></summary>
+
+**A:** はい。ただし、`Temporal` が組み込まれている **Node.js 26 以降**に限ります。フィールドを `Temporal.PlainDate`、`Temporal.Duration` などの Temporal 型で宣言すると、リクエストの値がその型にバインドされます。Node.js 20〜24 では `Date` は引き続き動作しますが、Temporal フィールドがあると `CargoSchemaError` でアプリが起動時に停止します。ポリフィルはサポートされません。詳しくは [Temporal](./advanced/temporal.md) をご覧ください。
+</details>
+
+<details>
 <summary><b>Q: TypeScript の設定は必須ですか？</b></summary>
 
 **A:** はい。デコレータを使用するため、`tsconfig.json` で以下の 2 つのオプションを `true` に設定する必要があります：

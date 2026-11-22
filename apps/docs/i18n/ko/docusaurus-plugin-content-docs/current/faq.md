@@ -20,6 +20,12 @@ title: 자주 묻는 질문
 </details>
 
 <details>
+<summary><b>Q: `Date` 대신 `Temporal`을 쓸 수 있나요?</b></summary>
+
+**A:** 네, `Temporal`이 기본 내장된 **Node.js 26 이상**에서 쓸 수 있습니다. 필드를 `Temporal.PlainDate`, `Temporal.Duration` 같은 Temporal 타입으로 선언하면 요청 값이 그 타입으로 바인딩됩니다. Node.js 20~24에서는 `Date`가 그대로 동작하고, Temporal 필드를 선언하면 앱 시작 시 `CargoSchemaError`가 납니다. 폴리필은 지원하지 않습니다. [Temporal](./advanced/temporal.md)을 참고하세요.
+</details>
+
+<details>
 <summary><b>Q: TypeScript 설정이 꼭 필요한가요?</b></summary>
 
 **A:** 네, 데코레이터를 사용하므로 `tsconfig.json`에서 아래 두 옵션이 반드시 `true`로 설정되어 있어야 합니다.
