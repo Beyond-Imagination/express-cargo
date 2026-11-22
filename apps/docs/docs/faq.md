@@ -20,6 +20,12 @@ Find answers to common questions about using the library. Click on a question to
 </details>
 
 <details>
+<summary><b>Q: Can I use `Temporal` instead of `Date`?</b></summary>
+
+**A:** Yes, on **Node.js 26 or later**, where `Temporal` is built in. Declare a field as `Temporal.PlainDate`, `Temporal.Duration` or another Temporal type, and the request value is bound to that type. On Node.js 20–24, `Date` keeps working, while a Temporal field stops the app at startup with a `CargoSchemaError`. Polyfills are not supported. See [Temporal](./advanced/temporal.md).
+</details>
+
+<details>
 <summary><b>Q: Is TypeScript configuration mandatory?</b></summary>
 
 **A:** Yes. Since it uses decorators, the following two options must be set to `true` in your `tsconfig.json`:

@@ -46,6 +46,7 @@ const sidebars: SidebarsConfig = {
                 'advanced/custom-transformer',
                 'advanced/list-decorator',
                 'advanced/type-and-polymorphism',
+                'advanced/temporal',
             ],
         },
         {
