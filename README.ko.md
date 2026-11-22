@@ -114,11 +114,11 @@ app.listen(3000)
 | `@Length(value: number)`                                                      | 문자열 길이가 정확히 `value` 여야 함                                                                                    | `@Length(6) otp!: string`                                                                  |
 | `@MinLength(min: number)`                                                     | 문자열 길이가 `min` 이상이어야 함                                                                                       | `@MinLength(8) password!: string`                                                          |
 | `@MaxLength(max: number)`                                                     | 문자열 길이가 `max` 이하이어야 함                                                                                       | `@MaxLength(20) username!: string`                                                         |
-| `@Equal(value: any)`                                                          | 값이 `value` 와 정확히 일치해야 함                                                                                     | `@Equal('production') env!: string`                                                        |
-| `@NotEqual(value: any)`                                                       | 값이 `value` 와 달라야 함                                                                                          | `@NotEqual('admin') role!: string`                                                         |
+| `@Equal(value: any)`                                                          | 값이 `value` 와 정확히 일치해야 함. 날짜와 Temporal 값은 값으로 비교                                                             | `@Equal('production') env!: string`                                                        |
+| `@NotEqual(value: any)`                                                       | 값이 `value` 와 달라야 함. 날짜와 Temporal 값은 값으로 비교                                                                  | `@NotEqual('admin') role!: string`                                                         |
 | `@IsTrue()`                                                                   | 값이 `true` 여야 함                                                                                              | `@IsTrue() acceptedTerms!: boolean`                                                        |
 | `@IsFalse()`                                                                  | 값이 `false` 여야 함                                                                                             | `@IsFalse() blocked!: boolean`                                                             |
-| `@OneOf(options: readonly any[])`                                             | 값이 `options` 중 하나여야 함                                                                                       | `@OneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                         |
+| `@OneOf(options: readonly any[])`                                             | 값이 `options` 중 하나여야 함. 날짜와 Temporal 값은 값으로 비교                                                               | `@OneOf(['credit','debit'] as const) method!: 'credit' \| 'debit'`                         |
 | `@ListContains(values: any[], comparator?: (expected, actual) => boolean)`    | 배열이 지정된 모든 값을 포함해야 함. `comparator` 제공 시 모든 비교를 위임                                                           | `@ListContains([1, 2]) nums!: number[]`                                                    |
 | `@ListNotContains(values: any[], comparator?: (expected, actual) => boolean)` | 배열이 지정된 값을 포함하지 않아야 함. `comparator` 제공 시 모든 비교를 위임                                                          | `@ListNotContains([1, 2]) nums!: number[]`                                                 |
 | `@ListMaxSize(max: number, message?)`                                         | 배열의 요소 수가 `max` 이하이어야 함                                                                                     | `@ListMaxSize(5) tags!: string[]`                                                          |
@@ -134,13 +134,15 @@ app.listen(3000)
 | `@IsLowercase(message?: string)`                                              | 필드에 소문자만 포함되어야 합니다.                                                                                         | `@IsLowercase() username!: string`                                                         |
 | `@IsJwt(message?: string)`                                                    | 필드가 유효한 JSON Web Token(JWT)인지 검증합니다. Base64URL 문자로 이루어진 `header.payload.signature` 형식이어야 합니다.               | `@IsJwt() accessToken!: string`                                                            |
 | `@IsUrl(options?: IsUrlOptions, message?: string)`                            | 필드가 유효한 URL인지 검증합니다. 기본적으로 `http`, `https`, `ftp` 프로토콜을 허용하며, `options.protocols`로 변경할 수 있습니다.              | `@IsUrl() website!: string`                                                                |
-| `@IsPhoneNumber(region?: CountryCode, message?: string)`                      | 필드가 유효한 전화번호인지 검증합니다. libphonenumber-js를 사용해 전 세계 모든 국가를 지원합니다. 지역 코드 지정 시 로컬 형식도 허용됩니다.                   | `@IsPhoneNumber('KR') phone!: string`                                                      |
-| `@IsTimeZone(message?: string)`                                               | 필드가 유효한 IANA 타임존 식별자인지 검증합니다(예: `Asia/Seoul`, `UTC`). 내장 `Intl` API를 사용합니다.                                  | `@IsTimeZone() tz!: string`                                                                |
+| `@IsPhoneNumber(region?: CountryCode, message?: string)`                      | 필드가 유효한 전화번호인지 검증합니다. libphonenumber-js를 사용해 전 세계 모든 국가를 지원합니다. 지역 코드 지정 시 로컬 형식도 허용됩니다.                    | `@IsPhoneNumber('KR') phone!: string`                                                      |
+| `@IsTimeZone(message?: string)`                                               | 필드가 유효한 IANA 타임존 식별자인지 검증합니다(예: `Asia/Seoul`, `UTC`). 내장 `Intl` API를 사용합니다.                                 | `@IsTimeZone() tz!: string`                                                                |
 | `@IsHexColor(message?: string)`                                               | 필드가 유효한 16진수 색상 코드인지 검증합니다. `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA` 형식을 지원합니다(대소문자 구분 없음).                  | `@IsHexColor() color!: string`                                                             |
 | `@IsHexadecimal(message?: string)`                                            | 필드가 16진수 숫자인지 검증합니다. `0-9` 및 `a-f` 문자(대소문자 구분 없음)만 허용되며, `0x` 접두사도 허용됩니다.                                   | `@IsHexadecimal() color!: string`                                                          |
 | `@IsHash(algorithm: HashAlgorithm, message?: string)`                         | 필드가 주어진 해시 알고리즘에 대한 유효한 해시 문자열인지 검증합니다. 지원: `md5`, `sha1`, `sha256`, `sha384`, `sha512`, `crc32`, `crc32b`. | `@IsHash('sha256') checksum!: string`                                                      |
-| `@MinDate(min: Date \| (() => Date), message?: string)`                       | 필드가 주어진 최소 날짜와 같거나 이후인 `Date`인지 검증합니다. 고정 날짜 또는 동적 비교를 위한 함수를 받습니다.                                         | `@MinDate(new Date('2000-01-01')) createdAt!: Date`                                        |
-| `@MaxDate(max: Date \| (() => Date), message?: string)`                       | 필드가 주어진 최대 날짜와 같거나 이전인 `Date`인지 검증합니다. 고정 날짜 또는 동적 비교를 위한 함수를 받습니다.                                         | `@MaxDate(new Date('2099-12-31')) createdAt!: Date`                                        |
+| `@MinDate(min, message?)`                                                     | 값이 `min`과 같거나 이후인지 검증합니다. `min`은 `Date`, 필드 타입과 같은 [Temporal](#temporal-nodejs-26) 값, 또는 이를 반환하는 함수입니다.     | `@MinDate(new Date('2000-01-01')) createdAt!: Date`                                        |
+| `@MaxDate(max, message?)`                                                     | 값이 `max`와 같거나 이전인지 검증합니다. `max`는 `Date`, 필드 타입과 같은 [Temporal](#temporal-nodejs-26) 값, 또는 이를 반환하는 함수입니다.     | `@MaxDate(new Date('2099-12-31')) createdAt!: Date`                                        |
+| `@MinDuration(min, message?)`                                                 | `Temporal.Duration`이 `min` 이상인지 검증합니다. `min`은 `Duration` 또는 ISO 8601 문자열입니다. Node.js 26 이상.                 | `@MinDuration('PT5M') length!: Temporal.Duration`                                          |
+| `@MaxDuration(max, message?)`                                                 | `Temporal.Duration`이 `max` 이하인지 검증합니다. `max`는 `Duration` 또는 ISO 8601 문자열입니다. Node.js 26 이상.                 | `@MaxDuration('PT2H') length!: Temporal.Duration`                                          |
 | `@With(fieldName: string)`                                                    | 데코레이터가 적용된 필드에 값이 있을 경우, 지정된 대상 필드 (fieldName)도 반드시 값을 가져야 함을 검증하여, 두 필드 간의 필수적인 의존 관계를 설정합니다.              | `@With('price') discountRate?: number`                                                     |
 | `@Without(fieldName: string)`                                                 | 데코레이터가 선언된 필드에 값이 있을 경우, 지정된 타겟 필드(fieldName)는 반드시 값이 없어야 함을 검증하여 상호 배타적 관계를 설정합니다.                         | `@Without('isGuest') password?: string`                                                    |
 
@@ -229,6 +231,31 @@ class OrderRequest {
 | `@Default(value)` | 필드가 없을 때 기본값 설정       | `@Default(0) count!: number` |
 
 > 한 필드에는 값 누락 처리 전략을 하나만 적용할 수 있습니다. `@Optional`과 `@Default`는 함께 쓸 수 없습니다.
+
+### Temporal (Node.js 26+)
+
+Node.js 26 이상에서는 기본 내장 [`Temporal`](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Temporal) 타입을 필드에 쓸 수 있습니다.
+`Instant`, `ZonedDateTime`, `PlainDateTime`, `PlainDate`, `PlainTime`, `PlainYearMonth`, `PlainMonthDay`, `Duration`을 지원합니다.
+문자열은 `Temporal.X.from()`으로 읽고, 요청 본문에서는 `{ "year": 2026, "month": 3, "day": 1 }` 같은 객체도 받습니다.
+
+```ts
+class BookingRequest {
+    @Body()
+    @MinDate(() => Temporal.Now.plainDateISO())
+    checkIn!: Temporal.PlainDate
+
+    @Body()
+    @MinDuration('PT30M')
+    @MaxDuration('PT4H')
+    length!: Temporal.Duration
+
+    @Body()
+    @List('plainDate')
+    holidays!: Temporal.PlainDate[]
+}
+```
+
+> Node.js 20~24에서 `Date`는 그대로 동작합니다. Temporal 필드를 선언한 DTO는 앱 시작 시 `CargoSchemaError`를 냅니다. Temporal 폴리필은 지원하지 않습니다. TypeScript는 6.0부터 Temporal 타입을 제공합니다(`"lib": ["ESNext"]`). 입력 형식, 검증기, 주의할 점은 [Temporal 가이드](https://beyond-imagination.github.io/express-cargo/ko/advanced/temporal)를 참고하세요.
 
 ### 에러 처리
 
