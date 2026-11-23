@@ -82,7 +82,7 @@ function main(): void {
             side.http.push(JSON.parse(readFileSync(file, 'utf8')))
         })
         runRounds(inlineRounds, 'inline', (side, file) => {
-            runScript('../inline/benchmark.js', [`--json=${file}`])
+            runScript('../inline/benchmark.js', ['--only=express-cargo', `--json=${file}`])
             side.inline.push(JSON.parse(readFileSync(file, 'utf8')))
         })
         runRounds(inlineRounds, 'dates', (side, file) => {

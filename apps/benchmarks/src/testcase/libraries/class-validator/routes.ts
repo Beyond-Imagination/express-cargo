@@ -6,7 +6,8 @@ import type { ValidResponse } from '../../scenarios/valid'
 import type { OrderRequest } from '../../common/types'
 import { ClassValidatorRequest } from './types'
 
-const parseClassValidator: RequestHandler = (req, res, next) => {
+// Exported so the inline benchmark can call the parser without HTTP.
+export const parseRequest: RequestHandler = (req, res, next) => {
     const input: OrderRequest = plainToInstance(ClassValidatorRequest, {
         ...req.body,
         id: req.params.id,
@@ -45,6 +46,6 @@ const respond: RequestHandler = (_req, res) => {
 }
 
 export const classValidatorRouter: Router = Router()
-classValidatorRouter.post(validScenario.route, parseClassValidator, respond)
-classValidatorRouter.post(validationFailureScenario.route, parseClassValidator, respond)
-classValidatorRouter.post(nested25Scenario.route, parseClassValidator, respond)
+classValidatorRouter.post(validScenario.route, parseRequest, respond)
+classValidatorRouter.post(validationFailureScenario.route, parseRequest, respond)
+classValidatorRouter.post(nested25Scenario.route, parseRequest, respond)

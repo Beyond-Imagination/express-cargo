@@ -20,6 +20,20 @@ export function orderRoutes(order: string | undefined): readonly BenchmarkRoute[
     return ordered as BenchmarkRoute[]
 }
 
+/**
+ * Returns the routes named by a comma-separated list of `sourceClass` values, e.g. `express-cargo`,
+ * in the usual route order. Every route when the list is undefined.
+ */
+export function selectRoutes(only: string | undefined): readonly BenchmarkRoute[] {
+    if (only === undefined) return routes
+    const names = only.split(',')
+    const unknown = names.filter(name => !routes.some(route => route.sourceClass === name))
+    if (names.length === 0 || unknown.length > 0) {
+        throw new Error(`--only must list some of ${routes.map(route => route.sourceClass).join(', ')}: ${only}`)
+    }
+    return routes.filter(route => names.includes(route.sourceClass))
+}
+
 /** Reads `--name=value` from the given arguments. */
 export function optionValue(argumentsList: readonly string[], name: string): string | undefined {
     const prefix = `--${name}=`

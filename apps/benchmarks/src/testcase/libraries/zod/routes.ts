@@ -4,7 +4,8 @@ import type { ValidResponse } from '../../scenarios/valid'
 import type { OrderRequest } from '../../common/types'
 import { requestSchema } from './types'
 
-const parseZod: RequestHandler = (req, res, next) => {
+// Exported so the inline benchmark can call the parser without HTTP.
+export const parseRequest: RequestHandler = (req, res, next) => {
     const result = requestSchema.safeParse({
         ...req.body,
         id: req.params.id,
@@ -44,6 +45,6 @@ const respond: RequestHandler = (_req, res) => {
 }
 
 export const zodRouter: Router = Router()
-zodRouter.post(validScenario.route, parseZod, respond)
-zodRouter.post(validationFailureScenario.route, parseZod, respond)
-zodRouter.post(nested25Scenario.route, parseZod, respond)
+zodRouter.post(validScenario.route, parseRequest, respond)
+zodRouter.post(validationFailureScenario.route, parseRequest, respond)
+zodRouter.post(nested25Scenario.route, parseRequest, respond)
