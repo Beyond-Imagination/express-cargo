@@ -8,7 +8,8 @@ setCargoErrorHandler((_error, _req, res) => {
     res.status(400).json(validationFailureScenario.response)
 })
 
-const bindRequest = bindingCargo(CargoRequest)
+// Exported so the inline benchmark can call the parser without HTTP.
+export const parseRequest: RequestHandler = bindingCargo(CargoRequest)
 
 const respond: RequestHandler = (req, res) => {
     const input = getCargo<CargoRequest>(req)
@@ -33,6 +34,6 @@ const respond: RequestHandler = (req, res) => {
 }
 
 export const expressCargoRouter: Router = Router()
-expressCargoRouter.post(validScenario.route, bindRequest, respond)
-expressCargoRouter.post(validationFailureScenario.route, bindRequest, respond)
-expressCargoRouter.post(nested25Scenario.route, bindRequest, respond)
+expressCargoRouter.post(validScenario.route, parseRequest, respond)
+expressCargoRouter.post(validationFailureScenario.route, parseRequest, respond)
+expressCargoRouter.post(nested25Scenario.route, parseRequest, respond)

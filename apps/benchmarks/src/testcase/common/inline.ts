@@ -12,27 +12,31 @@ export type InlineRequest = {
 
 export type InlineResult = {
     scenario: string
+    implementation?: string
     'ops/sec': number
     'µs/op': number
     'minimum ops/sec': number
     'maximum ops/sec': number
 }
 
+/** A warmed-up middleware call; each `sample()` times `callsPerSample` calls and returns ops/sec. */
+export type InlineSampler = { sample(): number }
+
 /**
- * Calls a middleware directly, without HTTP: a warm-up of `callsPerSample` calls, then `samples` timed samples.
- * The cargo error handler is expected to answer validation failures with res.status(400).json(...).
+ * Warms up a middleware with `callsPerSample` direct calls, without HTTP, and checks the status it answers with.
+ * Validation failures are expected to be answered with res.status(400).json(...); parsers may keep their result in res.locals.
  */
-export function measureInline(
+export function prepareInline(
     scenario: string,
     middleware: RequestHandler,
     fields: InlineRequest,
     expectedStatus: number,
     callsPerSample: number,
-    samples: number,
-): InlineResult {
+): InlineSampler {
     let status = 200
     let nextError: unknown
     const response = {
+        locals: {},
         status(code: number) {
             status = code
             return this
@@ -56,19 +60,37 @@ export function measureInline(
     strictEqual(nextError, undefined, `${scenario}: unexpected error`)
     strictEqual(status, expectedStatus, `${scenario}: unexpected status`)
 
-    const opsPerSecond = Array.from({ length: samples }, () => {
-        const started = process.hrtime.bigint()
-        run(callsPerSample)
-        return callsPerSample / (Number(process.hrtime.bigint() - started) / 1e9)
-    })
+    return {
+        sample() {
+            const started = process.hrtime.bigint()
+            run(callsPerSample)
+            return callsPerSample / (Number(process.hrtime.bigint() - started) / 1e9)
+        },
+    }
+}
+
+/** The median of the samples, with the slowest and fastest sample. */
+export function summarizeInline(opsPerSecond: readonly number[]): Omit<InlineResult, 'scenario' | 'implementation'> {
     const medianOps = median(opsPerSecond)
     return {
-        scenario,
         'ops/sec': Math.round(medianOps),
         'µs/op': Number((1e6 / medianOps).toFixed(3)),
         'minimum ops/sec': Math.round(Math.min(...opsPerSecond)),
         'maximum ops/sec': Math.round(Math.max(...opsPerSecond)),
     }
+}
+
+/** Warms up a middleware, then takes `samples` timed samples of `callsPerSample` calls in a row. */
+export function measureInline(
+    scenario: string,
+    middleware: RequestHandler,
+    fields: InlineRequest,
+    expectedStatus: number,
+    callsPerSample: number,
+    samples: number,
+): InlineResult {
+    const sampler = prepareInline(scenario, middleware, fields, expectedStatus, callsPerSample)
+    return { scenario, ...summarizeInline(Array.from({ length: samples }, () => sampler.sample())) }
 }
 
 /** Reads `[calls] [samples]` from the arguments, as the inline benchmarks take them. */
